@@ -1,0 +1,215 @@
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Reading...
+module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Reading...
+data.kubernetes_namespace.mesh_namespace: Reading...
+data.kubernetes_namespace.mesh_namespace: Read complete after 0s [id=mesh]
+module.demis_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=demis]
+module.activate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=f8f60594-140f-58f2-221f-eb64c518aa65]
+module.activate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=5f7b4235-eec7-fd5a-d3f7-e502214ec6aa]
+kubernetes_secret.notification_gateway_passwords: Refreshing state... [id=demis/notification-gateway-passwords]
+kubernetes_secret.redis_cus_reader_credentials: Refreshing state... [id=demis/redis-cus-reader-password]
+kubernetes_secret.minio_credentials: Refreshing state... [id=demis/minio-secret]
+helm_release.authorization_policies_istio: Refreshing state... [id=authorization-policies]
+kubernetes_secret.pgbouncer_userlist: Refreshing state... [id=demis/pgbouncer-userlist-secret]
+kubernetes_secret.notification_gateway_keystores: Refreshing state... [id=demis/notification-gateway-keystores]
+helm_release.authentication_policies_istio: Refreshing state... [id=authentication-policies]
+kubernetes_secret.igs_encryption_certificate: Refreshing state... [id=demis/igs-secret]
+kubernetes_secret.postgresql_tls_certificates: Refreshing state... [id=demis/postgres-tls-secret]
+kubernetes_secret.ncapi_apikey: Refreshing state... [id=demis/ncapi-apikey]
+kubernetes_secret.database_credentials[2]: Refreshing state... [id=demis/pseudo-database-secret]
+kubernetes_secret.database_credentials[1]: Refreshing state... [id=demis/ncapi-database-secret]
+kubernetes_secret.database_credentials[6]: Refreshing state... [id=demis/fhir-storage-reader-database-secret]
+kubernetes_secret.database_credentials[8]: Refreshing state... [id=demis/hapi-fhir-writer-database-secret]
+kubernetes_secret.database_credentials[4]: Refreshing state... [id=demis/fhir-storage-writer-ddl-database-secret]
+kubernetes_secret.database_credentials[5]: Refreshing state... [id=demis/fhir-storage-writer-database-secret]
+kubernetes_secret.database_credentials[0]: Refreshing state... [id=demis/postgres-secret]
+kubernetes_secret.database_credentials[3]: Refreshing state... [id=demis/pseudo-storage-database-secret]
+kubernetes_secret.database_credentials[9]: Refreshing state... [id=demis/hapi-fhir-reader-database-secret]
+kubernetes_secret.database_credentials[7]: Refreshing state... [id=demis/fhir-storage-purger-database-secret]
+module.persistent_volume_claims["minio-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=demis/minio-volume-claim]
+module.pull_secrets["gematik-gcr-io-demis-dev-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-dev-registry-reader]
+module.persistent_volume_claims["postgres-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=demis/postgres-volume-claim]
+module.pull_secrets["gematik-gcr-io-demis-qs-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-qs-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-prod-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-prod-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-ref-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-ref-registry-reader]
+module.demis_services.module.validation_service_core[0].helm_release.chart["2.7.0-b299"]: Refreshing state... [id=validation-service-core-2.7.0-b299]
+module.demis_services.module.lifecycle_validation_service[0].helm_release.chart["1.2.3-b120"]: Refreshing state... [id=lifecycle-validation-service-1.2.3-b120]
+module.demis_services.module.postgres[0].helm_release.chart["16.6.0-b8"]: Refreshing state... [id=postgres-16.6.0-b8]
+module.demis_services.module.context_enrichment_service[0].helm_release.chart["1.1.1-b83"]: Refreshing state... [id=context-enrichment-service-1.1.1-b83]
+module.demis_services.module.validation_service_ars[0].helm_release.chart["2.7.0-b299"]: Refreshing state... [id=validation-service-ars-2.7.0-b299]
+module.demis_services.module.validation_service_igs[0].helm_release.chart["2.7.0-b299"]: Refreshing state... [id=validation-service-igs-2.7.0-b299]
+module.demis_services.module.hospital_location_service[0].helm_release.chart["1.2.2-b279"]: Refreshing state... [id=hospital-location-service-1.2.2-b279]
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Read complete after 8s
+module.demis_services.module.futs_core[0].helm_release.chart["2.1.6-b292"]: Refreshing state... [id=futs-core-2.1.6-b292]
+module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Read complete after 9s
+module.demis_services.module.report_processing_service[0].helm_release.chart["2.0.1-b344"]: Refreshing state... [id=report-processing-service-2.0.1-b344]
+module.demis_services.module.notification_processing_service[0].helm_release.chart["2.1.1-b36"]: Refreshing state... [id=notification-processing-service-2.1.1-b36]
+module.demis_services.module.pdfgen_service[0].helm_release.chart["2.7.1-b393"]: Refreshing state... [id=pdfgen-service-2.7.1-b393]
+module.demis_services.module.ars_service[0].helm_release.chart["1.0.0-b11"]: Refreshing state... [id=ars-service-1.0.0-b11]
+module.demis_services.module.notification_routing_service[0].helm_release.chart["2.2.4-b125"]: Refreshing state... [id=notification-routing-service-2.2.4-b125]
+module.demis_services.module.validation_service_ars[0].helm_release.istio[0]: Refreshing state... [id=validation-service-ars-istio]
+module.demis_services.module.lifecycle_validation_service[0].helm_release.istio[0]: Refreshing state... [id=lifecycle-validation-service-istio]
+module.demis_services.module.validation_service_core[0].helm_release.istio[0]: Refreshing state... [id=validation-service-core-istio]
+module.demis_services.module.validation_service_igs[0].helm_release.istio[0]: Refreshing state... [id=validation-service-igs-istio]
+module.demis_services.module.futs_igs[0].helm_release.chart["2.1.6-b292"]: Refreshing state... [id=futs-igs-2.1.6-b292]
+module.demis_services.module.postgres[0].helm_release.istio[0]: Refreshing state... [id=postgres-istio]
+module.demis_services.module.context_enrichment_service[0].helm_release.istio[0]: Refreshing state... [id=context-enrichment-service-istio]
+module.demis_services.module.futs_core[0].helm_release.istio[0]: Refreshing state... [id=futs-core-istio]
+module.demis_services.module.pdfgen_service[0].helm_release.istio[0]: Refreshing state... [id=pdfgen-service-istio]
+module.demis_services.module.notification_routing_service[0].helm_release.istio[0]: Refreshing state... [id=notification-routing-service-istio]
+helm_release.network_rules_istio: Refreshing state... [id=network-rules]
+module.demis_services.module.hospital_location_service[0].helm_release.istio[0]: Refreshing state... [id=hospital-location-service-istio]
+module.demis_services.module.notification_processing_service[0].helm_release.istio[0]: Refreshing state... [id=notification-processing-service-istio]
+module.demis_services.module.report_processing_service[0].helm_release.istio[0]: Refreshing state... [id=report-processing-service-istio]
+module.demis_services.module.ars_service[0].helm_release.istio[0]: Refreshing state... [id=ars-service-istio]
+module.demis_services.module.futs_igs[0].helm_release.istio[0]: Refreshing state... [id=futs-igs-istio]
+module.demis_services.helm_release.validation_service[0]: Refreshing state... [id=validation-service-istio]
+module.demis_services.module.igs_service[0].helm_release.chart["1.2.2-b318"]: Refreshing state... [id=igs-service-1.2.2-b318]
+module.demis_services.module.pgbouncer[0].helm_release.chart["1.24.1-b4"]: Refreshing state... [id=pgbouncer-1.24.1-b4]
+module.demis_services.module.notification_gateway[0].helm_release.chart["6.3.8-b184"]: Refreshing state... [id=notification-gateway-6.3.8-b184]
+module.demis_services.helm_release.futs[0]: Refreshing state... [id=futs-istio]
+module.demis_services.module.pgbouncer[0].helm_release.istio[0]: Refreshing state... [id=pgbouncer-istio]
+module.demis_services.module.igs_service[0].helm_release.istio[0]: Refreshing state... [id=igs-service-istio]
+module.demis_services.module.notification_gateway[0].helm_release.istio[0]: Refreshing state... [id=notification-gateway-istio]
+module.demis_services.module.fhir_storage_reader[0].helm_release.chart["1.2.1-b122"]: Refreshing state... [id=fhir-storage-reader-1.2.1-b122]
+module.demis_services.module.pseudonymization_service[0].helm_release.chart["3.3.1-b24"]: Refreshing state... [id=pseudonymization-service-3.3.1-b24]
+module.demis_services.module.fhir_storage_purger[0].helm_release.chart["1.2.1-b122"]: Refreshing state... [id=fhir-storage-purger-1.2.1-b122]
+module.demis_services.module.notification_clearing_api[0].helm_release.chart["1.16.14-b203"]: Refreshing state... [id=notification-clearing-api-1.16.14-b203]
+module.demis_services.module.fhir_storage_writer[0].helm_release.chart["1.2.1-b122"]: Refreshing state... [id=fhir-storage-writer-1.2.1-b122]
+module.demis_services.module.pseudonymization_storage_service[0].helm_release.chart["2.5.1-b120"]: Refreshing state... [id=pseudonymization-storage-service-2.5.1-b120]
+module.demis_services.module.gateway_igs[0].helm_release.chart["1.1.5-b143"]: Refreshing state... [id=gateway-igs-1.1.5-b143]
+module.demis_services.module.portal_disease[0].helm_release.chart["1.3.3-b254"]: Refreshing state... [id=portal-disease-1.3.3-b254]
+module.demis_services.module.portal_pathogen[0].helm_release.chart["1.4.4-b222"]: Refreshing state... [id=portal-pathogen-1.4.4-b222]
+module.demis_services.module.portal_bedoccupancy[0].helm_release.chart["1.4.3-b132"]: Refreshing state... [id=portal-bedoccupancy-1.4.3-b132]
+module.demis_services.module.fhir_storage_reader[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-reader-istio]
+module.demis_services.module.pseudonymization_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-service-istio]
+module.demis_services.module.fhir_storage_purger[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-purger-istio]
+module.demis_services.module.pseudonymization_storage_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-storage-service-istio]
+module.demis_services.module.notification_clearing_api[0].helm_release.istio[0]: Refreshing state... [id=notification-clearing-api-istio]
+module.demis_services.module.fhir_storage_writer[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-writer-istio]
+module.demis_services.module.gateway_igs[0].helm_release.istio[0]: Refreshing state... [id=gateway-igs-istio]
+module.demis_services.module.portal_pathogen[0].helm_release.istio[0]: Refreshing state... [id=portal-pathogen-istio]
+module.demis_services.module.portal_bedoccupancy[0].helm_release.istio[0]: Refreshing state... [id=portal-bedoccupancy-istio]
+module.demis_services.module.portal_disease[0].helm_release.istio[0]: Refreshing state... [id=portal-disease-istio]
+module.demis_services.module.portal_igs[0].helm_release.chart["1.2.2-b117"]: Refreshing state... [id=portal-igs-1.2.2-b117]
+module.demis_services.module.portal_igs[0].helm_release.istio[0]: Refreshing state... [id=portal-igs-istio]
+module.demis_services.module.portal_shell[0].helm_release.chart["1.2.4-b176"]: Refreshing state... [id=portal-shell-1.2.4-b176]
+module.demis_services.module.portal_shell[0].helm_release.istio[0]: Refreshing state... [id=portal-shell-istio]
+module.deactivate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=e1fd7945-8acc-e0f9-a69e-05813fa23761]
+null_resource.fsp_manual_trigger[0]: Refreshing state... [id=4196424324221756502]
+module.deactivate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=fb639f05-558b-ac5e-b509-51c44c3f9f8f]
+
+Note: Objects have changed outside of OpenTofu
+
+OpenTofu detected the following changes made outside of OpenTofu since the
+last "tofu apply" which may have affected this plan:
+
+  # module.demis_namespace.kubernetes_namespace_v1.this has changed
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "demis"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              ~ "cattle.io/status"                          = jsonencode(
+                  ~ {
+                      ~ Conditions = [
+                            {
+                                LastUpdateTime = "2025-05-15T14:18:38Z"
+                                Message        = ""
+                                Status         = "True"
+                                Type           = "ResourceQuotaInit"
+                            },
+                          + {
+                              + LastUpdateTime = "2025-05-15T14:18:38Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
+            }
+            name             = "demis"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+OpenTofu used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+OpenTofu will perform the following actions:
+
+  # module.demis_namespace.kubernetes_namespace_v1.this will be updated in-place
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "demis"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              - "cattle.io/status"                          = jsonencode(
+                    {
+                      - Conditions = [
+                          - {
+                              - LastUpdateTime = "2025-05-15T14:18:38Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "ResourceQuotaInit"
+                            },
+                          - {
+                              - LastUpdateTime = "2025-05-15T14:18:38Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                ) -> null
+              - "lifecycle.cattle.io/create.namespace-auth" = "true" -> null
+            }
+            name             = "demis"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+Warning: Value for undeclared variable
+
+The root module does not declare a variable named "service_mesh_kiali_digest"
+but a value was found in file
+"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-dev-fra/demis/cluster.tfvars".
+If you meant to use this value, add a "variable" block to the configuration.
+
+To silence these warnings, use TF_VAR_... environment variables to provide
+certain "global" settings to all configurations in your organization. To
+reduce the verbosity of these warnings, use the -compact-warnings option.
+
+Warning: Value for undeclared variable
+
+The root module does not declare a variable named
+"service_mesh_prometheus_digest" but a value was found in file
+"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-dev-fra/demis/cluster.tfvars".
+If you meant to use this value, add a "variable" block to the configuration.
+
+To silence these warnings, use TF_VAR_... environment variables to provide
+certain "global" settings to all configurations in your organization. To
+reduce the verbosity of these warnings, use the -compact-warnings option.
+
+Warning: Values for undeclared variables
+
+In addition to the other similar warnings shown, 24 other variable(s) defined
+without being declared.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so OpenTofu can't
+guarantee to take exactly these actions if you run "tofu apply" now.

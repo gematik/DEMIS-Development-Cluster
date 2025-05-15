@@ -1,0 +1,167 @@
+data.kubernetes_namespace.mesh_namespace: Reading...
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Reading...
+module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Reading...
+data.kubernetes_namespace.mesh_namespace: Read complete after 0s [id=mesh]
+module.activate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=9237ff5e-904f-7508-04c6-a02c827ff0b2]
+module.activate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=761c589f-f8d3-72b2-c38e-f92a56657250]
+module.demis_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=idm]
+helm_release.authorization_policies_istio: Refreshing state... [id=authorization-policies]
+kubernetes_secret.keycloak_truststore_password: Refreshing state... [id=idm/keycloak-truststore-password]
+kubernetes_secret.redis_cus_reader_credentials: Refreshing state... [id=idm/redis-cus-reader-password]
+kubernetes_secret.keycloak_admin_account: Refreshing state... [id=idm/keycloak-admin-password]
+kubernetes_secret.keycloak_portal_secret: Refreshing state... [id=idm/keycloak-portal-secret]
+module.persistent_volume_claims["cus-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=idm/cus-volume-claim]
+kubernetes_secret.postgresql_tls_certificates: Refreshing state... [id=idm/postgres-tls-secret]
+module.persistent_volume_claims["postgres-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=idm/postgres-volume-claim]
+module.persistent_volume_claims["redis-cus-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=idm/redis-cus-volume-claim]
+kubernetes_secret.pgbouncer_userlist: Refreshing state... [id=idm/pgbouncer-userlist-secret]
+kubernetes_secret.ldap_certificates: Refreshing state... [id=idm/ldap-certificates]
+kubernetes_secret.keycloak_truststore_file: Refreshing state... [id=idm/keycloak-truststore-file]
+helm_release.network_rules_istio: Refreshing state... [id=network-rules]
+kubernetes_secret.database_credentials[1]: Refreshing state... [id=idm/keycloak-database-secret]
+kubernetes_secret.database_credentials[0]: Refreshing state... [id=idm/postgres-secret]
+kubernetes_secret.redis_cus_writer_credentials: Refreshing state... [id=idm/redis-cus-writer-password]
+kubernetes_secret.redis_cus_acl: Refreshing state... [id=idm/redis-cus-acl]
+module.pull_secrets["gematik-gcr-io-demis-dev-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=idm/gematik-gcr-io-demis-dev-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-prod-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=idm/gematik-gcr-io-demis-prod-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-ref-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=idm/gematik-gcr-io-demis-ref-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-qs-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=idm/gematik-gcr-io-demis-qs-registry-reader]
+module.idm_services.module.gematik_idp[0].helm_release.chart["29.0.1-b24"]: Refreshing state... [id=gematik-idp-29.0.1-b24]
+module.idm_services.module.postgres[0].helm_release.chart["16.6.0-b8"]: Refreshing state... [id=postgres-16.6.0-b8]
+module.idm_services.module.redis_cus[0].helm_release.chart["7.4.3-b4"]: Refreshing state... [id=redis-cus-7.4.3-b4]
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Read complete after 9s
+module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Read complete after 9s
+module.idm_services.module.gematik_idp[0].helm_release.istio[0]: Refreshing state... [id=gematik-idp-istio]
+module.idm_services.module.postgres[0].helm_release.istio[0]: Refreshing state... [id=postgres-istio]
+module.idm_services.module.redis_cus[0].helm_release.istio[0]: Refreshing state... [id=redis-cus-istio]
+module.idm_services.module.pgbouncer[0].helm_release.chart["1.24.1-b4"]: Refreshing state... [id=pgbouncer-1.24.1-b4]
+module.idm_services.module.pgbouncer[0].helm_release.istio[0]: Refreshing state... [id=pgbouncer-istio]
+module.idm_services.module.keycloak[0].helm_release.chart["26.2.0-b176"]: Refreshing state... [id=keycloak-26.2.0-b176]
+module.idm_services.module.bundid_idp[0].helm_release.chart["26.2.0-b176"]: Refreshing state... [id=bundid-idp-26.2.0-b176]
+module.idm_services.module.keycloak[0].helm_release.istio[0]: Refreshing state... [id=keycloak-istio]
+module.idm_services.module.bundid_idp[0].helm_release.istio[0]: Refreshing state... [id=bundid-idp-istio]
+module.idm_services.module.keycloak_user_purger[0].helm_release.chart["1.1.2-b50"]: Refreshing state... [id=keycloak-user-purger-1.1.2-b50]
+module.idm_services.module.certificate_update_service[0].helm_release.chart["1.8.1-b187"]: Refreshing state... [id=certificate-update-service-1.8.1-b187]
+module.idm_services.module.keycloak_user_purger[0].helm_release.istio[0]: Refreshing state... [id=keycloak-user-purger-istio]
+module.idm_services.module.certificate_update_service[0].helm_release.istio[0]: Refreshing state... [id=certificate-update-service-istio]
+module.deactivate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=0ae774f7-b768-7904-e977-b16872d6c6d3]
+null_resource.kup_manual_trigger[0]: Refreshing state... [id=4460721528076485604]
+null_resource.cus_manual_trigger[0]: Refreshing state... [id=341163738033759297]
+module.deactivate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=8d856aec-8d1f-94b4-0371-22a552b0ec85]
+
+Note: Objects have changed outside of OpenTofu
+
+OpenTofu detected the following changes made outside of OpenTofu since the
+last "tofu apply" which may have affected this plan:
+
+  # module.demis_namespace.kubernetes_namespace_v1.this has changed
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "idm"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              + "cattle.io/status"                          = jsonencode(
+                    {
+                      + Conditions = [
+                          + {
+                              + LastUpdateTime = "2025-05-15T14:17:38Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "ResourceQuotaInit"
+                            },
+                          + {
+                              + LastUpdateTime = "2025-05-15T14:17:38Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
+            }
+            name             = "idm"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+OpenTofu used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+OpenTofu will perform the following actions:
+
+  # null_resource.cus_manual_trigger[0] must be replaced
+-/+ resource "null_resource" "cus_manual_trigger" {
+      ~ id       = "341163738033759297" -> (known after apply)
+      ~ triggers = { # forces replacement
+          ~ "last_execution" = "2025-05-15T14:17:37Z" -> (known after apply)
+        }
+    }
+
+  # null_resource.kup_manual_trigger[0] must be replaced
+-/+ resource "null_resource" "kup_manual_trigger" {
+      ~ id       = "4460721528076485604" -> (known after apply)
+      ~ triggers = { # forces replacement
+          ~ "last_execution" = "2025-05-15T14:17:37Z" -> (known after apply)
+        }
+    }
+
+  # module.demis_namespace.kubernetes_namespace_v1.this will be updated in-place
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "idm"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              - "cattle.io/status"                          = jsonencode(
+                    {
+                      - Conditions = [
+                          - {
+                              - LastUpdateTime = "2025-05-15T14:17:38Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "ResourceQuotaInit"
+                            },
+                          - {
+                              - LastUpdateTime = "2025-05-15T14:17:38Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                ) -> null
+              - "lifecycle.cattle.io/create.namespace-auth" = "true" -> null
+            }
+            name             = "idm"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Warning: Value for undeclared variable
+
+The root module does not declare a variable named "image_pull_policy" but a
+value was found in file
+"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-dev-fra/idm/application-configuration.tfvars".
+If you meant to use this value, add a "variable" block to the configuration.
+
+To silence these warnings, use TF_VAR_... environment variables to provide
+certain "global" settings to all configurations in your organization. To
+reduce the verbosity of these warnings, use the -compact-warnings option.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so OpenTofu can't
+guarantee to take exactly these actions if you run "tofu apply" now.

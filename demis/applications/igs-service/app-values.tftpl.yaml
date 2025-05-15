@@ -1,0 +1,55 @@
+# Values for integrierte-genomische-surveillance-service
+
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-igs-service
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+# IMPORTANT: these values must be defined in the Secret Objects
+config:
+  # The (external) Secret Objects containing the API Key entry
+  secrets:
+    # Use default Secret from this Chart
+    useDefault: false
+
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  S3_URL: https://${storage_hostname}
+  S3_CLUSTER_URL: ${s3_storage_url}
+  DEMIS_BASE_URL_EXTERNAL: https://${core_hostname}
+  DEMIS_NETWORK_CONTENT_ENRICHMENT_SERVICE_ADDRESS: http://context-enrichment-service.${namespace}.svc.cluster.local
+  DEMIS_NETWORK_VALIDATION_SERVICE_ADDRESS: http://validation-service.${namespace}.svc.cluster.local
+  DEMIS_NETWORK_NOTIFICATION_CLEARING_API_ADDRESS: "http://fhir-storage-writer.${namespace}.svc.cluster.local"
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

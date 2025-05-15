@@ -1,0 +1,71 @@
+# Values for minio
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-minio
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+# Define custom configuration values
+# The Entries will be read from the given (external) Secrets and injected in the container with the same name.
+# IMPORTANT: these values must be defined in the Secret Objects
+config:
+  useDefault: true
+  settings:
+    configMap:
+      name: minio-config
+  # Defines if MinIO data must be persisted on disk
+  persistence:
+    enabled: true
+    # The Persistence Volume Claim where the files are available
+    volumeClaim:
+      # Use default Persistence Volume Claim from this Chart
+      useDefault: false
+      # The (external) Persistence Volume Claim to be used
+      name: minio-volume-claim
+    # The Persistence Volume where to store the data
+    volume: 
+      # Use the default embedded Persistence Volume (hostpath, for localhost)
+      useDefault: false
+  # The (external) Secret Objects containing the API Key entry
+  secrets:
+    # Use default Secret from this Chart
+    useDefault: false
+    # The (external) Secret for MinIO Keys
+    minio:
+      # The name of the (external) Secret for MinIO and the entries to be used and mapped
+      name: minio-secret
+      entries:
+        MINIO_ROOT_USER: MINIO_ROOT_USER
+        MINIO_ROOT_PASSWORD: MINIO_ROOT_PASSWORD
+
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

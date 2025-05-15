@@ -1,0 +1,237 @@
+module.security_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=security]
+module.kyverno_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=kyverno]
+module.remote_cluster[0].kubernetes_service_account_v1.this: Refreshing state... [id=kube-system/api-service-account]
+module.istio_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=istio-system]
+module.remote_cluster[0].kubernetes_cluster_role_v1.this: Refreshing state... [id=api-cluster-role]
+module.remote_cluster[0].kubernetes_cluster_role_binding_v1.this: Refreshing state... [id=api-cluster-role-binding]
+module.remote_cluster[0].kubernetes_secret_v1.this: Refreshing state... [id=kube-system/api-service-account-token]
+module.service_mesh.module.istio.helm_release.istio_base: Refreshing state... [id=istio-base]
+module.service_mesh.module.istio.helm_release.istiod: Refreshing state... [id=istiod]
+module.service_mesh.module.istio.helm_release.istio_cni: Refreshing state... [id=cni]
+module.service_mesh.module.istio.helm_release.istio_egressgateway: Refreshing state... [id=istio-egressgateway]
+module.service_mesh.module.istio.helm_release.istio_ingressgateway: Refreshing state... [id=istio-ingressgateway]
+module.service_mesh.module.jaeger[0].kubernetes_config_map_v1.jaeger_configuration: Refreshing state... [id=istio-system/jaeger-configuration]
+module.service_mesh.module.jaeger[0].kubernetes_service_account_v1.this: Refreshing state... [id=istio-system/jaeger]
+module.service_mesh.module.kiali[0].random_string.kiali_signing_key: Refreshing state... [id=XL02pcTnWybSYJbAKc1qtC0R5nhbEsaH]
+module.service_mesh.module.jaeger[0].kubernetes_service_v1.otlp_collector: Refreshing state... [id=istio-system/otlp-collector]
+module.service_mesh.module.jaeger[0].kubernetes_service_v1.tracing: Refreshing state... [id=istio-system/tracing]
+module.service_mesh.module.jaeger[0].kubernetes_deployment_v1.this: Refreshing state... [id=istio-system/jaeger]
+module.service_mesh.module.kiali[0].helm_release.this: Refreshing state... [id=kiali]
+module.service_mesh.module.kiali[0].kubernetes_secret_v1.kiali_service_account_token: Refreshing state... [id=istio-system/kiali-service-account-token]
+
+Note: Objects have changed outside of OpenTofu
+
+OpenTofu detected the following changes made outside of OpenTofu since the
+last "tofu apply" which may have affected this plan:
+
+  # module.istio_namespace.kubernetes_namespace_v1.this has changed
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "istio-system"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              ~ "cattle.io/status"                          = jsonencode(
+                  ~ {
+                      ~ Conditions = [
+                            {
+                                LastUpdateTime = "2025-04-28T06:58:53Z"
+                                Message        = ""
+                                Status         = "True"
+                                Type           = "ResourceQuotaInit"
+                            },
+                          + {
+                              + LastUpdateTime = "2025-04-28T06:58:53Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
+            }
+            name             = "istio-system"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.kyverno_namespace.kubernetes_namespace_v1.this has changed
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "kyverno"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              ~ "cattle.io/status"                          = jsonencode(
+                  ~ {
+                      ~ Conditions = [
+                            {
+                                LastUpdateTime = "2025-04-28T06:58:53Z"
+                                Message        = ""
+                                Status         = "True"
+                                Type           = "ResourceQuotaInit"
+                            },
+                          + {
+                              + LastUpdateTime = "2025-04-28T06:58:53Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
+            }
+            name             = "kyverno"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.security_namespace.kubernetes_namespace_v1.this has changed
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "security"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              ~ "cattle.io/status"                          = jsonencode(
+                  ~ {
+                      ~ Conditions = [
+                            {
+                                LastUpdateTime = "2025-04-28T06:58:53Z"
+                                Message        = ""
+                                Status         = "True"
+                                Type           = "ResourceQuotaInit"
+                            },
+                          + {
+                              + LastUpdateTime = "2025-04-28T06:58:53Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
+            }
+            name             = "security"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+OpenTofu used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+OpenTofu will perform the following actions:
+
+  # module.istio_namespace.kubernetes_namespace_v1.this will be updated in-place
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "istio-system"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              - "cattle.io/status"                          = jsonencode(
+                    {
+                      - Conditions = [
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "ResourceQuotaInit"
+                            },
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                ) -> null
+              - "lifecycle.cattle.io/create.namespace-auth" = "true" -> null
+            }
+            name             = "istio-system"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.kyverno_namespace.kubernetes_namespace_v1.this will be updated in-place
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "kyverno"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              - "cattle.io/status"                          = jsonencode(
+                    {
+                      - Conditions = [
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "ResourceQuotaInit"
+                            },
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                ) -> null
+              - "lifecycle.cattle.io/create.namespace-auth" = "true" -> null
+            }
+            name             = "kyverno"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.security_namespace.kubernetes_namespace_v1.this will be updated in-place
+  ~ resource "kubernetes_namespace_v1" "this" {
+        id                               = "security"
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          ~ annotations      = {
+              - "cattle.io/status"                          = jsonencode(
+                    {
+                      - Conditions = [
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "ResourceQuotaInit"
+                            },
+                          - {
+                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - Message        = ""
+                              - Status         = "True"
+                              - Type           = "InitialRolesPopulated"
+                            },
+                        ]
+                    }
+                ) -> null
+              - "lifecycle.cattle.io/create.namespace-auth" = "true" -> null
+            }
+            name             = "security"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+Plan: 0 to add, 3 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so OpenTofu can't
+guarantee to take exactly these actions if you run "tofu apply" now.

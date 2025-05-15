@@ -1,0 +1,98 @@
+# Application Information
+appName: "futs"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: 8080
+appServicePortTarget: 8080
+appServicePortProtocol: TCP
+appServicePortName: http
+
+# Istio Information
+# the List of the Istio Gateway Objects to be used for external cluster access
+virtualServiceGateways:
+  - ${cluster_gateway}
+# the List of the Hostnames/Domains that should match the VirtualService definition (external)
+# Core and Portal Hostnames
+virtualServiceDomains:
+  %{~ for hostname in demis_hostnames ~}
+  - ${hostname}
+  %{~ endfor ~}
+
+# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+# The "route" part is generated using the destination subset information
+virtualServiceHttpRules:
+  - match:
+    - headers:
+        fhirProfile:
+          exact: igs-profile-snapshots
+      uri:
+        prefix: /services/fhir-ui-data-model-translation
+    - headers:
+        fhirProfile:
+          exact: igs-profile-snapshots
+      uri:
+        prefix: /fhir-ui-data-model-translation
+    delegate:
+      name: futs-igs-internal
+      namespace: ${namespace}
+  - match:
+    - headers:
+        fhirProfile:
+          exact: fhir-profile-snapshots
+      uri:
+        prefix: /services/fhir-ui-data-model-translation
+    - headers:
+        fhirProfile:
+          exact: fhir-profile-snapshots
+      uri:
+        prefix: /fhir-ui-data-model-translation
+    delegate:
+      name: futs-core-internal
+      namespace: ${namespace}
+  - match:
+    - uri:
+        prefix: /services/fhir-ui-data-model-translation
+    - uri:
+        prefix: /fhir-ui-data-model-translation
+    delegate:
+      name: futs-core-internal
+      namespace: ${namespace}
+
+virtualServiceExternalHttpRules:
+  - match:
+      - headers:
+          fhirProfile:
+            exact: igs-profile-snapshots
+        uri:
+          prefix: ${context_path}/services/fhir-ui-data-model-translation
+      - headers:
+          fhirProfile:
+            exact: igs-profile-snapshots
+        uri:
+          prefix: ${context_path}/fhir-ui-data-model-translation
+    delegate:
+      name: futs-igs-internal
+      namespace: ${namespace}
+  - match:
+      - headers:
+          fhirProfile:
+            exact: fhir-profile-snapshots
+        uri:
+          prefix: ${context_path}/services/fhir-ui-data-model-translation
+      - headers:
+          fhirProfile:
+            exact: fhir-profile-snapshots
+        uri:
+          prefix: ${context_path}/fhir-ui-data-model-translation
+    delegate:
+      name: futs-core-internal
+      namespace: ${namespace}
+  - match:
+      - uri:
+          prefix: ${context_path}/services/fhir-ui-data-model-translation
+      - uri:
+          prefix: ${context_path}/fhir-ui-data-model-translation
+    delegate:
+      name: futs-core-internal
+      namespace: ${namespace}

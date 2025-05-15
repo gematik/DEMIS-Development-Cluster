@@ -1,0 +1,82 @@
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-postgres
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name}: ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name}: ${config_value}
+  %{~ endfor ~}
+
+extraEnvVars:
+  - name: NOTIFICATION_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ncapi-database-secret
+        key: NOTIFICATION_DB_PASSWORD
+  - name: FHIR_STORAGE_WRITER_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fhir-storage-writer-ddl-database-secret
+        key: FHIR_STORAGE_WRITER_DDL_DB_PASSWORD
+  - name: FHIR_STORAGE_PURGER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fhir-storage-purger-database-secret
+        key: FHIR_STORAGE_PURGER_DB_PASSWORD
+  - name: FHIR_STORAGE_WRITER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fhir-storage-writer-database-secret
+        key: FHIR_STORAGE_WRITER_DB_PASSWORD
+  - name: FHIR_STORAGE_READER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fhir-storage-reader-database-secret
+        key: FHIR_STORAGE_READER_DB_PASSWORD
+  - name: HAPI_FHIR_WRITER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: hapi-fhir-writer-database-secret
+        key: HAPI_FHIR_WRITER_DB_PASSWORD
+  - name: ESPRI_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: pseudo-storage-database-secret
+        key: ESPRI_DB_PASSWORD
+  - name: PSEUDO_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: pseudo-database-secret
+        key: PSEUDO_DB_PASSWORD
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

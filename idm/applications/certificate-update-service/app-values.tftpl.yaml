@@ -1,0 +1,82 @@
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+  
+# Defines the Schedule for the CronJob - Run every 12 hours
+cronJobSchedule: "${cron_schedule}"
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-certificate-update-service
+    %{ endif }
+  suspend: ${suspend}
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+# Define custom configuration values
+# The Entries will be read from the given (external) Secrets and injected in the container with the same name.
+# IMPORTANT: these values must be defined in the Secret Objects
+config:
+  # The (external) Secret Objects containing the API Key entry
+  secret:
+    # Use default Secret from this Chart
+    useDefault: false
+    # The (external) Secret for Certificate Files
+    certs: 
+      # The name of the (external) Secret for Certificates and the entries to be used and mapped
+      name: ldap-certificates
+      entries:
+        - root-ca.crt
+        - sub-ca.crt
+    # The (external) Secret for Keycloak
+    keycloak: 
+      # The name of the (external) Secret for Keycloak and the entry to be used
+      name: keycloak-admin-password
+      key: KEYCLOAK_ADMIN_PASSWORD
+    # The (external) Secret for Redis
+    redis:
+      # The name of the (external) Secret for Redis and the entry to be used
+      name: redis-cus-writer-password
+      key: REDIS_PASSWORD
+  # The Persistence Volume Claim where the files are available
+  volumeClaim:
+    # Use default Persistence Volume Claim from this Chart
+    useDefault: false
+    name: cus-volume-claim
+  
+# Extra Environment Variables to be defined
+# customEnvVars
+#   key: value
+customEnvVars: 
+  # preserves default environment variables from helm chart
+  TERRAFORM_DEPLOYMENT: true
+  # Keycloak Specific
+  KEYCLOAK_ADMIN: "${keycloak_admin}"
+  REDIS_USER: "${redis_user}"
+  KEYCLOAK_BASE_URL: "http://keycloak.${namespace}.svc.cluster.local/"
+  REDIS_HOST: "redis-cus.${namespace}.svc.cluster.local"
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

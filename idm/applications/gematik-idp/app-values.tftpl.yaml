@@ -1,0 +1,36 @@
+# Values for the gematik-idp Helm Template
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: idp-server
+    %{ endif }
+
+config:
+  idpConfig:
+    serverUrl: ${serverUrl}
+    clientName: ${clientName}
+    redirectUri: ${redirectUri}
+    returnSsoToken: ${returnSsoToken}
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

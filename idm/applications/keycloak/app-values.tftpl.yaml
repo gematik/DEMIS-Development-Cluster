@@ -1,0 +1,107 @@
+# Values for Keycloak Helm Chart
+istio:
+  enable: ${istio_enable}
+  # only for Local - allows Keycloak to read the user certificate from KIND-generated Header
+  enableKindClientCertHeader: ${local_stage}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-keycloak
+    %{ endif }
+
+# Image Pull Policy
+imagePullPolicy: IfNotPresent
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+# Define custom configuration values
+config:
+  # The (external) Secret Object containing the API Key entry
+  secret:
+    # Use default Secret from this Chart
+    useDefault: false
+    # The (external) Secret for Admin Password
+    admin:
+      # The name of the (external) Secret for Admin Password and the entries to be used and mapped
+      name: keycloak-admin-password
+      # Define the Admin Password
+      # IMPORTANT: these values must be defined in the Secret
+      entries:
+        KEYCLOAK_ADMIN: KEYCLOAK_ADMIN
+        KEYCLOAK_ADMIN_PASSWORD: KEYCLOAK_ADMIN_PASSWORD
+    # The (external) Secret for DB Passwords
+    db:
+      # The name of the (external) Secret for Database and the entries to be used and mapped
+      name: keycloak-database-secret
+      # Define the Database Passwords
+      # IMPORTANT: these values must be defined in the Secret
+      entries:
+        KC_DB_USERNAME: KC_DB_USERNAME
+        KC_DB_PASSWORD: KC_DB_PASSWORD
+    # The (external) Secret for Truststore
+    keystores:
+      # The name of the (external) Secret for Truststore and the entries to be used and mapped
+      name: keycloak-truststore-file
+      # Define the Truststore
+      # IMPORTANT: these values must be defined in the Secret
+      entries:
+        truststore.jks: truststore.jks
+    # The (external) Secret for Truststore Password
+    passwords:
+      # The name of the (external) Secret for Truststore Password and the entries to be used and mapped
+      name: keycloak-truststore-password
+      # Define the Truststore Password
+      # IMPORTANT: these values must be defined in the Secret
+      entries:
+        KC_SPI_TRUSTSTORE_FILE_PASSWORD: KC_SPI_TRUSTSTORE_FILE_PASSWORD
+  # Performs the initial import of data
+  # Requires a Database connection 
+  # Requires the definition of the import strategy
+  import:
+    enable: ${enable_import}
+    dataImage:
+      repository: ${repository}
+      %{ if strcontains(repository, "gematik1") }
+      name: demis-stage-configuration-data-public
+      %{ else }
+      name: ${data_name}
+      %{ endif }
+      tag: ${data_version}
+      characteristics: "keycloak" # keycloak or bundid-idp-keycloak
+    overwriteExistingData: true
+
+# Extra Environment Variables to be defined.
+# The full list of supported environment variables can be found here: https://www.keycloak.org/server/all-config
+# customEnvVars
+#   key: value
+customEnvVars: 
+  TERRAFORM_DEPLOYMENT: true
+  KC_HOSTNAME_ADMIN: "https://${issuer_hostname}"
+  KC_HOSTNAME: "https://${issuer_hostname}"
+  KC_DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/keycloak"
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+podAnnotations:
+  stage.configuration/data-version: ${data_version}
+  stage.configuration/data-name: ${data_name}
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}
