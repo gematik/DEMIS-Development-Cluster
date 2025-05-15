@@ -1,0 +1,20 @@
+# Activate GCS Bucket only for remote clusters
+# Automatically activate with "make [remoteStageName]"
+
+terraform {
+  backend "gcs" {}
+  encryption {
+    key_provider "gcp_kms" "basic" {
+      kms_encryption_key = var.kms_encryption_key
+      key_length         = 32
+    }
+
+    method "aes_gcm" "kms_method" {
+      keys = key_provider.gcp_kms.basic
+    }
+
+    state {
+      method = method.aes_gcm.kms_method
+    }
+  }
+}

@@ -1,0 +1,63 @@
+# Values for pgbouncer.
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-pgbouncer
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+      
+# Define custom configuration values
+config:
+  databases:
+    notification:
+      host: ${database_host}
+      port: 5432
+      dbname: notification
+    espri_demis:
+      host: ${database_host}
+      port: 5432
+      dbname: espri_demis
+    pseudonymization:
+      host: ${database_host}
+      port: 5432
+      dbname: pseudonymization
+    fhir-storage:
+      host: ${database_host}
+      port: 5432
+      dbname: fhir-storage
+  pgbouncer:
+    server_lifetime: "300"
+    max_client_conn: "200"
+  # List for Users allowed to login through pgBouncer
+  # The list contains entries in the form
+  # "user" "password"
+  userlist:
+    name: pgbouncer-userlist-secret
+  # Defines the TLS communication
+  tls:
+    enable: true
+    serverTlsMode: verify-ca
+    certificates:
+      serverCA:
+        name: postgres-tls-secret
+        entry: ca.crt
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

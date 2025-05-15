@@ -1,0 +1,198 @@
+api:
+  namespaces:
+    exclude:
+      - istio-operator
+      - kube.*
+      - openshift.*
+      - ibm.*
+      - kiali-operator
+    label_selector: ""
+
+auth:
+  strategy: "token"
+
+deployment:
+  image_pull_policy: "IfNotPresent"
+  image_version: "${image_version}"
+  ingress_enabled: false
+  instance_name: "kiali"
+  pod_labels:
+    sidecar.istio.io/inject: "false"
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  secret_name: "kiali"
+  version_label: "${image_version}"
+
+external_services:
+  custom_dashboards:
+    discovery_auto_threshold: 10
+    discovery_enabled: "auto"
+    enabled: true
+    is_core: false
+    namespace_label: ''
+    prometheus:
+      auth:
+        ca_file: ""
+        insecure_skip_verify: false
+        password: ""
+        token: ""
+        type: "none"
+        use_kiali_token: false
+        username: ""
+      cache_duration: 10
+      cache_enabled: true
+      cache_expiration: 300
+      thanos_proxy:
+        enabled: false
+      url: "${prometheus_url}"
+  istio:
+    component_status:
+      components:
+      - app_label: istiod
+        is_core: true
+        is_proxy: false
+        namespace: ''
+      - app_label: istio-ingressgateway
+        is_core: true
+        is_proxy: true
+        namespace: ''
+      - app_label: istio-egressgateway
+        is_core: false
+        is_proxy: true
+        namespace: ''
+      enabled: true
+    config_map_name: istio
+    envoy_admin_local_port: 15000
+    gateway_api_class_name: ''
+    istio_api_enabled: true
+    istio_identity_domain: svc.cluster.local
+    istio_injection_annotation: sidecar.istio.io/inject
+    istio_sidecar_annotation: sidecar.istio.io/status
+    istio_sidecar_injector_config_map_name: istio-sidecar-injector
+    istiod_deployment_name: istiod
+    istiod_pod_monitoring_port: 15014
+    root_namespace: istio-system
+    url_service_version: http://istiod.istio-system:15014/version
+  grafana: 
+    enabled: true
+    internal_url: ${grafana_url}
+    # Public facing URL of Grafana
+    external_url: ${grafana_public_url}
+    dashboards:
+    - name: "Istio Service Dashboard"
+      variables:
+        namespace: "var-namespace"
+        service: "var-service"
+    - name: "Istio Workload Dashboard"
+      variables:
+        namespace: "var-namespace"
+        workload: "var-workload"
+    - name: "Istio Mesh Dashboard"
+    - name: "Istio Control Plane Dashboard"
+    - name: "Istio Performance Dashboard"
+    - name: "Istio Wasm Extension Dashboard"
+  prometheus:
+    auth:
+      ca_file: ''
+      insecure_skip_verify: false
+      password: ''
+      token: ''
+      type: none
+      use_kiali_token: false
+      username: ''
+    cache_duration: 7
+    cache_enabled: true
+    cache_expiration: 300
+    custom_headers: {}
+    health_check_url: ''
+    is_core: true
+    query_scope: {}
+    thanos_proxy:
+      enabled: false
+      retention_period: 7d
+      scrape_interval: 30s
+    url: ${prometheus_url}
+  tracing:
+    auth:
+      ca_file: ''
+      insecure_skip_verify: false
+      password: ''
+      token: ''
+      type: none
+      use_kiali_token: false
+      username: ''
+    enabled: true
+    internal_url: ${tracing_url}
+    is_core: false
+    namespace_selector: true
+    query_scope: {}
+    query_timeout: 5
+    url: ''
+    use_grpc: true
+    whitelist_istio_system:
+    - jaeger-query
+    - istio-ingressgateway
+
+istio_labels:
+  app_label_name: app
+  injection_label_name: istio-injection
+  injection_label_rev: istio.io/rev
+  version_label_name: version
+  
+login_token:
+  signing_key: ${signing_key}
+
+kiali_feature_flags:
+  certificates_information_indicators:
+    enabled: true
+    secrets:
+    - cacerts
+    - istio-ca-secret
+  clustering:
+    autodetect_secrets:
+      enabled: true
+      label: kiali.io/multiCluster=true
+    clusters: []
+  disabled_features: []
+  istio_annotation_action: true
+  istio_injection_action: true
+  istio_upgrade_action: false
+  validations:
+    ignore:
+    - KIA1201
+
+kubernetes_config:
+  burst: 200
+  cache_duration: 300
+  cache_istio_types:
+  - AuthorizationPolicy
+  - DestinationRule
+  - EnvoyFilter
+  - Gateway
+  - PeerAuthentication
+  - RequestAuthentication
+  - ServiceEntry
+  - Sidecar
+  - VirtualService
+  - WorkloadEntry
+  - WorkloadGroup
+  cache_namespaces:
+  - .*
+  cache_token_namespace_duration: 10
+  excluded_workloads:
+  - CronJob
+  - DeploymentConfig
+  - ReplicationController
+  qps: 175
+
+server:
+  observability:
+    metrics:
+      enabled: true
+      port: ${metrics_port}
+  port: ${service_port}
+  web_root: /kiali

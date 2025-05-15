@@ -1,0 +1,62 @@
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger_storage_exporter]
+  telemetry:
+    resource:
+      service.name: jaeger
+    logs:
+      level: INFO
+
+extensions:
+  healthcheckv2:
+    use_v2: true
+    component_health:
+      include_permanent_errors: false
+      include_recoverable_errors: true
+      recovery_duration: 5m
+    http:
+      endpoint: "0.0.0.0:${health_check_port}"
+      status:
+        enabled: true
+        path: "/status"
+      config:
+        enabled: true
+        path: "/config"
+  jaeger_query:
+    base_path: /jaeger
+    storage:
+      traces: trace_storage
+    grpc:
+      endpoint: 0.0.0.0:${grpc_query_port}
+    http:
+      endpoint: 0.0.0.0:${http_query_port}
+  jaeger_storage:
+    backends:
+      trace_storage:
+        memory:
+          max_traces: ${max_traces}
+        badger:
+          ephemeral: false
+          consistency: true
+          directories:
+            keys: /badger/keys
+            values: /badger/values
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:${otlp_grpc_port}"
+      http:
+        endpoint: "0.0.0.0:${otlp_http_port}"
+
+processors:
+  batch:
+
+exporters:
+  jaeger_storage_exporter:
+    trace_storage: trace_storage

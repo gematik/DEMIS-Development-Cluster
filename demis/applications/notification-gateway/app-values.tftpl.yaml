@@ -1,0 +1,73 @@
+# Values for notification-gateway.
+
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-notification-gateway
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+# Define custom configuration values
+# The Entries will be read from the given (external) Secrets and injected in the container with the same name.
+# IMPORTANT: these values must be defined in the Secret Objects
+config:
+  # The (external) Secret Objects containing the API Key entry
+  secret:
+    # Use default Secret from this Chart
+    useDefault: false
+    # The (external) Secret for API Keys
+    passwords: 
+      # The name of the (external) Secret for Passwords and the entries to be used and mapped
+      name: notification-gateway-passwords
+    # The (external) Secret for Keystores
+    keystores: 
+      # The name of the (external) Secret for Keystores/Trustores and the entries to be used and mapped
+      # These values are mounted as files
+      name: notification-gateway-keystores
+
+# Extra Environment Variables to be defined
+# customEnvVars
+#   key: value
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  TRUSTSTORE_FILE: "/app/config/notification-gateway/certs/truststore.jks"
+  AUTH_CERT_KEYSTORE: "/app/config/notification-gateway/certs/keystore.p12"
+  TEST_AUTH_CERT_KEYSTORE: "/app/config/notification-gateway/certs/test_keystore.p12"
+  GATEWAY_SERVER_PORT: "8080"
+  FHIR_DATA_TRANSLATION_SERVICE_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
+  HOSPITAL_LOCATION_SERVICE_URL: "https://${portal_hostname}${context_path}/services"
+  NES_BASE_URL: "http://notification-processing-service.${namespace}.svc.cluster.local/"
+  RPS_BASE_URL: "http://report-processing-service.${namespace}.svc.cluster.local/"
+  KEYCLOAK_TOKEN_LAB_URI: "https://${core_hostname}/auth/realms/LAB/protocol/openid-connect/token"
+  ALLOWED_ORIGINS: "http://localhost:8080,https://${portal_hostname},https://${meldung_hostname},https://${portal_hostname}${context_path},https://${meldung_hostname}${context_path}"
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

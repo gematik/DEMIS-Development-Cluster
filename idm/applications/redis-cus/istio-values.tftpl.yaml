@@ -1,0 +1,14 @@
+# Application Information
+appName: "redis-cus"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: 6379
+appServicePortTarget: 6379
+appServicePortProtocol: TCP
+appServicePortName: tcp
+
+# Istio Information
+virtualServiceTcpRules: 
+  - match: 
+    - port: 6379

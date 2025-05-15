@@ -1,0 +1,56 @@
+# Values for notification-processing-service
+
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-notification-processing-service
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  NPS_TESTUSER_IDS_0: test-int
+  NPS_TESTUSER_IDS_1: 5-2-123494546
+  NPS_TESTUSER_IDS_2: 1-20014242424
+  NPS_TESTUSER_IDS_3: 5-2-510514181-500
+  REDIS_USER: "${redis_user}"
+  REDIS_HOST: "redis-cus.idm.svc.cluster.local"
+  NPS_CLIENT_VALIDATION: http://validation-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_LIFECYCLE_VS: http://lifecycle-validation-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_ROUTING: http://notification-routing-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_PDFGEN: http://pdfgen-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_PSEUDONYMIZATION: http://pseudonymization-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_PSEUDO_STORAGE: http://pseudonymization-storage-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_NCAPI: http://fhir-storage-writer.${namespace}.svc.cluster.local
+  NPS_CLIENT_FUTS: http://futs.${namespace}.svc.cluster.local
+  NPS_CLIENT_CONTEXT_ENRICHMENT_SERVICE: http://context-enrichment-service.${namespace}.svc.cluster.local
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

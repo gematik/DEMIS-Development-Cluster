@@ -1,0 +1,34 @@
+# Application Information
+appName: "futs-igs"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: 8080
+appServicePortTarget: 8080
+appServicePortProtocol: TCP
+appServicePortName: http
+
+# Istio Information
+
+# If true, the VirtualService will be created as a delegate Virtual Service, so the "host" will not be set
+# See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+isDelegate: true
+
+# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+# The "route" part is generated using the destination subset information
+virtualServiceHttpRules:
+  - match:
+    - uri:
+        prefix: /fhir-ui-data-model-translation
+    rewrite:
+      uri: /
+
+%{~ if length(context_path) > 0 ~}
+# Add additional match block for context path, needed because of not working rewirte rule in external delegation service
+# Need additional match block for context path because of an istio bug
+  - match:
+    - uri:
+        prefix: "${context_path}/fhir-ui-data-model-translation"
+    rewrite:
+      uri: /
+  %{~ endif}

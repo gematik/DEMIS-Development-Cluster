@@ -1,0 +1,41 @@
+autoscaleEnabled: ${autoscale_enabled}
+autoscaleMin: ${autoscale_min}
+replicaCount: ${replica_count}
+traceSampling: ${trace_sampling}
+
+global: 
+  logAsJson: true
+
+  proxy:
+    tracer: "none"
+    resources:
+      limits:
+        # CPU Limits cannot be unset
+        cpu: 2000m
+        memory: 256Mi
+
+# From https://istio.io/latest/docs/tasks/observability/distributed-tracing/jaeger/#before-you-begin
+meshConfig:
+  enableTracing: true
+  defaultConfig:
+    tracing: {} # disable legacy MeshConfig tracing options
+  extensionProviders:
+    - name: opentelemetry
+      opentelemetry:
+        service: ${opentelemetry_hostname}
+        port: ${opentelemetry_port}
+
+  pathNormalization:
+    # see https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/
+    normalization: DECODE_AND_MERGE_SLASHES
+
+# Allows Grafana Alloy to scrape metrics from the sidecar
+sidecarInjectorWebhook:
+  injectedAnnotations:
+    k8s.grafana.com/metrics.portNumber: '15020'
+    k8s.grafana.com/scrape: 'true'
+    k8s.grafana.com/metrics.path: /stats/prometheus
+
+cni:
+  enabled: true
+  provider: default
