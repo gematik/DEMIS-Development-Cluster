@@ -13,7 +13,7 @@ Project to configure a local or remote cluster with the following resources/serv
 A Linux-based system using one of these options:
 
 * Windows Users:
-  * Windows Subsystem for Linux (WSL2)
+  * Windows Subsystem for Linux ([WSL2](https://learn.microsoft.com/en-us/windows/wsl/install))
     * Ubuntu 24.04 LTS distribution preferred
     * Full integration with Windows filesystem
 * Linux Users:
@@ -25,7 +25,6 @@ A Linux-based system using one of these options:
 ### Required Tools
 Ensure all necessary tools are installed on your system. This include:
 
-- docker
 - git
 - make
 - vim
@@ -40,13 +39,16 @@ Ensure all necessary tools are installed on your system. This include:
 - tofu (OpenTofu)
 
 Hint:
-An installation script is already present in the Project "demis-cluster-deployment.", in the folder ".scripts" 
+An installation script is already present in the Project "DEMIS-Development-Cluster", in the folder ".scripts" 
 and it's called "install-tools.sh".  You can install the required tools when you checkout the Project for the first time.
 Run the script in a WSL2/Linux Shell.
 ```
 chmod +x .scripts/install-tools.sh
 .scripts/install-tools.sh
 ```
+
+Additionally, you need to install Docker, for example [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
+or [Docker Engine](https://docs.docker.com/engine/install/) on WSL2.
 
 ## Preparing DNS Entries 
 Before making changes, you need to identify your current IP address:
@@ -75,32 +77,28 @@ Add the following lines to the end of the hosts file, with your own IP Address a
 To configure the environment, you need to prepare the environment as follows:
 
 ### Clone this repository
+Add your SSH key to your GitHub account and clone the repository using SSH.
 ```sh
 git clone git@github.com:gematik/DEMIS-Development-Cluster.git
 ```
 
 ### Initialize the stage
 Once you've checked out the code, go in the folder and run the following command, to initialize the public 
-stage environment.
+stage environment. For this step you need SSH access to the repository.
 
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local init-stage
 ```
 
-or manually checkout the stage-public repository into the folder `demis-cluster-deployment/environments`:
-
-```sh
-cd demis-cluster-deployment/environments
-git clone git@github.com:gematik/DEMIS-stage-public.git
-```
+Now the public stage repository is checked out into the folder `DEMIS-Development-Cluster/environments`.
 
 ### Setup the whole environment
 To create a new complete Environment, including the KIND Cluster, Service Mesh Services and DEMIS Services, 
 you need to run the following command:
 
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make create-local-environment
 ```
 
@@ -109,7 +107,7 @@ This command is internally called by the previous one ("Create Environment"), th
 it separately, but in case you want to check that the Infrastructure (the KIND Cluster, Istio and Monitoring 
 Services) are updated and running, you can use the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local init-stage # updates the current stage repository   
 make local infrastructure
 ```
@@ -119,7 +117,7 @@ This command is internally called by the "Create Environment" one, thus it is no
 case you want to check that the Mesh components (the Istio Ingress Gateway, Policies and Network Rules) are updated and 
 running, you can use the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local init-stage # updates the current stage repository   
 make local mesh
 ```
@@ -129,7 +127,7 @@ This command is internally called by the "Create Environment" one, thus it is no
 case you want to check that the IDM (Identity Management) components (Keycloak, BundID-IDP, Gematik-IDP, Redis, Policies
 and Network Rules) are updated and running, you can use the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local init-stage # updates the current stage repository   
 make local idm
 ```
@@ -138,34 +136,34 @@ make local idm
 You can update the Services in a running KIND Kubernetes Cluster, without destroying and recreating it, using the 
 following commands:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local init-stage # updates the current stage repository   
 make local services
 ```
 
 ### Usage of K8s Tooling
 A kubeconfig file, called `kind-config`, will be automatically generated for the local stage under the folder 
-`demis-cluster-deployment/infrastructure`. You can use this file with Tools like Lens or `k9s` or `kubectl` itself.
+`DEMIS-Development-Cluster/infrastructure`. You can use this file with Tools like Lens or `k9s` or `kubectl` itself.
 
 ## Cleanup
 The Applications and Cluster can be completely removed, including the running KIND Docker Container, using make, with 
 the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make cleanup-local-environment
 ```
 
 If you want to remove only the DEMIS applications, including the "demis" Namespace, PersistenceVolumeClaims, 
 Secrets and other Resources, you need to run the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local cleanup-services
 ```
 
 If you want to remove only the IDM applications (not recommended!), including the "idm" Namespace, PersistenceVolumeClaims, 
 Secrets and other Resources, you need to run the following command:
 ```sh
-cd demis-cluster-deployment
+cd DEMIS-Development-Cluster
 make local cleanup-idm
 ```
 
