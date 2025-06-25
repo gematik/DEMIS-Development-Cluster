@@ -17,3 +17,18 @@ output "kup_enabled" {
   description = "Whether the Keycloak-User-Purger is enabled"
   value       = local.kup_enabled
 }
+
+output "version_stage_configuration_data" {
+  description = "Version of the Stage Configuration Data"
+  value       = local.stage_configuration_data_version
+}
+
+output "stage_configuration_data_name" {
+  description = "Name of the Stage Configuration Data"
+  value       = local.stage_configuration_data_name
+}
+
+output "version_istio_routing_chart" {
+  description = "Version of the Istio Routing Chart being used"
+  value       = local.common_helm_release_settings.istio_routing_chart_version
+}

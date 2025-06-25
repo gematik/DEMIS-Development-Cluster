@@ -116,6 +116,18 @@ variable "keycloak_truststore_jks" {
   description = "The Truststore JKS for Keycloak in Base64 Format"
 }
 
+variable "keycloak_gematik_idp_public_key" {
+  type        = string
+  sensitive   = true
+  description = "The gematik idp public key for Keycloak in Base64 Format"
+}
+
+variable "keycloak_cus_client_secret" {
+  type        = string
+  sensitive   = true
+  description = "client secret of cus-cli (service account) in realm oegd"
+}
+
 # Redis CUS Credentials
 variable "redis_cus_writer_user" {
   type        = string

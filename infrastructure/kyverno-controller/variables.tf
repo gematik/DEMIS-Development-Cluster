@@ -13,7 +13,7 @@ variable "helm_repository" {
 variable "chart_version" {
   description = "The Helm Chart Version for Kyverno"
   type        = string
-  default     = "3.3.7"
+  default     = "3.4.2"
 }
 
 variable "admissioncontroller_replicas" {
@@ -38,4 +38,10 @@ variable "reportscontroller_replicas" {
   description = "setting replicas of reports controller"
   type        = number
   default     = 2
+}
+
+variable "pull_secrets" {
+  type        = list(string)
+  description = "The list of pull secrets to be used for downloading Docker Images"
+  default     = []
 }

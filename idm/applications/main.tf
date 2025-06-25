@@ -16,6 +16,8 @@ locals {
     helm_repository               = var.helm_repository
     helm_repository_username      = var.helm_repository_username
     helm_repository_password      = var.helm_repository_password
-    istio_routing_chart_version   = var.istio_routing_chart_version
+    istio_routing_chart_version   = try(var.deployment_information["istio-routing"].main.version)
   }
+  stage_configuration_data_version = try(var.deployment_information["stage-configuration-data"].main.version, "")
+  stage_configuration_data_name    = try(var.deployment_information["stage-configuration-data"].chart-name, "")
 }

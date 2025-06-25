@@ -6,7 +6,6 @@ module "idm_services" {
   helm_repository                    = var.helm_repository
   helm_repository_username           = var.helm_repository_username
   helm_repository_password           = var.helm_repository_password
-  istio_routing_chart_version        = local.istio_routing_chart_version
   target_namespace                   = var.target_namespace
   pull_secrets                       = local.pull_secrets_credentials
   redis_cus_writer_user              = var.redis_cus_writer_user
@@ -22,8 +21,6 @@ module "idm_services" {
   auth_hostname                      = module.endpoints.auth_hostname
   bundid_idp_hostname                = module.endpoints.bundid_idp_hostname
   ti_idp_hostname                    = module.endpoints.ti_idp_hostname
-  stage_configuration_data_version   = local.stage_configuration_data_version
-  stage_configuration_data_name      = var.stage_configuration_data_name
   database_target_host               = var.database_target_host
   debug_enabled                      = var.debug_enabled
   istio_enabled                      = var.istio_enabled

@@ -28,7 +28,7 @@ module "notification_routing_service" {
     repository           = var.docker_registry,
     debug_enable         = var.debug_enabled,
     istio_enable         = var.istio_enabled,
-    routing_data_version = var.routing_data_version,
+    routing_data_version = local.routing_data_version,
     feature_flags        = try(var.feature_flags[local.nrs_name], {}),
     config_options       = try(var.config_options[local.nrs_name], {}),
     replica_count        = local.nrs_replicas,

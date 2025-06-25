@@ -17,8 +17,7 @@ It performs the following operations:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.17.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.36.0 |
-| <a name="requirement_null"></a> [null](#requirement\_null) | 3.2.3 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.37.1 |
 
 ## Modules
 
@@ -40,23 +39,23 @@ It performs the following operations:
 |------|------|
 | [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
 | [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
 | [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.ncapi_apikey](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.notification_gateway_keystores](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.notification_gateway_passwords](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [null_resource.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/null/3.2.3/docs/resources/resource) | resource |
+| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.ncapi_apikey](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.notification_gateway_keystores](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.notification_gateway_passwords](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [terraform_data.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ars_profile_snapshots"></a> [ars\_profile\_snapshots](#input\_ars\_profile\_snapshots) | Defines the FHIR Profile Version for ARS to be used in the DEMIS Environment | `string` | `null` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of configuration options that belong to services | <pre>list(object({<br/>    services     = list(string)<br/>    option_name  = string<br/>    option_value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_context_path"></a> [context\_path](#input\_context\_path) | The context path for reaching the DEMIS Services externally | `string` | `""` | no |
 | <a name="input_database_credentials"></a> [database\_credentials](#input\_database\_credentials) | List of Database Credentials for DEMIS services (a secret) | <pre>list(object({<br/>    username            = string<br/>    password            = string<br/>    secret-name         = string<br/>    secret-key-user     = string<br/>    secret-key-password = string<br/>  }))</pre> | `[]` | no |
@@ -65,7 +64,6 @@ It performs the following operations:
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_docker_registry"></a> [docker\_registry](#input\_docker\_registry) | The Docker Registry to use for pulling Images | `string` | n/a | yes |
 | <a name="input_feature_flags"></a> [feature\_flags](#input\_feature\_flags) | Defines a list of feature flags that belong to services | <pre>list(object({<br/>    services   = list(string)<br/>    flag_name  = string<br/>    flag_value = bool<br/>  }))</pre> | `[]` | no |
-| <a name="input_fhir_profile_snapshots"></a> [fhir\_profile\_snapshots](#input\_fhir\_profile\_snapshots) | Defines the FHIR Profile Version to be used in the DEMIS Environment | `string` | `null` | no |
 | <a name="input_fhir_storage_purger_cron_schedule"></a> [fhir\_storage\_purger\_cron\_schedule](#input\_fhir\_storage\_purger\_cron\_schedule) | Defines the cron schedule for the FHIR storage purger | `string` | n/a | yes |
 | <a name="input_fhir_storage_purger_suspend"></a> [fhir\_storage\_purger\_suspend](#input\_fhir\_storage\_purger\_suspend) | Defines if the fhir-storage-purger is suspended. | `bool` | `false` | no |
 | <a name="input_gateway_auth_cert_password"></a> [gateway\_auth\_cert\_password](#input\_gateway\_auth\_cert\_password) | The Password for the Gateway Auth Certificate | `string` | n/a | yes |
@@ -79,7 +77,6 @@ It performs the following operations:
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Repository where is stored the Helm Chart | `string` | n/a | yes |
 | <a name="input_helm_repository_password"></a> [helm\_repository\_password](#input\_helm\_repository\_password) | The Password credential for the Helm Repository | `string` | `""` | no |
 | <a name="input_helm_repository_username"></a> [helm\_repository\_username](#input\_helm\_repository\_username) | The Username credential for the Helm Repository | `string` | `""` | no |
-| <a name="input_igs_profile_snapshots"></a> [igs\_profile\_snapshots](#input\_igs\_profile\_snapshots) | Defines the FHIR Profile Version for IGS to be used in the DEMIS Environment | `string` | `null` | no |
 | <a name="input_istio_enabled"></a> [istio\_enabled](#input\_istio\_enabled) | Defines if Istio Settings are enabled for the given target namespace | `bool` | `true` | no |
 | <a name="input_kms_encryption_key"></a> [kms\_encryption\_key](#input\_kms\_encryption\_key) | The GCP KMS encryption key for OpenTofu state encryption | `string` | `""` | no |
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `""` | no |
@@ -93,7 +90,6 @@ It performs the following operations:
 | <a name="input_redis_cus_reader_password"></a> [redis\_cus\_reader\_password](#input\_redis\_cus\_reader\_password) | The Redis CUS Password (Reader) | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_user"></a> [redis\_cus\_reader\_user](#input\_redis\_cus\_reader\_user) | The Redis CUS User (Reader) | `string` | n/a | yes |
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>list(object({<br/>    service  = string<br/>    replicas = number<br/>    resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
-| <a name="input_routing_data_version"></a> [routing\_data\_version](#input\_routing\_data\_version) | Defines the Version of the Routing Data to be used in the DEMIS Environment | `string` | `null` | no |
 | <a name="input_s3_hostname"></a> [s3\_hostname](#input\_s3\_hostname) | The Hostname of the Remote S3 Storage | `string` | `""` | no |
 | <a name="input_s3_port"></a> [s3\_port](#input\_s3\_port) | The Port of the Remote S3 Storage | `number` | `9000` | no |
 | <a name="input_s3_tls_credential"></a> [s3\_tls\_credential](#input\_s3\_tls\_credential) | Base64-encoded, PEM certificate to be used for configuring the TLS Settings for the S3 Storage Server Connection. | `string` | n/a | yes |
@@ -105,6 +101,7 @@ It performs the following operations:
 
 | Name | Description |
 |------|-------------|
+| <a name="output_ars_profile_snapshots"></a> [ars\_profile\_snapshots](#output\_ars\_profile\_snapshots) | Version of the ARS Profile Snapshots being used |
 | <a name="output_kms_encryption_key_used"></a> [kms\_encryption\_key\_used](#output\_kms\_encryption\_key\_used) | The flag to indicate if the KMS encryption key is used |
 | <a name="output_service_config_options"></a> [service\_config\_options](#output\_service\_config\_options) | Current ops flags defined in the stage |
 | <a name="output_service_feature_flags"></a> [service\_feature\_flags](#output\_service\_feature\_flags) | Current feature flags defined in the stage |

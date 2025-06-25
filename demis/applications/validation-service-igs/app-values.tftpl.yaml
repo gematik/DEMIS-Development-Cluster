@@ -26,6 +26,10 @@ required:
     name: igs-profile-snapshots
     %{ endif }
     version: ${profile_version}
+    versions: 
+      %{~ for version in profile_versions ~}
+      - ${version}
+      %{~ endfor ~}
 
 # Image Pull Secrets
 imagePullSecrets: 
@@ -52,3 +56,5 @@ replicaCount: ${replica_count}
 # Override Resource Definitions for Pod
 ${resource_block}
 %{endif}
+
+${labels}

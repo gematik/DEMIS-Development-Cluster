@@ -22,6 +22,7 @@ locals {
   futs_core_replicas            = lookup(local.futs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.futs_core_name].replicas : null
   futs_core_resource_block      = lookup(local.futs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.futs_core_name].resource_block : null
 
+
   ###########################
   # FUTS IGS                #
   ###########################
@@ -86,7 +87,7 @@ module "futs_core" {
     repository              = var.docker_registry,
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
-    profile_version         = var.fhir_profile_snapshots,
+    profile_version         = can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots,
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.futs_core_name], {}),
     config_options          = try(var.config_options[local.futs_core_name], {}),
@@ -116,7 +117,7 @@ module "futs_igs" {
     repository              = var.docker_registry,
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
-    profile_version         = var.igs_profile_snapshots,
+    profile_version         = local.igs_profile_snapshots,
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.futs_igs_name], {}),
     config_options          = try(var.config_options[local.futs_igs_name], {}),

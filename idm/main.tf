@@ -39,7 +39,8 @@ locals {
   active_versions_source_path = "${local.chart_source_path}/active-versions.yaml"
 
   # Import the "active-versions.yaml" file
-  deployment_information = yamldecode(file(local.active_versions_source_path))
+  deployment_information = merge({ for k, v in yamldecode(file(local.active_versions_source_path)) : k => merge(v, { chart-name = (contains(keys(v), "chart-name") ? v.chart-name : (k == "stage-configuration-data" ? var.stage_configuration_data_name : null)) }) })
+
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
   pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
@@ -47,11 +48,6 @@ locals {
   # define Istio Helm Chart versions
   istio_authorization_policies_chart_version = local.deployment_information["policies-authorizations"].main.version
   istio_network_policies_chart_version       = local.deployment_information["network-rules"].main.version
-
-  # The version of Stage Configuration Data to use
-  stage_configuration_data_version = try(local.deployment_information["stage-configuration-data"].main.version, var.stage_configuration_data_version)
-  # The version of the Istio Routing Chart to be used
-  istio_routing_chart_version = try(local.deployment_information["istio-routing"].main.version, var.istio_routing_chart_version)
 }
 
 # Define the Endpoints

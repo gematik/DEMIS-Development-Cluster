@@ -15,17 +15,17 @@ output "stage_name" {
 }
 
 output "version_istio_routing_chart" {
-  value       = local.istio_routing_chart_version
+  value       = module.idm_services.version_istio_routing_chart
   description = "Version of the Istio Routing Chart being used"
 }
 
 output "version_stage_configuration_data" {
-  value       = local.stage_configuration_data_version
+  value       = module.idm_services.version_stage_configuration_data
   description = "Version of the Stage Configuration Data"
 }
 
 output "stage_configuration_data_name" {
-  value       = var.stage_configuration_data_name
+  value       = module.idm_services.stage_configuration_data_name
   description = "Name of the Stage Configuration Data"
 }
 

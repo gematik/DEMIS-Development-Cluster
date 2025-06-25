@@ -22,3 +22,5 @@ virtualServiceHttpRules:
         prefix: /
     rewrite:
       uri: /
+
+${destinationSubsets}

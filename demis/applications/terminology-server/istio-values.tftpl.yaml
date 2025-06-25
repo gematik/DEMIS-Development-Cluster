@@ -1,5 +1,5 @@
 # Application Information
-appName: "notification-clearing-api"
+appName: "terminology-server"
 appNamespace: "${namespace}" # defaults to Release.Namespace
 # Settings for the Kubernetes Service Object for the Application
 appServiceType: ClusterIP
@@ -10,25 +10,11 @@ appServicePortName: http
 
 # Istio Information
 
-# the List of the Istio Gateway Objects to be used for external cluster access
-virtualServiceGateways: 
-  - ${cluster_gateway}
-# the List of the Hostnames/Domains that should match the VirtualService definition (external)
-virtualServiceDomains: 
-  - ${core_hostname}
-
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
-    - uri:
-        prefix: /notification-clearing-api
+      - uri:
+          prefix: /
     rewrite:
-      uri: /notification-clearing-api
-
-virtualServiceExternalHttpRules:
-  - match:
-    - uri:
-        prefix: ${context_path}/ncapi
-    rewrite:
-      uri: /notification-clearing-api
+      uri: /

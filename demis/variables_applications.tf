@@ -36,38 +36,6 @@ variable "s3_port" {
   }
 }
 
-# FHIR Profile Versions
-variable "fhir_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version to be used in the DEMIS Environment"
-  nullable    = true
-  default     = null
-}
-
-#IGS  FHIR Profile Versions
-variable "igs_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version for IGS to be used in the DEMIS Environment"
-  nullable    = true
-  default     = null
-}
-
-#ARS  FHIR Profile Versions
-variable "ars_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version for ARS to be used in the DEMIS Environment"
-  nullable    = true
-  default     = null
-}
-
-# Routing Data Version
-variable "routing_data_version" {
-  type        = string
-  description = "Defines the Version of the Routing Data to be used in the DEMIS Environment"
-  nullable    = true
-  default     = null
-}
-
 variable "fhir_storage_purger_suspend" {
   type        = bool
   description = "Defines if the fhir-storage-purger is suspended."

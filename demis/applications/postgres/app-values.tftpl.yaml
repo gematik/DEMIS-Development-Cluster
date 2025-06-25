@@ -54,11 +54,6 @@ extraEnvVars:
       secretKeyRef:
         name: fhir-storage-reader-database-secret
         key: FHIR_STORAGE_READER_DB_PASSWORD
-  - name: HAPI_FHIR_WRITER_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: hapi-fhir-writer-database-secret
-        key: HAPI_FHIR_WRITER_DB_PASSWORD
   - name: ESPRI_DB_PASSWORD
     valueFrom:
       secretKeyRef:

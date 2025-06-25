@@ -32,14 +32,105 @@ variable "deployment_information" {
     deployment-strategy = string
     enabled             = bool
     main = object({
-      version = string
-      weight  = number
+      version  = string
+      weight   = number
+      profiles = optional(list(string))
     })
     canary = optional(object({
-      version = optional(string)
-      weight  = optional(string)
+      version  = optional(string)
+      weight   = optional(string)
+      profiles = optional(list(string))
     }), {})
   }))
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || can(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", service.main.version))
+    )])
+    error_message = "Service Configuration is not valid. Please recheck service versions syntax."
+  }
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || contains(["canary", "update", "replace"], service.deployment-strategy))
+    ])
+    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update and replace is valid."
+  }
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || service.canary.version == null || can(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", service.canary.version)))
+    ])
+
+    error_message = "Service Configuration is not valid. Please recheck service canary syntax."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core"], name) || !can(length(service.main.profiles)) || can([for v in service.main.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+    ])
+    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in main."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core"], name) || !can(length(service.canary.profiles)) || can([for v in service.canary.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+    ])
+    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in canary."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core"], name) || !can(length(service.canary.profiles)) || (can(length(service.canary.version) > 0) || !can(service.canary.weight >= 0 && service.canary.weight <= 100)))
+    ])
+    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in validation-service-core. Canary needs to be defined with a version and weight."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["futs-core", "validation-service-core"], name) || can(length(var.deployment_information["fhir-profile-snapshots"].main.version) > 0))
+    ])
+    error_message = "Service Configuration is not valid. Profile version vor fhir-profile-snapshots is not defined. version is required for services futs-core and validation-service-core"
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["futs-igs", "validation-service-igs"], name) || can(length(var.deployment_information["igs-profile-snapshots"].main.version) > 0))
+    ])
+    error_message = "Service Configuration is not valid. Profile version vor igs-profile-snapshots is not defined. Version is required for services futs-igs and validation-service-igs"
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["validation-service-ars"], name) || can(var.deployment_information["ars-profile-snapshots"]))
+    ])
+    error_message = "Service Configuration is not valid. Profile version vor ars-profile-snapshots is not defined. Version is required for service validation-service-ars"
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["notification-routing-service"], name) || can(var.deployment_information["notification-routing-data"]))
+    ])
+    error_message = "Service Configuration is not valid. Notification routing data is required for service notification-routing-service."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["istio-routing"], name) || can(var.deployment_information["istio-routing"]))
+    ])
+    error_message = "Service Configuration is not valid. Istio routing chart is not defined."
+  }
 }
 
 variable "resource_definitions" {
@@ -83,11 +174,6 @@ variable "helm_repository_password" {
   type        = string
   sensitive   = true
   default     = ""
-}
-
-variable "istio_routing_chart_version" {
-  description = "The version of the istio routing chart to use"
-  type        = string
 }
 
 variable "istio_enabled" {
@@ -205,46 +291,6 @@ variable "database_target_host" {
   validation {
     condition     = length(var.database_target_host) > 0
     error_message = "The Database Hostname must be defined"
-  }
-}
-
-# FHIR Profile Versions
-variable "fhir_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version to be used in the DEMIS Environment"
-  validation {
-    condition     = length(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", var.fhir_profile_snapshots)) > 0
-    error_message = "The version specified is not a valid Semantic Version"
-  }
-}
-
-#IGS  FHIR Profile Versions
-variable "igs_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version for IGS to be used in the DEMIS Environment"
-  validation {
-    condition     = length(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", var.igs_profile_snapshots)) > 0
-    error_message = "The version specified is not a valid Semantic Version"
-  }
-}
-
-#ARS  FHIR Profile Versions
-variable "ars_profile_snapshots" {
-  type        = string
-  description = "Defines the FHIR Profile Version for ARS to be used in the DEMIS Environment"
-  validation {
-    condition     = length(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", var.ars_profile_snapshots)) > 0
-    error_message = "The version specified is not a valid Semantic Version"
-  }
-}
-
-# Routing Data Version
-variable "routing_data_version" {
-  type        = string
-  description = "Defines the Version of the Routing Data to be used in the DEMIS Environment"
-  validation {
-    condition     = length(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", var.routing_data_version)) > 0
-    error_message = "The version specified is not a valid Semantic Version"
   }
 }
 

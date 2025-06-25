@@ -1,0 +1,63 @@
+# Values for terminology-server.
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+  profiles:
+    repository: ${profile_docker_registry}
+    images:
+      - name: ars-profile-snapshots
+        versions:
+          %{~ for version in split(",", ars_profile_version) ~}
+          - ${version}
+          %{~ endfor ~}
+      %{ if strcontains(repository, "gematik1") }
+      - name: demis-fhir-profile-snapshots
+      %{ else }
+      - name: fhir-profile-snapshots
+      %{ endif }
+        versions:
+          %{~ for version in split(",", fhir_profile_version) ~}
+          - ${version}
+          %{~ endfor ~}
+      - name: igs-profile-snapshots
+        versions:
+          %{~ for version in split(",", igs_profile_version) ~}
+          - ${version}
+          %{~ endfor ~}
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+# Extra Environment Variables to be defined
+# customEnvVars
+#   key: value
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}
