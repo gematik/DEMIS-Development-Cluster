@@ -2,6 +2,13 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.4.1
+- Update Readme with new disclaimer
+
+## Release 3.4.0
+- Update Jenkins Pipelines for publishing to GitHub 
+- Update Jenkins Pipelines for automatic validation 
+
 ## Release 3.3.0
 - Add functionality defining alternative fhir-profile-snapshot version for futs
 - fix null update for profiles in canary to main transition on active-versions.yaml

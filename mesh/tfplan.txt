@@ -1,9 +1,8 @@
 data.kubernetes_namespace.istio_namespace: Reading...
 kubernetes_secret.demis_gateway_tls_credential: Refreshing state... [id=istio-system/demis-istio-tls]
 data.kubernetes_namespace.istio_namespace: Read complete after 0s [id=istio-system]
-kubernetes_secret.s3_tls_credential[0]: Refreshing state... [id=istio-system/s3-tls-certificate]
 module.mesh_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=mesh]
-helm_release.kyverno_admission_policies[0]: Refreshing state... [id=kyverno-admission-policies]
+kubernetes_secret.s3_tls_credential[0]: Refreshing state... [id=istio-system/s3-tls-certificate]
 helm_release.authorization_policies_istio: Refreshing state... [id=authorization-policies]
 helm_release.network_rules_istio: Refreshing state... [id=network-rules]
 
@@ -23,14 +22,16 @@ last "tofu apply" which may have affected this plan:
                   ~ {
                       ~ Conditions = [
                             {
-                                LastUpdateTime = "2025-06-25T13:46:34Z"
+                                LastUpdateTime = "2025-06-18T09:47:09Z"
                                 Message        = ""
                                 Status         = "True"
                                 Type           = "ResourceQuotaInit"
                             },
-                          ~ {
-                              ~ LastUpdateTime = "2025-06-25T13:46:34Z" -> "2025-06-25T13:46:35Z"
-                                # (3 unchanged attributes hidden)
+                          + {
+                              + LastUpdateTime = "2025-06-18T09:47:09Z"
+                              + Message        = ""
+                              + Status         = "True"
+                              + Type           = "InitialRolesPopulated"
                             },
                         ]
                     }
@@ -66,13 +67,13 @@ OpenTofu will perform the following actions:
                     {
                       - Conditions = [
                           - {
-                              - LastUpdateTime = "2025-06-25T13:46:34Z"
+                              - LastUpdateTime = "2025-06-18T09:47:09Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "ResourceQuotaInit"
                             },
                           - {
-                              - LastUpdateTime = "2025-06-25T13:46:35Z"
+                              - LastUpdateTime = "2025-06-18T09:47:09Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "InitialRolesPopulated"
