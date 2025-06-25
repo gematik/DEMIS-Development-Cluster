@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.4.2
+- Update gitignore
+ 
 ## Release 3.4.1
 - Update Readme with new disclaimer
 
