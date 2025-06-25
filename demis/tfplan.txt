@@ -1,149 +1,138 @@
-module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Reading...
 module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Reading...
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Reading...
 data.kubernetes_namespace.mesh_namespace: Reading...
 data.kubernetes_namespace.mesh_namespace: Read complete after 0s [id=mesh]
+module.activate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=eeec5939-740b-b0dd-65d5-e0c01e36999f]
 module.demis_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=demis]
-module.activate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=f8f60594-140f-58f2-221f-eb64c518aa65]
-module.activate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=c86cc593-a3c3-dcd8-2a1b-7015b9647cc1]
-helm_release.kyverno_admission_policies[0]: Refreshing state... [id=kyverno-admission-policies]
-kubernetes_secret.igs_encryption_certificate: Refreshing state... [id=demis/igs-secret]
-helm_release.authorization_policies_istio: Refreshing state... [id=authorization-policies]
-kubernetes_secret.minio_credentials: Refreshing state... [id=demis/minio-secret]
+module.activate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=570de9bb-3730-6200-559d-0d3b3ed0cdda]
 kubernetes_secret.ncapi_apikey: Refreshing state... [id=demis/ncapi-apikey]
-kubernetes_secret.pgbouncer_userlist: Refreshing state... [id=demis/pgbouncer-userlist-secret]
-kubernetes_secret.notification_gateway_keystores: Refreshing state... [id=demis/notification-gateway-keystores]
-kubernetes_secret.postgresql_tls_certificates: Refreshing state... [id=demis/postgres-tls-secret]
-kubernetes_secret.redis_cus_reader_credentials: Refreshing state... [id=demis/redis-cus-reader-password]
 kubernetes_secret.notification_gateway_passwords: Refreshing state... [id=demis/notification-gateway-passwords]
 helm_release.authentication_policies_istio: Refreshing state... [id=authentication-policies]
-kubernetes_secret.database_credentials[1]: Refreshing state... [id=demis/ncapi-database-secret]
+module.persistent_volume_claims["postgres-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=demis/postgres-volume-claim]
+kubernetes_secret.igs_encryption_certificate: Refreshing state... [id=demis/igs-secret]
+kubernetes_secret.postgresql_tls_certificates: Refreshing state... [id=demis/postgres-tls-secret]
+kubernetes_secret.redis_cus_reader_credentials: Refreshing state... [id=demis/redis-cus-reader-password]
+kubernetes_secret.notification_gateway_keystores: Refreshing state... [id=demis/notification-gateway-keystores]
 kubernetes_secret.database_credentials[4]: Refreshing state... [id=demis/fhir-storage-writer-ddl-database-secret]
-kubernetes_secret.database_credentials[9]: Refreshing state... [id=demis/hapi-fhir-reader-database-secret]
-kubernetes_secret.database_credentials[6]: Refreshing state... [id=demis/fhir-storage-reader-database-secret]
+kubernetes_secret.pgbouncer_userlist: Refreshing state... [id=demis/pgbouncer-userlist-secret]
 kubernetes_secret.database_credentials[2]: Refreshing state... [id=demis/pseudo-database-secret]
-kubernetes_secret.database_credentials[8]: Refreshing state... [id=demis/hapi-fhir-writer-database-secret]
 kubernetes_secret.database_credentials[3]: Refreshing state... [id=demis/pseudo-storage-database-secret]
-kubernetes_secret.database_credentials[7]: Refreshing state... [id=demis/fhir-storage-purger-database-secret]
+kubernetes_secret.database_credentials[6]: Refreshing state... [id=demis/fhir-storage-reader-database-secret]
 kubernetes_secret.database_credentials[5]: Refreshing state... [id=demis/fhir-storage-writer-database-secret]
 kubernetes_secret.database_credentials[0]: Refreshing state... [id=demis/postgres-secret]
-module.persistent_volume_claims["postgres-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=demis/postgres-volume-claim]
-module.persistent_volume_claims["minio-volume-claim"].kubernetes_persistent_volume_claim_v1.this: Refreshing state... [id=demis/minio-volume-claim]
-module.pull_secrets["gematik-gcr-io-demis-prod-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-prod-registry-reader]
-module.pull_secrets["gematik-gcr-io-demis-dev-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-dev-registry-reader]
-module.pull_secrets["gematik-gcr-io-demis-qs-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-qs-registry-reader]
+kubernetes_secret.minio_credentials: Refreshing state... [id=demis/minio-secret]
+kubernetes_secret.database_credentials[1]: Refreshing state... [id=demis/ncapi-database-secret]
+kubernetes_secret.database_credentials[7]: Refreshing state... [id=demis/fhir-storage-purger-database-secret]
+helm_release.authorization_policies_istio: Refreshing state... [id=authorization-policies]
 module.pull_secrets["gematik-gcr-io-demis-ref-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=demis/gematik-gcr-io-demis-ref-registry-reader]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.main_profiles: Refreshing state... [id=5abb127a-93b2-808c-4ae9-26e5cc06b0a9]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.version_canary: Refreshing state... [id=65dfad60-0f2f-e87e-ca6d-6214a360bacd]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.version_canary: Refreshing state... [id=e7a35346-f7cf-1076-71d4-58d81671cbe2]
-module.demis_services.module.validation_service_core_metadata.terraform_data.version_canary: Refreshing state... [id=4c731ebb-56ee-0413-ba45-604c774b3d69]
-module.demis_services.module.validation_service_core_metadata.terraform_data.main_profiles: Refreshing state... [id=0449dd1b-0663-d479-8396-528a246f23c9]
-module.demis_services.module.validation_service_core_metadata.terraform_data.version_main: Refreshing state... [id=4317fdac-849b-526c-3338-a9bd44220b27]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.version_main: Refreshing state... [id=629a34d1-5d7e-cfa0-d085-0c74c2098de0]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.version_main: Refreshing state... [id=38af8c21-00a7-8739-9c60-7c26ad84d3a7]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.main_profiles: Refreshing state... [id=30e8f4a1-8457-607f-69d4-a3fe49dbc8c8]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.canary_profiles: Refreshing state... [id=c345f74f-bbdb-2fba-a62f-2a65471f37a4]
-module.demis_services.module.validation_service_core_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=a0c32b2a-e386-b0da-5161-814299d9ea11]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=c369dba4-570a-8afd-99e6-d9c930031492]
-module.demis_services.module.validation_service_core_metadata.terraform_data.canary_profiles: Refreshing state... [id=b02772b3-5b87-8cf7-0c5c-bd72f662b69f]
-module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_main: Refreshing state... [id=9a23b3d2-9c41-cc04-8cd3-2999fd88a769]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_main: Refreshing state... [id=453803a3-6774-baa3-7e8a-28e10a532944]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_main: Refreshing state... [id=ef5bc052-d864-13e4-beb0-f76c3da9fa1d]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=bac6a474-39fd-2c85-93a7-9f4ea299da25]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.canary_profiles: Refreshing state... [id=31a64e94-269c-2584-b477-6c96447bfddf]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=ad1c0686-67ef-d0d6-af06-f0cf8d81df5b]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_canary: Refreshing state... [id=c4fb2d86-62c2-fbef-a170-7044214fad5d]
-module.demis_services.module.validation_service_core_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=6831cd63-e048-8c77-6851-c78ca34b4211]
-module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_main: Refreshing state... [id=35e18d91-8bda-72bc-d760-8bca302a08b3]
-module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_canary: Refreshing state... [id=a7180172-e5a1-ba6a-59ae-cd27f3ffe7a6]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_main: Refreshing state... [id=e6ec20f5-5a66-e254-9096-0b26aa8954d4]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=b0c8e257-d2ea-acfd-36d3-892ac0f096e7]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_canary: Refreshing state... [id=f96074a7-5d4b-0e89-ed03-441b0f1d9cb9]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_main: Refreshing state... [id=e8f8d27d-b1a5-0f1d-36ad-198020e78765]
-module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=e2174442-a597-18d0-a8c0-d3406bdd3406]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_canary: Refreshing state... [id=6c7a54c3-e531-bcec-cffa-8de7f1668a9a]
-module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_canary: Refreshing state... [id=9d3d26cb-029f-8a5b-7c7a-719d4186ec63]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=08f197e1-b072-a5a5-d18c-88463d33e79e]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_canary: Refreshing state... [id=240bf89b-fdc8-4465-cc26-a28e6a4341ce]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=887bf0e7-8a87-1d0a-d124-30f8256f6b9a]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels: Refreshing state... [id=457c1e45-f20a-c897-ac97-1aef5d21f823]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=4d59ebf7-3ea2-43de-01d4-94d231af51eb]
-module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels: Refreshing state... [id=baee24fc-d282-e4b2-0edc-40f3981b1767]
-module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=2ae75a81-abe7-3f1c-3268-dfdedea93a9f]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels: Refreshing state... [id=3c37a541-33e5-69a0-c376-305fa1475342]
-module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=d571b1a6-74a6-d2cd-1f85-a5f8f287d1d3]
-module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets: Refreshing state... [id=8972a627-aaa2-c0b1-ebbe-b5b7c790f13e]
-module.demis_services.module.pdfgen_service[0].helm_release.chart["2.7.2-b410"]: Refreshing state... [id=pdfgen-service-2.7.2-b410]
-module.demis_services.module.ars_service[0].helm_release.chart["1.2.0-b25"]: Refreshing state... [id=ars-service-1.2.0-b25]
-module.demis_services.module.futs_igs[0].helm_release.chart["2.2.0-b301"]: Refreshing state... [id=futs-igs-2.2.0-b301]
-module.demis_services.module.hospital_location_service[0].helm_release.chart["1.2.3-b287"]: Refreshing state... [id=hospital-location-service-1.2.3-b287]
-module.demis_services.module.terminology_server[0].helm_release.chart["1.0.0-b10"]: Refreshing state... [id=terminology-server-1.0.0-b10]
-module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Still reading... [10s elapsed]
-module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Still reading... [10s elapsed]
-module.demis_services.module.futs_core[0].helm_release.chart["2.2.0-b301"]: Refreshing state... [id=futs-core-2.2.0-b301]
-module.demis_services.module.report_processing_service[0].helm_release.chart["2.1.1-b348"]: Refreshing state... [id=report-processing-service-2.1.1-b348]
-module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets: Refreshing state... [id=55263477-4f75-4efe-4f13-4b7d69276f15]
-module.demis_services.module.notification_processing_service[0].helm_release.chart["2.3.2-b52"]: Refreshing state... [id=notification-processing-service-2.3.2-b52]
-module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Read complete after 15s
-module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets: Refreshing state... [id=80330a9b-842c-39e2-791f-ee997166d141]
-module.demis_services.module.ars_pseudonymization_service[0].helm_release.chart["1.2.0-b9"]: Refreshing state... [id=ars-pseudonymization-service-1.2.0-b9]
-module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Read complete after 16s
-module.demis_services.module.lifecycle_validation_service[0].helm_release.chart["1.3.1-b125"]: Refreshing state... [id=lifecycle-validation-service-1.3.1-b125]
-module.demis_services.module.context_enrichment_service[0].helm_release.chart["1.1.1-b87"]: Refreshing state... [id=context-enrichment-service-1.1.1-b87]
-module.demis_services.module.notification_routing_service[0].helm_release.chart["2.3.1-b132"]: Refreshing state... [id=notification-routing-service-2.3.1-b132]
-module.demis_services.module.postgres[0].helm_release.chart["16.6.1-b10"]: Refreshing state... [id=postgres-16.6.1-b10]
-module.demis_services.module.pdfgen_service[0].helm_release.istio[0]: Refreshing state... [id=pdfgen-service-istio]
-module.demis_services.module.futs_core[0].helm_release.istio[0]: Refreshing state... [id=futs-core-istio]
-module.demis_services.module.validation_service_core[0].helm_release.chart["2.8.0-b310"]: Refreshing state... [id=validation-service-core-2.8.0-b310]
-module.demis_services.module.terminology_server[0].helm_release.istio[0]: Refreshing state... [id=terminology-server-istio]
-module.demis_services.module.futs_igs[0].helm_release.istio[0]: Refreshing state... [id=futs-igs-istio]
-module.demis_services.module.validation_service_ars[0].helm_release.chart["2.8.0-b310"]: Refreshing state... [id=validation-service-ars-2.8.0-b310]
-module.demis_services.module.validation_service_igs[0].helm_release.chart["2.8.0-b310"]: Refreshing state... [id=validation-service-igs-2.8.0-b310]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.main_profiles: Refreshing state... [id=5561fe55-48d6-4ea8-6c20-4ed08928ad3c]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.version_main: Refreshing state... [id=b6ddc7f3-e869-911e-41d7-806fbe7a0296]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.canary_profiles: Refreshing state... [id=54043bdf-f53b-96ba-7351-ff603806c6bf]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=826788cf-27f3-0854-4f88-4a2b1aed9847]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.version_canary: Refreshing state... [id=e4d2bd72-9782-6414-6d28-9f39cef8b0c5]
+module.demis_services.module.validation_service_core_metadata.terraform_data.version_canary: Refreshing state... [id=2368f979-0710-d1ab-aebb-beaa441196b7]
+module.demis_services.module.validation_service_core_metadata.terraform_data.version_main: Refreshing state... [id=bc6460da-543c-3950-9ee0-03b749a48341]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_main: Refreshing state... [id=b68defb8-95e1-1480-5fe7-e92b820f55f9]
+module.demis_services.module.validation_service_core_metadata.terraform_data.main_profiles: Refreshing state... [id=aafaa2b2-8942-3805-ebac-63757742580a]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=abd7515d-7efb-f31a-5e21-19d864871375]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_canary: Refreshing state... [id=e3505603-462e-dc6e-60a9-df50134f0425]
+module.demis_services.module.validation_service_core_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=ac4b2a69-3460-bf94-23d8-ea1d8725994f]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_main: Refreshing state... [id=201f79ad-eeca-b809-c9a0-13083c658a52]
+module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_main: Refreshing state... [id=f14cbade-a078-7ee1-b0b8-4fb63a792034]
+module.demis_services.module.validation_service_core_metadata.terraform_data.canary_profiles: Refreshing state... [id=7a35c6bc-744a-b20f-1dd4-24eb3273d5ef]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.version_canary: Refreshing state... [id=a6973d57-2929-6d71-d2b3-66d3042b70e1]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.main_profiles: Refreshing state... [id=5a648ca9-ca8f-afd2-dd7a-4538ef66a749]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.version_main: Refreshing state... [id=f29c20cf-6796-f199-f5a8-25368c4f80e9]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_canary: Refreshing state... [id=83618076-1415-7d2e-9220-33375647c362]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=90462936-6fc4-92b8-34f6-d3054561dbad]
+module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_main: Refreshing state... [id=41ff8727-a960-205d-602a-2706f1473084]
+module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_canary: Refreshing state... [id=a95b2ca3-efdd-463f-1408-6367e14a9984]
+module.demis_services.module.validation_service_core_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=92f03d1e-e9f4-df3c-2016-0a74afa6d278]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.profile_version_labels_main: Refreshing state... [id=ce4afb02-f663-bfbd-f6b6-4be730087283]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.canary_profiles: Refreshing state... [id=b7b2d72f-7e12-7f36-7d47-6bac0352f4e9]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_main: Refreshing state... [id=2e4db003-8332-8ecf-4a33-a9aec7140a4a]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels: Refreshing state... [id=10d6335f-0afa-390c-c555-9099bc6bcb80]
+module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_canary: Refreshing state... [id=5723c82b-9e23-db94-dfbe-30865e0e57be]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=e43fb377-d94d-3b36-4664-1baf22bafa07]
+module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=b297555e-faf8-38bb-45d3-a50cecd9c794]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.profile_version_labels_canary: Refreshing state... [id=449fb411-7c59-b8a6-1e3d-606b3585d96a]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_canary: Refreshing state... [id=ce45b7d4-bcae-f4cf-20bb-77b937be214c]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_main: Refreshing state... [id=0b477273-de8f-5c51-b460-47c4554b2378]
+module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=f0bb4f56-6206-9876-9d74-1ba30d7e79b1]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_canary: Refreshing state... [id=66b8a3da-d157-5815-fb53-bcb567c183e5]
+module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels: Refreshing state... [id=975f8a94-013d-ccc3-c11b-13afd4622e0d]
+module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets: Refreshing state... [id=f4fdb0aa-8d8c-a451-d612-492296b2379e]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_main: Refreshing state... [id=bdd7b2ff-1e5c-a99d-ad89-823c82fd7d42]
+module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets: Refreshing state... [id=615963dc-75fb-862c-f111-4fbfa027b78f]
+module.demis_services.module.context_enrichment_service[0].helm_release.chart["1.1.0"]: Refreshing state... [id=context-enrichment-service-1.1.0]
+module.demis_services.module.lifecycle_validation_service[0].helm_release.chart["1.3.0"]: Refreshing state... [id=lifecycle-validation-service-1.3.0]
+module.demis_services.module.notification_processing_service[0].helm_release.chart["2.2.0"]: Refreshing state... [id=notification-processing-service-2.2.0]
+module.demis_services.module.notification_routing_service[0].helm_release.chart["2.3.0"]: Refreshing state... [id=notification-routing-service-2.3.0]
+module.demis_services.module.futs_igs[0].helm_release.chart["2.1.5"]: Refreshing state... [id=futs-igs-2.1.5]
+module.demis_services.module.ars_pseudonymization_service[0].helm_release.chart["1.0.0"]: Refreshing state... [id=ars-pseudonymization-service-1.0.0]
+module.demis_services.module.report_processing_service[0].helm_release.chart["2.0.0"]: Refreshing state... [id=report-processing-service-2.0.0]
+module.endpoints.data.kubernetes_resources.istio_gateways_beta[0]: Read complete after 7s
+module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_canary: Refreshing state... [id=c69d4999-c972-b6d3-0664-bf7f0c519c56]
+module.demis_services.module.ars_service[0].helm_release.chart["1.0.0"]: Refreshing state... [id=ars-service-1.0.0]
+module.endpoints.data.kubernetes_resources.istio_gateways_stable[0]: Read complete after 7s
+module.demis_services.module.futs_core[0].helm_release.chart["2.1.5"]: Refreshing state... [id=futs-core-2.1.5]
+module.demis_services.module.postgres[0].helm_release.chart["16.6.0"]: Refreshing state... [id=postgres-16.6.0]
+module.demis_services.module.hospital_location_service[0].helm_release.chart["1.2.1"]: Refreshing state... [id=hospital-location-service-1.2.1]
+module.demis_services.module.pdfgen_service[0].helm_release.chart["2.7.1"]: Refreshing state... [id=pdfgen-service-2.7.1]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels: Refreshing state... [id=0f40551b-092b-d95a-8e3e-fd60c63be73c]
+module.demis_services.module.validation_service_ars[0].helm_release.chart["2.7.0"]: Refreshing state... [id=validation-service-ars-2.7.0]
+module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets: Refreshing state... [id=7f3c0dcb-92d1-7676-d76b-c53a74cc9297]
 module.demis_services.module.lifecycle_validation_service[0].helm_release.istio[0]: Refreshing state... [id=lifecycle-validation-service-istio]
+module.demis_services.module.futs_igs[0].helm_release.istio[0]: Refreshing state... [id=futs-igs-istio]
 module.demis_services.module.context_enrichment_service[0].helm_release.istio[0]: Refreshing state... [id=context-enrichment-service-istio]
 module.demis_services.module.notification_routing_service[0].helm_release.istio[0]: Refreshing state... [id=notification-routing-service-istio]
+module.demis_services.module.validation_service_core[0].helm_release.chart["2.7.0"]: Refreshing state... [id=validation-service-core-2.7.0]
+module.demis_services.module.futs_core[0].helm_release.istio[0]: Refreshing state... [id=futs-core-istio]
 module.demis_services.module.postgres[0].helm_release.istio[0]: Refreshing state... [id=postgres-istio]
+module.demis_services.module.validation_service_igs[0].helm_release.chart["2.7.0"]: Refreshing state... [id=validation-service-igs-2.7.0]
 helm_release.network_rules_istio: Refreshing state... [id=network-rules]
-module.demis_services.module.validation_service_core[0].helm_release.istio[0]: Refreshing state... [id=validation-service-core-istio]
-module.demis_services.module.ars_pseudonymization_service[0].helm_release.istio[0]: Refreshing state... [id=ars-pseudonymization-service-istio]
-module.demis_services.module.report_processing_service[0].helm_release.istio[0]: Refreshing state... [id=report-processing-service-istio]
-module.demis_services.module.notification_processing_service[0].helm_release.istio[0]: Refreshing state... [id=notification-processing-service-istio]
-module.demis_services.module.hospital_location_service[0].helm_release.istio[0]: Refreshing state... [id=hospital-location-service-istio]
-module.demis_services.module.ars_service[0].helm_release.istio[0]: Refreshing state... [id=ars-service-istio]
+module.demis_services.module.pdfgen_service[0].helm_release.istio[0]: Refreshing state... [id=pdfgen-service-istio]
 module.demis_services.module.validation_service_ars[0].helm_release.istio[0]: Refreshing state... [id=validation-service-ars-istio]
+module.demis_services.module.ars_service[0].helm_release.istio[0]: Refreshing state... [id=ars-service-istio]
+module.demis_services.module.hospital_location_service[0].helm_release.istio[0]: Refreshing state... [id=hospital-location-service-istio]
+module.demis_services.module.ars_pseudonymization_service[0].helm_release.istio[0]: Refreshing state... [id=ars-pseudonymization-service-istio]
+module.demis_services.module.notification_processing_service[0].helm_release.istio[0]: Refreshing state... [id=notification-processing-service-istio]
+module.demis_services.module.report_processing_service[0].helm_release.istio[0]: Refreshing state... [id=report-processing-service-istio]
+module.demis_services.module.validation_service_core[0].helm_release.istio[0]: Refreshing state... [id=validation-service-core-istio]
 module.demis_services.module.validation_service_igs[0].helm_release.istio[0]: Refreshing state... [id=validation-service-igs-istio]
 module.demis_services.helm_release.futs[0]: Refreshing state... [id=futs-istio]
-module.demis_services.module.igs_service[0].helm_release.chart["1.2.2-b321"]: Refreshing state... [id=igs-service-1.2.2-b321]
-module.demis_services.module.pgbouncer[0].helm_release.chart["1.24.1-b4"]: Refreshing state... [id=pgbouncer-1.24.1-b4]
-module.demis_services.module.notification_gateway[0].helm_release.chart["6.3.10-b191"]: Refreshing state... [id=notification-gateway-6.3.10-b191]
+module.demis_services.module.igs_service[0].helm_release.chart["1.2.1"]: Refreshing state... [id=igs-service-1.2.1]
+module.demis_services.module.pgbouncer[0].helm_release.chart["1.24.0"]: Refreshing state... [id=pgbouncer-1.24.0]
+module.demis_services.module.notification_gateway[0].helm_release.chart["6.3.9"]: Refreshing state... [id=notification-gateway-6.3.9]
 module.demis_services.helm_release.validation_service[0]: Refreshing state... [id=validation-service-istio]
 module.demis_services.module.igs_service[0].helm_release.istio[0]: Refreshing state... [id=igs-service-istio]
 module.demis_services.module.pgbouncer[0].helm_release.istio[0]: Refreshing state... [id=pgbouncer-istio]
 module.demis_services.module.notification_gateway[0].helm_release.istio[0]: Refreshing state... [id=notification-gateway-istio]
-module.demis_services.module.gateway_igs[0].helm_release.chart["1.1.5-b143"]: Refreshing state... [id=gateway-igs-1.1.5-b143]
-module.demis_services.module.fhir_storage_reader[0].helm_release.chart["1.2.2-b126"]: Refreshing state... [id=fhir-storage-reader-1.2.2-b126]
-module.demis_services.module.pseudonymization_service[0].helm_release.chart["3.4.1-b33"]: Refreshing state... [id=pseudonymization-service-3.4.1-b33]
-module.demis_services.module.pseudonymization_storage_service[0].helm_release.chart["2.5.1-b120"]: Refreshing state... [id=pseudonymization-storage-service-2.5.1-b120]
-module.demis_services.module.fhir_storage_purger[0].helm_release.chart["1.2.2-b126"]: Refreshing state... [id=fhir-storage-purger-1.2.2-b126]
-module.demis_services.module.fhir_storage_writer[0].helm_release.chart["1.2.2-b126"]: Refreshing state... [id=fhir-storage-writer-1.2.2-b126]
-module.demis_services.module.portal_bedoccupancy[0].helm_release.chart["1.4.5-b138"]: Refreshing state... [id=portal-bedoccupancy-1.4.5-b138]
-module.demis_services.module.portal_disease[0].helm_release.chart["1.3.5-b266"]: Refreshing state... [id=portal-disease-1.3.5-b266]
-module.demis_services.module.portal_pathogen[0].helm_release.chart["1.4.6-b238"]: Refreshing state... [id=portal-pathogen-1.4.6-b238]
+module.demis_services.module.gateway_igs[0].helm_release.chart["1.1.4"]: Refreshing state... [id=gateway-igs-1.1.4]
+module.demis_services.module.fhir_storage_purger[0].helm_release.chart["1.2.1"]: Refreshing state... [id=fhir-storage-purger-1.2.1]
+module.demis_services.module.pseudonymization_service[0].helm_release.chart["3.3.1"]: Refreshing state... [id=pseudonymization-service-3.3.1]
+module.demis_services.module.fhir_storage_writer[0].helm_release.chart["1.2.1"]: Refreshing state... [id=fhir-storage-writer-1.2.1]
+module.demis_services.module.pseudonymization_storage_service[0].helm_release.chart["2.5.0"]: Refreshing state... [id=pseudonymization-storage-service-2.5.0]
+module.demis_services.module.fhir_storage_reader[0].helm_release.chart["1.2.1"]: Refreshing state... [id=fhir-storage-reader-1.2.1]
+module.demis_services.module.portal_pathogen[0].helm_release.chart["1.4.3"]: Refreshing state... [id=portal-pathogen-1.4.3]
+module.demis_services.module.portal_bedoccupancy[0].helm_release.chart["1.4.2"]: Refreshing state... [id=portal-bedoccupancy-1.4.2]
+module.demis_services.module.portal_disease[0].helm_release.chart["1.3.3"]: Refreshing state... [id=portal-disease-1.3.3]
 module.demis_services.module.gateway_igs[0].helm_release.istio[0]: Refreshing state... [id=gateway-igs-istio]
-module.demis_services.module.fhir_storage_reader[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-reader-istio]
-module.demis_services.module.pseudonymization_storage_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-storage-service-istio]
-module.demis_services.module.pseudonymization_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-service-istio]
 module.demis_services.module.fhir_storage_purger[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-purger-istio]
+module.demis_services.module.pseudonymization_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-service-istio]
 module.demis_services.module.fhir_storage_writer[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-writer-istio]
+module.demis_services.module.pseudonymization_storage_service[0].helm_release.istio[0]: Refreshing state... [id=pseudonymization-storage-service-istio]
+module.demis_services.module.fhir_storage_reader[0].helm_release.istio[0]: Refreshing state... [id=fhir-storage-reader-istio]
+module.demis_services.module.portal_pathogen[0].helm_release.istio[0]: Refreshing state... [id=portal-pathogen-istio]
 module.demis_services.module.portal_bedoccupancy[0].helm_release.istio[0]: Refreshing state... [id=portal-bedoccupancy-istio]
 module.demis_services.module.portal_disease[0].helm_release.istio[0]: Refreshing state... [id=portal-disease-istio]
-module.demis_services.module.portal_pathogen[0].helm_release.istio[0]: Refreshing state... [id=portal-pathogen-istio]
-module.demis_services.module.portal_igs[0].helm_release.chart["1.2.3-b118"]: Refreshing state... [id=portal-igs-1.2.3-b118]
+module.demis_services.module.portal_igs[0].helm_release.chart["1.2.1"]: Refreshing state... [id=portal-igs-1.2.1]
 module.demis_services.module.portal_igs[0].helm_release.istio[0]: Refreshing state... [id=portal-igs-istio]
-module.demis_services.module.portal_shell[0].helm_release.chart["1.2.6-b187"]: Refreshing state... [id=portal-shell-1.2.6-b187]
+module.demis_services.module.portal_shell[0].helm_release.chart["1.2.3"]: Refreshing state... [id=portal-shell-1.2.3]
 module.demis_services.module.portal_shell[0].helm_release.istio[0]: Refreshing state... [id=portal-shell-istio]
-terraform_data.fsp_manual_trigger: Refreshing state... [id=010c4816-df5a-c6a3-8b7e-ac684ffd5fa0]
-module.deactivate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=e1fd7945-8acc-e0f9-a69e-05813fa23761]
-module.deactivate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=ebd441b2-2bd6-c9bb-8229-5abc9286d93c]
+terraform_data.fsp_manual_trigger: Refreshing state... [id=392f827c-9259-0c80-1299-fa07bb63b622]
+module.deactivate_maintenance_mode.terraform_data.update_services: Refreshing state... [id=66781462-ca3a-c2f3-8131-ef101577fa10]
+module.deactivate_maintenance_mode.terraform_data.set_maintenance_mode: Refreshing state... [id=cb56e670-5e41-c246-8f95-76bba01002bb]
 
 Note: Objects have changed outside of OpenTofu
 
@@ -157,24 +146,7 @@ last "tofu apply" which may have affected this plan:
 
       ~ metadata {
           ~ annotations      = {
-              ~ "cattle.io/status"                          = jsonencode(
-                  ~ {
-                      ~ Conditions = [
-                            {
-                                LastUpdateTime = "2025-06-25T13:48:46Z"
-                                Message        = ""
-                                Status         = "True"
-                                Type           = "ResourceQuotaInit"
-                            },
-                          + {
-                              + LastUpdateTime = "2025-06-25T13:48:46Z"
-                              + Message        = ""
-                              + Status         = "True"
-                              + Type           = "InitialRolesPopulated"
-                            },
-                        ]
-                    }
-                )
+              + "lifecycle.cattle.io/create.namespace-auth" = "true"
                 # (1 unchanged element hidden)
             }
             name             = "demis"
@@ -198,9 +170,9 @@ OpenTofu will perform the following actions:
 
   # terraform_data.fsp_manual_trigger must be replaced
 -/+ resource "terraform_data" "fsp_manual_trigger" {
-      ~ id               = "010c4816-df5a-c6a3-8b7e-ac684ffd5fa0" -> (known after apply)
+      ~ id               = "392f827c-9259-0c80-1299-fa07bb63b622" -> (known after apply)
       ~ triggers_replace = [
-          - "2025-06-25T13:48:45Z",
+          - "2025-06-18T09:48:52Z",
           + (known after apply),
         ]
     }
@@ -216,13 +188,13 @@ OpenTofu will perform the following actions:
                     {
                       - Conditions = [
                           - {
-                              - LastUpdateTime = "2025-06-25T13:48:46Z"
+                              - LastUpdateTime = "2025-06-18T09:48:53Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "ResourceQuotaInit"
                             },
                           - {
-                              - LastUpdateTime = "2025-06-25T13:48:46Z"
+                              - LastUpdateTime = "2025-06-18T09:48:53Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "InitialRolesPopulated"
@@ -237,13 +209,1147 @@ OpenTofu will perform the following actions:
         }
     }
 
-Plan: 1 to add, 1 to change, 1 to destroy.
+  # module.demis_services.module.validation_service_ars[0].helm_release.chart["2.7.0"] will be updated in-place
+  ~ resource "helm_release" "chart" {
+        id                         = "validation-service-ars-2.7.0"
+      ~ metadata                   = [
+          - {
+              - app_version    = "2.7.0"
+              - chart          = "validation-service"
+              - first_deployed = 1750188185
+              - last_deployed  = 1750188185
+              - name           = "validation-service-ars-2.7.0"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Get the application URL by running these commands:
+                      export POD_NAME=$(kubectl get pods --namespace demis -l "app.kubernetes.io/name=validation-service-ars,app.kubernetes.io/instance=validation-service-ars-2.7.0" -o jsonpath="{.items[0].metadata.name}")
+                      export CONTAINER_PORT=$(kubectl get pod --namespace demis $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+                      echo "Visit http://127.0.0.1:8080 to use your application"
+                      kubectl --namespace demis port-forward $POD_NAME 8080:$CONTAINER_PORT
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - customEnvVars    = {
+                          - TERRAFORM_DEPLOYMENT = true
+                        }
+                      - customLabels     = {
+                          - fhirProfile        = "ars-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - debug            = {
+                          - enable = true
+                        }
+                      - deploymentLabels = {
+                          - fhirProfile        = "ars-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - fullname         = "validation-service-ars"
+                      - fullnameOverride = "validation-service-ars"
+                      - imagePullSecrets = [
+                          - {
+                              - name = "gematik-gcr-io-demis-ref-registry-reader"
+                            },
+                        ]
+                      - istio            = {
+                          - enable = true
+                        }
+                      - nameOverride     = "validation-service-ars"
+                      - required         = {
+                          - image    = {
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - tag        = "2.7.0"
+                            }
+                          - profiles = {
+                              - name       = "ars-profile-snapshots"
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - version    = "1.0.0"
+                              - versions   = null
+                            }
+                        }
+                    }
+                )
+              - version        = "2.7.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-ars-2.7.0"
+      ~ values                     = [
+          - <<-EOT
+                # Values for the validation-service-igs Helm Template
+                
+                fullname: "validation-service-ars"
+                fullnameOverride: "validation-service-ars"
+                nameOverride: "validation-service-ars"
+                
+                # Enables debug mode
+                debug:
+                  enable: true
+                
+                istio:
+                  enable: true
+                
+                # Required Values for the Chart
+                required:
+                  image: 
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                  profiles:
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                    name: ars-profile-snapshots
+                    
+                    version: 1.0.0
+                    versions: 
+                
+                # Image Pull Secrets
+                imagePullSecrets: 
+                  - name: gematik-gcr-io-demis-ref-registry-reader
+                  
+                customEnvVars:
+                  # Prevents empty values that can delete the default environment variables
+                  TERRAFORM_DEPLOYMENT: true
+                
+                
+                
+                
+                "customLabels":
+                  "fhirProfile": "ars-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+                "deploymentLabels":
+                  "fhirProfile": "ars-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+  # module.demis_services.module.validation_service_ars[0].helm_release.istio[0] will be updated in-place
+  ~ resource "helm_release" "istio" {
+        id                         = "validation-service-ars-istio"
+      ~ metadata                   = [
+          - {
+              - app_version    = "1.1.0-b14"
+              - chart          = "istio-routing"
+              - first_deployed = 1750188251
+              - last_deployed  = 1750188251
+              - name           = "validation-service-ars-istio"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Thank you for installing the istio-routing Helm Chart
+                    
+                    The application is available through Istio Virtual Service under the following addresses:
+                    
+                    - validation-service-ars.demis.svc.cluster.local
+                    
+                    
+                    The Service is available at the port 8080
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - appName                 = "validation-service-ars"
+                      - appNamespace            = "demis"
+                      - appServicePortExternal  = 8080
+                      - appServicePortName      = "http"
+                      - appServicePortProtocol  = "TCP"
+                      - appServicePortTarget    = 8080
+                      - appServiceType          = "ClusterIP"
+                      - destinationSubsets      = {
+                          - main = {
+                              - extraLabels = {
+                                  - fhirProfile        = "ars-profile-snapshots"
+                                  - fhirProfileVersion = "2.7.0"
+                                }
+                              - name        = "2.7.0"
+                              - version     = "2.7.0"
+                              - weight      = 100
+                            }
+                        }
+                      - isDelegate              = true
+                      - virtualServiceHttpRules = [
+                          - {
+                              - match   = [
+                                  - {
+                                      - uri = {
+                                          - prefix = "/"
+                                        }
+                                    },
+                                ]
+                              - rewrite = {
+                                  - uri = "/"
+                                }
+                            },
+                        ]
+                    }
+                )
+              - version        = "1.1.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-ars-istio"
+      ~ values                     = [
+          - <<-EOT
+                # Application Information
+                appName: "validation-service-ars"
+                appNamespace: "demis" # defaults to Release.Namespace
+                # Settings for the Kubernetes Service Object for the Application
+                appServiceType: ClusterIP
+                appServicePortExternal: 8080
+                appServicePortTarget: 8080
+                appServicePortProtocol: TCP
+                appServicePortName: http
+                
+                # Istio Information
+                
+                # If true, the VirtualService will be created as a delegate Virtual Service, so the "host" will not be set
+                # See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+                isDelegate: true
+                
+                # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+                # The "route" part is generated using the destination subset information
+                virtualServiceHttpRules:
+                  - match:
+                    - uri:
+                        prefix: /
+                    rewrite:
+                      uri: /
+                
+                "destinationSubsets":
+                  "main":
+                    "extraLabels":
+                      "fhirProfile": "ars-profile-snapshots"
+                      "fhirProfileVersion": "2.7.0"
+                    "name": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets will be updated in-place
+  ~ resource "terraform_data" "destination_subsets" {
+        id     = "f4fdb0aa-8d8c-a451-d612-492296b2379e"
+      ~ input  = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_canary will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_canary" {
+        id     = "e43fb377-d94d-3b36-4664-1baf22bafa07"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ canary = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    } -> (known after apply)
+                  ~ name        = "" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - canary = {
+                  - extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    }
+                  - name        = ""
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.destination_subsets_main will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_main" {
+        id     = "90462936-6fc4-92b8-34f6-d3054561dbad"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ main = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    } -> (known after apply)
+                  ~ name        = "2.7.0" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "ars-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_canary will be updated in-place
+  ~ resource "terraform_data" "subset_name_canary" {
+        id     = "e3505603-462e-dc6e-60a9-df50134f0425"
+      + input  = "-ars-profile-snapshots"
+      + output = (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.subset_name_main will be updated in-place
+  ~ resource "terraform_data" "subset_name_main" {
+        id     = "b68defb8-95e1-1480-5fe7-e92b820f55f9"
+      ~ input  = "2.7.0" -> "2.7.0-ars-profile-snapshots"
+      ~ output = "2.7.0" -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels will be updated in-place
+  ~ resource "terraform_data" "version_labels" {
+        id     = "10d6335f-0afa-390c-c555-9099bc6bcb80"
+      ~ input  = {
+          ~ customLabels     = {
+              - fhirProfile        = "ars-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+          ~ deploymentLabels = {
+              - fhirProfile        = "ars-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+        }
+      ~ output = {
+          - customLabels     = {
+              - fhirProfile        = "ars-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+          - deploymentLabels = {
+              - fhirProfile        = "ars-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_canary will be updated in-place
+  ~ resource "terraform_data" "version_labels_canary" {
+        id     = "83618076-1415-7d2e-9220-33375647c362"
+      ~ input  = {
+          ~ fhirProfileVersion = "" -> "1.0.0"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "ars-profile-snapshots"
+          - fhirProfileVersion = ""
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_ars_metadata.terraform_data.version_labels_main will be updated in-place
+  ~ resource "terraform_data" "version_labels_main" {
+        id     = "201f79ad-eeca-b809-c9a0-13083c658a52"
+      ~ input  = {
+          ~ fhirProfileVersion = "2.7.0" -> "1.0.0"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "ars-profile-snapshots"
+          - fhirProfileVersion = "2.7.0"
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core[0].helm_release.chart["2.7.0"] will be updated in-place
+  ~ resource "helm_release" "chart" {
+        id                         = "validation-service-core-2.7.0"
+      ~ metadata                   = [
+          - {
+              - app_version    = "2.7.0"
+              - chart          = "validation-service"
+              - first_deployed = 1750188192
+              - last_deployed  = 1750188192
+              - name           = "validation-service-core-2.7.0"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Get the application URL by running these commands:
+                      export POD_NAME=$(kubectl get pods --namespace demis -l "app.kubernetes.io/name=validation-service-core,app.kubernetes.io/instance=validation-service-core-2.7.0" -o jsonpath="{.items[0].metadata.name}")
+                      export CONTAINER_PORT=$(kubectl get pod --namespace demis $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+                      echo "Visit http://127.0.0.1:8080 to use your application"
+                      kubectl --namespace demis port-forward $POD_NAME 8080:$CONTAINER_PORT
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - customEnvVars    = {
+                          - TERRAFORM_DEPLOYMENT = true
+                        }
+                      - customLabels     = {
+                          - fhirProfile        = "fhir-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - debug            = {
+                          - enable = true
+                        }
+                      - deploymentLabels = {
+                          - fhirProfile        = "fhir-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - fullname         = "validation-service-core"
+                      - fullnameOverride = "validation-service-core"
+                      - imagePullSecrets = [
+                          - {
+                              - name = "gematik-gcr-io-demis-ref-registry-reader"
+                            },
+                        ]
+                      - istio            = {
+                          - enable = true
+                        }
+                      - nameOverride     = "validation-service-core"
+                      - replicaCount     = 2
+                      - required         = {
+                          - image    = {
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - tag        = "2.7.0"
+                            }
+                          - profiles = {
+                              - name       = "fhir-profile-snapshots"
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - version    = "5.2.0"
+                              - versions   = null
+                            }
+                        }
+                      - resources        = {
+                          - limits   = {
+                              - memory = "2750Mi"
+                            }
+                          - requests = {
+                              - cpu    = "2000m"
+                              - memory = "2750Mi"
+                            }
+                        }
+                    }
+                )
+              - version        = "2.7.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-core-2.7.0"
+      ~ values                     = [
+          - <<-EOT
+                # Values for the validation-service-core Helm Template
+                
+                fullname: "validation-service-core"
+                fullnameOverride: "validation-service-core"
+                nameOverride: "validation-service-core"
+                
+                # Enables debug mode
+                debug:
+                  enable: true
+                
+                istio:
+                  enable: true
+                
+                # Required Values for the Chart
+                required:
+                  image: 
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                  profiles:
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                    name: fhir-profile-snapshots
+                    
+                    version: 5.2.0
+                    versions: 
+                
+                # Image Pull Secrets
+                imagePullSecrets: 
+                  - name: gematik-gcr-io-demis-ref-registry-reader
+                
+                customEnvVars:
+                  # Prevents empty values that can delete the default environment variables
+                  TERRAFORM_DEPLOYMENT: true
+                
+                # Number of Pod Replicas desired
+                replicaCount: 2
+                
+                # Override Resource Definitions for Pod
+                "resources":
+                  "limits":
+                    "memory": "2750Mi"
+                  "requests":
+                    "cpu": "2000m"
+                    "memory": "2750Mi"
+                
+                
+                
+                "customLabels":
+                  "fhirProfile": "fhir-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+                "deploymentLabels":
+                  "fhirProfile": "fhir-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+  # module.demis_services.module.validation_service_core[0].helm_release.istio[0] will be updated in-place
+  ~ resource "helm_release" "istio" {
+        id                         = "validation-service-core-istio"
+      ~ metadata                   = [
+          - {
+              - app_version    = "1.1.0-b14"
+              - chart          = "istio-routing"
+              - first_deployed = 1750188259
+              - last_deployed  = 1750188259
+              - name           = "validation-service-core-istio"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Thank you for installing the istio-routing Helm Chart
+                    
+                    The application is available through Istio Virtual Service under the following addresses:
+                    
+                    - validation-service-core.demis.svc.cluster.local
+                    
+                    
+                    The Service is available at the port 8080
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - appName                 = "validation-service-core"
+                      - appNamespace            = "demis"
+                      - appServicePortExternal  = 8080
+                      - appServicePortName      = "http"
+                      - appServicePortProtocol  = "TCP"
+                      - appServicePortTarget    = 8080
+                      - appServiceType          = "ClusterIP"
+                      - destinationSubsets      = {
+                          - main = {
+                              - extraLabels = {
+                                  - fhirProfile        = "fhir-profile-snapshots"
+                                  - fhirProfileVersion = "2.7.0"
+                                }
+                              - name        = "2.7.0"
+                              - version     = "2.7.0"
+                              - weight      = 100
+                            }
+                        }
+                      - isDelegate              = true
+                      - virtualServiceHttpRules = [
+                          - {
+                              - match   = [
+                                  - {
+                                      - uri = {
+                                          - prefix = "/"
+                                        }
+                                    },
+                                ]
+                              - rewrite = {
+                                  - uri = "/"
+                                }
+                            },
+                        ]
+                    }
+                )
+              - version        = "1.1.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-core-istio"
+      ~ values                     = [
+          - <<-EOT
+                # Application Information
+                appName: "validation-service-core"
+                appNamespace: "demis" # defaults to Release.Namespace
+                # Settings for the Kubernetes Service Object for the Application
+                appServiceType: ClusterIP
+                appServicePortExternal: 8080
+                appServicePortTarget: 8080
+                appServicePortProtocol: TCP
+                appServicePortName: http
+                
+                # Istio Information
+                
+                # If true, the VirtualService will be created as a delegate Virtual Service, so the "host" will not be set
+                # See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+                isDelegate: true
+                
+                # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+                # The "route" part is generated using the destination subset information
+                virtualServiceHttpRules:
+                  - match:
+                    - uri:
+                        prefix: /
+                    rewrite:
+                      uri: /
+                
+                "destinationSubsets":
+                  "main":
+                    "extraLabels":
+                      "fhirProfile": "fhir-profile-snapshots"
+                      "fhirProfileVersion": "2.7.0"
+                    "name": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets will be updated in-place
+  ~ resource "terraform_data" "destination_subsets" {
+        id     = "615963dc-75fb-862c-f111-4fbfa027b78f"
+      ~ input  = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_canary will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_canary" {
+        id     = "f0bb4f56-6206-9876-9d74-1ba30d7e79b1"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ canary = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    } -> (known after apply)
+                  ~ name        = "" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - canary = {
+                  - extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    }
+                  - name        = ""
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.destination_subsets_main will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_main" {
+        id     = "b297555e-faf8-38bb-45d3-a50cecd9c794"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ main = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    } -> (known after apply)
+                  ~ name        = "2.7.0" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "fhir-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_canary will be updated in-place
+  ~ resource "terraform_data" "subset_name_canary" {
+        id     = "a95b2ca3-efdd-463f-1408-6367e14a9984"
+      + input  = "-fhir-profile-snapshots"
+      + output = (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.subset_name_main will be updated in-place
+  ~ resource "terraform_data" "subset_name_main" {
+        id     = "f14cbade-a078-7ee1-b0b8-4fb63a792034"
+      ~ input  = "2.7.0" -> "2.7.0-fhir-profile-snapshots"
+      ~ output = "2.7.0" -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels will be updated in-place
+  ~ resource "terraform_data" "version_labels" {
+        id     = "975f8a94-013d-ccc3-c11b-13afd4622e0d"
+      ~ input  = {
+          ~ customLabels     = {
+              - fhirProfile        = "fhir-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+          ~ deploymentLabels = {
+              - fhirProfile        = "fhir-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+        }
+      ~ output = {
+          - customLabels     = {
+              - fhirProfile        = "fhir-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+          - deploymentLabels = {
+              - fhirProfile        = "fhir-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_canary will be updated in-place
+  ~ resource "terraform_data" "version_labels_canary" {
+        id     = "5723c82b-9e23-db94-dfbe-30865e0e57be"
+      ~ input  = {
+          ~ fhirProfileVersion = "" -> "5.2.0"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "fhir-profile-snapshots"
+          - fhirProfileVersion = ""
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_core_metadata.terraform_data.version_labels_main will be updated in-place
+  ~ resource "terraform_data" "version_labels_main" {
+        id     = "41ff8727-a960-205d-602a-2706f1473084"
+      ~ input  = {
+          ~ fhirProfileVersion = "2.7.0" -> "5.2.0"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "fhir-profile-snapshots"
+          - fhirProfileVersion = "2.7.0"
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs[0].helm_release.chart["2.7.0"] will be updated in-place
+  ~ resource "helm_release" "chart" {
+        id                         = "validation-service-igs-2.7.0"
+      ~ metadata                   = [
+          - {
+              - app_version    = "2.7.0"
+              - chart          = "validation-service"
+              - first_deployed = 1750188186
+              - last_deployed  = 1750188186
+              - name           = "validation-service-igs-2.7.0"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Get the application URL by running these commands:
+                      export POD_NAME=$(kubectl get pods --namespace demis -l "app.kubernetes.io/name=validation-service-igs,app.kubernetes.io/instance=validation-service-igs-2.7.0" -o jsonpath="{.items[0].metadata.name}")
+                      export CONTAINER_PORT=$(kubectl get pod --namespace demis $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+                      echo "Visit http://127.0.0.1:8080 to use your application"
+                      kubectl --namespace demis port-forward $POD_NAME 8080:$CONTAINER_PORT
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - customEnvVars    = {
+                          - TERRAFORM_DEPLOYMENT = true
+                        }
+                      - customLabels     = {
+                          - fhirProfile        = "igs-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - debug            = {
+                          - enable = true
+                        }
+                      - deploymentLabels = {
+                          - fhirProfile        = "igs-profile-snapshots"
+                          - fhirProfileVersion = "2.7.0"
+                        }
+                      - fullname         = "validation-service-igs"
+                      - fullnameOverride = "validation-service-igs"
+                      - imagePullSecrets = [
+                          - {
+                              - name = "gematik-gcr-io-demis-ref-registry-reader"
+                            },
+                        ]
+                      - istio            = {
+                          - enable = true
+                        }
+                      - nameOverride     = "validation-service-igs"
+                      - replicaCount     = 1
+                      - required         = {
+                          - image    = {
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - tag        = "2.7.0"
+                            }
+                          - profiles = {
+                              - name       = "igs-profile-snapshots"
+                              - repository = "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref"
+                              - version    = "3.0.2"
+                              - versions   = null
+                            }
+                        }
+                      - resources        = {
+                          - limits   = {
+                              - memory = "1500Mi"
+                            }
+                          - requests = {
+                              - cpu    = "200m"
+                              - memory = "1500Mi"
+                            }
+                        }
+                    }
+                )
+              - version        = "2.7.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-igs-2.7.0"
+      ~ values                     = [
+          - <<-EOT
+                # Values for the validation-service-igs Helm Template
+                
+                fullname: "validation-service-igs"
+                fullnameOverride: "validation-service-igs"
+                nameOverride: "validation-service-igs"
+                
+                # Enables debug mode
+                debug:
+                  enable: true
+                
+                istio:
+                  enable: true
+                
+                # Required Values for the Chart
+                required:
+                  image: 
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                  profiles:
+                    repository: europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis-ref
+                    
+                    name: igs-profile-snapshots
+                    
+                    version: 3.0.2
+                    versions: 
+                
+                # Image Pull Secrets
+                imagePullSecrets: 
+                  - name: gematik-gcr-io-demis-ref-registry-reader
+                  
+                customEnvVars:
+                  # Prevents empty values that can delete the default environment variables
+                  TERRAFORM_DEPLOYMENT: true
+                # Number of Pod Replicas desired
+                replicaCount: 1
+                
+                # Override Resource Definitions for Pod
+                "resources":
+                  "limits":
+                    "memory": "1500Mi"
+                  "requests":
+                    "cpu": "200m"
+                    "memory": "1500Mi"
+                
+                
+                
+                "customLabels":
+                  "fhirProfile": "igs-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+                "deploymentLabels":
+                  "fhirProfile": "igs-profile-snapshots"
+                  "fhirProfileVersion": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+  # module.demis_services.module.validation_service_igs[0].helm_release.istio[0] will be updated in-place
+  ~ resource "helm_release" "istio" {
+        id                         = "validation-service-igs-istio"
+      ~ metadata                   = [
+          - {
+              - app_version    = "1.1.0-b14"
+              - chart          = "istio-routing"
+              - first_deployed = 1750188252
+              - last_deployed  = 1750188252
+              - name           = "validation-service-igs-istio"
+              - namespace      = "demis"
+              - notes          = <<-EOT
+                    Thank you for installing the istio-routing Helm Chart
+                    
+                    The application is available through Istio Virtual Service under the following addresses:
+                    
+                    - validation-service-igs.demis.svc.cluster.local
+                    
+                    
+                    The Service is available at the port 8080
+                EOT
+              - revision       = 1
+              - values         = jsonencode(
+                    {
+                      - appName                 = "validation-service-igs"
+                      - appNamespace            = "demis"
+                      - appServicePortExternal  = 8080
+                      - appServicePortName      = "http"
+                      - appServicePortProtocol  = "TCP"
+                      - appServicePortTarget    = 8080
+                      - appServiceType          = "ClusterIP"
+                      - destinationSubsets      = {
+                          - main = {
+                              - extraLabels = {
+                                  - fhirProfile        = "igs-profile-snapshots"
+                                  - fhirProfileVersion = "2.7.0"
+                                }
+                              - name        = "2.7.0"
+                              - version     = "2.7.0"
+                              - weight      = 100
+                            }
+                        }
+                      - isDelegate              = true
+                      - virtualServiceHttpRules = [
+                          - {
+                              - match   = [
+                                  - {
+                                      - uri = {
+                                          - prefix = "/"
+                                        }
+                                    },
+                                ]
+                              - rewrite = {
+                                  - uri = "/"
+                                }
+                            },
+                        ]
+                    }
+                )
+              - version        = "1.1.0"
+            },
+        ] -> (known after apply)
+        name                       = "validation-service-igs-istio"
+      ~ values                     = [
+          - <<-EOT
+                # Application Information
+                appName: "validation-service-igs"
+                appNamespace: "demis" # defaults to Release.Namespace
+                # Settings for the Kubernetes Service Object for the Application
+                appServiceType: ClusterIP
+                appServicePortExternal: 8080
+                appServicePortTarget: 8080
+                appServicePortProtocol: TCP
+                appServicePortName: http
+                
+                # Istio Information
+                
+                # If true, the VirtualService will be created as a delegate Virtual Service, so the "host" will not be set
+                # See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+                isDelegate: true
+                
+                # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+                # The "route" part is generated using the destination subset information
+                virtualServiceHttpRules:
+                  - match:
+                    - uri:
+                        prefix: /
+                    rewrite:
+                      uri: /
+                
+                "destinationSubsets":
+                  "main":
+                    "extraLabels":
+                      "fhirProfile": "igs-profile-snapshots"
+                      "fhirProfileVersion": "2.7.0"
+                    "name": "2.7.0"
+            EOT,
+        ] -> (known after apply)
+        # (28 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets will be updated in-place
+  ~ resource "terraform_data" "destination_subsets" {
+        id     = "7f3c0dcb-92d1-7676-d76b-c53a74cc9297"
+      ~ input  = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_canary will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_canary" {
+        id     = "c69d4999-c972-b6d3-0664-bf7f0c519c56"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ canary = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    } -> (known after apply)
+                  ~ name        = "" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - canary = {
+                  - extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = ""
+                    }
+                  - name        = ""
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.destination_subsets_main will be updated in-place
+  ~ resource "terraform_data" "destination_subsets_main" {
+        id     = "bdd7b2ff-1e5c-a99d-ad89-823c82fd7d42"
+      ~ input  = {
+          ~ destinationSubsets = {
+              ~ main = {
+                  ~ extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    } -> (known after apply)
+                  ~ name        = "2.7.0" -> (known after apply)
+                }
+            }
+        }
+      ~ output = {
+          - destinationSubsets = {
+              - main = {
+                  - extraLabels = {
+                      - fhirProfile        = "igs-profile-snapshots"
+                      - fhirProfileVersion = "2.7.0"
+                    }
+                  - name        = "2.7.0"
+                }
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_canary will be updated in-place
+  ~ resource "terraform_data" "subset_name_canary" {
+        id     = "ce45b7d4-bcae-f4cf-20bb-77b937be214c"
+      + input  = "-igs-profile-snapshots"
+      + output = (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.subset_name_main will be updated in-place
+  ~ resource "terraform_data" "subset_name_main" {
+        id     = "2e4db003-8332-8ecf-4a33-a9aec7140a4a"
+      ~ input  = "2.7.0" -> "2.7.0-igs-profile-snapshots"
+      ~ output = "2.7.0" -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels will be updated in-place
+  ~ resource "terraform_data" "version_labels" {
+        id     = "0f40551b-092b-d95a-8e3e-fd60c63be73c"
+      ~ input  = {
+          ~ customLabels     = {
+              - fhirProfile        = "igs-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+          ~ deploymentLabels = {
+              - fhirProfile        = "igs-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            } -> (known after apply)
+        }
+      ~ output = {
+          - customLabels     = {
+              - fhirProfile        = "igs-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+          - deploymentLabels = {
+              - fhirProfile        = "igs-profile-snapshots"
+              - fhirProfileVersion = "2.7.0"
+            }
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_canary will be updated in-place
+  ~ resource "terraform_data" "version_labels_canary" {
+        id     = "66b8a3da-d157-5815-fb53-bcb567c183e5"
+      ~ input  = {
+          ~ fhirProfileVersion = "" -> "3.0.2"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "igs-profile-snapshots"
+          - fhirProfileVersion = ""
+        } -> (known after apply)
+    }
+
+  # module.demis_services.module.validation_service_igs_metadata.terraform_data.version_labels_main will be updated in-place
+  ~ resource "terraform_data" "version_labels_main" {
+        id     = "0b477273-de8f-5c51-b460-47c4554b2378"
+      ~ input  = {
+          ~ fhirProfileVersion = "2.7.0" -> "3.0.2"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - fhirProfile        = "igs-profile-snapshots"
+          - fhirProfileVersion = "2.7.0"
+        } -> (known after apply)
+    }
+
+Plan: 1 to add, 31 to change, 1 to destroy.
 
 Warning: Value for undeclared variable
 
-The root module does not declare a variable named
-"keycloak_user_purger_cron_schedule" but a value was found in file
-"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-dev-fra/demis/application-configuration.tfvars".
+The root module does not declare a variable named "image_pull_policy" but a
+value was found in file
+"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-ref-fra/demis/application-configuration.tfvars".
 If you meant to use this value, add a "variable" block to the configuration.
 
 To silence these warnings, use TF_VAR_... environment variables to provide
@@ -253,8 +1359,8 @@ reduce the verbosity of these warnings, use the -compact-warnings option.
 Warning: Value for undeclared variable
 
 The root module does not declare a variable named
-"service_mesh_kiali_version" but a value was found in file
-"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-dev-fra/demis/cluster.tfvars".
+"gateway_token_client_hospital" but a value was found in file
+"/home/jenkins/agent/workspace/aform_Deployment-Validation_main/environments/stage-adesso-ref-fra/demis/credentials.tfvars".
 If you meant to use this value, add a "variable" block to the configuration.
 
 To silence these warnings, use TF_VAR_... environment variables to provide
@@ -263,7 +1369,7 @@ reduce the verbosity of these warnings, use the -compact-warnings option.
 
 Warning: Values for undeclared variables
 
-In addition to the other similar warnings shown, 24 other variable(s) defined
+In addition to the other similar warnings shown, 1 other variable(s) defined
 without being declared.
 
 ─────────────────────────────────────────────────────────────────────────────
