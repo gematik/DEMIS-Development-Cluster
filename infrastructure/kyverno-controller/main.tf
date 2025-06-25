@@ -28,4 +28,8 @@ resource "helm_release" "kyverno" {
     value = var.reportscontroller_replicas
   }
 
+  set_list {
+    name  = "existingImagePullSecrets"
+    value = var.pull_secrets
+  }
 }

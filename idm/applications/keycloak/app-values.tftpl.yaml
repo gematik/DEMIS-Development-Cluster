@@ -60,6 +60,12 @@ config:
       # IMPORTANT: these values must be defined in the Secret
       entries:
         KC_SPI_TRUSTSTORE_FILE_PASSWORD: KC_SPI_TRUSTSTORE_FILE_PASSWORD
+    gematikIdp:
+      # The name of the (external) Secret for gematik idp public key and the entries to be used and mapped
+      name: keycloak-gematik-idp-public-key
+      # IMPORTANT: these values must be defined in the Secret
+      entries:
+        JWT_VALIDATION_VERIFICATION_KEY: JWT_VALIDATION_VERIFICATION_KEY
   # Performs the initial import of data
   # Requires a Database connection 
   # Requires the definition of the import strategy

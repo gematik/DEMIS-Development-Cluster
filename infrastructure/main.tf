@@ -5,6 +5,9 @@
 locals {
   kubeconfig_path    = var.local_cluster ? module.local_cluster[0].kubeconfig_path : var.kubeconfig_path
   kms_encryption_key = length(var.kms_encryption_key) > 0 ? true : false
+
+  # retrieve the name of the pull secret from the given docker registry credentials (local)
+  pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
 }
 
 # Configure a KIND cluster locally
@@ -81,10 +84,13 @@ module "kyverno" {
   count                         = var.kyverno_enabled ? 1 : 0
   source                        = "./kyverno-controller"
   namespace                     = module.kyverno_namespace.name
+  pull_secrets                  = local.pull_secrets_credentials
   admissioncontroller_replicas  = var.kyverno_admissioncontroller_replicas
   backgroundcontroller_replicas = var.kyverno_backgroundcontroller_replicas
   cleanupcontroller_replicas    = var.kyverno_cleanupcontroller_replicas
   reportscontroller_replicas    = var.kyverno_reportscontroller_replicas
+
+  depends_on = [module.pull_secrets]
 }
 
 module "kyverno_policy_reporter" {

@@ -1,18 +1,24 @@
-module.security_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=security]
-module.kyverno_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=kyverno]
 module.remote_cluster[0].kubernetes_service_account_v1.this: Refreshing state... [id=kube-system/api-service-account]
-module.istio_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=istio-system]
 module.remote_cluster[0].kubernetes_cluster_role_v1.this: Refreshing state... [id=api-cluster-role]
-module.remote_cluster[0].kubernetes_cluster_role_binding_v1.this: Refreshing state... [id=api-cluster-role-binding]
+module.kyverno_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=kyverno]
+module.security_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=security]
+module.istio_namespace.kubernetes_namespace_v1.this: Refreshing state... [id=istio-system]
 module.remote_cluster[0].kubernetes_secret_v1.this: Refreshing state... [id=kube-system/api-service-account-token]
+module.remote_cluster[0].kubernetes_cluster_role_binding_v1.this: Refreshing state... [id=api-cluster-role-binding]
 module.service_mesh.module.istio.helm_release.istio_base: Refreshing state... [id=istio-base]
+module.pull_secrets["gematik-gcr-io-demis-dev-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=kyverno/gematik-gcr-io-demis-dev-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-prod-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=kyverno/gematik-gcr-io-demis-prod-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-ref-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=kyverno/gematik-gcr-io-demis-ref-registry-reader]
+module.pull_secrets["gematik-gcr-io-demis-qs-registry-reader"].kubernetes_secret_v1.this: Refreshing state... [id=kyverno/gematik-gcr-io-demis-qs-registry-reader]
+module.kyverno[0].helm_release.kyverno: Refreshing state... [id=kyverno]
+module.kyverno_policy_reporter[0].helm_release.policy_reporter: Refreshing state... [id=policy-reporter]
 module.service_mesh.module.istio.helm_release.istiod: Refreshing state... [id=istiod]
-module.service_mesh.module.istio.helm_release.istio_cni: Refreshing state... [id=cni]
 module.service_mesh.module.istio.helm_release.istio_egressgateway: Refreshing state... [id=istio-egressgateway]
+module.service_mesh.module.istio.helm_release.istio_cni: Refreshing state... [id=cni]
 module.service_mesh.module.istio.helm_release.istio_ingressgateway: Refreshing state... [id=istio-ingressgateway]
-module.service_mesh.module.jaeger[0].kubernetes_config_map_v1.jaeger_configuration: Refreshing state... [id=istio-system/jaeger-configuration]
-module.service_mesh.module.jaeger[0].kubernetes_service_account_v1.this: Refreshing state... [id=istio-system/jaeger]
 module.service_mesh.module.kiali[0].random_string.kiali_signing_key: Refreshing state... [id=XL02pcTnWybSYJbAKc1qtC0R5nhbEsaH]
+module.service_mesh.module.jaeger[0].kubernetes_service_account_v1.this: Refreshing state... [id=istio-system/jaeger]
+module.service_mesh.module.jaeger[0].kubernetes_config_map_v1.jaeger_configuration: Refreshing state... [id=istio-system/jaeger-configuration]
 module.service_mesh.module.jaeger[0].kubernetes_service_v1.otlp_collector: Refreshing state... [id=istio-system/otlp-collector]
 module.service_mesh.module.jaeger[0].kubernetes_service_v1.tracing: Refreshing state... [id=istio-system/tracing]
 module.service_mesh.module.jaeger[0].kubernetes_deployment_v1.this: Refreshing state... [id=istio-system/jaeger]
@@ -35,13 +41,13 @@ last "tofu apply" which may have affected this plan:
                   ~ {
                       ~ Conditions = [
                             {
-                                LastUpdateTime = "2025-04-28T06:58:53Z"
+                                LastUpdateTime = "2025-06-18T14:11:06Z"
                                 Message        = ""
                                 Status         = "True"
                                 Type           = "ResourceQuotaInit"
                             },
                           + {
-                              + LastUpdateTime = "2025-04-28T06:58:53Z"
+                              + LastUpdateTime = "2025-06-18T14:11:06Z"
                               + Message        = ""
                               + Status         = "True"
                               + Type           = "InitialRolesPopulated"
@@ -63,27 +69,62 @@ last "tofu apply" which may have affected this plan:
 
       ~ metadata {
           ~ annotations      = {
-              ~ "cattle.io/status"                          = jsonencode(
-                  ~ {
-                      ~ Conditions = [
-                            {
-                                LastUpdateTime = "2025-04-28T06:58:53Z"
-                                Message        = ""
-                                Status         = "True"
-                                Type           = "ResourceQuotaInit"
-                            },
-                          + {
-                              + LastUpdateTime = "2025-04-28T06:58:53Z"
-                              + Message        = ""
-                              + Status         = "True"
-                              + Type           = "InitialRolesPopulated"
-                            },
-                        ]
-                    }
-                )
               + "lifecycle.cattle.io/create.namespace-auth" = "true"
+                # (1 unchanged element hidden)
             }
             name             = "kyverno"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.pull_secrets["gematik-gcr-io-demis-dev-registry-reader"].kubernetes_secret_v1.this has changed
+  ~ resource "kubernetes_secret_v1" "this" {
+        id                             = "kyverno/gematik-gcr-io-demis-dev-registry-reader"
+        # (4 unchanged attributes hidden)
+
+      ~ metadata {
+          + annotations      = {}
+          + labels           = {}
+            name             = "gematik-gcr-io-demis-dev-registry-reader"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.pull_secrets["gematik-gcr-io-demis-prod-registry-reader"].kubernetes_secret_v1.this has changed
+  ~ resource "kubernetes_secret_v1" "this" {
+        id                             = "kyverno/gematik-gcr-io-demis-prod-registry-reader"
+        # (4 unchanged attributes hidden)
+
+      ~ metadata {
+          + annotations      = {}
+          + labels           = {}
+            name             = "gematik-gcr-io-demis-prod-registry-reader"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.pull_secrets["gematik-gcr-io-demis-qs-registry-reader"].kubernetes_secret_v1.this has changed
+  ~ resource "kubernetes_secret_v1" "this" {
+        id                             = "kyverno/gematik-gcr-io-demis-qs-registry-reader"
+        # (4 unchanged attributes hidden)
+
+      ~ metadata {
+          + annotations      = {}
+          + labels           = {}
+            name             = "gematik-gcr-io-demis-qs-registry-reader"
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # module.pull_secrets["gematik-gcr-io-demis-ref-registry-reader"].kubernetes_secret_v1.this has changed
+  ~ resource "kubernetes_secret_v1" "this" {
+        id                             = "kyverno/gematik-gcr-io-demis-ref-registry-reader"
+        # (4 unchanged attributes hidden)
+
+      ~ metadata {
+          + annotations      = {}
+          + labels           = {}
+            name             = "gematik-gcr-io-demis-ref-registry-reader"
             # (4 unchanged attributes hidden)
         }
     }
@@ -99,13 +140,13 @@ last "tofu apply" which may have affected this plan:
                   ~ {
                       ~ Conditions = [
                             {
-                                LastUpdateTime = "2025-04-28T06:58:53Z"
+                                LastUpdateTime = "2025-06-18T14:11:06Z"
                                 Message        = ""
                                 Status         = "True"
                                 Type           = "ResourceQuotaInit"
                             },
                           + {
-                              + LastUpdateTime = "2025-04-28T06:58:53Z"
+                              + LastUpdateTime = "2025-06-18T14:11:06Z"
                               + Message        = ""
                               + Status         = "True"
                               + Type           = "InitialRolesPopulated"
@@ -144,13 +185,13 @@ OpenTofu will perform the following actions:
                     {
                       - Conditions = [
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "ResourceQuotaInit"
                             },
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "InitialRolesPopulated"
@@ -176,13 +217,13 @@ OpenTofu will perform the following actions:
                     {
                       - Conditions = [
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "ResourceQuotaInit"
                             },
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "InitialRolesPopulated"
@@ -208,13 +249,13 @@ OpenTofu will perform the following actions:
                     {
                       - Conditions = [
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "ResourceQuotaInit"
                             },
                           - {
-                              - LastUpdateTime = "2025-04-28T06:58:53Z"
+                              - LastUpdateTime = "2025-06-18T14:11:06Z"
                               - Message        = ""
                               - Status         = "True"
                               - Type           = "InitialRolesPopulated"

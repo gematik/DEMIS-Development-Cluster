@@ -17,8 +17,7 @@ It performs the following operations:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.17.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.36.0 |
-| <a name="requirement_null"></a> [null](#requirement\_null) | 3.2.3 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.37.1 |
 
 ## Modules
 
@@ -39,20 +38,23 @@ It performs the following operations:
 | Name | Type |
 |------|------|
 | [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
 | [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.ldap_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_acl](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_writer_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.36.0/docs/resources/secret) | resource |
-| [null_resource.cus_manual_trigger](https://registry.terraform.io/providers/hashicorp/null/3.2.3/docs/resources/resource) | resource |
-| [null_resource.kup_manual_trigger](https://registry.terraform.io/providers/hashicorp/null/3.2.3/docs/resources/resource) | resource |
+| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_cus_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_gematik_idp_public_key](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.ldap_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.redis_cus_acl](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.redis_cus_writer_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [terraform_data.cus_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.kup_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
@@ -75,9 +77,10 @@ It performs the following operations:
 | <a name="input_helm_repository_password"></a> [helm\_repository\_password](#input\_helm\_repository\_password) | The Password credential for the Helm Repository | `string` | `""` | no |
 | <a name="input_helm_repository_username"></a> [helm\_repository\_username](#input\_helm\_repository\_username) | The Username credential for the Helm Repository | `string` | `""` | no |
 | <a name="input_istio_enabled"></a> [istio\_enabled](#input\_istio\_enabled) | Defines if Istio Settings are enabled for the given target namespace | `bool` | `true` | no |
-| <a name="input_istio_routing_chart_version"></a> [istio\_routing\_chart\_version](#input\_istio\_routing\_chart\_version) | Defines the version of the Istio Routing Chart to be used | `string` | `""` | no |
 | <a name="input_keycloak_admin_password"></a> [keycloak\_admin\_password](#input\_keycloak\_admin\_password) | The Admin Password for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_admin_user"></a> [keycloak\_admin\_user](#input\_keycloak\_admin\_user) | The Admin User for Keycloak | `string` | n/a | yes |
+| <a name="input_keycloak_cus_client_secret"></a> [keycloak\_cus\_client\_secret](#input\_keycloak\_cus\_client\_secret) | client secret of cus-cli (service account) in realm oegd | `string` | n/a | yes |
+| <a name="input_keycloak_gematik_idp_public_key"></a> [keycloak\_gematik\_idp\_public\_key](#input\_keycloak\_gematik\_idp\_public\_key) | The gematik idp public key for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_portal_admin_password"></a> [keycloak\_portal\_admin\_password](#input\_keycloak\_portal\_admin\_password) | The Admin Password for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The Admin User for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The Client-ID for Keycloak PORTAL-Realm | `string` | n/a | yes |
@@ -100,7 +103,6 @@ It performs the following operations:
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>list(object({<br/>    service  = string<br/>    replicas = number<br/>    resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_root_ca_certificate"></a> [root\_ca\_certificate](#input\_root\_ca\_certificate) | The LDAP Root CA Certificate | `string` | n/a | yes |
 | <a name="input_stage_configuration_data_name"></a> [stage\_configuration\_data\_name](#input\_stage\_configuration\_data\_name) | Defines the Name of the Stage Configuration Data to be used in the DEMIS Environment | `string` | n/a | yes |
-| <a name="input_stage_configuration_data_version"></a> [stage\_configuration\_data\_version](#input\_stage\_configuration\_data\_version) | Defines the Version of the Stage Configuration Data to be used in the DEMIS Environment | `string` | `null` | no |
 | <a name="input_sub_ca_certificate"></a> [sub\_ca\_certificate](#input\_sub\_ca\_certificate) | The LDAP Sub CA Certificate | `string` | n/a | yes |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The Namespace to use for deployment | `string` | `"idm"` | no |
 | <a name="input_ti_idp_client_name"></a> [ti\_idp\_client\_name](#input\_ti\_idp\_client\_name) | The client name for access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |

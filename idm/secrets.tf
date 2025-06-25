@@ -75,6 +75,19 @@ resource "kubernetes_secret" "keycloak_admin_account" {
   }
 }
 
+resource "kubernetes_secret" "keycloak_cus_client_secret" {
+  metadata {
+    name      = "keycloak-cus-client-secret"
+    namespace = module.demis_namespace.name
+  }
+
+  immutable = true
+
+  data = {
+    KC_CUS_CLI_SECRET = var.keycloak_cus_client_secret
+  }
+}
+
 resource "kubernetes_secret" "keycloak_portal_secret" {
   metadata {
     name      = "keycloak-portal-secret"
@@ -114,6 +127,19 @@ resource "kubernetes_secret" "keycloak_truststore_password" {
 
   data = {
     KC_SPI_TRUSTSTORE_FILE_PASSWORD = var.keycloak_truststore_password
+  }
+}
+
+resource "kubernetes_secret" "keycloak_gematik_idp_public_key" {
+  metadata {
+    name      = "keycloak-gematik-idp-public-key"
+    namespace = module.demis_namespace.name
+  }
+
+  immutable = true
+
+  data = {
+    JWT_VALIDATION_VERIFICATION_KEY = var.keycloak_gematik_idp_public_key
   }
 }
 

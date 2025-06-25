@@ -49,6 +49,8 @@ locals {
   vs_ars_resources_overrides = try(var.resource_definitions[local.vs_ars_name], {})
   vs_ars_replicas            = lookup(local.vs_ars_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_ars_name].replicas : null
   vs_ars_resource_block      = lookup(local.vs_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_ars_name].resource_block : null
+
+  profile_prefix = strcontains(var.docker_registry, "gematik1") ? "demis-" : ""
 }
 
 # Creates the Virtual Service for the Validation Service delegates
@@ -80,6 +82,15 @@ resource "helm_release" "validation_service" {
   depends_on = [module.validation_service_core[0], module.validation_service_igs[0], module.validation_service_ars[0]]
 }
 
+module "validation_service_core_metadata" {
+  source = "../../modules/fhir-profiles-metadata"
+
+  profile_type              = "${local.profile_prefix}fhir-profile-snapshots"
+  is_canary                 = can(length(var.deployment_information[local.vs_core_name].canary.version))
+  deployment_information    = var.deployment_information[local.vs_core_name]
+  default_profile_snapshots = local.fhir_profile_snapshots
+}
+
 module "validation_service_core" {
   source = "../../modules/helm_deployment"
 
@@ -97,16 +108,28 @@ module "validation_service_core" {
     repository              = var.docker_registry,
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
-    profile_version         = var.fhir_profile_snapshots,
+    profile_version         = local.fhir_profile_snapshots,
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.vs_core_name], {}),
     config_options          = try(var.config_options[local.vs_core_name], {}),
     replica_count           = local.vs_core_replicas,
     resource_block          = local.vs_core_resource_block
+    profile_versions        = module.validation_service_core_metadata.current_profile_versions
+    labels                  = yamlencode(module.validation_service_core_metadata.version_labels)
   })
   istio_values = templatefile(local.vs_core_template_istio, {
-    namespace = var.target_namespace
+    namespace          = var.target_namespace
+    destinationSubsets = yamlencode(module.validation_service_core_metadata.destination_subsets)
   })
+}
+
+module "validation_service_igs_metadata" {
+  source = "../../modules/fhir-profiles-metadata"
+
+  profile_type              = "${local.profile_prefix}igs-profile-snapshots"
+  is_canary                 = can(length(var.deployment_information[local.vs_igs_name].canary.version))
+  deployment_information    = var.deployment_information[local.vs_igs_name]
+  default_profile_snapshots = local.igs_profile_snapshots
 }
 
 module "validation_service_igs" {
@@ -126,16 +149,29 @@ module "validation_service_igs" {
     repository              = var.docker_registry,
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
-    profile_version         = var.igs_profile_snapshots,
+    profile_version         = local.igs_profile_snapshots,
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.vs_igs_name], {}),
     config_options          = try(var.config_options[local.vs_igs_name], {}),
     replica_count           = local.vs_igs_replicas,
     resource_block          = local.vs_igs_resource_block
+    profile_versions        = module.validation_service_igs_metadata.current_profile_versions
+    labels                  = yamlencode(module.validation_service_igs_metadata.version_labels)
   })
   istio_values = templatefile(local.vs_igs_template_istio, {
-    namespace = var.target_namespace
+    namespace          = var.target_namespace
+    destinationSubsets = yamlencode(module.validation_service_igs_metadata.destination_subsets)
   })
+}
+
+module "validation_service_ars_metadata" {
+  # Deploy if enabled
+  source = "../../modules/fhir-profiles-metadata"
+
+  profile_type              = "${local.profile_prefix}ars-profile-snapshots"
+  is_canary                 = can(length(var.deployment_information[local.vs_ars_name].canary.version))
+  deployment_information    = var.deployment_information[local.vs_ars_name]
+  default_profile_snapshots = local.ars_profile_snapshots
 }
 
 module "validation_service_ars" {
@@ -155,14 +191,17 @@ module "validation_service_ars" {
     repository              = var.docker_registry,
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
-    profile_version         = var.ars_profile_snapshots,
+    profile_version         = local.ars_profile_snapshots,
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.vs_ars_name], {}),
     config_options          = try(var.config_options[local.vs_ars_name], {}),
     replica_count           = local.vs_ars_replicas,
     resource_block          = local.vs_ars_resource_block
+    profile_versions        = module.validation_service_ars_metadata.current_profile_versions
+    labels                  = yamlencode(module.validation_service_ars_metadata.version_labels)
   })
   istio_values = templatefile(local.vs_ars_template_istio, {
-    namespace = var.target_namespace
+    namespace          = var.target_namespace
+    destinationSubsets = yamlencode(module.validation_service_ars_metadata.destination_subsets)
   })
 }

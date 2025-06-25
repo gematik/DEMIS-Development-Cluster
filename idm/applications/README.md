@@ -49,7 +49,6 @@ No resources.
 | <a name="input_helm_repository_username"></a> [helm\_repository\_username](#input\_helm\_repository\_username) | The username for the helm repository | `string` | `""` | no |
 | <a name="input_is_local_mode"></a> [is\_local\_mode](#input\_is\_local\_mode) | Flag to define if the cluster is local | `bool` | `false` | no |
 | <a name="input_istio_enabled"></a> [istio\_enabled](#input\_istio\_enabled) | Enable istio for the application | `bool` | `true` | no |
-| <a name="input_istio_routing_chart_version"></a> [istio\_routing\_chart\_version](#input\_istio\_routing\_chart\_version) | The version of the istio routing chart to use | `string` | n/a | yes |
 | <a name="input_keycloak_admin_user"></a> [keycloak\_admin\_user](#input\_keycloak\_admin\_user) | The admin user for keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The admin user for keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The client id for keycloak PORTAL-Realm | `string` | n/a | yes |
@@ -59,8 +58,6 @@ No resources.
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_redis_cus_writer_user"></a> [redis\_cus\_writer\_user](#input\_redis\_cus\_writer\_user) | The Redis CUS User (with Write Permissions) | `string` | n/a | yes |
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>map(object({<br/>    resource_block = optional(string)<br/>    replicas       = number<br/>  }))</pre> | `{}` | no |
-| <a name="input_stage_configuration_data_name"></a> [stage\_configuration\_data\_name](#input\_stage\_configuration\_data\_name) | Defines the Name of the Stage Configuration Data to be used in the DEMIS Environment | `string` | n/a | yes |
-| <a name="input_stage_configuration_data_version"></a> [stage\_configuration\_data\_version](#input\_stage\_configuration\_data\_version) | Defines the Version of the Stage Configuration Data to be used in the DEMIS Environment | `string` | n/a | yes |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The namespace to deploy the application to | `string` | `"demis"` | no |
 | <a name="input_ti_idp_client_name"></a> [ti\_idp\_client\_name](#input\_ti\_idp\_client\_name) | The client name for access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |
 | <a name="input_ti_idp_hostname"></a> [ti\_idp\_hostname](#input\_ti\_idp\_hostname) | The Portal URL to access the DEMIS Notification Portal | `string` | `""` | no |
@@ -76,4 +73,7 @@ No resources.
 | <a name="output_cus_version"></a> [cus\_version](#output\_cus\_version) | The version of Certificate Update Service |
 | <a name="output_kup_enabled"></a> [kup\_enabled](#output\_kup\_enabled) | Whether the Keycloak-User-Purger is enabled |
 | <a name="output_kup_version"></a> [kup\_version](#output\_kup\_version) | The version of Keycloak-User-Purger |
+| <a name="output_stage_configuration_data_name"></a> [stage\_configuration\_data\_name](#output\_stage\_configuration\_data\_name) | Name of the Stage Configuration Data |
+| <a name="output_version_istio_routing_chart"></a> [version\_istio\_routing\_chart](#output\_version\_istio\_routing\_chart) | Version of the Istio Routing Chart being used |
+| <a name="output_version_stage_configuration_data"></a> [version\_stage\_configuration\_data](#output\_version\_stage\_configuration\_data) | Version of the Stage Configuration Data |
 <!-- END_TF_DOCS -->

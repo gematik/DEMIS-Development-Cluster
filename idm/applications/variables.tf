@@ -35,6 +35,64 @@ variable "deployment_information" {
       weight  = optional(string)
     }), {})
   }))
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || can(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", service.main.version))
+    )])
+    error_message = "Service Configuration is not valid. Please recheck service versions syntax."
+  }
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || contains(["canary", "update", "replace"], service.deployment-strategy))
+    ])
+    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update and replace is valid."
+  }
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || service.canary.version == null || can(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", service.canary.version)))
+    ])
+
+    error_message = "Service Configuration is not valid. Please recheck service canary syntax."
+  }
+
+  validation {
+    condition = alltrue([
+      for service in var.deployment_information : true &&
+      (!service.enabled || service.canary.version == null || can(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", service.canary.version)))
+    ])
+
+    error_message = "Service Configuration is not valid. Please recheck service canary syntax."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["istio-routing"], name) || can(var.deployment_information["istio-routing"]))
+    ])
+    error_message = "Service Configuration is not valid. Istio routing chart is not defined."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || can(var.deployment_information["stage-configuration-data"]))
+    ])
+    error_message = "Service Configuration is not valid. Stage configuration data is required for services keycloak and bund-idp."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, service in var.deployment_information : true &&
+      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || can(length(var.deployment_information["stage-configuration-data"].chart-name) > 0))
+    ])
+    error_message = "Service Configuration is not valid. Stage configuration data chart-name is required for services keycloak and bund-idp."
+  }
 }
 
 variable "resource_definitions" {
@@ -78,11 +136,6 @@ variable "helm_repository_password" {
   type        = string
   sensitive   = true
   default     = ""
-}
-
-variable "istio_routing_chart_version" {
-  description = "The version of the istio routing chart to use"
-  type        = string
 }
 
 variable "istio_enabled" {
@@ -191,26 +244,6 @@ variable "database_target_host" {
   validation {
     condition     = length(var.database_target_host) > 0
     error_message = "The Database Hostname must be defined"
-  }
-}
-
-# Stage Configuration Data Version
-variable "stage_configuration_data_version" {
-  type        = string
-  description = "Defines the Version of the Stage Configuration Data to be used in the DEMIS Environment"
-  validation {
-    condition     = length(regex("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", var.stage_configuration_data_version)) > 0
-    error_message = "The version specified is not a valid Semantic Version"
-  }
-}
-
-# Stage Configuration Data Name
-variable "stage_configuration_data_name" {
-  type        = string
-  description = "Defines the Name of the Stage Configuration Data to be used in the DEMIS Environment"
-  validation {
-    condition     = length(var.stage_configuration_data_name) > 0
-    error_message = "The Name of the Stage Configuration Data must be defined"
   }
 }
 

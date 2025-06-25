@@ -22,10 +22,11 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_admissioncontroller_replicas"></a> [admissioncontroller\_replicas](#input\_admissioncontroller\_replicas) | setting replicas of admission controller | `number` | `3` | no |
 | <a name="input_backgroundcontroller_replicas"></a> [backgroundcontroller\_replicas](#input\_backgroundcontroller\_replicas) | setting replicas of background controller | `number` | `2` | no |
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno | `string` | `"3.3.7"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno | `string` | `"3.4.2"` | no |
 | <a name="input_cleanupcontroller_replicas"></a> [cleanupcontroller\_replicas](#input\_cleanupcontroller\_replicas) | setting replicas of cleanup controller | `number` | `2` | no |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Chart Repository for Kyverno | `string` | `"https://kyverno.github.io/kyverno/"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install Kyverno | `string` | `"kyverno"` | no |
+| <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_reportscontroller_replicas"></a> [reportscontroller\_replicas](#input\_reportscontroller\_replicas) | setting replicas of reports controller | `number` | `2` | no |
 
 ## Outputs

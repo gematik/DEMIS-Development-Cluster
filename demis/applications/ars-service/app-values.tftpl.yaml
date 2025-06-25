@@ -1,4 +1,4 @@
-# Values for integrierte-genomische-surveillance-service
+# Values for ars-service
 
 # Enables debug mode
 debug:
@@ -30,6 +30,7 @@ config:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  DEMIS_NETWORK_VALIDATION_SERVICE_ADDRESS: http://validation-service.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

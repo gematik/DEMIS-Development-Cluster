@@ -54,14 +54,6 @@ variable "ti_idp_return_sso_token" {
   default     = "true"
 }
 
-# Stage Configuration Data Version
-variable "stage_configuration_data_version" {
-  type        = string
-  description = "Defines the Version of the Stage Configuration Data to be used in the DEMIS Environment"
-  nullable    = true
-  default     = null
-}
-
 # Stage Configuration Data Name
 variable "stage_configuration_data_name" {
   type        = string

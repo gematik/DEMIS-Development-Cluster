@@ -67,12 +67,14 @@ serverFiles:
         metrics_path: '/actuator/prometheus'
         static_configs:
           - targets:
+            - validation-service-ars.demis.svc.cluster.local:8080
             - validation-service-core.demis.svc.cluster.local:8080
             - validation-service-igs.demis.svc.cluster.local:8080
             - futs-core.demis.svc.cluster.local:8080
             - futs-igs.demis.svc.cluster.local:8080
             - igs-service.demis.svc.cluster.local:8080
             - ars-service.demis.svc.cluster.local:8080
+            - ars-pseudonymization-service.demis.svc.cluster.local:8080
             - gateway-igs.demis.svc.cluster.local:8080
             - pdfgen-service.demis.svc.cluster.local:8080
             - notification-gateway.demis.svc.cluster.local:8080

@@ -35,8 +35,6 @@ target :=
 ### Default Values
 #####################
 STAGE := public
-TF_DIRS := $(shell find $(ROOT_DIR) -name '*.tf' -exec dirname {} \; | sort -u)
-TF_TEST_DIRS := $(shell find $(ROOT_DIR) -name '*.tftest.hcl' -exec dirname {} \; | sort -u)
 
 # check if STAGE_REPOSITORY is empty and set accordingly
 ifeq ($(strip $(STAGE_REPOSITORY)),)
@@ -103,12 +101,22 @@ infrastructure: init-infrastructure validate ## Creates the Kubernetes cluster
 	cd $(WORKING_PATH)/service-mesh/grafana/dashboards/
 	sh ./downloader.sh
 	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
-	$(TF_BIN) plan ${VAR_FILE_ARGS} -lock=false -refresh-only
+	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
 	echo "## Computing Plan"
-	$(TF_BIN) plan ${VAR_FILE_ARGS} -out=tfplan.out
+	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out
 	echo "## Applying Plan"
-	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
+	$(TF_BIN) apply -refresh-only $(TERRAFORM_EXTRA_ARGS) tfplan.out
+
+init-infrastructure: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
+init-infrastructure: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
+init-infrastructure: ## Initializes the Terraform infrastructure environment
+	cd $(WORKING_PATH)
+	@echo "## Initialising the infrastructure project"
+	@echo "$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+	@echo "## Initialising the infrastructure project done"
 
 .PHONY: cleanup-infrastructure
 cleanup-infrastructure: export WORKING_PATH=$(ROOT_DIR)/$(INFRASTRUCTURE_PATH)
@@ -201,15 +209,6 @@ cleanup-services:
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
 
-init-infrastructure: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
-init-infrastructure: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
-init-infrastructure: ## Initializes the Terraform infrastructure environment
-	cd $(WORKING_PATH)
-	@echo "## Initialising the infrastructure project"
-	@echo "$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}"
-	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
-	@echo "## Initialising the infrastructure project done"
-
 init-services: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(APPLICATIONS_ENV_FOLDER) STAGE=$(STAGE))
 init-services: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(APPLICATIONS_ENV_FOLDER) STAGE=$(STAGE))
 init-services: ## Initializes the Terraform DEMIS Services
@@ -259,7 +258,12 @@ init-stage:
 	if [ -d "$(ENV_FOLDER)" ]; then \
 		echo "Repository for $(STAGE) already present, try git pull" && \
 		cd $(ENV_FOLDER) && \
-		git pull || exit 1; \
+		if git symbolic-ref --short -q HEAD > /dev/null; then \
+			echo "## Pulling latest changes from $(STAGE_REPOSITORY)"; \
+			git pull || exit 1; \
+		else \
+			echo "No branch checked out, skip git pull"; \
+		fi \
 	else \
 		git clone $(STAGE_REPOSITORY) $(ENV_FOLDER) || exit 1; \
 	fi
@@ -363,8 +367,8 @@ endif
 .PHONY: docs
 docs: ## Generates documentation for all terraform modules
 	@echo "## Generating documentation for all terraform modules"
-	@for dir in $(TF_DIRS); do \
-		terraform-docs -c "$(ROOT_DIR)/.tfdocs.yaml" "$$dir"
+	@for dir in $(shell find $(ROOT_DIR) -name '*.tf' -exec dirname {} \; | sort -u); do \
+		terraform-docs -c "$(ROOT_DIR)/.tfdocs.yaml" "$$dir"; \
 	done
 
 .PHONY: lint
@@ -395,11 +399,11 @@ checkov: ## Runs Checkov to check for security issues
 
 .PHONY: test-modules
 test-modules: ## Runs tests for all modules
-	@for dir in $(TF_TEST_DIRS); do \
-		printf "## Testing module: %s\n" "$$dir";
-		cd "$$dir"
-		tofu init 1> /dev/null;
-		tofu test -v 1> /dev/null;
+	@for dir in $(shell find $(ROOT_DIR) -name '*.tftest.hcl' -exec dirname {} \; | sort -u); do \
+		printf "## Testing module: %s\n" "$$dir"; \
+		cd "$$dir"; \
+		tofu init 1> /dev/null; \
+		tofu test -v 1> /dev/null; \
 	done
 
 .PHONY: chores

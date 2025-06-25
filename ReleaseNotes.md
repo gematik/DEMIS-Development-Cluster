@@ -2,6 +2,19 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.3.0
+- Add functionality defining alternative fhir-profile-snapshot version for futs
+- fix null update for profiles in canary to main transition on active-versions.yaml
+
+## Release 3.2.0
+- Add charts for new service 'ars-pseudonymization-service'
+- Add charts for new service 'terminology-server'
+- Add functionality defining multiple profiles for validation services
+
+## Release 3.1.0
+- Add new secret for keycloak token exchange
+- Add new secret for certificate-update-service
+
 ## Release 3.0.0
 - Helm Chart Template Values are now part of theis repository
 - Resources and Replicas can be fully customised over a variable

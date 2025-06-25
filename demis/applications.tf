@@ -7,7 +7,6 @@ module "demis_services" {
   helm_repository                   = var.helm_repository
   helm_repository_username          = var.helm_repository_username
   helm_repository_password          = var.helm_repository_password
-  istio_routing_chart_version       = local.istio_routing_chart_version
   target_namespace                  = var.target_namespace
   pull_secrets                      = local.pull_secrets_credentials
   redis_cus_reader_user             = var.redis_cus_reader_user
@@ -21,10 +20,6 @@ module "demis_services" {
   auth_hostname                     = module.endpoints.auth_hostname
   storage_hostname                  = module.endpoints.storage_hostname
   cluster_gateway                   = module.endpoints.istio_gateway_fullname
-  fhir_profile_snapshots            = local.fhir_profile_snapshots
-  igs_profile_snapshots             = local.igs_profile_snapshots
-  ars_profile_snapshots             = local.ars_profile_snapshots
-  routing_data_version              = local.routing_data_version
   database_target_host              = var.database_target_host
   s3_hostname                       = var.s3_hostname
   s3_port                           = var.s3_port

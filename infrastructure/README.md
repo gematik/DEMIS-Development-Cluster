@@ -25,8 +25,8 @@ It performs the following operations:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.17.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.36.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | 3.7.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.37.1 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.7.2 |
 
 ## Modules
 
@@ -39,6 +39,7 @@ It performs the following operations:
 | <a name="module_kyverno_namespace"></a> [kyverno\_namespace](#module\_kyverno\_namespace) | ../modules/namespace | n/a |
 | <a name="module_kyverno_policy_reporter"></a> [kyverno\_policy\_reporter](#module\_kyverno\_policy\_reporter) | ./security/policy-reporter | n/a |
 | <a name="module_local_cluster"></a> [local\_cluster](#module\_local\_cluster) | ./local-cluster-setup | n/a |
+| <a name="module_pull_secrets"></a> [pull\_secrets](#module\_pull\_secrets) | ../modules/pull_secret | n/a |
 | <a name="module_remote_cluster"></a> [remote\_cluster](#module\_remote\_cluster) | ./remote-cluster-setup | n/a |
 | <a name="module_security_metadata"></a> [security\_metadata](#module\_security\_metadata) | ../modules/metadata | n/a |
 | <a name="module_security_namespace"></a> [security\_namespace](#module\_security\_namespace) | ../modules/namespace | n/a |
@@ -55,11 +56,13 @@ No resources.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | The name of the region where the cluster is deployed | `string` | n/a | yes |
 | <a name="input_cluster_role_name"></a> [cluster\_role\_name](#input\_cluster\_role\_name) | Defines the Cluster Role Name to be configured | `string` | `"api-cluster-role"` | no |
+| <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_falco_driver_kind"></a> [falco\_driver\_kind](#input\_falco\_driver\_kind) | sets the specfifc driver kind of the probe inside the nodes. Default of Falco is auto. The options are: kmod, ebpf, modern\_ebpf, We can enforce that if needed. | `string` | `"auto"` | no |
 | <a name="input_falco_enabled"></a> [falco\_enabled](#input\_falco\_enabled) | Activates/Deactivates the deployment of Falco | `bool` | `false` | no |
 | <a name="input_falco_falcosidekick_enabled"></a> [falco\_falcosidekick\_enabled](#input\_falco\_falcosidekick\_enabled) | enables falcosidekick | `bool` | `false` | no |
 | <a name="input_falco_falcosidekick_ui_enabled"></a> [falco\_falcosidekick\_ui\_enabled](#input\_falco\_falcosidekick\_ui\_enabled) | enables falcosidekick | `bool` | `false` | no |
 | <a name="input_falco_kubernetes_meta_collector"></a> [falco\_kubernetes\_meta\_collector](#input\_falco\_kubernetes\_meta\_collector) | enables the k8s metacollector plugin | `bool` | `true` | no |
+| <a name="input_google_cloud_access_token"></a> [google\_cloud\_access\_token](#input\_google\_cloud\_access\_token) | The User-Token for accessing the Google Artifact Registry. <br/>  Typically obtained with the command: 'gcloud auth print-access-token' | `string` | `""` | no |
 | <a name="input_kind_cluster_name"></a> [kind\_cluster\_name](#input\_kind\_cluster\_name) | Defines the name of the local KIND cluster | `string` | `""` | no |
 | <a name="input_kind_image_tag"></a> [kind\_image\_tag](#input\_kind\_image\_tag) | Defines the KIND Image Tag to use. | `string` | `"v1.32.2"` | no |
 | <a name="input_kind_worker_nodes"></a> [kind\_worker\_nodes](#input\_kind\_worker\_nodes) | Defines the number of KIND Worker Nodes to be created | `number` | `2` | no |

@@ -48,16 +48,6 @@ locals {
   istio_authentication_policies_chart_version = local.deployment_information["policies-authentications"].main.version
   istio_authorization_policies_chart_version  = local.deployment_information["policies-authorizations"].main.version
   istio_network_policies_chart_version        = local.deployment_information["network-rules"].main.version
-  # The version of the FHIR Profile Snapshots to use
-  fhir_profile_snapshots = try(local.deployment_information["fhir-profile-snapshots"].main.version, var.fhir_profile_snapshots)
-  # The version of the IGS Profile Snapshots to use
-  igs_profile_snapshots = try(local.deployment_information["igs-profile-snapshots"].main.version, var.igs_profile_snapshots)
-  # The version of the ARS Profile Snapshots to use
-  ars_profile_snapshots = try(local.deployment_information["ars-profile-snapshots"].main.version, var.ars_profile_snapshots)
-  # The version of the Routing Data to use
-  routing_data_version = try(local.deployment_information["notification-routing-data"].main.version, var.routing_data_version)
-  # The version of the Istio Routing Chart to be used
-  istio_routing_chart_version = try(local.deployment_information["istio-routing"].main.version, var.routing_data_version)
 }
 
 # Define the Endpoints
