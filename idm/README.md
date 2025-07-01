@@ -80,7 +80,6 @@ It performs the following operations:
 | <a name="input_keycloak_admin_password"></a> [keycloak\_admin\_password](#input\_keycloak\_admin\_password) | The Admin Password for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_admin_user"></a> [keycloak\_admin\_user](#input\_keycloak\_admin\_user) | The Admin User for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_cus_client_secret"></a> [keycloak\_cus\_client\_secret](#input\_keycloak\_cus\_client\_secret) | client secret of cus-cli (service account) in realm oegd | `string` | n/a | yes |
-| <a name="input_keycloak_gematik_idp_public_key"></a> [keycloak\_gematik\_idp\_public\_key](#input\_keycloak\_gematik\_idp\_public\_key) | The gematik idp public key for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_portal_admin_password"></a> [keycloak\_portal\_admin\_password](#input\_keycloak\_portal\_admin\_password) | The Admin Password for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The Admin User for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The Client-ID for Keycloak PORTAL-Realm | `string` | n/a | yes |

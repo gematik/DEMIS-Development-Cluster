@@ -9,6 +9,10 @@ locals {
   fts_resources_overrides = try(var.resource_definitions[local.fts_name], {})
   fts_replicas            = lookup(local.fts_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.fts_name].replicas : null
   fts_resource_block      = lookup(local.fts_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.fts_name].resource_block : null
+  # FHIR Profile Snapshots
+  fts_ars_profile_snapshots  = length(module.validation_service_ars_metadata.current_profile_versions) > 0 ? module.validation_service_ars_metadata.current_profile_versions : [local.ars_profile_snapshots]
+  fts_fhir_profile_snapshots = length(module.validation_service_core_metadata.current_profile_versions) > 0 ? module.validation_service_core_metadata.current_profile_versions : [local.fhir_profile_snapshots]
+  fts_igs_profile_snapshots  = length(module.validation_service_igs_metadata.current_profile_versions) > 0 ? module.validation_service_igs_metadata.current_profile_versions : [local.igs_profile_snapshots]
 }
 
 module "terminology_server" {
@@ -30,9 +34,9 @@ module "terminology_server" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
-    ars_profile_version     = local.ars_profile_snapshots,
-    fhir_profile_version    = local.fhir_profile_snapshots,
-    igs_profile_version     = local.igs_profile_snapshots,
+    ars_profile_versions    = local.fts_ars_profile_snapshots,
+    fhir_profile_versions   = local.fts_fhir_profile_snapshots,
+    igs_profile_versions    = local.fts_igs_profile_snapshots,
     feature_flags           = try(var.feature_flags[local.fts_name], {}),
     config_options          = try(var.config_options[local.fts_name], {}),
     replica_count           = local.fts_replicas,

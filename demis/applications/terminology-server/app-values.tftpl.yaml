@@ -14,7 +14,7 @@ required:
     images:
       - name: ars-profile-snapshots
         versions:
-          %{~ for version in split(",", ars_profile_version) ~}
+          %{~ for version in ars_profile_versions ~}
           - ${version}
           %{~ endfor ~}
       %{ if strcontains(repository, "gematik1") }
@@ -23,12 +23,12 @@ required:
       - name: fhir-profile-snapshots
       %{ endif }
         versions:
-          %{~ for version in split(",", fhir_profile_version) ~}
+          %{~ for version in fhir_profile_versions ~}
           - ${version}
           %{~ endfor ~}
       - name: igs-profile-snapshots
         versions:
-          %{~ for version in split(",", igs_profile_version) ~}
+          %{~ for version in igs_profile_versions ~}
           - ${version}
           %{~ endfor ~}
 
