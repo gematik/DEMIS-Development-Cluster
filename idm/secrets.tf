@@ -137,10 +137,6 @@ resource "kubernetes_secret" "keycloak_gematik_idp_public_key" {
   }
 
   immutable = true
-
-  data = {
-    JWT_VALIDATION_VERIFICATION_KEY = var.keycloak_gematik_idp_public_key
-  }
 }
 
 resource "kubernetes_secret" "ldap_certificates" {

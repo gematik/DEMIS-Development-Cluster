@@ -2,6 +2,14 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.4.4
+- Remove keycloak-gematik-idp-public-key as variable and add as config option.
+
+## Release 3.4.3
+- Terminology server FHIR snapshot configuration change to apply all validation services' snapshots
+- Update Database Pipeline for abc Cluster
+- Added default addresses for 'ars-service'
+
 ## Release 3.4.2
 - Update gitignore
  
