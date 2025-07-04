@@ -51,7 +51,7 @@ config:
       # Define the Truststore
       # IMPORTANT: these values must be defined in the Secret
       entries:
-        truststore.jks: truststore.jks
+        truststore.p12: truststore.p12
     # The (external) Secret for Truststore Password
     passwords:
       # The name of the (external) Secret for Truststore Password and the entries to be used and mapped
