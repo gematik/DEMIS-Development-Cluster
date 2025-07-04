@@ -2,8 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
-## Release 3.4.4
+## Release 3.5.0
 - Remove keycloak-gematik-idp-public-key as variable and add as config option.
+- Change keycloak truststore from jks to p12
 
 ## Release 3.4.3
 - Terminology server FHIR snapshot configuration change to apply all validation services' snapshots

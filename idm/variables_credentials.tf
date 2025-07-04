@@ -110,10 +110,10 @@ variable "keycloak_truststore_password" {
   description = "The Truststore Password for Keycloak"
 }
 
-variable "keycloak_truststore_jks" {
+variable "keycloak_truststore_p12" {
   type        = string
   sensitive   = true
-  description = "The Truststore JKS for Keycloak in Base64 Format"
+  description = "The Truststore P12 for Keycloak in Base64 Format"
 }
 
 variable "keycloak_cus_client_secret" {
