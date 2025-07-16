@@ -39,7 +39,6 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_portal_shell"></a> [portal\_shell](#module\_portal\_shell) | ../../modules/helm_deployment | n/a |
 | <a name="module_postgres"></a> [postgres](#module\_postgres) | ../../modules/helm_deployment | n/a |
 | <a name="module_pseudonymization_service"></a> [pseudonymization\_service](#module\_pseudonymization\_service) | ../../modules/helm_deployment | n/a |
-| <a name="module_pseudonymization_storage_service"></a> [pseudonymization\_storage\_service](#module\_pseudonymization\_storage\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_report_processing_service"></a> [report\_processing\_service](#module\_report\_processing\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_terminology_server"></a> [terminology\_server](#module\_terminology\_server) | ../../modules/helm_deployment | n/a |
 | <a name="module_validation_service_ars"></a> [validation\_service\_ars](#module\_validation\_service\_ars) | ../../modules/helm_deployment | n/a |

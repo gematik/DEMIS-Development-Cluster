@@ -22,10 +22,6 @@ config:
       host: ${database_host}
       port: 5432
       dbname: notification
-    espri_demis:
-      host: ${database_host}
-      port: 5432
-      dbname: espri_demis
     pseudonymization:
       host: ${database_host}
       port: 5432

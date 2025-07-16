@@ -2,11 +2,18 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.6.0
+- Remove deprecated Pseudonymization-Storage-Service
+- use last version of activated gcp secrets for deployments
+- Remove NCAPI References + API Key
+- Add Filter to exclude option values with null values
+- Add ABC Prod Fra
+
 ## Release 3.5.0
 - Remove keycloak-gematik-idp-public-key as variable and add as config option.
-- Change keycloak truststore from jks to p12
 
 ## Release 3.4.3
+- Remove keycloak-gematik-idp-public-key as variable and add as config option.
 - Terminology server FHIR snapshot configuration change to apply all validation services' snapshots
 - Update Database Pipeline for abc Cluster
 - Added default addresses for 'ars-service'

@@ -25,7 +25,7 @@ variable "config_options" {
   default     = []
 
   validation {
-    condition     = length(var.config_options) > 0 ? alltrue([for co in var.config_options : length(co.option_name) > 0 && length(co.option_value) > 0]) : true
+    condition     = length(var.config_options) > 0 ? alltrue([for co in var.config_options : length(co.option_name) > 0 && (co.option_value == null || length(co.option_value) >= 0)]) : true
     error_message = "Configuration options must not be empty"
   }
 }

@@ -84,7 +84,7 @@ It performs the following operations:
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The Admin User for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The Client-ID for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_secret"></a> [keycloak\_portal\_client\_secret](#input\_keycloak\_portal\_client\_secret) | The Client-Secret for Keycloak PORTAL-Realm | `string` | n/a | yes |
-| <a name="input_keycloak_truststore_p12"></a> [keycloak\_truststore\_p12](#input\_keycloak\_truststore\_p12) | The Truststore P12 for Keycloak in Base64 Format | `string` | n/a | yes |
+| <a name="input_keycloak_truststore_jks"></a> [keycloak\_truststore\_jks](#input\_keycloak\_truststore\_jks) | The Truststore JKS for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_truststore_password"></a> [keycloak\_truststore\_password](#input\_keycloak\_truststore\_password) | The Truststore Password for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_user_import_enabled"></a> [keycloak\_user\_import\_enabled](#input\_keycloak\_user\_import\_enabled) | Activate Keycloak user import | `bool` | `false` | no |
 | <a name="input_keycloak_user_purger_cron_schedule"></a> [keycloak\_user\_purger\_cron\_schedule](#input\_keycloak\_user\_purger\_cron\_schedule) | Defines the Cron Schedule for the Keycloak-User-Purger | `string` | n/a | yes |

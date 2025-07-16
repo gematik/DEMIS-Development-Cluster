@@ -93,11 +93,6 @@ variable "postgres_server_key" {
 ################################
 # DEMIS Application Credentials
 ################################
-variable "ncapi_apikey" {
-  type        = string
-  sensitive   = true
-  description = "The API Key for the NCAPI Service"
-}
 
 # Notification Gateway Credentials
 variable "gateway_auth_cert_password" {

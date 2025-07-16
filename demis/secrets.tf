@@ -52,19 +52,6 @@ resource "kubernetes_secret" "pgbouncer_userlist" {
   }
 }
 
-resource "kubernetes_secret" "ncapi_apikey" {
-  metadata {
-    name      = "ncapi-apikey"
-    namespace = module.demis_namespace.name
-  }
-
-  immutable = true
-
-  data = {
-    NCS_APIKEY = var.ncapi_apikey
-  }
-}
-
 resource "kubernetes_secret" "notification_gateway_passwords" {
   metadata {
     name      = "notification-gateway-passwords"
