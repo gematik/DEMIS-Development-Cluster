@@ -113,7 +113,7 @@ resource "kubernetes_secret" "keycloak_truststore_file" {
   immutable = true
 
   binary_data = {
-    "truststore.p12" = var.keycloak_truststore_p12
+    "truststore.jks" = var.keycloak_truststore_jks
   }
 }
 

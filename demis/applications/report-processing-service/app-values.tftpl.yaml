@@ -23,7 +23,7 @@ customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   DEMIS_NETWORK_VALIDATION_SERVICE_ADDRESS: http://validation-service.${namespace}.svc.cluster.local
-  DEMIS_NETWORK_NOTIFICATION_CLEARING_API_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local/notification-clearing-api/fhir
+  DEMIS_NETWORK_FHIR_STORAGE_WRITER_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local/notification-clearing-api/fhir
   DEMIS_NETWORK_HOSPITAL_LOCATION_SERVICE_ADDRESS: http://hospital-location-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_PDFGEN_SERVICE_ADDRESS: http://pdfgen-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_CONTEXT_ENRICHMENT_SERVICE_ADDRESS: http://context-enrichment-service.${namespace}.svc.cluster.local
