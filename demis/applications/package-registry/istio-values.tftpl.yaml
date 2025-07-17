@@ -1,5 +1,5 @@
 # Application Information
-appName: "ars-pseudonymization-service"
+appName: "package-registry"
 appNamespace: "${namespace}" # defaults to Release.Namespace
 # Settings for the Kubernetes Service Object for the Application
 appServiceType: ClusterIP
@@ -14,7 +14,7 @@ appServicePortName: http
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
-    - uri:
-        prefix: /
+      - uri:
+          prefix: /
     rewrite:
       uri: /

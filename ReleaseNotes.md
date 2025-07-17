@@ -2,12 +2,20 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.7.0
+- Add new service: surveillance-pseudonym-service-ars
+- Remove external virtual service from package-registry
+- remove NCAPI and pseudo-storage database from pgbouncer and postgres
+- Update switch Database Script
+
 ## Release 3.6.0
 - Remove deprecated Pseudonymization-Storage-Service
 - use last version of activated gcp secrets for deployments
 - Remove NCAPI References + API Key
 - Add Filter to exclude option values with null values
+- Added new service: Package Registry
 - Add ABC Prod Fra
+- Remove external virtual service from ars-pseudonymization-service
 
 ## Release 3.5.0
 - Remove keycloak-gematik-idp-public-key as variable and add as config option.
