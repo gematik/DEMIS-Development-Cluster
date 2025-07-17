@@ -29,10 +29,6 @@ virtualServiceHttpRules:
         exact: GET
     rewrite:
       uri: /notification-clearing-api
-    mirror:
-      host: notification-clearing-api.${namespace}.svc.cluster.local
-    mirrorPercentage:
-      value: 100.0
 
 virtualServiceExternalHttpRules:
   - match:
