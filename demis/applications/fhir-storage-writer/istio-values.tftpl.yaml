@@ -19,10 +19,3 @@ virtualServiceHttpRules:
     rewrite:
       uri: /notification-clearing-api
     timeout: 15s
-    mirror:
-      host: notification-clearing-api.${namespace}.svc.cluster.local
-      port:
-        number: 8080
-    mirrorPercentage:
-      value: 100.0
-

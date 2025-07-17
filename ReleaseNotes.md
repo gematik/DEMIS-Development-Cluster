@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.7.1
+- remove NCAPI mirror
+
 ## Release 3.7.0
 - Add new service: surveillance-pseudonym-service-ars
 - Remove external virtual service from package-registry
