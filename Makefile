@@ -89,6 +89,7 @@ help:
 	@echo "cleanup-services               		- Removes the DEMIS Services"
 	@echo "get-backend-config-args-for-folder	- getting backend.tfvars file path as terraform backend-config argument"
 	@echo "get-var-file-args-for-folder   		- getting all tfvars file paths as terraform arguments except backend.tfvars"
+	@echo "docs                                 - updates README.md, after adjustments."
 	@echo -e "### \e[36mSelectors\e[0m available:"
 	@echo ""
 	@echo "local                          		- Defines the Local environment"

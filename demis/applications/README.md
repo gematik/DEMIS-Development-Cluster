@@ -30,6 +30,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_notification_gateway"></a> [notification\_gateway](#module\_notification\_gateway) | ../../modules/helm_deployment | n/a |
 | <a name="module_notification_processing_service"></a> [notification\_processing\_service](#module\_notification\_processing\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_notification_routing_service"></a> [notification\_routing\_service](#module\_notification\_routing\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_package_registry"></a> [package\_registry](#module\_package\_registry) | ../../modules/helm_deployment | n/a |
 | <a name="module_pdfgen_service"></a> [pdfgen\_service](#module\_pdfgen\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_pgbouncer"></a> [pgbouncer](#module\_pgbouncer) | ../../modules/helm_deployment | n/a |
 | <a name="module_portal_bedoccupancy"></a> [portal\_bedoccupancy](#module\_portal\_bedoccupancy) | ../../modules/helm_deployment | n/a |
@@ -40,6 +41,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_postgres"></a> [postgres](#module\_postgres) | ../../modules/helm_deployment | n/a |
 | <a name="module_pseudonymization_service"></a> [pseudonymization\_service](#module\_pseudonymization\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_report_processing_service"></a> [report\_processing\_service](#module\_report\_processing\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_surveillance_pseudonym_service_ars"></a> [surveillance\_pseudonym\_service\_ars](#module\_surveillance\_pseudonym\_service\_ars) | ../../modules/helm_deployment | n/a |
 | <a name="module_terminology_server"></a> [terminology\_server](#module\_terminology\_server) | ../../modules/helm_deployment | n/a |
 | <a name="module_validation_service_ars"></a> [validation\_service\_ars](#module\_validation\_service\_ars) | ../../modules/helm_deployment | n/a |
 | <a name="module_validation_service_ars_metadata"></a> [validation\_service\_ars\_metadata](#module\_validation\_service\_ars\_metadata) | ../../modules/fhir-profiles-metadata | n/a |

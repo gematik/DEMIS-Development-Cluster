@@ -18,10 +18,6 @@ imagePullSecrets:
 # Define custom configuration values
 config:
   databases:
-    notification:
-      host: ${database_host}
-      port: 5432
-      dbname: notification
     pseudonymization:
       host: ${database_host}
       port: 5432

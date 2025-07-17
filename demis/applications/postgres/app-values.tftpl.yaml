@@ -29,11 +29,6 @@ customEnvVars:
   %{~ endfor ~}
 
 extraEnvVars:
-  - name: NOTIFICATION_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: ncapi-database-secret
-        key: NOTIFICATION_DB_PASSWORD
   - name: FHIR_STORAGE_WRITER_DDL_DB_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -54,11 +49,6 @@ extraEnvVars:
       secretKeyRef:
         name: fhir-storage-reader-database-secret
         key: FHIR_STORAGE_READER_DB_PASSWORD
-  - name: ESPRI_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: pseudo-storage-database-secret
-        key: ESPRI_DB_PASSWORD
   - name: PSEUDO_DB_PASSWORD
     valueFrom:
       secretKeyRef:
