@@ -2,6 +2,10 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 3.7.2
+- skip manual job creation if job is suspended (CUS, FSP, KUP)
+- add surveillance-pseudonym database to pgbouncer
+
 ## Release 3.7.1
 - remove NCAPI mirror
 
