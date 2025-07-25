@@ -26,6 +26,10 @@ config:
       host: ${database_host}
       port: 5432
       dbname: fhir-storage
+    surveillance-pseudonym:
+      host: ${database_host}
+      port: 5432
+      dbname: surveillance-pseudonym
   pgbouncer:
     server_lifetime: "300"
     max_client_conn: "200"
