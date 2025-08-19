@@ -25,16 +25,17 @@ module "gateway_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.gateway_igs_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    core_hostname      = var.core_hostname,
-    namespace          = var.target_namespace,
-    feature_flags      = try(var.feature_flags[local.gateway_igs_name], {}),
-    config_options     = try(var.config_options[local.gateway_igs_name], {}),
-    replica_count      = local.gateway_igs_replicas,
-    resource_block     = local.gateway_igs_resource_block
+    image_pull_secrets             = var.pull_secrets,
+    repository                     = var.docker_registry,
+    debug_enable                   = var.debug_enabled,
+    istio_enable                   = var.istio_enabled,
+    core_hostname                  = var.core_hostname,
+    namespace                      = var.target_namespace,
+    feature_flags                  = try(var.feature_flags[local.gateway_igs_name], {}),
+    config_options                 = try(var.config_options[local.gateway_igs_name], {}),
+    replica_count                  = local.gateway_igs_replicas,
+    resource_block                 = local.gateway_igs_resource_block,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
   })
   istio_values = templatefile(local.gateway_igs_template_istio, {
     namespace       = var.target_namespace,

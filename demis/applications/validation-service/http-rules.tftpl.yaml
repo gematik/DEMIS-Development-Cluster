@@ -1,0 +1,46 @@
+%{ for version in distinct(compact([ for subset in concat(tolist(subsets.main), tolist(subsets.canary)): join("",regex("(0|[1-9]\\d*)",subset.labels.fhirProfileVersion)) if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion))) ])) ~}
+- match:
+    - headers:
+        x-fhir-api-version:
+          exact: v${version}
+  route:
+%{ for s in [ for subset in concat(tolist(subsets.main), tolist(subsets.canary)): subset if (!can(length(subset.labels.fhirProfileVersions_0)) && try(startswith(subset.labels.fhirProfileVersion, version), false))] ~}
+    - destination:
+        host: {{ include "routing.application.host" . }}
+        subset: ${s.name}
+        port:
+          number: {{ .Values.appServicePortExternal }}
+      weight: ${s.weight}
+%{ endfor ~}
+%{ endfor ~}
+%{ if length([for sub in concat(tolist(subsets.main), tolist(subsets.canary)): sub if can(length(sub.labels.fhirProfileVersions_0))]) >= 1 || (length(distinct(compact([for subset in tolist(subsets.main): subset.labels.fhirProfileVersion if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))]))) <= 1 && length(distinct(compact([for subset in tolist(subsets.canary): subset.labels.fhirProfileVersion if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))]))) <= 1) ~}
+- route:
+%{ endif  ~}
+%{ for s in [ for subset in concat(tolist(subsets.main), tolist(subsets.canary)): subset if can(length(subset.labels.fhirProfileVersions_0))] ~}
+    - destination:
+        host: {{ include "routing.application.host" . }}
+        subset: ${s.name}
+        port:
+          number: {{ .Values.appServicePortExternal }}
+      weight: ${s.weight}
+%{ endfor ~}
+%{ if length(distinct(compact([for subset in tolist(subsets.main): subset.labels.fhirProfileVersion if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))]))) < 2 ~}
+%{ for s in [ for subset in tolist(subsets.main): subset if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))] ~}
+    - destination:
+        host: {{ include "routing.application.host" . }}
+        subset: ${s.name}
+        port:
+          number: {{ .Values.appServicePortExternal }}
+      weight: ${s.weight}
+%{ endfor ~}
+%{ endif ~}
+%{ if length(distinct(compact([for subset in tolist(subsets.canary): subset.labels.fhirProfileVersion if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))]))) < 2 }
+%{ for s in [ for subset in tolist(subsets.canary): subset if (!can(length(subset.labels.fhirProfileVersions_0)) && can(length(subset.labels.fhirProfileVersion)))] ~}
+    - destination:
+        host: {{ include "routing.application.host" . }}
+        subset: ${s.name}
+        port:
+          number: {{ .Values.appServicePortExternal }}
+      weight: ${s.weight}
+%{ endfor ~}
+%{ endif ~}

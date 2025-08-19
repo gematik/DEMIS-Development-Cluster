@@ -30,6 +30,17 @@ virtualServiceHttpRules:
         prefix: /gateway/notification/api/ng
     rewrite:
       uri: /api/ng
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+    - uri:
+        prefix: /gateway/pathogen
+    - uri:
+        prefix: /gateway/disease
+    - uri:
+        prefix: /gateway/bedoccupancy
+    rewrite:
+      uri: /
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
@@ -37,6 +48,22 @@ virtualServiceExternalHttpRules:
         gateway-request:
           exact: "true"
       uri:
+%{ if feature_flag_new_api_endpoints ~}
         prefix: ${context_path}/gateway/notification/api/ng
+%{ else ~}
+        prefix: ${context_path}/gateway/notification
+%{ endif ~}
     rewrite:
-      uri: /api/ng
+      uri: /
+
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+    - uri:
+        prefix: ${context_path}/gateway/pathogen
+    - uri:
+        prefix: ${context_path}/gateway/disease
+    - uri:
+        prefix: ${context_path}/gateway/bedoccupancy
+    rewrite:
+      uri: /
+%{ endif ~}

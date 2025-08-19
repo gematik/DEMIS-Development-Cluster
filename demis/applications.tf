@@ -29,6 +29,9 @@ module "demis_services" {
   feature_flags                     = module.application_flags.service_feature_flags
   config_options                    = module.application_flags.service_config_options
   resource_definitions              = module.application_resources.service_resource_definitions
+  profile_provisioning_mode_vs_core = var.profile_provisioning_mode_vs_core
+  profile_provisioning_mode_vs_igs  = var.profile_provisioning_mode_vs_igs
+  profile_provisioning_mode_vs_ars  = var.profile_provisioning_mode_vs_ars
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
 }

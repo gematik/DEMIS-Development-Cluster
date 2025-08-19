@@ -23,16 +23,39 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: /notification-clearing-api/fhir
+      method:
+        exact: GET
+    - uri:
+        prefix: /
+      method:
+        exact: GET
+    rewrite:
+      uri: /
+%{ else ~}
     - uri:
         prefix: /notification-clearing-api
       method:
         exact: GET
     rewrite:
       uri: /notification-clearing-api
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
-      - uri:
-          prefix: ${context_path}/notification-clearing-api
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: ${context_path}/notification-clearing-api/fhir
+    - uri:
+        prefix: ${context_path}/notifications/v1/fhir
+    rewrite:
+      uri: /
+%{ else ~}
+    - uri:
+        prefix: ${context_path}/notification-clearing-api
     rewrite:
       uri: /notification-clearing-api
+
+%{ endif ~}

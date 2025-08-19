@@ -23,7 +23,11 @@ imagePullSecrets:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+%{ if feature_flag_new_api_endpoints ~}
+  EXTERNAL_SERVER_URL: "https://${core_hostname}${context_path}/notifications/v1/fhir/"
+%{ else ~}
   EXTERNAL_SERVER_URL: "https://${core_hostname}${context_path}/"
+%{ endif ~}
   DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/fhir-storage"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}

@@ -1,4 +1,5 @@
 locals {
+  vs_http_rules_file = "http-rules.tftpl.yaml"
   #################################
   # Validation Service Delegation #
   #################################
@@ -7,6 +8,11 @@ locals {
   vs_enabled = contains(local.service_names, local.vs_name) ? var.deployment_information[local.vs_name].enabled : false
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
   vs_template_istio = fileexists("${var.external_chart_path}/${local.vs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_name}/${local.istio_values_file}" : "${path.module}/${local.vs_name}/${local.istio_values_file}"
+
+  ####################################
+  # Validation Service http template #
+  ####################################
+  vs_template_http_rules = fileexists("${var.external_chart_path}/${local.vs_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_name}/${local.vs_http_rules_file}" : "${path.module}/${local.vs_name}/${local.vs_http_rules_file}"
 
   ###########################
   # Validation Service Core #
@@ -18,9 +24,11 @@ locals {
   vs_core_template_app   = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}" : "${path.module}/${local.vs_core_name}/${local.application_values_file}"
   vs_core_template_istio = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}" : "${path.module}/${local.vs_core_name}/${local.istio_values_file}"
   # Define override for resources for Core
-  vs_core_resources_overrides = try(var.resource_definitions[local.vs_core_name], {})
-  vs_core_replicas            = lookup(local.vs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_core_name].replicas : null
-  vs_core_resource_block      = lookup(local.vs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_core_name].resource_block : null
+  vs_core_resources_overrides            = try(var.resource_definitions[local.vs_core_name], {})
+  vs_core_replicas                       = lookup(local.vs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_core_name].replicas : null
+  vs_core_resource_block                 = lookup(local.vs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_core_name].resource_block : null
+  vs_core_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
+  fhir_profile_metadata_api_version_core = var.profile_provisioning_mode_vs_core == null ? "v1" : "v2"
 
   ###########################
   # Validation Service IGS  #
@@ -32,9 +40,11 @@ locals {
   vs_igs_template_app   = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}" : "${path.module}/${local.vs_igs_name}/${local.application_values_file}"
   vs_igs_template_istio = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}" : "${path.module}/${local.vs_igs_name}/${local.istio_values_file}"
   # Define override for resources for IGS
-  vs_igs_resources_overrides = try(var.resource_definitions[local.vs_igs_name], {})
-  vs_igs_replicas            = lookup(local.vs_igs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_igs_name].replicas : null
-  vs_igs_resource_block      = lookup(local.vs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_igs_name].resource_block : null
+  vs_igs_resources_overrides            = try(var.resource_definitions[local.vs_igs_name], {})
+  vs_igs_replicas                       = lookup(local.vs_igs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_igs_name].replicas : null
+  vs_igs_resource_block                 = lookup(local.vs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_igs_name].resource_block : null
+  vs_igs_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
+  fhir_profile_metadata_api_version_igs = var.profile_provisioning_mode_vs_igs == null ? "v1" : "v2"
 
   ###########################
   # Validation Service ARS  #
@@ -46,11 +56,11 @@ locals {
   vs_ars_template_app   = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}" : "${path.module}/${local.vs_ars_name}/${local.application_values_file}"
   vs_ars_template_istio = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}" : "${path.module}/${local.vs_ars_name}/${local.istio_values_file}"
   # Define override for resources for ARS
-  vs_ars_resources_overrides = try(var.resource_definitions[local.vs_ars_name], {})
-  vs_ars_replicas            = lookup(local.vs_ars_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_ars_name].replicas : null
-  vs_ars_resource_block      = lookup(local.vs_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_ars_name].resource_block : null
-
-  profile_prefix = strcontains(var.docker_registry, "gematik1") ? "demis-" : ""
+  vs_ars_resources_overrides            = try(var.resource_definitions[local.vs_ars_name], {})
+  vs_ars_replicas                       = lookup(local.vs_ars_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_ars_name].replicas : null
+  vs_ars_resource_block                 = lookup(local.vs_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_ars_name].resource_block : null
+  vs_ars_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
+  fhir_profile_metadata_api_version_ars = var.profile_provisioning_mode_vs_ars == null ? "v1" : "v2"
 }
 
 # Creates the Virtual Service for the Validation Service delegates
@@ -63,7 +73,7 @@ resource "helm_release" "validation_service" {
   repository_username = local.common_helm_release_settings.helm_repository_username
   repository_password = local.common_helm_release_settings.helm_repository_password
   namespace           = var.target_namespace
-  chart               = "istio-routing"
+  chart               = local.common_helm_release_settings.istio_routing_chart_name
   version             = local.common_helm_release_settings.istio_routing_chart_version
   max_history         = 3
   lint                = true
@@ -85,10 +95,19 @@ resource "helm_release" "validation_service" {
 module "validation_service_core_metadata" {
   source = "../../modules/fhir-profiles-metadata"
 
-  profile_type              = "${local.profile_prefix}fhir-profile-snapshots"
+  profile_type              = local.fhir_profile_metadata_api_version_core == "v1" && strcontains(var.docker_registry, "gematik1") ? "demis-fhir-profile-snapshots" : "fhir-profile-snapshots"
   is_canary                 = can(length(var.deployment_information[local.vs_core_name].canary.version))
   deployment_information    = var.deployment_information[local.vs_core_name]
   default_profile_snapshots = local.fhir_profile_snapshots
+  provisioning_mode         = var.profile_provisioning_mode_vs_core
+  api_version               = local.fhir_profile_metadata_api_version_core
+}
+
+resource "terraform_data" "validation_service_core_http_rules" {
+  count = local.fhir_profile_metadata_api_version_core != "v1" ? 1 : 0
+  input = templatefile(local.vs_core_template_http_rules, {
+    subsets = module.validation_service_core_metadata.destination_subsets
+  })
 }
 
 module "validation_service_core" {
@@ -104,32 +123,46 @@ module "validation_service_core" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_core_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_version         = local.fhir_profile_snapshots,
-    profile_docker_registry = var.docker_registry,
-    feature_flags           = try(var.feature_flags[local.vs_core_name], {}),
-    config_options          = try(var.config_options[local.vs_core_name], {}),
-    replica_count           = local.vs_core_replicas,
-    resource_block          = local.vs_core_resource_block
-    profile_versions        = module.validation_service_core_metadata.current_profile_versions
-    labels                  = yamlencode(module.validation_service_core_metadata.version_labels)
+    image_pull_secrets           = var.pull_secrets,
+    repository                   = var.docker_registry,
+    debug_enable                 = var.debug_enabled,
+    istio_enable                 = var.istio_enabled,
+    profile_version              = local.fhir_profile_snapshots,
+    profile_docker_registry      = var.docker_registry,
+    feature_flags                = try(var.feature_flags[local.vs_core_name], {}),
+    config_options               = try(var.config_options[local.vs_core_name], {}),
+    replica_count                = local.vs_core_replicas,
+    resource_block               = local.vs_core_resource_block,
+    profile_versions             = module.validation_service_core_metadata.current_profile_versions,
+    provisioning_mode            = var.profile_provisioning_mode_vs_core,
+    labels                       = try(yamlencode(module.validation_service_core_metadata.version_labels), "")
+    profile_handling_api_version = local.fhir_profile_metadata_api_version_core
   })
   istio_values = templatefile(local.vs_core_template_istio, {
-    namespace          = var.target_namespace
-    destinationSubsets = yamlencode(module.validation_service_core_metadata.destination_subsets)
+    namespace                         = var.target_namespace,
+    custom_virtual_service_http_rules = try(terraform_data.validation_service_core_http_rules[0].output, ""),
+    custom_destination_subsets        = module.validation_service_core_metadata.destination_subsets,
+    profile_handling_api_version      = local.fhir_profile_metadata_api_version_core
+    destinationSubsets                = try(yamlencode(module.validation_service_core_metadata.destination_subsets), "")
   })
 }
 
 module "validation_service_igs_metadata" {
   source = "../../modules/fhir-profiles-metadata"
 
-  profile_type              = "${local.profile_prefix}igs-profile-snapshots"
+  profile_type              = local.fhir_profile_metadata_api_version_igs == "v1" && strcontains(var.docker_registry, "gematik1") ? "demis-igs-profile-snapshots" : "igs-profile-snapshots"
   is_canary                 = can(length(var.deployment_information[local.vs_igs_name].canary.version))
   deployment_information    = var.deployment_information[local.vs_igs_name]
   default_profile_snapshots = local.igs_profile_snapshots
+  provisioning_mode         = var.profile_provisioning_mode_vs_igs
+  api_version               = local.fhir_profile_metadata_api_version_igs
+}
+
+resource "terraform_data" "validation_service_igs_http_rules" {
+  count = local.fhir_profile_metadata_api_version_igs != "v1" ? 1 : 0
+  input = templatefile(local.vs_igs_template_http_rules, {
+    subsets = module.validation_service_igs_metadata.destination_subsets
+  })
 }
 
 module "validation_service_igs" {
@@ -145,33 +178,46 @@ module "validation_service_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_igs_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_version         = local.igs_profile_snapshots,
-    profile_docker_registry = var.docker_registry,
-    feature_flags           = try(var.feature_flags[local.vs_igs_name], {}),
-    config_options          = try(var.config_options[local.vs_igs_name], {}),
-    replica_count           = local.vs_igs_replicas,
-    resource_block          = local.vs_igs_resource_block
-    profile_versions        = module.validation_service_igs_metadata.current_profile_versions
-    labels                  = yamlencode(module.validation_service_igs_metadata.version_labels)
+    image_pull_secrets           = var.pull_secrets,
+    repository                   = var.docker_registry,
+    debug_enable                 = var.debug_enabled,
+    istio_enable                 = var.istio_enabled,
+    profile_version              = local.igs_profile_snapshots,
+    profile_docker_registry      = var.docker_registry,
+    feature_flags                = try(var.feature_flags[local.vs_igs_name], {}),
+    config_options               = try(var.config_options[local.vs_igs_name], {}),
+    replica_count                = local.vs_igs_replicas,
+    resource_block               = local.vs_igs_resource_block,
+    profile_versions             = module.validation_service_igs_metadata.current_profile_versions,
+    provisioning_mode            = var.profile_provisioning_mode_vs_igs,
+    labels                       = try(yamlencode(module.validation_service_igs_metadata.version_labels), "")
+    profile_handling_api_version = local.fhir_profile_metadata_api_version_igs
   })
   istio_values = templatefile(local.vs_igs_template_istio, {
-    namespace          = var.target_namespace
-    destinationSubsets = yamlencode(module.validation_service_igs_metadata.destination_subsets)
+    namespace                         = var.target_namespace,
+    custom_virtual_service_http_rules = try(terraform_data.validation_service_igs_http_rules[0].output, ""),
+    custom_destination_subsets        = module.validation_service_igs_metadata.destination_subsets,
+    profile_handling_api_version      = local.fhir_profile_metadata_api_version_igs
+    destinationSubsets                = try(yamlencode(module.validation_service_igs_metadata.destination_subsets), "")
   })
 }
 
 module "validation_service_ars_metadata" {
-  # Deploy if enabled
   source = "../../modules/fhir-profiles-metadata"
 
-  profile_type              = "${local.profile_prefix}ars-profile-snapshots"
+  profile_type              = local.fhir_profile_metadata_api_version_ars == "v1" && strcontains(var.docker_registry, "gematik1") ? "demis-ars-profile-snapshots" : "ars-profile-snapshots"
   is_canary                 = can(length(var.deployment_information[local.vs_ars_name].canary.version))
   deployment_information    = var.deployment_information[local.vs_ars_name]
   default_profile_snapshots = local.ars_profile_snapshots
+  provisioning_mode         = var.profile_provisioning_mode_vs_ars
+  api_version               = local.fhir_profile_metadata_api_version_ars
+}
+
+resource "terraform_data" "validation_service_ars_http_rules" {
+  count = local.fhir_profile_metadata_api_version_ars != "v1" ? 1 : 0
+  input = templatefile(local.vs_ars_template_http_rules, {
+    subsets = module.validation_service_ars_metadata.destination_subsets
+  })
 }
 
 module "validation_service_ars" {
@@ -187,21 +233,27 @@ module "validation_service_ars" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_ars_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_version         = local.ars_profile_snapshots,
-    profile_docker_registry = var.docker_registry,
-    feature_flags           = try(var.feature_flags[local.vs_ars_name], {}),
-    config_options          = try(var.config_options[local.vs_ars_name], {}),
-    replica_count           = local.vs_ars_replicas,
-    resource_block          = local.vs_ars_resource_block
-    profile_versions        = module.validation_service_ars_metadata.current_profile_versions
-    labels                  = yamlencode(module.validation_service_ars_metadata.version_labels)
+    image_pull_secrets           = var.pull_secrets,
+    repository                   = var.docker_registry,
+    debug_enable                 = var.debug_enabled,
+    istio_enable                 = var.istio_enabled,
+    profile_version              = local.ars_profile_snapshots,
+    profile_docker_registry      = var.docker_registry,
+    feature_flags                = try(var.feature_flags[local.vs_ars_name], {}),
+    config_options               = try(var.config_options[local.vs_ars_name], {}),
+    replica_count                = local.vs_ars_replicas,
+    resource_block               = local.vs_ars_resource_block,
+    profile_versions             = module.validation_service_ars_metadata.current_profile_versions,
+    provisioning_mode            = var.profile_provisioning_mode_vs_ars,
+    labels                       = try(yamlencode(module.validation_service_ars_metadata.version_labels), "")
+    profile_handling_api_version = local.fhir_profile_metadata_api_version_ars
   })
   istio_values = templatefile(local.vs_ars_template_istio, {
-    namespace          = var.target_namespace
-    destinationSubsets = yamlencode(module.validation_service_ars_metadata.destination_subsets)
+    namespace                         = var.target_namespace,
+    custom_virtual_service_http_rules = try(terraform_data.validation_service_ars_http_rules[0].output, ""),
+    custom_destination_subsets        = module.validation_service_ars_metadata.destination_subsets,
+    profile_handling_api_version      = local.fhir_profile_metadata_api_version_ars
+    destinationSubsets                = try(yamlencode(module.validation_service_ars_metadata.destination_subsets), "")
+
   })
 }

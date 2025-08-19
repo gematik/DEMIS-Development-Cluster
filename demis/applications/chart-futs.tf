@@ -48,7 +48,7 @@ resource "helm_release" "futs" {
   repository_username = local.common_helm_release_settings.helm_repository_username
   repository_password = local.common_helm_release_settings.helm_repository_password
   namespace           = var.target_namespace
-  chart               = "istio-routing"
+  chart               = local.common_helm_release_settings.istio_routing_chart_name
   version             = local.common_helm_release_settings.istio_routing_chart_version
   max_history         = 3
   lint                = true
@@ -57,10 +57,13 @@ resource "helm_release" "futs" {
   wait_for_jobs       = true
   cleanup_on_fail     = true
   values = [templatefile(local.futs_template_istio, {
-    namespace       = var.target_namespace,
-    context_path    = var.context_path,
-    cluster_gateway = var.cluster_gateway,
-    demis_hostnames = local.demis_hostnames
+    namespace                      = var.target_namespace,
+    context_path                   = var.context_path,
+    cluster_gateway                = var.cluster_gateway,
+    demis_hostnames                = local.demis_hostnames,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.futs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
+    profile_version_core           = regex("^([0-9]+)", can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots)[0],
+    profile_version_igs            = regex("^([0-9]+)", local.igs_profile_snapshots)[0]
   })]
   timeout = 600
   lifecycle {

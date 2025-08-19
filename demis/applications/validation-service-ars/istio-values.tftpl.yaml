@@ -14,13 +14,35 @@ appServicePortName: http
 # See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
 isDelegate: true
 
+%{ if profile_handling_api_version == "v1" ~}
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
-virtualServiceHttpRules:
-  - match:
-    - uri:
-        prefix: /
-    rewrite:
-      uri: /
+CustomVirtualServiceHttpRules: >-
+  - {{ include "routing.service.destination.subsets" . }}
 
 ${destinationSubsets}
+%{ else ~}
+# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+%{ if custom_virtual_service_http_rules != null && length(custom_virtual_service_http_rules) > 0 ~}
+CustomVirtualServiceHttpRules: >-
+  ${indent(2, custom_virtual_service_http_rules)}
+%{ endif ~}
+
+%{ if custom_destination_subsets != null && length(custom_destination_subsets) > 0 ~}
+CustomDestinationSubsets: >-
+%{ for subset in custom_destination_subsets.main ~}
+  - name: ${subset.name}
+    labels:
+%{ for key, value in subset.labels ~}
+      ${key}: ${value}
+%{ endfor ~}
+%{ endfor ~}
+%{ for subset in custom_destination_subsets.canary ~}
+  - name: ${subset.name}
+    labels:
+%{ for key, value in subset.labels ~}
+      ${key}: ${value}
+%{ endfor ~}
+%{ endfor ~}
+%{ endif ~}
+%{ endif ~}

@@ -48,7 +48,11 @@ customEnvVars:
   AUTH_CERT_KEYSTORE: "/app/config/notification-gateway/certs/keystore.p12"
   TEST_AUTH_CERT_KEYSTORE: "/app/config/notification-gateway/certs/test_keystore.p12"
   GATEWAY_SERVER_PORT: "8080"
+%{ if feature_flag_new_api_endpoints ~}
+  FHIR_DATA_TRANSLATION_SERVICE_URL: "http://futs.${namespace}.svc.cluster.local"
+%{ else ~}
   FHIR_DATA_TRANSLATION_SERVICE_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
+%{ endif ~}
   HOSPITAL_LOCATION_SERVICE_URL: "https://${portal_hostname}${context_path}/services"
   NES_BASE_URL: "http://notification-processing-service.${namespace}.svc.cluster.local/"
   RPS_BASE_URL: "http://report-processing-service.${namespace}.svc.cluster.local/"

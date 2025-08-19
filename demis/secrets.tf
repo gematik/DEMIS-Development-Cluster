@@ -22,6 +22,7 @@ resource "kubernetes_secret" "database_credentials" {
   }
 }
 
+
 resource "kubernetes_secret" "postgresql_tls_certificates" {
   metadata {
     name      = "postgres-tls-secret"
@@ -125,3 +126,35 @@ resource "kubernetes_secret" "redis_cus_reader_credentials" {
     REDIS_PASSWORD = var.redis_cus_reader_password
   }
 }
+
+resource "kubernetes_secret" "ars_pseudo_hash_pepper" {
+  count = var.ars_pseudo_hash_pepper == null ? 0 : 1
+
+  metadata {
+    name      = "ars-pseudo-hash-pepper"
+    namespace = module.demis_namespace.name
+  }
+
+  immutable = true
+
+  data = {
+    ARS_PSEUDO_HASH_PEPPER = var.ars_pseudo_hash_pepper
+  }
+}
+
+resource "kubernetes_secret" "gcp_service_accounts" {
+  count = length(var.gcp_service_accounts)
+
+  metadata {
+    name      = var.gcp_service_accounts[count.index].secret_name
+    namespace = module.demis_namespace.name
+  }
+
+  data = {
+    "keyfile.json" = base64decode(var.gcp_service_accounts[count.index].keyfile_base64)
+  }
+
+  immutable = true
+}
+
+

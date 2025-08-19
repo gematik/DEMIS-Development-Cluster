@@ -21,78 +21,120 @@ virtualServiceDomains:
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
+
 virtualServiceHttpRules:
+# old endpoints
+%{ for profile in ["", "igs"] ~}
   - match:
     - headers:
         fhirProfile:
-          exact: igs-profile-snapshots
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
+      withoutHeaders:
+        x-fhir-profile: {}
       uri:
         prefix: /services/fhir-ui-data-model-translation
     - headers:
         fhirProfile:
-          exact: igs-profile-snapshots
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
+      withoutHeaders:
+        x-fhir-profile: {}
       uri:
         prefix: /fhir-ui-data-model-translation
+    rewrite:
+      uri: /
     delegate:
-      name: futs-igs-internal
+      name: futs-${coalesce(profile,"core")}-internal
       namespace: ${namespace}
+%{ endfor ~}
+%{ if feature_flag_new_api_endpoints ~}
+%{ for entry in [["", profile_version_core], ["igs", profile_version_igs]] ~}
   - match:
-    - headers:
-        fhirProfile:
-          exact: fhir-profile-snapshots
-      uri:
-        prefix: /services/fhir-ui-data-model-translation
-    - headers:
-        fhirProfile:
-          exact: fhir-profile-snapshots
-      uri:
-        prefix: /fhir-ui-data-model-translation
+      - headers:
+          x-fhir-profile:
+            exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+        uri:
+          prefix: /v${entry[1]}/fhir
+    rewrite:
+      uri: /
     delegate:
-      name: futs-core-internal
+      name: futs-${coalesce(entry[0],"core")}-internal
       namespace: ${namespace}
+%{ endfor ~}
+%{ endif ~}
   - match:
-    - uri:
-        prefix: /services/fhir-ui-data-model-translation
-    - uri:
-        prefix: /fhir-ui-data-model-translation
+      - uri:
+          prefix: /services/fhir-ui-data-model-translation
+        withoutHeaders:
+          fhirProfile: {}
+          x-fhir-profile: {}
+      - uri:
+          prefix: /fhir-ui-data-model-translation
+        withoutHeaders:
+          fhirProfile: {}
+          x-fhir-profile: {}
+      - uri:
+          prefix: /
+        withoutHeaders:
+          fhirProfile: {}
+          x-fhir-profile: {}
+    rewrite:
+      uri: /
     delegate:
       name: futs-core-internal
       namespace: ${namespace}
 
 virtualServiceExternalHttpRules:
+# old endpoints
+%{ for profile in ["", "igs"] ~}
   - match:
-      - headers:
-          fhirProfile:
-            exact: igs-profile-snapshots
-        uri:
-          prefix: ${context_path}/services/fhir-ui-data-model-translation
-      - headers:
-          fhirProfile:
-            exact: igs-profile-snapshots
-        uri:
-          prefix: ${context_path}/fhir-ui-data-model-translation
+    - headers:
+        fhirProfile:
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
+      withoutHeaders:
+        x-fhir-profile: {}
+      uri:
+        prefix: ${context_path}/services/fhir-ui-data-model-translation
+    - headers:
+        fhirProfile:
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
+      withoutHeaders:
+        x-fhir-profile: {}
+      uri:
+        prefix: ${context_path}/fhir-ui-data-model-translation
+    rewrite:
+      uri: /
     delegate:
-      name: futs-igs-internal
+      name: futs-${coalesce(profile,"core")}-internal
       namespace: ${namespace}
+%{ endfor ~}
+%{ if feature_flag_new_api_endpoints ~}
+%{ for entry in [["", profile_version_core], ["igs", profile_version_igs]] ~}
   - match:
-      - headers:
-          fhirProfile:
-            exact: fhir-profile-snapshots
-        uri:
-          prefix: ${context_path}/services/fhir-ui-data-model-translation
-      - headers:
-          fhirProfile:
-            exact: fhir-profile-snapshots
-        uri:
-          prefix: ${context_path}/fhir-ui-data-model-translation
+    - headers:
+        x-fhir-profile:
+          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+      uri:
+        prefix: ${context_path}/translation/ui-data-model/v${entry[1]}/fhir
+    rewrite:
+      uri: /
     delegate:
-      name: futs-core-internal
+      name: futs-${coalesce(entry[0],"core")}-internal
       namespace: ${namespace}
+%{ endfor ~}
+%{ endif ~}
   - match:
       - uri:
           prefix: ${context_path}/services/fhir-ui-data-model-translation
+        withoutHeaders:
+          fhirProfile: {}
+          x-fhir-profile: {}
       - uri:
           prefix: ${context_path}/fhir-ui-data-model-translation
+        withoutHeaders:
+          fhirProfile: {}
+          x-fhir-profile: {}
+    rewrite:
+      uri: /
     delegate:
       name: futs-core-internal
       namespace: ${namespace}

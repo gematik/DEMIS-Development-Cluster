@@ -60,3 +60,25 @@ variable "default_profile_snapshots" {
     error_message = "The FHIR Profile Snapshots version must be in the format X.Y.Z[-suffix][+build]"
   }
 }
+
+variable "provisioning_mode" {
+  description = "Provisioning mode for the FHIR Profiles Metadata. Allowed values are: dedicated, distributed, combined"
+  type        = string
+  nullable    = false
+  default     = "dedicated"
+  validation {
+    condition     = contains(["dedicated", "distributed", "combined"], var.provisioning_mode)
+    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
+  }
+}
+
+variable "api_version" {
+  description = "API version for the FHIR Profiles Metadata. Allowed values are: v1, v2"
+  type        = string
+  nullable    = false
+  default     = "v1"
+  validation {
+    condition     = contains(["v1", "v2"], var.api_version)
+    error_message = "The API version must be one of the following: v1, v2"
+  }
+}

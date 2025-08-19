@@ -56,7 +56,7 @@ resource "helm_release" "istio" {
   repository_username = local.helm_repository_username
   repository_password = local.helm_repository_password
   namespace           = var.namespace
-  chart               = "istio-routing"
+  chart               = var.helm_settings.istio_routing_chart_name
   version             = local.istio_routing_chart_version != null ? local.istio_routing_chart_version : ""
   max_history         = 3
   lint                = true
