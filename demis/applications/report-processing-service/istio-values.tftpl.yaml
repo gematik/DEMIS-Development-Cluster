@@ -22,10 +22,29 @@ virtualServiceHttpRules:
   - match:
     - uri:
         prefix: /reports/fhir/
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: /
+%{ endif }
     rewrite:
       uri: /
 
 virtualServiceExternalHttpRules:
+%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}  
+%{for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
+  - headers:
+      request:
+        set:
+          x-fhir-api-version: v${version}
+          x-fhir-profile: fhir-profile-snapshots
+    match:
+    - uri:
+        prefix: ${context_path}/reports/bedoccupancy/v${version}/fhir/
+      ignoreUriCase: true
+    rewrite:
+      uri: /
+%{ endfor ~}
+%{ endif ~}
   - match:
     - uri:
         prefix: ${context_path}/reports/fhir/

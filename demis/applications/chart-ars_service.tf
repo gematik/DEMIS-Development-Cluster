@@ -35,9 +35,12 @@ module "ars_service" {
     resource_block     = local.ars_resource_block
   })
   istio_values = templatefile(local.ars_template_istio, {
-    namespace       = var.target_namespace,
-    context_path    = var.context_path,
-    cluster_gateway = var.cluster_gateway,
-    demis_hostnames = local.demis_hostnames
+    namespace                      = var.target_namespace,
+    context_path                   = var.context_path,
+    cluster_gateway                = var.cluster_gateway,
+    demis_hostnames                = local.demis_hostnames
+    support_fhir_api_versions      = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
+    fhir_api_versions              = module.validation_service_ars_metadata.current_profile_versions,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.ars_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

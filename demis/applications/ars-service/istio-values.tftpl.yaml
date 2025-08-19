@@ -22,14 +22,39 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: /surveillance/antibiotic-resistance/fhir/
+%{ else ~}
     - uri:
         prefix: /surveillance/antibiotic-resistance/
+%{ endif ~}
     rewrite:
       uri: /
 
 virtualServiceExternalHttpRules:
+%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
+%{ for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
+  - headers:
+      request:
+        set:
+          x-fhir-api-version: v${version}
+          x-fhir-profile: ars-profile-snapshots
+    match:
+    - uri:
+        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/
+      ignoreUriCase: true
+    rewrite:
+      uri: /
+%{ endfor ~}
+%{ endif ~}
   - match:
+%{ if feature_flag_new_api_endpoints ~}
+      - uri:
+          prefix: ${context_path}/surveillance/antibiotic-resistance/fhir/
+%{ else ~}
       - uri:
           prefix: ${context_path}/surveillance/antibiotic-resistance/
+%{ endif ~}
     rewrite:
       uri: /

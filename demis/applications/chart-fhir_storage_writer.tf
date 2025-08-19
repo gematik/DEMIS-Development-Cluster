@@ -36,6 +36,7 @@ module "fhir_storage_writer" {
     resource_block     = local.fssw_resource_block
   })
   istio_values = templatefile(local.fssw_template_istio, {
-    namespace = var.target_namespace
+    namespace                      = var.target_namespace,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.fssw_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

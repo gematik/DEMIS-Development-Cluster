@@ -34,9 +34,10 @@ module "hospital_location_service" {
     resource_block     = local.hls_resource_block
   })
   istio_values = templatefile(local.hls_template_istio, {
-    namespace       = var.target_namespace,
-    cluster_gateway = var.cluster_gateway,
-    context_path    = var.context_path,
-    demis_hostnames = local.demis_hostnames
+    namespace                      = var.target_namespace,
+    cluster_gateway                = var.cluster_gateway,
+    context_path                   = var.context_path,
+    demis_hostnames                = local.demis_hostnames,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.hls_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

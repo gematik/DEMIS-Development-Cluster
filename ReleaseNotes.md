@@ -1,6 +1,29 @@
 <img align="right" alt="gematik" width="250" height="47" src="media/Gematik_Logo_Flag.png"/> <br/>    
 
 # Release Notes DEMIS Kubernetes Environment
+## Release 3.8.0
+- add module fhir-profiles-metadata v2
+- add setup for provisioning modes dedicated, distributed and combined on validation services
+- add setup for versioned profile snapshots and external access on validation services, ars-service, igs-service, report-processing-service and notification-processing-service
+- add Support for new API Endpoint for Backend-Services
+- new API Endpoint change for FFS Reader Search url
+- add new API endpoints for portal-bedoccupancy
+- add new API endpoints for portal-pathogen
+- add new API endpoints for HLS
+- add new API endpoints for NG
+- add new API endpoints for RPS
+- add new API endpoints for policies-authorizations
+- add new API endpoints for portal-disease
+- add new API endpoints for notification-gateway
+- add new API endpoints for portal-shell
+- add new API endpoints for portal-igs
+- new API endpoint use profile header x-fhir-profile instead of fhirProfile
+- make TF_EXTRA_ARGS environment variable available for passing parameters from command line to opentofu
+- ARS: use surveillance-pseudonym-service-ars instead of ars-pseudonymization-service   
+- ARS: add secret ars-pseudo-hash-pepper to demis environment
+- surveillance-pseudonym-service-ars: app-values extended 
+- add support for using Kubernetes secrets to provide GCP service account key files.
+- add ekm-template
 
 ## Release 3.7.2
 - skip manual job creation if job is suspended (CUS, FSP, KUP)

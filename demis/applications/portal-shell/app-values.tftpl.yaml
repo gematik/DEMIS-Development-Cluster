@@ -31,6 +31,7 @@ config:
       tenant: demis
       issuers:
         - https://${issuer_hostname}/realms/HOSPITAL
+        - https://${issuer_hostname}/realms/LAB
     - baseUrl: https://${issuer_hostname}
       tenant: demis-portal
       clientId: meldeportal

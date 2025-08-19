@@ -11,12 +11,13 @@ variable "namespace" {
 # Helm Deployment Settings
 variable "helm_settings" {
   type = object({
-    chart_image_tag_property_name = string           # the Helm Chart Property Name where the Image Tag is set (e.g. "image.tag")
-    helm_repository               = string           # the Helm Repository URL
-    helm_repository_username      = optional(string) # optional (required for private registries), the Helm Repository Username
-    helm_repository_password      = optional(string) # optional (required for private registries), the Helm Repository Password
-    istio_routing_chart_version   = optional(string) # optional, the Version of the Istio Routing Helm Chart to be installed
-    deployment_timeout            = optional(number) # optional, the Timeout for creating Helm Release
+    chart_image_tag_property_name = string                            # the Helm Chart Property Name where the Image Tag is set (e.g. "image.tag")
+    helm_repository               = string                            # the Helm Repository URL
+    helm_repository_username      = optional(string)                  # optional (required for private registries), the Helm Repository Username
+    helm_repository_password      = optional(string)                  # optional (required for private registries), the Helm Repository Password
+    istio_routing_chart_version   = optional(string)                  # optional, the Version of the Istio Routing Helm Chart to be installed
+    deployment_timeout            = optional(number)                  # optional, the Timeout for creating Helm Release
+    istio_routing_chart_name      = optional(string, "istio-routing") # optional, the name of the Istio Routing Helm Chart
   })
   sensitive   = true
   description = "Helm Release settings as Object."
@@ -70,3 +71,4 @@ variable "istio_values" {
   description = "Custom values in YAML format to override the configuration for the Istio Helm Chart"
   default     = ""
 }
+

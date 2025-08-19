@@ -13,9 +13,19 @@ appServicePortName: http
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+    - uri:
+        prefix: /notification-clearing-api/fhir
+    - uri:
+        prefix: /
+    rewrite:
+      uri: /
+%{ else ~}
   - match:
     - uri:
         prefix: /notification-clearing-api
     rewrite:
       uri: /notification-clearing-api
+%{ endif ~}
     timeout: 15s

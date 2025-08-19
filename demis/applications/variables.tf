@@ -332,3 +332,36 @@ variable "fhir_storage_purger_suspend" {
   description = "Defines if the fhir-storage-purger is suspended."
   default     = false
 }
+
+variable "profile_provisioning_mode_vs_core" {
+  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
+  type        = string
+  nullable    = true
+  default     = null
+  validation {
+    condition     = var.profile_provisioning_mode_vs_core == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_core), false)
+    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
+  }
+}
+
+variable "profile_provisioning_mode_vs_igs" {
+  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
+  type        = string
+  nullable    = true
+  default     = null
+  validation {
+    condition     = var.profile_provisioning_mode_vs_igs == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_igs), false)
+    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
+  }
+}
+
+variable "profile_provisioning_mode_vs_ars" {
+  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
+  type        = string
+  nullable    = true
+  default     = null
+  validation {
+    condition     = var.profile_provisioning_mode_vs_ars == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars), false)
+    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
+  }
+}

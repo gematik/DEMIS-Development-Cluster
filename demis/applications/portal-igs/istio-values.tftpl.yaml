@@ -29,6 +29,13 @@ virtualServiceHttpRules:
         prefix: /igs
     rewrite:
       uri: /
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+      - uri:
+          prefix: /portal/igs
+    rewrite:
+      uri: /
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
@@ -39,3 +46,10 @@ virtualServiceExternalHttpRules:
           prefix: ${context_path}/igs
     rewrite:
       uri: /
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+      - uri:
+          prefix: ${context_path}/portal/igs
+    rewrite:
+      uri: /
+%{ endif ~}

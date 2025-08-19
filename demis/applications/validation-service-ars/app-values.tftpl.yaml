@@ -15,47 +15,64 @@ istio:
 required:
   image: 
     repository: ${repository}
-    %{ if strcontains(repository, "gematik1") }
+%{ if strcontains(repository, "gematik1") ~}
     name: demis-validation-service
-    %{ endif }
+%{ endif ~}
   profiles:
     repository: ${profile_docker_registry}
-    %{ if strcontains(repository, "gematik1") }
+%{ if strcontains(repository, "gematik1") && profile_handling_api_version == "v1" ~}
     name: demis-ars-profile-snapshots
-    %{ else }
+%{ else ~}
+%{ if strcontains(repository, "gematik1") && profile_handling_api_version == "v2" ~}
     name: ars-profile-snapshots
-    %{ endif }
+    imageName: demis-ars-profile-snapshots
+%{ else ~}
+    name: ars-profile-snapshots
+%{ endif ~}
+%{ endif ~}
     version: ${profile_version}
+%{ if length(profile_versions) > 0 ~}
     versions: 
-      %{~ for version in profile_versions ~}
+%{ for version in profile_versions ~}
       - ${version}
-      %{~ endfor ~}
+%{ endfor ~}
+%{ endif ~}
 
 # Image Pull Secrets
 imagePullSecrets: 
-  %{~ for pull_secret in image_pull_secrets ~}
+%{ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
-  %{~ endfor ~}
+%{ endfor ~}
   
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
-  %{~ for flag_name, flag_value in feature_flags ~}
-  ${flag_name} : ${flag_value}
-  %{~ endfor ~}
-  %{~ for config_name, config_value in config_options ~}
-  ${config_name} : "${config_value}"
-  %{~ endfor ~}
+%{ for flag_name, flag_value in feature_flags ~}
+  ${flag_name}: ${flag_value}
+%{ endfor ~}
+%{ for config_name, config_value in config_options ~}
+  ${config_name}: "${config_value}"
+%{ endfor ~}
 
 
-%{~ if replica_count != null ~}
+%{ if replica_count != null ~}
 # Number of Pod Replicas desired
 replicaCount: ${replica_count}
-%{endif}
+%{ endif ~}
 
-%{~ if resource_block != null ~}
+%{ if resource_block != null ~}
 # Override Resource Definitions for Pod
 ${resource_block}
-%{endif}
+%{ endif ~}
 
+%{ if profile_handling_api_version == "v2" ~}
+# mode for profile provisioning of snapshot profiles
+# default is dedicated
+# available modes:
+# - dedicated: all profiles are provisioned in a dedicated pod
+# - distributed: one profile provisioning for one pod
+# - combined: mix of dedicated and distributed
+provisioningMode: ${provisioning_mode}
+%{ else ~}
 ${labels}
+%{ endif ~}

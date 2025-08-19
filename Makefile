@@ -25,8 +25,9 @@ APPLICATIONS_PATH := demis
 APPLICATIONS_ENV_FOLDER := demis
 IDM_PATH := idm
 MESH_PATH := mesh
+EKM_TEMPLATE_PATH := ekm-template
 GCP_SECRET_PREFIX :=
-TERRAFORM_EXTRA_ARGS :=
+TERRAFORM_EXTRA_ARGS := ${TF_EXTRA_ARGS}
 TARGET_ARG :=
 MODULE :=
 target :=
@@ -108,6 +109,7 @@ infrastructure: init-infrastructure validate ## Creates the Kubernetes cluster
 	echo "## Computing Plan"
 	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out
 	echo "## Applying Plan"
+	echo "TF_EXTRA_ARGS = ${TF_EXTRA_ARGS}"
 	$(TF_BIN) apply -refresh-only $(TERRAFORM_EXTRA_ARGS) tfplan.out
 
 init-infrastructure: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
@@ -233,6 +235,40 @@ init-mesh: ## Initializes the Terraform Mesh components
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	@echo "## Initialising the Mesh project done"
 
+.PHONY: ekm
+ekm-template: export WORKING_PATH=$(ROOT_DIR)/$(EKM_TEMPLATE_PATH)
+ekm-template: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
+ekm-template: init-ekm-template validate ## Initializes the Terraform ekm-template service
+ifneq ($(target),)
+	$(eval TARGET_ARG="-target=$(target)")
+endif
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Checking for drifts"
+	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
+	echo "## Computing Plan"
+	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	echo "## Applying Plan"
+	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
+
+.PHONY: cleanup-ekm-template
+cleanup-ekm-template: export WORKING_PATH=$(ROOT_DIR)/$(EKM_TEMPLATE_PATH)
+cleanup-ekm-template: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
+cleanup-ekm-template: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
+cleanup-ekm-template:
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Destroying ekm-template Resources"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
+
+init-ekm-template: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
+init-ekm-template: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
+init-ekm-template: ## Initializes the Terraform DEMIS Services
+	cd $(WORKING_PATH)
+	@echo "## Initialising the ekm-template"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+
 validate: ## Validates the configuration
 	cd $(WORKING_PATH)
 	@echo "## Performing Validation"
@@ -243,8 +279,9 @@ local: ## Defines local resources
 	@echo "Using STAGE=$(STAGE)"
 	$(eval CURR_FOLDER=$(ROOT_DIR))
 	$(eval GCP_SECRET_PREFIX=$(STAGE))
-	$(eval TERRAFORM_EXTRA_ARGS=-auto-approve)
+	$(eval TERRAFORM_EXTRA_ARGS=$(TERRAFORM_EXTRA_ARGS) -auto-approve)
 	@echo "## Cleaning up Backend Configuration"
+	rm -rf $(CURR_FOLDER)/ekm-template/backend.tf
 	rm -rf $(CURR_FOLDER)/demis/backend.tf
 	rm -rf $(CURR_FOLDER)/idm/backend.tf
 	rm -rf $(CURR_FOLDER)/mesh/backend.tf
@@ -280,6 +317,7 @@ create-local-environment: local ## Creates a complete local environment
 
 .PHONY: cleanup-local-environment
 cleanup-local-environment: ## Destroys the local environment
+	$(MAKE) local cleanup-ekm-template
 	$(MAKE) local cleanup-services
 	$(MAKE) local cleanup-idm
 	$(MAKE) local cleanup-mesh

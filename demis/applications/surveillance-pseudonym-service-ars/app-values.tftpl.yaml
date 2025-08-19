@@ -30,9 +30,23 @@ config:
     # Use default Secret from this Chart
     useDefault: false
 
+secret:
+  dbPwdUser:
+    name: ars-pseudo-user-database-secret
+    key: ARS_PSEUDO_USER_DB_PASSWORD
+  dbPwdDdl:
+    name: ars-pseudo-ddl-database-secret
+    key: ARS_PSEUDO_DDL_DB_PASSWORD
+  hashPepper:
+    name: ars-pseudo-hash-pepper
+    key: ARS_PSEUDO_HASH_PEPPER
+
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/surveillance-pseudonym"
+  DB_USER: ars-pseudo-user
+  LIQUIBASE_DB_USER: ars-pseudo-ddl
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

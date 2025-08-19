@@ -13,36 +13,29 @@ appServicePortName: http
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
+%{ for profile in [ "", "igs", "ars"] ~}
   - match:
     - headers:
-        fhirProfile:
-          exact: igs-profile-snapshots
+        x-fhir-profile:
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
       uri:
         prefix: /
-    delegate:
-      name: validation-service-igs-internal
-      namespace: ${namespace}
-  - match:
     - headers:
         fhirProfile:
-          exact: ars-profile-snapshots
+          exact: ${coalesce(profile,"fhir")}-profile-snapshots
       uri:
         prefix: /
+    rewrite:
+      uri: /
     delegate:
-      name: validation-service-ars-internal
+      name: validation-service-${coalesce(profile,"core")}-internal
       namespace: ${namespace}
-  - match:
-    - headers:
-        fhirProfile:
-          exact: fhir-profile-snapshots
-      uri:
-        prefix: /
-    delegate:
-      name: validation-service-core-internal
-      namespace: ${namespace}
+%{ endfor ~}
   - match:
     - uri:
         prefix: /
+    rewrite:
+      uri: /
     delegate:
       name: validation-service-core-internal
       namespace: ${namespace}

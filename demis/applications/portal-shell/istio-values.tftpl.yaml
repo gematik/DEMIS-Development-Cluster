@@ -22,20 +22,30 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: /portal/shell
+%{ else ~}
     - headers:
         gateway-request:
           exact: "false"
       uri:
         prefix: /portal
+%{ endif ~}
     rewrite:
       uri: /
 
 virtualServiceExternalHttpRules:
   - match:
+%{ if feature_flag_new_api_endpoints ~}
+    - uri:
+        prefix: ${context_path}/portal/shell
+%{ else ~}
     - headers:
         gateway-request:
           exact: "false"
       uri:
         prefix: ${context_path}/portal
+%{ endif ~}
     rewrite:
       uri: /

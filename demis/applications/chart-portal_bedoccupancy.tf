@@ -36,9 +36,10 @@ module "portal_bedoccupancy" {
     resource_block     = local.portal_bedoccupancy_resource_block
   })
   istio_values = templatefile(local.portal_bedoccupancy_template_istio, {
-    namespace        = var.target_namespace,
-    context_path     = var.context_path,
-    cluster_gateway  = var.cluster_gateway,
-    portal_hostnames = local.frontend_hostnames
+    namespace                      = var.target_namespace,
+    context_path                   = var.context_path,
+    cluster_gateway                = var.cluster_gateway,
+    portal_hostnames               = local.frontend_hostnames
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.portal_bedoccupancy_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

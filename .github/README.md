@@ -179,6 +179,30 @@ executed during the step CreateEnvironment, perform the following steps:
 6. If successful, you should receive a confirmation dialog and your browser will download a PDF Receipt automatically
 
 
+## EKM-Template
+
+The ekm-template is an example of a deployment module for DEMIS. It includes a demo-service and all needed configuration to include it into the DEMIS environment. Its structure is the same as the other modules idm, demis, etc. but all specific configuration is removed. It includes only the necessary files to deploy a new module in its own namespace in the DEMIS environment. It is meant to be used as a template for creating new modules.
+
+After the environment is initialized, as described in [Configure Cluster](#configure-cluster), the public stage repository is in the folder `DEMIS-Development-Cluster/environments`. It also contains configuration files for the EKM-Template module, located in the folder `ekm-template`.
+
+To create a new deployment module for DEMIS you can copy the ekm-template folder in this repo and the stage-public and rename module and configuration names as you need.
+
+### Deploy / Remove
+The Makefile includes commands to deploy and remove the module from the DEMIS environment. These can be used to test the module or as a blueprint for your own module.
+To deploy or remove the module, you can use the following commands:
+```sh
+make local ekm-template # deploys the module
+make local cleanup-ekm-template # removes the module
+```
+
+### Verify Deployment
+After the module is deployed, there should be a new namespace called `ekm-template` in your Kubernetes cluster. In that namespace, a demo service is deployed.
+
+You can verify the service functionality by accessing the deployed services URL in your browser: [https://portal.ingress.local/service-demo](https://portal.ingress.local/service-demo)
+
+The demo service should be accessible and you should see a simple web page with a message indicating that the service is running.
+
+
 ## Security Policy
 If you want to see the security policy, please check our [SECURITY.md](SECURITY.md).
 

@@ -24,7 +24,11 @@ customEnvVars:
   TERRAFORM_DEPLOYMENT: true
   IGS_SERVICE_URL_PUBLIC: "https://${core_hostname}/surveillance/notification-sequence"
   IGS_SERVICE_URL: "http://igs-service.${namespace}.svc.cluster.local/surveillance/notification-sequence"
+%{ if feature_flag_new_api_endpoints ~}
+  FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local"
+%{ else ~}
   FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

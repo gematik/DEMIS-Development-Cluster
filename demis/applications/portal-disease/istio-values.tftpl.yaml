@@ -29,6 +29,13 @@ virtualServiceHttpRules:
         prefix: /disease
     rewrite:
       uri: /
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+    - uri:
+        prefix: /portal/disease
+    rewrite:
+      uri: /
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
@@ -39,3 +46,10 @@ virtualServiceExternalHttpRules:
           prefix: ${context_path}/disease
     rewrite:
       uri: /
+%{ if feature_flag_new_api_endpoints ~}
+  - match:
+    - uri:
+        prefix: ${context_path}/portal/disease
+    rewrite:
+      uri: /
+%{ endif ~}

@@ -10,17 +10,17 @@ output "fsp_enabled" {
 
 output "fhir_profile_snapshots" {
   description = "Version of the FHIR Profile Snapshots being used"
-  value       = local.fhir_profile_snapshots
+  value       = length(tolist(module.validation_service_core_metadata.current_profile_versions)) > 0 ? "[${join(", ", tolist(module.validation_service_core_metadata.current_profile_versions))}]" : local.fhir_profile_snapshots
 }
 
 output "igs_profile_snapshots" {
   description = "Version of the IGS Profile Snapshots being used"
-  value       = local.igs_profile_snapshots
+  value       = length(tolist(module.validation_service_igs_metadata.current_profile_versions)) > 0 ? "[${join(", ", tolist(module.validation_service_igs_metadata.current_profile_versions))}]" : local.igs_profile_snapshots
 }
 
 output "ars_profile_snapshots" {
   description = "Version of the ARS Profile Snapshots being used"
-  value       = local.ars_profile_snapshots
+  value       = length(tolist(module.validation_service_ars_metadata.current_profile_versions)) > 0 ? "[${join(", ", tolist(module.validation_service_ars_metadata.current_profile_versions))}]" : local.ars_profile_snapshots
 }
 
 output "version_istio_routing_chart" {
