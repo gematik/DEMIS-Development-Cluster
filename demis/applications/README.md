@@ -17,6 +17,9 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_ars_pseudonymization_service"></a> [ars\_pseudonymization\_service](#module\_ars\_pseudonymization\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_ars_service"></a> [ars\_service](#module\_ars\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_context_enrichment_service"></a> [context\_enrichment\_service](#module\_context\_enrichment\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_destination_lookup_purger"></a> [destination\_lookup\_purger](#module\_destination\_lookup\_purger) | ../../modules/helm_deployment | n/a |
+| <a name="module_destination_lookup_reader"></a> [destination\_lookup\_reader](#module\_destination\_lookup\_reader) | ../../modules/helm_deployment | n/a |
+| <a name="module_destination_lookup_writer"></a> [destination\_lookup\_writer](#module\_destination\_lookup\_writer) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_purger"></a> [fhir\_storage\_purger](#module\_fhir\_storage\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_reader"></a> [fhir\_storage\_reader](#module\_fhir\_storage\_reader) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_writer"></a> [fhir\_storage\_writer](#module\_fhir\_storage\_writer) | ../../modules/helm_deployment | n/a |
@@ -72,6 +75,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_database_target_host"></a> [database\_target\_host](#input\_database\_target\_host) | Defines the Hostname of the Database Server | `string` | n/a | yes |
 | <a name="input_debug_enabled"></a> [debug\_enabled](#input\_debug\_enabled) | Defines if the backend Java Services must be started in Debug Mode | `bool` | `false` | no |
 | <a name="input_deployment_information"></a> [deployment\_information](#input\_deployment\_information) | Structure holding deployment information for the Helm Charts | <pre>map(object({<br/>    chart-name          = optional(string) # Optional, uses a different Helm Chart name than the application name<br/>    image-tag           = optional(string) # Optional, uses a different image tag for the deployment<br/>    deployment-strategy = string<br/>    enabled             = bool<br/>    main = object({<br/>      version  = string<br/>      weight   = number<br/>      profiles = optional(list(string))<br/>    })<br/>    canary = optional(object({<br/>      version  = optional(string)<br/>      weight   = optional(string)<br/>      profiles = optional(list(string))<br/>    }), {})<br/>  }))</pre> | n/a | yes |
+| <a name="input_destination_lookup_purger_cron_schedule"></a> [destination\_lookup\_purger\_cron\_schedule](#input\_destination\_lookup\_purger\_cron\_schedule) | Defines the Cron Schedule for the destination-lookup-purger | `string` | n/a | yes |
+| <a name="input_destination_lookup_purger_suspend"></a> [destination\_lookup\_purger\_suspend](#input\_destination\_lookup\_purger\_suspend) | Defines if the destination-lookup-purger is suspended. | `bool` | `false` | no |
 | <a name="input_docker_registry"></a> [docker\_registry](#input\_docker\_registry) | The docker registry to use for the application | `string` | n/a | yes |
 | <a name="input_external_chart_path"></a> [external\_chart\_path](#input\_external\_chart\_path) | The path to the stage-dependent Helm Chart Values. | `string` | n/a | yes |
 | <a name="input_feature_flags"></a> [feature\_flags](#input\_feature\_flags) | Defines a list of feature flags to be bound in services | `map(map(bool))` | `{}` | no |
@@ -102,6 +107,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | Name | Description |
 |------|-------------|
 | <a name="output_ars_profile_snapshots"></a> [ars\_profile\_snapshots](#output\_ars\_profile\_snapshots) | Version of the ARS Profile Snapshots being used |
+| <a name="output_dlp_enabled"></a> [dlp\_enabled](#output\_dlp\_enabled) | Whether destination-lookup-purger is enabled |
+| <a name="output_dlp_version"></a> [dlp\_version](#output\_dlp\_version) | The version of destination-lookup-purger |
 | <a name="output_fhir_profile_snapshots"></a> [fhir\_profile\_snapshots](#output\_fhir\_profile\_snapshots) | Version of the FHIR Profile Snapshots being used |
 | <a name="output_fsp_enabled"></a> [fsp\_enabled](#output\_fsp\_enabled) | Whether FHIR-Storage-Purger is enabled |
 | <a name="output_fsp_version"></a> [fsp\_version](#output\_fsp\_version) | The version of FHIR-Storage-Purger |

@@ -142,16 +142,18 @@ resource "kubernetes_secret" "ars_pseudo_hash_pepper" {
   }
 }
 
-resource "kubernetes_secret" "gcp_service_accounts" {
-  count = length(var.gcp_service_accounts)
+resource "kubernetes_secret" "service_accounts" {
+  for_each = {
+    for sa in var.service_accounts : sa.secret_name => sa
+  }
 
   metadata {
-    name      = var.gcp_service_accounts[count.index].secret_name
+    name      = each.value.secret_name
     namespace = module.demis_namespace.name
   }
 
-  data = {
-    "keyfile.json" = base64decode(var.gcp_service_accounts[count.index].keyfile_base64)
+  binary_data = {
+    "keyfile.json" = each.value.keyfile_base64
   }
 
   immutable = true

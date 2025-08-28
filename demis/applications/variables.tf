@@ -303,6 +303,15 @@ variable "fhir_storage_purger_cron_schedule" {
   }
 }
 
+variable "destination_lookup_purger_cron_schedule" {
+  type        = string
+  description = "Defines the Cron Schedule for the destination-lookup-purger"
+  validation {
+    condition     = length(var.destination_lookup_purger_cron_schedule) > 0
+    error_message = "The destination-lookup-purger cron Schedule must be defined"
+  }
+}
+
 # used in environments with different parallel versions of DEMIS Services
 variable "context_path" {
   description = "The context path for reaching the DEMIS Services externally"
@@ -330,6 +339,12 @@ variable "s3_port" {
 variable "fhir_storage_purger_suspend" {
   type        = bool
   description = "Defines if the fhir-storage-purger is suspended."
+  default     = false
+}
+
+variable "destination_lookup_purger_suspend" {
+  type        = bool
+  description = "Defines if the destination-lookup-purger is suspended."
   default     = false
 }
 

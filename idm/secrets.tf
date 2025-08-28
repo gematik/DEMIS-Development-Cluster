@@ -130,15 +130,6 @@ resource "kubernetes_secret" "keycloak_truststore_password" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_gematik_idp_public_key" {
-  metadata {
-    name      = "keycloak-gematik-idp-public-key"
-    namespace = module.demis_namespace.name
-  }
-
-  immutable = true
-}
-
 resource "kubernetes_secret" "ldap_certificates" {
   metadata {
     name      = "ldap-certificates"

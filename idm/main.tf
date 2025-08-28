@@ -44,10 +44,6 @@ locals {
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
   pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
-
-  # define Istio Helm Chart versions
-  istio_authorization_policies_chart_version = local.deployment_information["policies-authorizations"].main.version
-  istio_network_policies_chart_version       = local.deployment_information["network-rules"].main.version
 }
 
 # Define the Endpoints

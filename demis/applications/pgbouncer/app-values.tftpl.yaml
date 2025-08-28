@@ -30,6 +30,12 @@ config:
       host: ${database_host}
       port: 5432
       dbname: surveillance-pseudonym
+%{ if lookup(config_options, "CONFIG_DESTINATION_LOOKUP_DB", false) ~}
+    destination_lookup:
+      host: ${database_host}
+      port: 5432
+      dbname: destination_lookup
+%{ endif ~}
   pgbouncer:
     server_lifetime: "300"
     max_client_conn: "200"

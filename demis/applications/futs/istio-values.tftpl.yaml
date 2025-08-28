@@ -29,15 +29,11 @@ virtualServiceHttpRules:
     - headers:
         fhirProfile:
           exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      withoutHeaders:
-        x-fhir-profile: {}
       uri:
         prefix: /services/fhir-ui-data-model-translation
     - headers:
         fhirProfile:
           exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      withoutHeaders:
-        x-fhir-profile: {}
       uri:
         prefix: /fhir-ui-data-model-translation
     rewrite:
@@ -49,12 +45,17 @@ virtualServiceHttpRules:
 %{ if feature_flag_new_api_endpoints ~}
 %{ for entry in [["", profile_version_core], ["igs", profile_version_igs]] ~}
   - match:
-      - headers:
-          x-fhir-profile:
-            exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
-        uri:
-          prefix: /v${entry[1]}/fhir
-    rewrite:
+    - headers:
+        x-fhir-profile:
+          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+      uri:
+        prefix: /v${entry[1]}/fhir
+    - headers:
+        x-fhir-profile:
+          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+      uri:
+        prefix: /
+    rewrite: 
       uri: /
     delegate:
       name: futs-${coalesce(entry[0],"core")}-internal

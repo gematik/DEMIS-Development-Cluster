@@ -1,17 +1,17 @@
-# Values for gateway-igs.
-
+# Enables debug mode
 debug:
   enable: ${debug_enable}
 
-istio:
-  enable: ${istio_enable}
+# Defines the Schedule for the CronJob - Run every 12 hours
+cronJobSchedule: "${cron_schedule}"
 
 required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-gateway-igs
+    name: demis-destination-lookup-purger
     %{ endif }
+  suspend: ${suspend}
 
 # Image Pull Secrets
 imagePullSecrets: 
@@ -19,17 +19,10 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
   
+# Extra Environment Variables to be defined
 customEnvVars:
-  # Prevents empty values that can delete the default environment variables
+  # preserves default environment variables from helm chart
   TERRAFORM_DEPLOYMENT: true
-  IGS_SERVICE_URL_PUBLIC: "https://${core_hostname}/surveillance/notification-sequence"
-  IGS_SERVICE_URL: "http://igs-service.${namespace}.svc.cluster.local/surveillance/notification-sequence"
-  IGS_PROFILE_VERSION: "v${igs_profile_major_version}"
-%{ if feature_flag_new_api_endpoints ~}
-  FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local"
-%{ else ~}
-  FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
-%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

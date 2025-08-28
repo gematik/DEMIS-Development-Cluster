@@ -81,17 +81,17 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || can(var.deployment_information["stage-configuration-data"]))
+      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || !(var.keycloak_user_import_enabled || var.bundid_idp_user_import_enabled) || can(var.deployment_information["stage-configuration-data"]))
     ])
-    error_message = "Service Configuration is not valid. Stage configuration data is required for services keycloak and bund-idp."
+    error_message = "Service Configuration is not valid. Stage configuration data is required for services keycloak and bund-idp if import is enabled."
   }
 
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || can(length(var.deployment_information["stage-configuration-data"].chart-name) > 0))
+      (!service.enabled || !contains(["keycloak", "bundid-idp"], name) || !(var.keycloak_user_import_enabled || var.bundid_idp_user_import_enabled) || can(length(var.deployment_information["stage-configuration-data"].chart-name) > 0))
     ])
-    error_message = "Service Configuration is not valid. Stage configuration data chart-name is required for services keycloak and bund-idp."
+    error_message = "Service Configuration is not valid. Stage configuration data chart-name is required for services keycloak and bund-idp if import is enabled."
   }
 }
 

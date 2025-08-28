@@ -43,7 +43,6 @@ It performs the following operations:
 | [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
 | [kubernetes_secret.ars_pseudo_hash_pepper](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.gcp_service_accounts](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.notification_gateway_keystores](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
@@ -51,6 +50,8 @@ It performs the following operations:
 | [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [kubernetes_secret.service_accounts](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [terraform_data.dls_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
@@ -63,6 +64,8 @@ It performs the following operations:
 | <a name="input_database_credentials"></a> [database\_credentials](#input\_database\_credentials) | List of Database Credentials for DEMIS services (a secret) | <pre>list(object({<br/>    username            = string<br/>    password            = string<br/>    secret-name         = string<br/>    secret-key-user     = string<br/>    secret-key-password = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_database_target_host"></a> [database\_target\_host](#input\_database\_target\_host) | Defines the Hostname of the Database Server | `string` | n/a | yes |
 | <a name="input_debug_enabled"></a> [debug\_enabled](#input\_debug\_enabled) | Defines if the backend Java Services must be started in Debug Mode | `bool` | `false` | no |
+| <a name="input_destination_lookup_purger_cron_schedule"></a> [destination\_lookup\_purger\_cron\_schedule](#input\_destination\_lookup\_purger\_cron\_schedule) | Defines the cron schedule for the destination-lookup-purger | `string` | `"0 22 * * *"` | no |
+| <a name="input_destination_lookup_purger_suspend"></a> [destination\_lookup\_purger\_suspend](#input\_destination\_lookup\_purger\_suspend) | Defines if the destination-lookup-purger is suspended. | `bool` | `false` | no |
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_docker_registry"></a> [docker\_registry](#input\_docker\_registry) | The Docker Registry to use for pulling Images | `string` | n/a | yes |
 | <a name="input_feature_flags"></a> [feature\_flags](#input\_feature\_flags) | Defines a list of feature flags that belong to services | <pre>list(object({<br/>    services   = list(string)<br/>    flag_name  = string<br/>    flag_value = bool<br/>  }))</pre> | `[]` | no |
@@ -75,7 +78,6 @@ It performs the following operations:
 | <a name="input_gateway_token_client_lab"></a> [gateway\_token\_client\_lab](#input\_gateway\_token\_client\_lab) | The Client Token for the Gateway LAB Realm | `string` | n/a | yes |
 | <a name="input_gateway_truststore_jks"></a> [gateway\_truststore\_jks](#input\_gateway\_truststore\_jks) | The Truststore JKS for the Gateway | `string` | n/a | yes |
 | <a name="input_gateway_truststore_password"></a> [gateway\_truststore\_password](#input\_gateway\_truststore\_password) | The Password for the Gateway Truststore | `string` | n/a | yes |
-| <a name="input_gcp_service_accounts"></a> [gcp\_service\_accounts](#input\_gcp\_service\_accounts) | Google Cloud service account details for authentication | <pre>list(object({<br/>    service_account_name = string # Name of the service account<br/>    gcp_project_id       = string # GCP Project ID where the service account exists<br/>    secret_name          = string # Name of the Kubernetes secret to store the service account key<br/>    keyfile_base64       = string # Base64-encoded JSON key file content<br/>  }))</pre> | `[]` | no |
 | <a name="input_google_cloud_access_token"></a> [google\_cloud\_access\_token](#input\_google\_cloud\_access\_token) | The User-Token for accessing the Google Artifact Registry. <br/>  Typically obtained with the command: 'gcloud auth print-access-token' | `string` | `""` | no |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Repository where is stored the Helm Chart | `string` | n/a | yes |
 | <a name="input_helm_repository_password"></a> [helm\_repository\_password](#input\_helm\_repository\_password) | The Password credential for the Helm Repository | `string` | `""` | no |
@@ -98,6 +100,7 @@ It performs the following operations:
 | <a name="input_s3_hostname"></a> [s3\_hostname](#input\_s3\_hostname) | The Hostname of the Remote S3 Storage | `string` | `""` | no |
 | <a name="input_s3_port"></a> [s3\_port](#input\_s3\_port) | The Port of the Remote S3 Storage | `number` | `9000` | no |
 | <a name="input_s3_tls_credential"></a> [s3\_tls\_credential](#input\_s3\_tls\_credential) | Base64-encoded, PEM certificate to be used for configuring the TLS Settings for the S3 Storage Server Connection. | `string` | n/a | yes |
+| <a name="input_service_accounts"></a> [service\_accounts](#input\_service\_accounts) | Service account details for authentication | <pre>list(object({<br/>    secret_name    = string # Name of the Kubernetes secret to store the service account key<br/>    keyfile_base64 = string # Base64-encoded JSON key file content<br/>  }))</pre> | `[]` | no |
 | <a name="input_storage_tls_certificate"></a> [storage\_tls\_certificate](#input\_storage\_tls\_certificate) | CA certificate of storage when accessing externally | `string` | n/a | yes |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The Namespace to use for deployment | `string` | `"demis"` | no |
 | <a name="input_volumes"></a> [volumes](#input\_volumes) | Defines the volumes to be used in the DEMIS Environment | <pre>map(object({<br/>    storage_class = string<br/>    capacity      = string<br/>  }))</pre> | n/a | yes |
