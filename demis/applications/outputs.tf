@@ -8,6 +8,16 @@ output "fsp_enabled" {
   value       = local.fsp_enabled
 }
 
+output "dlp_version" {
+  description = "The version of destination-lookup-purger"
+  value       = try(module.destination_lookup_purger[0].app_chart_versions[0], "")
+}
+
+output "dlp_enabled" {
+  description = "Whether destination-lookup-purger is enabled"
+  value       = try(local.dls_purger_information.enabled, false)
+}
+
 output "fhir_profile_snapshots" {
   description = "Version of the FHIR Profile Snapshots being used"
   value       = length(tolist(module.validation_service_core_metadata.current_profile_versions)) > 0 ? "[${join(", ", tolist(module.validation_service_core_metadata.current_profile_versions))}]" : local.fhir_profile_snapshots

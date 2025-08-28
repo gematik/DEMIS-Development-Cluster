@@ -54,7 +54,40 @@ extraEnvVars:
       secretKeyRef:
         name: pseudo-database-secret
         key: PSEUDO_DB_PASSWORD
-
+%{ if lookup(config_options, "CONFIG_ARS_PSEUDO_SCHEMA", false) ~}
+  - name: ARS_PSEUDO_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-pseudo-ddl-database-secret
+        key: ARS_PSEUDO_DDL_DB_PASSWORD
+  - name: ARS_PSEUDO_USER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-pseudo-user-database-secret
+        key: ARS_PSEUDO_USER_DB_PASSWORD
+%{ endif ~}
+%{ if lookup(config_options, "CONFIG_DESTINATION_LOOKUP_DB", false) ~}
+  - name: DESTINATION_LOOKUP_WRITER_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: destination-lookup-writer-ddl-database-secret
+        key: DESTINATION_LOOKUP_WRITER_DDL_DB_PASSWORD
+  - name: DESTINATION_LOOKUP_PURGER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: destination-lookup-purger-database-secret
+        key: DESTINATION_LOOKUP_PURGER_DB_PASSWORD
+  - name: DESTINATION_LOOKUP_WRITER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: destination-lookup-writer-database-secret
+        key: DESTINATION_LOOKUP_WRITER_DB_PASSWORD
+  - name: DESTINATION_LOOKUP_READER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: destination-lookup-reader-database-secret
+        key: DESTINATION_LOOKUP_READER_DB_PASSWORD
+%{ endif ~}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

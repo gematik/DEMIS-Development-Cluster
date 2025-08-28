@@ -1,9 +1,19 @@
+locals {
+  # define Istio Helm Chart versions and charts
+  istio_authentication_policies_chart         = coalesce(try(local.deployment_information["policies-authentications"].chart-name, ""), "policies-authentications-istio")
+  istio_authentication_policies_chart_version = local.deployment_information["policies-authentications"].main.version
+  istio_authorization_policies_chart          = coalesce(try(local.deployment_information["policies-authorizations"].chart-name, ""), "policies-authorizations-istio")
+  istio_authorization_policies_chart_version  = local.deployment_information["policies-authorizations"].main.version
+  istio_network_policies_chart                = coalesce(try(local.deployment_information["network-rules"].chart-name, ""), "network-rules-istio")
+  istio_network_policies_chart_version        = local.deployment_information["network-rules"].main.version
+}
+
 ###################################
 # Install Istio Helm Charts
 ###################################
 resource "helm_release" "authorization_policies_istio" {
   name                = "authorization-policies"
-  chart               = "policies-authorizations-istio"
+  chart               = local.istio_authorization_policies_chart
   version             = local.istio_authorization_policies_chart_version
   namespace           = var.target_namespace
   repository          = var.helm_repository
@@ -29,7 +39,7 @@ resource "helm_release" "authorization_policies_istio" {
 
 resource "helm_release" "authentication_policies_istio" {
   name                = "authentication-policies"
-  chart               = "policies-authentications-istio"
+  chart               = local.istio_authentication_policies_chart
   version             = local.istio_authentication_policies_chart_version
   namespace           = var.target_namespace
   repository          = var.helm_repository
@@ -55,7 +65,7 @@ resource "helm_release" "authentication_policies_istio" {
 
 resource "helm_release" "network_rules_istio" {
   name                = "network-rules"
-  chart               = "network-rules-istio"
+  chart               = local.istio_network_policies_chart
   version             = local.istio_network_policies_chart_version
   namespace           = var.target_namespace
   repository          = var.helm_repository

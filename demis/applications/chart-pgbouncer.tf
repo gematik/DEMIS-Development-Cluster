@@ -30,7 +30,8 @@ module "pgbouncer" {
     database_host      = var.database_target_host,
     istio_enable       = var.istio_enabled,
     replica_count      = local.pgbouncer_replicas,
-    resource_block     = local.pgbouncer_resource_block
+    resource_block     = local.pgbouncer_resource_block,
+    config_options     = try(var.config_options[local.pgbouncer_name], {})
   })
   istio_values = templatefile(local.pgbouncer_template_istio, {
     namespace = var.target_namespace

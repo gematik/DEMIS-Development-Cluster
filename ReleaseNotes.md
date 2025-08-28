@@ -1,6 +1,17 @@
 <img align="right" alt="gematik" width="250" height="47" src="media/Gematik_Logo_Flag.png"/> <br/>    
 
 # Release Notes DEMIS Kubernetes Environment
+
+## Release 3.8.1
+- Update structure of the service account Kubernetes secret.
+- add database for destination-lookup to pgbouncer and postgres
+- remove unused variables from ekm-template
+- add resource for destination-lookup-service
+- make stage-configuration-data optional
+- remove unused secret for gematik-idp
+- changed routing of requests to FUTS
+- added profile version for IGS in Gateway-IGS
+
 ## Release 3.8.0
 - add module fhir-profiles-metadata v2
 - add setup for provisioning modes dedicated, distributed and combined on validation services

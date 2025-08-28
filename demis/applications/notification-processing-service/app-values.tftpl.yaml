@@ -34,8 +34,8 @@ customEnvVars:
   NPS_CLIENT_PDFGEN: http://pdfgen-service.${namespace}.svc.cluster.local
   NPS_CLIENT_PSEUDONYMIZATION: http://pseudonymization-service.${namespace}.svc.cluster.local
   NPS_CLIENT_PSEUDO_STORAGE: http://pseudonymization-storage-service.${namespace}.svc.cluster.local
-  NPS_CLIENT_FHIR_STORAGE_WRITER: http://fhir-storage-writer.${namespace}.svc.cluster.local
-  NPS_CLIENT_FUTS: http://futs.${namespace}.svc.cluster.local
+  NPS_CLIENT_FHIR_STORAGE_WRITER_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local
+  NPS_CLIENT_FUTS_ADDRESS: http://futs.${namespace}.svc.cluster.local
   NPS_CLIENT_CONTEXT_ENRICHMENT_SERVICE: http://context-enrichment-service.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}

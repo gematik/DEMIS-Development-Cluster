@@ -1,16 +1,14 @@
-# Values for gateway-igs.
+# Values for the destination-lookup-writer Helm Template
 
+# Enables debug mode
 debug:
   enable: ${debug_enable}
-
-istio:
-  enable: ${istio_enable}
 
 required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-gateway-igs
+    name: demis-${app_name}
     %{ endif }
 
 # Image Pull Secrets
@@ -18,18 +16,11 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
-  
+
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
-  IGS_SERVICE_URL_PUBLIC: "https://${core_hostname}/surveillance/notification-sequence"
-  IGS_SERVICE_URL: "http://igs-service.${namespace}.svc.cluster.local/surveillance/notification-sequence"
-  IGS_PROFILE_VERSION: "v${igs_profile_major_version}"
-%{ if feature_flag_new_api_endpoints ~}
-  FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local"
-%{ else ~}
-  FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
-%{ endif ~}
+  DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/${data_base}"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

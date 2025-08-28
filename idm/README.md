@@ -43,7 +43,6 @@ It performs the following operations:
 | [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_cus_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_gematik_idp_public_key](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |

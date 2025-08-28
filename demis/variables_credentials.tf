@@ -30,13 +30,11 @@ variable "google_cloud_access_token" {
   EOT
 }
 
-variable "gcp_service_accounts" {
-  description = "Google Cloud service account details for authentication"
+variable "service_accounts" {
+  description = "Service account details for authentication"
   type = list(object({
-    service_account_name = string # Name of the service account
-    gcp_project_id       = string # GCP Project ID where the service account exists
-    secret_name          = string # Name of the Kubernetes secret to store the service account key
-    keyfile_base64       = string # Base64-encoded JSON key file content
+    secret_name    = string # Name of the Kubernetes secret to store the service account key
+    keyfile_base64 = string # Base64-encoded JSON key file content
   }))
   default = []
 }

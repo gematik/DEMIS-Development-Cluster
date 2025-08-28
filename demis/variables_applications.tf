@@ -42,12 +42,28 @@ variable "fhir_storage_purger_suspend" {
   default     = false
 }
 
+variable "destination_lookup_purger_suspend" {
+  type        = bool
+  description = "Defines if the destination-lookup-purger is suspended."
+  default     = false
+}
+
 variable "fhir_storage_purger_cron_schedule" {
   type        = string
   description = "Defines the cron schedule for the FHIR storage purger"
   validation {
     condition     = length(var.fhir_storage_purger_cron_schedule) > 0
     error_message = "The FHIR storage purger cron schedule must be defined"
+  }
+}
+
+variable "destination_lookup_purger_cron_schedule" {
+  type        = string
+  description = "Defines the cron schedule for the destination-lookup-purger"
+  default     = "0 22 * * *"
+  validation {
+    condition     = length(var.destination_lookup_purger_cron_schedule) > 0
+    error_message = "The destination-lookup-purger cron schedule must be defined"
   }
 }
 

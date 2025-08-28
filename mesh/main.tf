@@ -40,9 +40,6 @@ locals {
 
   # Import the "active-versions.yaml" file
   deployment_information = yamldecode(file(local.active_versions_source_path))
-  # define Istio Helm Chart versions
-  istio_authorization_policies_chart_version = local.deployment_information["policies-authorizations"].main.version
-  istio_network_policies_chart_version       = local.deployment_information["network-rules"].main.version
 }
 
 # Define the Endpoints
