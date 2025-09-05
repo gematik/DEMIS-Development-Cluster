@@ -25,12 +25,14 @@ module "pgbouncer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.pgbouncer_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    database_host      = var.database_target_host,
-    istio_enable       = var.istio_enabled,
-    replica_count      = local.pgbouncer_replicas,
-    resource_block     = local.pgbouncer_resource_block
+    image_pull_secrets  = var.pull_secrets,
+    repository          = var.docker_registry,
+    database_host       = var.database_target_host,
+    istio_enable        = var.istio_enabled,
+    replica_count       = local.pgbouncer_replicas,
+    resource_block      = local.pgbouncer_resource_block
+    keycloak_db_enabled = local.keycloak_enabled
+    bundid_db_enabled   = local.bundid_enabled
   })
   istio_values = templatefile(local.pgbouncer_template_istio, {
     namespace = var.target_namespace

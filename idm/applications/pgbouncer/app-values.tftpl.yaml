@@ -18,14 +18,18 @@ imagePullSecrets:
 # Define custom configuration values
 config:
   databases:
+%{ if keycloak_db_enabled ~}
     keycloak:
       host: ${database_host}
       port: 5432
       dbname: keycloak
+%{ endif ~}
+%{ if bundid_db_enabled ~}
     bundid_keycloak:
       host: ${database_host}
       port: 5432
       dbname: bundid_keycloak
+%{ endif ~}
   pgbouncer:
     server_lifetime: "300"
     max_client_conn: "200"

@@ -7,7 +7,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
 

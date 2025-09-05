@@ -69,12 +69,12 @@ function tofu() {
 
 function helm()  {
     # Install "helm" source if not present
-    if ls /etc/apt/sources.list.d/helm.list 1> /dev/null 2>&1; then
+    if ls /etc/apt/sources.list.d/helm-stable-debian.list 1> /dev/null 2>&1; then
         echo "##### Helm source list already exists."
     else 
         echo "##### Installing helm sources"
-        echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee -a /etc/apt/sources.list.d/helm.list
-        curl -fsSL https://baltocdn.com/helm/signing.asc | sudo gpg --dearmor -o /usr/share/keyrings/helm.gpg
+        echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
     fi
 
     echo "##### Installing/Updating helm"

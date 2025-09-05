@@ -2,6 +2,22 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.0.0
+#### Breaking:
+- upgrade required terraform version to 1.9.0
+- upgrade provider hashicorp/helm to 3.0.2
+- for local development KIND version 0.30.0 is required
+- update apt package manager resource for helm (old is unavailable)
+#### improvements and features:
+- add db entries for pgbouncer only if necessary
+- determine postgres initialization config from running services
+- updating kyverno
+- fix grafana dashboard download issue on empty folder in terraform
+- upgrade provider hashicorp/kubernetes to 2.38.0
+- update custom dashboards
+- add more documentation for customizing new EKM deployment modules
+- add destination lookup services to switch database script
+
 ## Release 3.8.1
 - Update structure of the service account Kubernetes secret.
 - add database for destination-lookup to pgbouncer and postgres

@@ -21,6 +21,13 @@ imagePullSecrets:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  CONFIG_KEYCLOAK_DB: false
+  CONFIG_BUNDID_DB: false
+  CONFIG_PSEUDO_DB: ${pseudo_db_enabled}
+  CONFIG_SURVEILLANCE_PSEUDO_DB: ${surveillance_pseudo_db_enabled}
+  CONFIG_ARS_PSEUDO_SCHEMA: ${ars_pseudo_schema_enabled}
+  CONFIG_DESTINATION_LOOKUP_DB: ${destination_lookup_db_enabled}
+  CONFIG_FHIR_STORAGE_DB: ${fhir_storage_db_enabled}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name}: ${flag_value}
   %{~ endfor ~}
@@ -29,6 +36,7 @@ customEnvVars:
   %{~ endfor ~}
 
 extraEnvVars:
+%{ if fhir_storage_db_enabled ~}
   - name: FHIR_STORAGE_WRITER_DDL_DB_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -49,12 +57,15 @@ extraEnvVars:
       secretKeyRef:
         name: fhir-storage-reader-database-secret
         key: FHIR_STORAGE_READER_DB_PASSWORD
+%{ endif ~}
+%{ if pseudo_db_enabled ~}
   - name: PSEUDO_DB_PASSWORD
     valueFrom:
       secretKeyRef:
         name: pseudo-database-secret
         key: PSEUDO_DB_PASSWORD
-%{ if lookup(config_options, "CONFIG_ARS_PSEUDO_SCHEMA", false) ~}
+%{ endif ~}
+%{ if ars_pseudo_schema_enabled ~}
   - name: ARS_PSEUDO_DDL_DB_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -66,7 +77,7 @@ extraEnvVars:
         name: ars-pseudo-user-database-secret
         key: ARS_PSEUDO_USER_DB_PASSWORD
 %{ endif ~}
-%{ if lookup(config_options, "CONFIG_DESTINATION_LOOKUP_DB", false) ~}
+%{ if destination_lookup_db_enabled ~}
   - name: DESTINATION_LOOKUP_WRITER_DDL_DB_PASSWORD
     valueFrom:
       secretKeyRef:

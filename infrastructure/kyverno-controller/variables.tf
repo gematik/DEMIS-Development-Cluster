@@ -13,7 +13,7 @@ variable "helm_repository" {
 variable "chart_version" {
   description = "The Helm Chart Version for Kyverno"
   type        = string
-  default     = "3.4.2"
+  default     = "3.5.1"
 }
 
 variable "admissioncontroller_replicas" {

@@ -43,10 +43,12 @@ resource "helm_release" "chart" {
   # When doing a canary deployment, we need to ensure that the values of the main version are not updated
   values = length(local.available_versions) > 1 && (each.key == local.main_version) ? [] : [var.application_values]
 
-  set {
-    name  = local.image_tag_property
-    value = coalesce(try(var.deployment_information.image-tag, null), each.key)
-  }
+  set = [
+    {
+      name  = local.image_tag_property
+      value = coalesce(try(var.deployment_information.image-tag, null), each.key)
+    }
+  ]
 }
 
 resource "helm_release" "istio" {
@@ -67,31 +69,29 @@ resource "helm_release" "istio" {
   values              = [var.istio_values]
   timeout             = local.deployment_timeout
 
-  set {
-    name  = "destinationSubsets.main.version"
-    value = local.main_version
-  }
 
-  set {
-    name  = "destinationSubsets.main.weight"
-    value = var.deployment_information.main.weight
-  }
-
-  dynamic "set" {
-    for_each = toset(compact([local.canary_version]))
-    content {
-      name  = "destinationSubsets.canary.version"
-      value = set.value
+  set = flatten([[
+    {
+      name  = "destinationSubsets.main.version"
+      value = local.main_version
+    },
+    {
+      name  = "destinationSubsets.main.weight"
+      value = var.deployment_information.main.weight
     }
-  }
-
-  dynamic "set" {
-    for_each = toset(compact([local.canary_weight]))
-    content {
-      name  = "destinationSubsets.canary.weight"
-      value = set.value
-    }
-  }
+    ],
+    [for version in compact([local.canary_version]) :
+      {
+        name  = "destinationSubsets.canary.version"
+        value = version
+      }
+    ],
+    [for canary_weight in compact([local.canary_weight]) :
+      {
+        name  = "destinationSubsets.canary.weight"
+        value = canary_weight
+      }
+  ]])
 
   depends_on = [helm_release.chart]
 }

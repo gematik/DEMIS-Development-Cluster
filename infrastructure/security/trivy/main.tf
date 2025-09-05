@@ -8,48 +8,40 @@ resource "helm_release" "trivy_operator" {
   atomic     = true
   wait       = true
 
-  set {
+  set = flatten([[{
     name  = "trivy.slow"
     value = var.use_less_resources
-  }
-
-  # See GitHub Issue https://github.com/hashicorp/terraform-provider-helm/issues/316
-  set {
-    name  = "trivy.additionalVulnerabilityReportFields"
-    value = replace(var.additional_report_fields, ",", "\\,")
-  }
-
-  set {
-    name  = "trivy.ignoreUnfixed"
-    value = var.ignore_unfixed
-  }
-
-  set {
-    name = "trivy.severity"
+    },
     # See GitHub Issue https://github.com/hashicorp/terraform-provider-helm/issues/316
-    value = replace(var.severity_levels, ",", "\\,")
-  }
-
-  set {
-    name  = "targetNamespaces"
-    value = var.scan_namespaces
-  }
-
-  set {
-    name  = "compliance.cron"
-    value = var.cron_job_schedule
-  }
-
-  set {
-    name  = "operator.scanJobsConcurrentLimit"
-    value = var.scan_jobs_limit
-  }
-
-  dynamic "set" {
-    for_each = var.private_registry_secret_names
-    content {
-      name  = "operator.privateRegistryScanSecretsNames.${set.value.namespace}"
-      value = set.value.token
-    }
-  }
+    {
+      name  = "trivy.additionalVulnerabilityReportFields"
+      value = replace(var.additional_report_fields, ",", "\\,")
+    },
+    {
+      name  = "trivy.ignoreUnfixed"
+      value = var.ignore_unfixed
+    },
+    {
+      name = "trivy.severity"
+      # See GitHub Issue https://github.com/hashicorp/terraform-provider-helm/issues/316
+      value = replace(var.severity_levels, ",", "\\,")
+    },
+    {
+      name  = "targetNamespaces"
+      value = var.scan_namespaces
+    },
+    {
+      name  = "compliance.cron"
+      value = var.cron_job_schedule
+    },
+    {
+      name  = "operator.scanJobsConcurrentLimit"
+      value = var.scan_jobs_limit
+    }],
+    [for secret in var.private_registry_secret_names :
+      {
+        name  = "operator.privateRegistryScanSecretsNames.${secret.namespace}"
+        value = secret.token
+      }
+  ]])
 }

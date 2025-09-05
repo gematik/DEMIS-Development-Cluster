@@ -1,14 +1,14 @@
 terraform {
-  required_version = ">=1.6.0"
+  required_version = ">=1.9.0"
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "2.17.0"
+      version = "3.0.2"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.37.1"
+      version = "2.38.0"
     }
 
     random = {
@@ -19,7 +19,7 @@ terraform {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     config_path = local.kubeconfig_path
   }
 }

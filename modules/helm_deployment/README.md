@@ -70,8 +70,8 @@ The tests are pretty limited, since the DEMIS Helm Charts are currently hosted o
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) |  >= 2.17.0, < 3.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0.0, < 4.0.0 |
 
 ## Modules
 

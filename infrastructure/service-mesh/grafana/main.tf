@@ -40,6 +40,13 @@ resource "kubernetes_config_map_v1" "grafana_istio_dashboards" {
     "istio-performance-dashboard.json" = data.local_file.istio_performance_dashboard.content
     "pilot-dashboard.json"             = data.local_file.istio_control_plane_dashboard.content
   }
+
+  lifecycle {
+    precondition {
+      condition     = !contains([data.local_file.istio_performance_dashboard.filename, data.local_file.istio_control_plane_dashboard.filename], ".gitkeep")
+      error_message = "one or more of the dashboard files are missing."
+    }
+  }
 }
 
 
@@ -60,6 +67,13 @@ resource "kubernetes_config_map_v1" "grafana_istio_services_dashboards" {
     "istio-service-dashboard.json"   = data.local_file.istio_service_dashboard.content
     "istio-workload-dashboard.json"  = data.local_file.istio_workload_dashboard.content
   }
+
+  lifecycle {
+    precondition {
+      condition     = !contains([data.local_file.istio_wasm_dashboard.filename, data.local_file.istio_mesh_dashboard.filename, data.local_file.istio_service_dashboard.filename, data.local_file.istio_workload_dashboard.filename], ".gitkeep")
+      error_message = "one or more of the dashboard files are missing."
+    }
+  }
 }
 
 resource "kubernetes_config_map_v1" "grafana_base_dashboards" {
@@ -79,5 +93,12 @@ resource "kubernetes_config_map_v1" "grafana_base_dashboards" {
     "pod-metrics.json"         = data.local_file.pod_metrics_dashboard.content
     "prometheus-stats.json"    = data.local_file.prometheus_stats.content
     "prometheus-overview.json" = data.local_file.prometheus_overview.content
+  }
+
+  lifecycle {
+    precondition {
+      condition     = !contains([data.local_file.cluster_dashboard.filename, data.local_file.cluster_monitoring_prometheus.filename, data.local_file.pod_metrics_dashboard.filename, data.local_file.prometheus_stats.filename, data.local_file.prometheus_overview.filename], ".gitkeep")
+      error_message = "one or more of the dashboard files are missing."
+    }
   }
 }
