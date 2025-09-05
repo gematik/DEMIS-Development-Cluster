@@ -3,8 +3,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.17.0, < 3.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0.0, < 4.0.0 |
 
 ## Modules
 
@@ -22,7 +22,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_admissioncontroller_replicas"></a> [admissioncontroller\_replicas](#input\_admissioncontroller\_replicas) | setting replicas of admission controller | `number` | `3` | no |
 | <a name="input_backgroundcontroller_replicas"></a> [backgroundcontroller\_replicas](#input\_backgroundcontroller\_replicas) | setting replicas of background controller | `number` | `2` | no |
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno | `string` | `"3.4.2"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno | `string` | `"3.5.1"` | no |
 | <a name="input_cleanupcontroller_replicas"></a> [cleanupcontroller\_replicas](#input\_cleanupcontroller\_replicas) | setting replicas of cleanup controller | `number` | `2` | no |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Chart Repository for Kyverno | `string` | `"https://kyverno.github.io/kyverno/"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install Kyverno | `string` | `"kyverno"` | no |

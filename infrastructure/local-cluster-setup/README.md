@@ -7,8 +7,8 @@ Terraform Module for creating a local Kubernetes Cluster using KIND (Kubernetes 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
-| <a name="requirement_kind"></a> [kind](#requirement\_kind) | >= 0.7.0, < 1.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
+| <a name="requirement_kind"></a> [kind](#requirement\_kind) | >= 0.9.0, < 1.0.0 |
 
 ## Modules
 

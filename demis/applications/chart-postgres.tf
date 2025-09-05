@@ -24,14 +24,19 @@ module "postgres" {
 
   # Pass the values for the chart
   application_values = templatefile(local.postgres_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    debug_enable       = var.debug_enabled,
-    feature_flags      = try(var.feature_flags[local.postgres_name], {}),
-    config_options     = try(var.config_options[local.postgres_name], {}),
-    replica_count      = local.postgres_replicas,
-    resource_block     = local.postgres_resource_block
+    image_pull_secrets             = var.pull_secrets,
+    repository                     = var.docker_registry,
+    istio_enable                   = var.istio_enabled,
+    debug_enable                   = var.debug_enabled,
+    feature_flags                  = try(var.feature_flags[local.postgres_name], {}),
+    config_options                 = try(var.config_options[local.postgres_name], {}),
+    replica_count                  = local.postgres_replicas,
+    resource_block                 = local.postgres_resource_block
+    pseudo_db_enabled              = local.pseudo_enabled
+    surveillance_pseudo_db_enabled = local.surveillance_pseudonym_enabled || local.ars_pseudonymization_enabled
+    ars_pseudo_schema_enabled      = local.ars_pseudonymization_enabled
+    fhir_storage_db_enabled        = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled
+    destination_lookup_db_enabled  = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled
   })
   istio_values = templatefile(local.postgres_template_istio, {
     namespace = var.target_namespace

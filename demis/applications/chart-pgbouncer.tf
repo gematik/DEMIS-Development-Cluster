@@ -25,13 +25,17 @@ module "pgbouncer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.pgbouncer_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    database_host      = var.database_target_host,
-    istio_enable       = var.istio_enabled,
-    replica_count      = local.pgbouncer_replicas,
-    resource_block     = local.pgbouncer_resource_block,
-    config_options     = try(var.config_options[local.pgbouncer_name], {})
+    image_pull_secrets                = var.pull_secrets,
+    repository                        = var.docker_registry,
+    database_host                     = var.database_target_host,
+    istio_enable                      = var.istio_enabled,
+    replica_count                     = local.pgbouncer_replicas,
+    resource_block                    = local.pgbouncer_resource_block,
+    config_options                    = try(var.config_options[local.pgbouncer_name], {})
+    pseudonymization_db_enabled       = local.ars_pseudonymization_enabled
+    fhir_storage_db_enabled           = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled
+    surveillance_pseudonym_db_enabled = local.surveillance_pseudonym_enabled
+    destination_lookup_db_enabled     = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled
   })
   istio_values = templatefile(local.pgbouncer_template_istio, {
     namespace = var.target_namespace

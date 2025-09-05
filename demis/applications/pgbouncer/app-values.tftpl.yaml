@@ -18,19 +18,25 @@ imagePullSecrets:
 # Define custom configuration values
 config:
   databases:
+%{ if pseudonymization_db_enabled ~}
     pseudonymization:
       host: ${database_host}
       port: 5432
       dbname: pseudonymization
+%{ endif ~}
+%{ if fhir_storage_db_enabled ~}
     fhir-storage:
       host: ${database_host}
       port: 5432
       dbname: fhir-storage
+%{ endif ~}
+%{ if surveillance_pseudonym_db_enabled ~}
     surveillance-pseudonym:
       host: ${database_host}
       port: 5432
       dbname: surveillance-pseudonym
-%{ if lookup(config_options, "CONFIG_DESTINATION_LOOKUP_DB", false) ~}
+%{ endif ~}
+%{ if destination_lookup_db_enabled ~}
     destination_lookup:
       host: ${database_host}
       port: 5432

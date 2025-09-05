@@ -43,83 +43,61 @@ resource "helm_release" "istio_ingressgateway" {
 
   depends_on = [helm_release.istiod]
 
-  set {
+  set = flatten([[{
     name  = "autoscaling.enabled"
     value = var.local_deployment ? "false" : "true"
-  }
-
-  # only one External IP for the ingress gateway are supported and for_each loop is used
-  # to create a single set block if the external_ip variable is not empty
-  dynamic "set" {
-    for_each = length(var.external_ip) > 0 ? [var.external_ip] : []
-    content {
-      name  = "service.loadBalancerIP"
-      value = var.external_ip
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.ingress_annotations
-    content {
-      name  = "service.annotations.${set.value.name}"
-      value = set.value.value
-    }
-  }
-
-  set {
-    name  = "autoscaling.minReplicas"
-    value = var.local_deployment ? "1" : tostring(var.replica_count)
-  }
-
-  set {
-    name  = "autoscaling.maxReplicas"
-    value = var.local_deployment ? "1" : tostring(var.replica_count)
-  }
-
-  set {
-    name  = "service.type"
-    value = var.local_deployment ? "NodePort" : "LoadBalancer"
-  }
-
-  dynamic "set" {
-    for_each = var.local_deployment ? toset(var.local_node_ports_istio) : []
-    content {
-      name  = "service.ports[${index(var.local_node_ports_istio, set.value)}].name"
-      value = set.value.name
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.local_deployment ? toset(var.local_node_ports_istio) : []
-    content {
-      name  = "service.ports[${index(var.local_node_ports_istio, set.value)}].protocol"
-      value = set.value.protocol
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.local_deployment ? toset(var.local_node_ports_istio) : []
-    content {
-      name  = "service.ports[${index(var.local_node_ports_istio, set.value)}].port"
-      value = set.value.port
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.local_deployment ? toset(var.local_node_ports_istio) : []
-    content {
-      name  = "service.ports[${index(var.local_node_ports_istio, set.value)}].targetPort"
-      value = set.value.targetPort
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.local_deployment ? toset(var.local_node_ports_istio) : []
-    content {
-      name  = "service.ports[${index(var.local_node_ports_istio, set.value)}].nodePort"
-      value = set.value.nodePort
-    }
-  }
+    },
+    {
+      name  = "autoscaling.minReplicas"
+      value = var.local_deployment ? "1" : tostring(var.replica_count)
+    },
+    {
+      name  = "autoscaling.maxReplicas"
+      value = var.local_deployment ? "1" : tostring(var.replica_count)
+    },
+    {
+      name  = "service.type"
+      value = var.local_deployment ? "NodePort" : "LoadBalancer"
+    }],
+    # only one External IP for the ingress gateway are supported and for_each loop is used
+    # to create a single set block if the external_ip variable is not empty
+    [for ip in
+      (length(var.external_ip) > 0 ? [var.external_ip] : []) :
+      {
+        name  = "service.loadBalancerIP"
+        value = var.external_ip
+      }
+    ],
+    [for annotation in var.ingress_annotations :
+      {
+        name  = "service.annotations.${annotation.name}"
+        value = annotation.value
+      }
+    ],
+    flatten(
+      [for istio_node_ports in(var.local_deployment ? var.local_node_ports_istio : []) : [
+        {
+          name  = "service.ports[${index(var.local_node_ports_istio, istio_node_ports)}].name"
+          value = istio_node_ports.name
+        },
+        {
+          name  = "service.ports[${index(var.local_node_ports_istio, istio_node_ports)}].protocol"
+          value = istio_node_ports.protocol
+        },
+        {
+          name  = "service.ports[${index(var.local_node_ports_istio, istio_node_ports)}].port"
+          value = istio_node_ports.port
+        },
+        {
+          name  = "service.ports[${index(var.local_node_ports_istio, istio_node_ports)}].targetPort"
+          value = istio_node_ports.targetPort
+        },
+        {
+          name  = "service.ports[${index(var.local_node_ports_istio, istio_node_ports)}].nodePort"
+          value = istio_node_ports.nodePort
+        }
+        ]
+  ])])
 
 }
 
@@ -135,16 +113,15 @@ resource "helm_release" "istio_egressgateway" {
 
   depends_on = [helm_release.istiod]
 
-  set {
+  set = [{
     name  = "autoscaling.enabled"
     value = var.local_deployment ? "false" : "true"
-  }
-
-  # Egress gateways do not need an external LoadBalancer IP
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
+    },
+    # Egress gateways do not need an external LoadBalancer IP
+    {
+      name  = "service.type"
+      value = "ClusterIP"
+  }]
 }
 
 resource "helm_release" "istio_cni" {
@@ -158,10 +135,10 @@ resource "helm_release" "istio_cni" {
   atomic    = true
   wait      = true
 
-  set {
+  set = [{
     name  = "global.logAsJson"
     value = "true"
-  }
+  }]
 
   depends_on = [helm_release.istiod]
 }

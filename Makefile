@@ -99,9 +99,6 @@ help:
 infrastructure: export WORKING_PATH=$(ROOT_DIR)/$(INFRASTRUCTURE_PATH)
 infrastructure: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
 infrastructure: init-infrastructure validate ## Creates the Kubernetes cluster
-	echo "## Pre Downloading Grafana Dashboards"
-	cd $(WORKING_PATH)/service-mesh/grafana/dashboards/
-	sh ./downloader.sh
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"

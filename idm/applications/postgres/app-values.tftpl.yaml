@@ -21,6 +21,10 @@ imagePullSecrets:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  CONFIG_KEYCLOAK_DB: ${keycloak_db_enabled}
+  CONFIG_BUNDID_DB: ${bundid_db_enabled}
+  CONFIG_PSEUDO_DB: false
+  CONFIG_FHIR_STORAGE_DB: false
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

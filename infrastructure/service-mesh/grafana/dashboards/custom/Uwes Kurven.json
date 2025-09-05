@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 209,
+  "id": 202,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -100,7 +100,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 10,
+        "w": 8,
         "x": 0,
         "y": 0
       },
@@ -114,7 +114,7 @@
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
-          "sortBy": "Total",
+          "sortBy": "Name",
           "sortDesc": true
         },
         "tooltip": {
@@ -136,6 +136,84 @@
       ],
       "title": "nginx",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "http status codes",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+            }
+          ],
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 21,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "sum by(status) (count_over_time( {app=\"log-collector-nginx\"} |~ `$regex_include` !~ `$regex_exclude` | regexp `\\\"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<http_version>HTTP\\/\\d\\.\\d)\\\" (?P<status>\\d+) (?P<size>\\d+) \"[^\"]+\" \"(?P<ua>[^\"]+)\"` | status != \"\" | status =~ `$http_status` [$__interval]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "nginx",
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -199,17 +277,90 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 10,
-        "x": 10,
+        "w": 8,
+        "x": 12,
         "y": 0
       },
       "id": 1,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "sum"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by(url) (count_over_time({container=\"log-collector-nginx\"} |= `access` |= `POST /gateway` | regexp `\"(?P<method>[A-Z]+) (?P<path>[^\"]+) HTTP/(?P<http_version>[\\d.]+)\" (?P<status>\\d+) (?P<size>\\d+) \"(?P<url>[^\"]+)\" \"[^\"]+\" ` [$__interval]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "POST des Meldeportal",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 20,
+      "options": {
+        "displayLabels": [
+          "percent",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
         },
         "tooltip": {
           "mode": "single",
@@ -222,14 +373,14 @@
             "type": "loki",
             "uid": "${datasource}"
           },
-          "editorMode": "code",
-          "expr": "sum(count_over_time({container=\"log-collector-nginx\"} |= `access` |= `POST /notification-gateway` [5m]))",
+          "editorMode": "builder",
+          "expr": "sum by(url) (count_over_time({container=\"log-collector-nginx\"} |= `access` |= `POST /gateway` | regexp `\"(?P<method>[A-Z]+) (?P<path>[^\"]+) HTTP/(?P<http_version>[\\d.]+)\" (?P<status>\\d+) (?P<size>\\d+) \"(?P<url>[^\"]+)\" \"[^\"]+\" ` [$__interval]))",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "POST des Meldeportal pro 5 min",
-      "type": "timeseries"
+      "title": "POST des Meldeportal",
+      "type": "piechart"
     },
     {
       "collapsed": false,
@@ -301,7 +452,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{message=\"HTTP 422 Unprocessable Entity: Rule per-1: 'If present, start SHALL have a lower value than end' Failed\"}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
@@ -406,7 +582,7 @@
         "x": 8,
         "y": 8
       },
-      "id": 14,
+      "id": 19,
       "options": {
         "legend": {
           "calcs": [
@@ -430,61 +606,111 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "(count_over_time( {container=\"log-collector-nginx\"} |~ `(?i)modsec` |= `--` != `-->` [$__interval]))",
-          "legendFormat": "--",
+          "expr": "sum by(msg) (count_over_time({container=\"log-collector-nginx\"} |= `ModSecurity` !~ `(GET https://portal.demis.rki.de/portal/ HTTP/1.0|PUT /sequence-data)` | regexp `id \"(?P<id>\\d+)\".+msg \"(?P<msg>[^\\\"]*)\"` | id !~ `(949110)` [$__interval]))",
+          "legendFormat": "",
           "queryType": "range",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(count_over_time( {container=\"log-collector-nginx\"} |~ `(?i)modsec` |= `-->` [$__interval]))",
-          "hide": false,
-          "legendFormat": "-->",
-          "queryType": "range",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(count_over_time( {container=\"log-collector-nginx\"} |~ `(?i)modsec` |= `id \"200002\"` [$__interval]))",
-          "hide": false,
-          "legendFormat": "200002, xml parsing error",
-          "queryType": "range",
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(count_over_time( {container=\"log-collector-nginx\"} |~ `(?i)modsec` !~ `(id \"12[01238]\"|id \"200002\"|id \"949110\"|-->|--|Matched Data: .nsr found within ARGS:refresh_token)` [$__interval]))",
-          "hide": false,
-          "legendFormat": "andere",
-          "queryType": "range",
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(count_over_time( {container=\"log-collector-nginx\"} |~ `(?i)modsec` |= `Matched Data: .nsr found within ARGS:refresh_token` [$__interval]))",
-          "hide": false,
-          "legendFormat": ".nsr in refreshToken",
-          "queryType": "range",
-          "refId": "E"
         }
       ],
       "title": "spezial ModSec Zeichenkettensuche",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by(user, error) (count_over_time({container=\"keycloak\"} |~ `$regex_include` !~ `$regex_exclude`| json | __error__!=\"JSONParserErr\" | level != `INFO` | regexp `username=\\\\\"(?P<user>[^\\\\]+)\\\\\"` | regexp `error=\\\\\"(?P<error>[^\\\\]+)\\\\\"` | user!=`` [$__interval]))",
+          "legendFormat": "",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "KeyCloak user error",
       "type": "timeseries"
     },
     {
@@ -559,15 +785,14 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 8
+        "w": 12,
+        "x": 0,
+        "y": 17
       },
       "id": 16,
       "options": {
         "legend": {
           "calcs": [
-            "last",
             "sum"
           ],
           "displayMode": "table",
@@ -588,7 +813,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(ip, status) (count_over_time({app=\"log-collector-nginx\"} |~ `$regex_include` !~ `$regex_exclude` | regexp ` \"log\"=>\"(?P<ip>[^ ]+) .*\\\"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<http_version>HTTP\\/\\d\\.\\d)\\\" (?P<status>\\d+) (?P<size>\\d+) \"[^\"]+\" \"(?P<ua>[^\"]+)\"` | status != `` | status =~ `(4..)` [$__interval]))",
+          "expr": "sum by(ip, status) (count_over_time({container=\"log-collector-nginx\"} |~ `$regex_include` !~ `$regex_exclude` | regexp ` \"log\"=>\"(?P<ip>[^ ]+) .*\\\"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<http_version>HTTP\\/\\d\\.\\d)\\\" (?P<status>\\d+) (?P<size>\\d+) \"[^\"]+\" \"(?P<ua>[^\"]+)\"` | status != `` | status =~ `(4..)` [$__interval]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -597,12 +822,120 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "http status codes",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "sum by(sender) (count_over_time({container=\"notification-processing-service\"} |~ `$regex_include` !~ `$regex_exclude` |= `status=422` | regexp ` from sender (?P<sender>[0-9]+) ` [$__interval]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "422 producer@nps",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 26
       },
       "id": 7,
       "panels": [
@@ -692,14 +1025,14 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 9,
       "panels": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "loki-jpr57s4tf4"
+            "uid": "${datasource}"
           },
           "gridPos": {
             "h": 39,
@@ -730,10 +1063,10 @@
             {
               "datasource": {
                 "type": "loki",
-                "uid": "loki-jpr57s4tf4"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
-              "expr": "{app=\"log-collector-nginx\"} |~ `$regex_include` !~ `$regex_exclude` | regexp `\\\"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<http_version>HTTP\\/\\d\\.\\d)\\\" (?P<status>\\d+) (?P<size>\\d+) \"[^\"]+\" \"(?P<ua>[^\"]+)\"` | status =~ `$http_status`",
+              "expr": "{app=\"log-collector-nginx\"} |~ `$regex_include` !~ `$regex_exclude` | regexp `\\\"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<http_version>HTTP\\/\\d\\.\\d)\\\" (?P<status>\\d+) (?P<size>\\d+) \"[^\"]+\" \"(?P<ua>[^\"]+)\"` | status != \"\" | status =~ `$http_status`",
               "queryType": "range",
               "refId": "A"
             }
@@ -746,16 +1079,16 @@
       "type": "row"
     }
   ],
-  "refresh": "1m",
-  "schemaVersion": 38,
+  "refresh": "auto",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "Loki rki-fra-prod",
-          "value": "loki-jpr57s4tf4"
+          "text": "Loki rki-fkb-prod",
+          "value": "loki-adnbzfx2wg"
         },
         "hide": 0,
         "includeAll": false,
@@ -771,8 +1104,8 @@
       {
         "current": {
           "selected": false,
-          "text": "...",
-          "value": "..."
+          "text": "[^23]..",
+          "value": "[^23].."
         },
         "description": "regular expression for http status",
         "hide": 0,
@@ -781,19 +1114,19 @@
         "options": [
           {
             "selected": true,
-            "text": "[345]..",
-            "value": "[345].."
+            "text": "[^23]..",
+            "value": "[^23].."
           }
         ],
-        "query": "...",
+        "query": "[^23]..",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "current": {
           "selected": false,
-          "text": "(HetrixTools|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
-          "value": "(HetrixTools|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)"
+          "text": "(Telegraf|checkmk-active-httpv2|9explore|GoogleOther|Googlebot|gptbot|HetrixTools|HTTPing|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
+          "value": "(Telegraf|checkmk-active-httpv2|9explore|GoogleOther|Googlebot|gptbot|HetrixTools|HTTPing|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)"
         },
         "description": "regular expression for lines to exclude",
         "hide": 0,
@@ -801,12 +1134,12 @@
         "name": "regex_exclude",
         "options": [
           {
-            "selected": true,
-            "text": "(HetrixTools|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
-            "value": "(HetrixTools|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)"
+            "selected": false,
+            "text": "(l9explore|GoogleOther|Googlebot|gptbot|HetrixTools|HTTPing|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
+            "value": "(l9explore|GoogleOther|Googlebot|gptbot|HetrixTools|HTTPing|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)"
           }
         ],
-        "query": "(HetrixTools|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
+        "query": "(Telegraf|checkmk-active-httpv2|9explore|GoogleOther|Googlebot|gptbot|HetrixTools|HTTPing|curl|zgrab|uptimerobot|Exporter|Datadog|check_http|Zabbix|PRTG|Site24x7|probing|Uptime-Kuma)",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -821,7 +1154,7 @@
         "name": "regex_include",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": ".*",
             "value": ".*"
           }
@@ -833,13 +1166,13 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Uwes Kurven",
   "uid": "Pt9qdnpIz",
-  "version": 6,
+  "version": 60,
   "weekStart": ""
 }

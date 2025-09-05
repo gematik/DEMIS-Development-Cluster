@@ -202,6 +202,22 @@ You can verify the service functionality by accessing the deployed services URL 
 
 The demo service should be accessible and you should see a simple web page with a message indicating that the service is running.
 
+### Create your own module
+
+As EKM-Partner you request a new module from gematik. We will create a new module similar to the ekm-template, name the new module and its namespace and include it in our internal processes. Part of the new module is a folder in this project at root level, for generic deployment configuration of your services, and a folder with the same name in the [stage-public](https://github.com/gematik/DEMIS-stage-public) repository for the environment specific configuration.
+As for all other deployment modules, there will be make targets to deploy and undeploy the new module.
+You can use the new module as a base for your own services and will likely want to:
+- set your own helm and docker repositories in the stage configuration (variables `helm_repository` and `docker_registry` in application-configuration.tfvars for your module, e.g. for ekm-template: [application-configuration.tfvars](../environments/stage-public/ekm-template/application-configuration.tfvars) )
+- set credentials for your helm and docker repositories (fill the variables in credentials.tfvars for your module, e.g. for ekm-template: [credentials.tfvars](../environments/stage-public/ekm-template/credentials.tfvars))
+- add your own services in the new module and remove the service-demo
+  - generic configuration of your service is done in this project
+  - stage specific configuration is done in your environment under [environments](../environments)
+  - create your own istio-policies and other configuration for your services:
+    
+    In the demo-module are the demis internal policies deployed. You need to create your own policy chart and use it instead of the demis policies.
+
+If your services need to communicate with services in other namespaces (idm, demis, etc.) you need to request the necessary changes as pull-request or ticket to the gematik repository for [istio-policies](https://github.com/gematik/DEMIS-istio-policies) .
+
 
 ## Security Policy
 If you want to see the security policy, please check our [SECURITY.md](SECURITY.md).

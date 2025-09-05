@@ -15,9 +15,9 @@ It performs the following operations:
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.6.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.17.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.37.1 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.0.2 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.38.0 |
 
 ## Modules
 
@@ -37,20 +37,20 @@ It performs the following operations:
 
 | Name | Type |
 |------|------|
-| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
-| [kubernetes_secret.ars_pseudo_hash_pepper](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.notification_gateway_keystores](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.notification_gateway_passwords](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
-| [kubernetes_secret.service_accounts](https://registry.terraform.io/providers/hashicorp/kubernetes/2.37.1/docs/resources/secret) | resource |
+| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
+| [kubernetes_secret.ars_pseudo_hash_pepper](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.notification_gateway_keystores](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.notification_gateway_passwords](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.service_accounts](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [terraform_data.dls_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 

@@ -8,18 +8,17 @@ resource "helm_release" "policy_reporter" {
   atomic     = true
   wait       = true
 
-  set {
+  set = [{
     name  = "ui.enabled"
     value = true
-  }
-
-  set {
-    name  = "ui.plugins.kyverno"
-    value = true
-  }
-
-  set {
-    name  = "kyvernoPlugin.enabled"
-    value = true
-  }
+    },
+    {
+      name  = "ui.plugins.kyverno"
+      value = true
+    },
+    {
+      name  = "kyvernoPlugin.enabled"
+      value = true
+    }
+  ]
 }

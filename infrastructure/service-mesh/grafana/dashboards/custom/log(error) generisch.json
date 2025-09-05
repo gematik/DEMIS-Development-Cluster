@@ -194,7 +194,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.2.9",
       "targets": [
         {
           "datasource": {
@@ -230,14 +230,14 @@
         "datasource": "-- Grafana --",
         "groupBy": [],
         "groupMode": "default",
-        "maxItems": 20,
+        "maxItems": 50,
         "sortOrder": 3,
         "stateFilter": {
           "error": true,
           "firing": true,
           "noData": true,
-          "normal": true,
-          "pending": false
+          "normal": false,
+          "pending": true
         },
         "viewMode": "list"
       },
@@ -294,7 +294,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.2.9",
       "targets": [
         {
           "datasource": {
@@ -382,7 +382,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.2.9",
       "repeat": "app",
       "repeatDirection": "h",
       "targets": [
@@ -470,7 +470,7 @@
             "h": 18,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 10
           },
           "id": 681,
           "options": {
@@ -521,7 +521,7 @@
             "h": 21,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 20
           },
           "id": 180,
           "options": {
@@ -556,8 +556,8 @@
       "type": "row"
     }
   ],
-  "refresh": "30s",
-  "schemaVersion": 38,
+  "refresh": "5m",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
@@ -582,7 +582,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "demis",
             "istio-system"
@@ -651,20 +651,20 @@
         "description": "Diese alles sind keine Fehler bei uns.",
         "hide": 2,
         "name": "noErrorRegex",
-        "query": "`(Unknown code '20422'|RestExceptionHandler activated|Failed to find ADMIN theme|Failed to find ACCOUNT theme|Revoked on:|Failed to load evidences of disease! No data found. Disease: cdfd|LVS-001|LifecycleValidationException: No valid scenario found|Error when retrieving getInfoForCodeFromCodeSystem|Certificate's been revoked|REFRESH_TOKEN_ERROR|user_not_found|Error while loading code|misc:error|StructureDefinition|\"severity\":\"WARN\"|errorCode=FHIR_VALIDATION_ERROR|LIFECYCLE_VALIDATION_ERROR|Failed to load evidences of disease!|entered-in-error)`",
+        "query": "`(no InEK data found|Unknown code '20422'|RestExceptionHandler activated|Failed to find ADMIN theme|Failed to find ACCOUNT theme|Revoked on:|Failed to load evidences of disease! No data found. Disease: cdfd|LVS-001|LifecycleValidationException: No valid scenario found|Error when retrieving getInfoForCodeFromCodeSystem|Certificate's been revoked|REFRESH_TOKEN_ERROR|user_not_found|Error while loading code|misc:error|StructureDefinition|\"severity\":\"WARN\"|errorCode=FHIR_VALIDATION_ERROR|LIFECYCLE_VALIDATION_ERROR|Failed to load evidences of disease!|entered-in-error)`",
         "skipUrlSync": false,
         "type": "constant"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "log(error) generisch",
   "uid": "b36f7eea-940c-4b21-b033-29c441a0cc83",
-  "version": 84,
+  "version": 87,
   "weekStart": ""
 }

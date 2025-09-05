@@ -8,24 +8,21 @@ resource "helm_release" "falco" {
   atomic     = true
   wait       = true
 
-  set {
+  set = [{
     name  = "collectors.kubernetes.enabled"
     value = var.kubernetes_meta_collector
-  }
-
-  set {
-    name  = "falcosidekick.enabled"
-    value = var.falcosidekick_enabled
-  }
-
-  set {
-    name  = "falcosidekick.webui.enabled"
-    value = var.falcosidekick_ui_enabled
-  }
-
-  set {
-    name  = "driver.kind"
-    value = var.driver_kind
-  }
-
+    },
+    {
+      name  = "falcosidekick.enabled"
+      value = var.falcosidekick_enabled
+    },
+    {
+      name  = "falcosidekick.webui.enabled"
+      value = var.falcosidekick_ui_enabled
+    },
+    {
+      name  = "driver.kind"
+      value = var.driver_kind
+    }
+  ]
 }
