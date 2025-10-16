@@ -15,6 +15,10 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
 
+podAnnotations: 
+  chesksum/userlist: "${userlist_secret_checksum}"
+  chesksum/postgres-tls: "${postgres_tls_secret_checksum}"
+
 # Define custom configuration values
 config:
   databases:

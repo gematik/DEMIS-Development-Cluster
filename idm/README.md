@@ -40,18 +40,6 @@ It performs the following operations:
 | [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
 | [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
 | [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
-| [kubernetes_secret.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_cus_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.ldap_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_acl](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [kubernetes_secret.redis_cus_writer_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [terraform_data.cus_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.kup_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
@@ -98,6 +86,7 @@ It performs the following operations:
 | <a name="input_redis_cus_reader_user"></a> [redis\_cus\_reader\_user](#input\_redis\_cus\_reader\_user) | The Redis CUS User (Reader) | `string` | n/a | yes |
 | <a name="input_redis_cus_writer_password"></a> [redis\_cus\_writer\_password](#input\_redis\_cus\_writer\_password) | The Redis CUS Password (Writer) | `string` | n/a | yes |
 | <a name="input_redis_cus_writer_user"></a> [redis\_cus\_writer\_user](#input\_redis\_cus\_writer\_user) | The Redis CUS User (Writer) | `string` | n/a | yes |
+| <a name="input_reset_values"></a> [reset\_values](#input\_reset\_values) | Reset the values to the ones built into the chart. This will override any custom values and reuse\_values settings. | `bool` | `false` | no |
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>list(object({<br/>    service  = string<br/>    replicas = number<br/>    resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_root_ca_certificate"></a> [root\_ca\_certificate](#input\_root\_ca\_certificate) | The LDAP Root CA Certificate | `string` | n/a | yes |
 | <a name="input_stage_configuration_data_name"></a> [stage\_configuration\_data\_name](#input\_stage\_configuration\_data\_name) | Defines the Name of the Stage Configuration Data to be used in the DEMIS Environment | `string` | n/a | yes |

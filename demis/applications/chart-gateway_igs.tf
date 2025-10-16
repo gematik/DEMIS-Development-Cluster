@@ -36,7 +36,7 @@ module "gateway_igs" {
     replica_count                  = local.gateway_igs_replicas,
     resource_block                 = local.gateway_igs_resource_block,
     igs_profile_major_version      = local.igs_profile_major_version,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
   istio_values = templatefile(local.gateway_igs_template_istio, {
     namespace       = var.target_namespace,

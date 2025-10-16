@@ -8,10 +8,6 @@ module "idm_services" {
   helm_repository_password           = var.helm_repository_password
   target_namespace                   = var.target_namespace
   pull_secrets                       = local.pull_secrets_credentials
-  redis_cus_writer_user              = var.redis_cus_writer_user
-  keycloak_admin_user                = var.keycloak_admin_user
-  keycloak_portal_admin_user         = var.keycloak_portal_admin_user
-  keycloak_portal_client_id          = var.keycloak_portal_client_id
   deployment_information             = local.deployment_information
   certificate_update_service_suspend = var.certificate_update_service_suspend
   certificate_update_cron_schedule   = var.certificate_update_cron_schedule
@@ -33,6 +29,29 @@ module "idm_services" {
   ti_idp_return_sso_token            = var.ti_idp_return_sso_token
   bundid_idp_user_import_enabled     = var.bundid_idp_user_import_enabled
   keycloak_user_import_enabled       = var.keycloak_user_import_enabled
+  reset_values                       = var.reset_values
 
-  depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
+  # Secrets and Credentials needed for the applications
+  postgres_server_certificate        = var.postgres_server_certificate
+  postgres_server_key                = var.postgres_server_key
+  postgres_root_ca_certificate       = var.postgres_root_ca_certificate
+  root_ca_certificate                = var.root_ca_certificate
+  sub_ca_certificate                 = var.sub_ca_certificate
+  keycloak_portal_client_secret      = var.keycloak_portal_client_secret
+  keycloak_cus_client_secret         = var.keycloak_cus_client_secret
+  keycloak_truststore_jks            = var.keycloak_truststore_jks
+  keycloak_truststore_password       = var.keycloak_truststore_password
+  redis_cus_writer_user              = var.redis_cus_writer_user
+  redis_cus_writer_password          = var.redis_cus_writer_password
+  redis_cus_reader_user              = var.redis_cus_reader_user
+  redis_cus_reader_password          = var.redis_cus_reader_password
+  keycloak_admin_user                = var.keycloak_admin_user
+  keycloak_admin_password            = var.keycloak_admin_password
+  keycloak_portal_admin_user         = var.keycloak_portal_admin_user
+  keycloak_portal_admin_password     = var.keycloak_portal_admin_password
+  keycloak_portal_client_id          = var.keycloak_portal_client_id
+  database_credentials               = var.database_credentials
+  cus_health_department_certificates = var.cus_health_department_certificates
+
+  depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode]
 }

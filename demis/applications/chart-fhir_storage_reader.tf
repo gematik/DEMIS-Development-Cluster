@@ -9,6 +9,14 @@ locals {
   fssr_resources_overrides = try(var.resource_definitions[local.fssr_name], {})
   fssr_replicas            = lookup(local.fssr_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.fssr_name].replicas : null
   fssr_resource_block      = lookup(local.fssr_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.fssr_name].resource_block : null
+
+  fssr_index = try(
+    index(
+      [for cred in var.database_credentials : cred.secret-name],
+      "${local.fssr_name}-database-secret"
+    ),
+    -1 # Default index if not found
+  )
 }
 
 module "fhir_storage_reader" {
@@ -36,7 +44,8 @@ module "fhir_storage_reader" {
     config_options                 = try(var.config_options[local.fssr_name], {}),
     replica_count                  = local.fssr_replicas,
     resource_block                 = local.fssr_resource_block,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
+    db_secret_checksum             = try(kubernetes_secret.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssr_template_istio, {
     namespace                      = var.target_namespace,

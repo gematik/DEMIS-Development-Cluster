@@ -18,7 +18,10 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
-  
+
+podAnnotations:
+  checksum/pseudo-database-secret: "${db_secret_checksum}"
+
 # Define custom configuration values
 # The Entries will be read from the given (external) Secrets and injected in the container with the same name.
 # IMPORTANT: these values must be defined in the Secret Objects

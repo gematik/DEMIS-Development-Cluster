@@ -48,6 +48,12 @@ variable "destination_lookup_purger_suspend" {
   default     = false
 }
 
+variable "surveillance_pseudonym_purger_ars_suspend" {
+  type        = bool
+  description = "Defines if the surveillance-pseudonym-purger-ars is suspended."
+  default     = false
+}
+
 variable "fhir_storage_purger_cron_schedule" {
   type        = string
   description = "Defines the cron schedule for the FHIR storage purger"
@@ -64,6 +70,16 @@ variable "destination_lookup_purger_cron_schedule" {
   validation {
     condition     = length(var.destination_lookup_purger_cron_schedule) > 0
     error_message = "The destination-lookup-purger cron schedule must be defined"
+  }
+}
+
+variable "surveillance_pseudonym_purger_ars_cron_schedule" {
+  type        = string
+  description = "Defines the cron schedule for the surveillance-pseudonym-purger-ars"
+  default     = "0 22 * * *"
+  validation {
+    condition     = length(var.surveillance_pseudonym_purger_ars_cron_schedule) > 0
+    error_message = "The surveillance-pseudonym-purger-ars cron schedule must be defined"
   }
 }
 

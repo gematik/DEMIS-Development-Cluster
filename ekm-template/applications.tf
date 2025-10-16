@@ -18,6 +18,7 @@ module "ekm_services" {
   feature_flags            = module.application_flags.service_feature_flags
   config_options           = module.application_flags.service_config_options
   resource_definitions     = module.application_resources.service_resource_definitions
+  reset_values             = var.reset_values
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
 }

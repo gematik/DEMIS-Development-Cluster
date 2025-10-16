@@ -32,8 +32,8 @@ spec:
                   "    <meta charset=\"UTF-8\">\n" ..
                   "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" ..
                   "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" ..
-                  "    <meta gematik=\"Gematik DEMIS Cluster (Automatisches Service Update)\">\n" ..
-                  "    <title>DEMIS Wartungsmodus (Automatisches Service Update)</title>\n" ..
+                  "    <meta gematik=\"Gematik DEMIS Cluster (e.g. Service Update, restart)\">\n" ..
+                  "    <title>DEMIS Wartungsmodus (e.g. Service Update)</title>\n" ..
                   "    <style>\n" ..
                   "        * {\n" ..
                   "            margin: 0;\n" ..

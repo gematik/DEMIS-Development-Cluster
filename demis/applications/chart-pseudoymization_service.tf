@@ -9,6 +9,14 @@ locals {
   pseudo_resources_overrides = try(var.resource_definitions[local.pseudo_name], {})
   pseudo_replicas            = lookup(local.pseudo_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.pseudo_name].replicas : null
   pseudo_resource_block      = lookup(local.pseudo_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.pseudo_name].resource_block : null
+
+  pseudo_index = try(
+    index(
+      [for cred in var.database_credentials : cred.secret-name],
+      "pseudo-database-secret"
+    ),
+    -1 # Default index if not found
+  )
 }
 
 module "pseudonymization_service" {
@@ -33,7 +41,8 @@ module "pseudonymization_service" {
     feature_flags      = try(var.feature_flags[local.pseudo_name], {}),
     config_options     = try(var.config_options[local.pseudo_name], {}),
     replica_count      = local.pseudo_replicas,
-    resource_block     = local.pseudo_resource_block
+    resource_block     = local.pseudo_resource_block,
+    db_secret_checksum = try(kubernetes_secret.database_credentials[local.pseudo_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.pseudo_template_istio, {
     namespace = var.target_namespace

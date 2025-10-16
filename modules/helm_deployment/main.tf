@@ -2,12 +2,13 @@ locals {
   #####################################################
   # Detect if a newer canary version has been provided
   #####################################################
-  is_canary_defined   = var.deployment_information.canary != null && var.deployment_information.canary != {} && var.deployment_information.canary.version != null
-  canary_version      = local.is_canary_defined ? var.deployment_information.canary.version : null
-  canary_weight       = local.is_canary_defined ? var.deployment_information.canary.weight : null
-  main_version        = var.deployment_information.main.version
-  replacement_version = local.is_canary_defined ? var.deployment_information.canary.version : var.deployment_information.main.version
-  available_versions  = var.deployment_information.deployment-strategy == "canary" ? toset(compact([local.main_version, local.canary_version])) : toset(compact([local.replacement_version]))
+  is_canary_defined    = var.deployment_information.canary != null && var.deployment_information.canary != {} && var.deployment_information.canary.version != null
+  canary_version       = local.is_canary_defined ? var.deployment_information.canary.version : null
+  canary_weight        = local.is_canary_defined ? var.deployment_information.canary.weight : null
+  main_version         = var.deployment_information.main.version
+  is_canary_deployment = var.deployment_information.deployment-strategy == "canary"
+  replacement_version  = local.is_canary_defined ? var.deployment_information.canary.version : var.deployment_information.main.version
+  available_versions   = local.is_canary_deployment ? toset(compact([local.main_version, local.canary_version])) : toset(compact([local.replacement_version]))
   #####################################################
   # evaluate given helm properties, including optional ones
   #####################################################
@@ -37,6 +38,7 @@ resource "helm_release" "chart" {
   wait_for_jobs       = true
   cleanup_on_fail     = true
   timeout             = local.deployment_timeout
+  reset_values        = var.helm_settings.reset_values ? true : null
 
   # check if values must be reused for the main version
   reuse_values = length(local.available_versions) > 1 && (each.key == local.main_version) ? true : false
@@ -68,25 +70,26 @@ resource "helm_release" "istio" {
   cleanup_on_fail     = true
   values              = [var.istio_values]
   timeout             = local.deployment_timeout
+  reset_values        = var.helm_settings.reset_values
 
 
   set = flatten([[
     {
       name  = "destinationSubsets.main.version"
-      value = local.main_version
+      value = local.is_canary_deployment ? local.main_version : local.replacement_version
     },
     {
       name  = "destinationSubsets.main.weight"
-      value = var.deployment_information.main.weight
+      value = local.is_canary_deployment ? var.deployment_information.main.weight : 100
     }
     ],
-    [for version in compact([local.canary_version]) :
+    [for version in(local.is_canary_deployment ? compact([local.canary_version]) : []) :
       {
         name  = "destinationSubsets.canary.version"
         value = version
       }
     ],
-    [for canary_weight in compact([local.canary_weight]) :
+    [for canary_weight in(local.is_canary_deployment ? compact([local.canary_weight]) : []) :
       {
         name  = "destinationSubsets.canary.weight"
         value = canary_weight

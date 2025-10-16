@@ -182,12 +182,6 @@ variable "istio_enabled" {
   default     = true
 }
 
-variable "redis_cus_reader_user" {
-  type        = string
-  sensitive   = true
-  description = "The Redis CUS User (with Reader Permissions)"
-}
-
 # Feature Flags
 
 variable "feature_flags" {
@@ -312,6 +306,15 @@ variable "destination_lookup_purger_cron_schedule" {
   }
 }
 
+variable "surveillance_pseudonym_purger_ars_cron_schedule" {
+  type        = string
+  description = "Defines the Cron Schedule for the surveillance-pseudonym-purger-ars"
+  validation {
+    condition     = length(var.surveillance_pseudonym_purger_ars_cron_schedule) > 0
+    error_message = "The surveillance-pseudonym-purger-ars cron Schedule must be defined"
+  }
+}
+
 # used in environments with different parallel versions of DEMIS Services
 variable "context_path" {
   description = "The context path for reaching the DEMIS Services externally"
@@ -348,6 +351,12 @@ variable "destination_lookup_purger_suspend" {
   default     = false
 }
 
+variable "surveillance_pseudonym_purger_ars_suspend" {
+  type        = bool
+  description = "Defines if the surveillance-pseudonym-purger-ars is suspended."
+  default     = false
+}
+
 variable "profile_provisioning_mode_vs_core" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string
@@ -379,4 +388,10 @@ variable "profile_provisioning_mode_vs_ars" {
     condition     = var.profile_provisioning_mode_vs_ars == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars), false)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
+}
+
+variable "reset_values" {
+  type        = bool
+  description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
+  default     = false
 }

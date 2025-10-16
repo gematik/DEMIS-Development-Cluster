@@ -1,4 +1,3 @@
-
 ####################
 # Global Settings
 ####################
@@ -52,6 +51,12 @@ variable "kms_encryption_key" {
     condition     = length(var.kms_encryption_key) > 0 ? startswith(var.kms_encryption_key, "projects/") : true
     error_message = "Invalid KMS encryption key format, must start with 'projects/...'"
   }
+}
+
+variable "reset_values" {
+  type        = bool
+  description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
+  default     = false
 }
 
 # used in environments with different parallel versions of DEMIS Services

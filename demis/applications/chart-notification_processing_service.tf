@@ -24,16 +24,17 @@ module "notification_processing_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.nps_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    namespace          = var.target_namespace,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    redis_user         = var.redis_cus_reader_user,
-    feature_flags      = try(var.feature_flags[local.nps_name], {}),
-    config_options     = try(var.config_options[local.nps_name], {}),
-    replica_count      = local.nps_replicas,
-    resource_block     = local.nps_resource_block
+    image_pull_secrets                    = var.pull_secrets,
+    repository                            = var.docker_registry,
+    namespace                             = var.target_namespace,
+    debug_enable                          = var.debug_enabled,
+    istio_enable                          = var.istio_enabled,
+    redis_user                            = var.redis_cus_reader_user,
+    feature_flags                         = try(var.feature_flags[local.nps_name], {}),
+    config_options                        = try(var.config_options[local.nps_name], {}),
+    replica_count                         = local.nps_replicas,
+    resource_block                        = local.nps_resource_block,
+    redis_cus_reader_credentials_checksum = try(kubernetes_secret.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.nps_template_istio, {
     namespace                      = var.target_namespace,

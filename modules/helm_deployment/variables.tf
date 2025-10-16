@@ -18,6 +18,7 @@ variable "helm_settings" {
     istio_routing_chart_version   = optional(string)                  # optional, the Version of the Istio Routing Helm Chart to be installed
     deployment_timeout            = optional(number)                  # optional, the Timeout for creating Helm Release
     istio_routing_chart_name      = optional(string, "istio-routing") # optional, the name of the Istio Routing Helm Chart
+    reset_values                  = optional(bool, false)             # optional, whether to reset values to the ones built into the chart
   })
   sensitive   = true
   description = "Helm Release settings as Object."

@@ -19,6 +19,7 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
+  
 
 # Define custom configuration values
 config:
@@ -75,6 +76,12 @@ config:
       tag: ${data_version}
       characteristics: "keycloak" # keycloak or bundid-idp-keycloak
     overwriteExistingData: true
+  tslDelivererMock:
+    enable: ${enable_tsl_deliverer_mock}
+    image:
+      repository: ${repository}
+      name: ${tsl_deliverer_mock_name}
+      tag: ${tsl_deliverer_mock_version}
 
 # Extra Environment Variables to be defined.
 # The full list of supported environment variables can be found here: https://www.keycloak.org/server/all-config
@@ -95,6 +102,10 @@ customEnvVars:
 podAnnotations:
   stage.configuration/data-version: ${data_version}
   stage.configuration/data-name: ${data_name}
+  checksum/keycloak_truststore_file: ${keycloak_truststore_file_checksum}
+  checksum/keycloak_truststore_password: ${keycloak_truststore_password_checksum}
+  checksum/db_secret: ${db_secret_checksum}
+  checksum/keycloak_admin_account: ${keycloak_admin_account_checksum}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

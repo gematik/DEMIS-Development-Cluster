@@ -24,14 +24,16 @@ module "package_registry" {
 
   # Pass the values for the chart
   application_values = templatefile(local.fpr_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    feature_flags      = try(var.feature_flags[local.fpr_name], {}),
-    config_options     = try(var.config_options[local.fpr_name], {}),
-    replica_count      = local.fpr_replicas,
-    resource_block     = local.fpr_resource_block
+    image_pull_secrets         = var.pull_secrets,
+    repository                 = var.docker_registry,
+    debug_enable               = var.debug_enabled,
+    istio_enable               = var.istio_enabled,
+    feature_flags              = try(var.feature_flags[local.fpr_name], {}),
+    config_options             = try(var.config_options[local.fpr_name], {}),
+    replica_count              = local.fpr_replicas,
+    resource_block             = local.fpr_resource_block
+    service_accounts_checksums = [for k, v in kubernetes_secret.service_accounts : v.metadata[0].annotations["checksum"]]
+
   })
   istio_values = templatefile(local.fpr_template_istio, {
     namespace = var.target_namespace

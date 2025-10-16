@@ -20,6 +20,11 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
 
+podAnnotations:
+  %{~ for i, sa_checksum in range(0, length(service_accounts_checksums)) ~}
+  checksum/service_account_checksum_${i + 1}: "${service_accounts_checksums[i]}"
+  %{~ endfor ~}
+
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true

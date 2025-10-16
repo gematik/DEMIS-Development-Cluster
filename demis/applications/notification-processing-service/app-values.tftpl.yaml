@@ -12,20 +12,19 @@ required:
     %{ if strcontains(repository, "gematik1") }
     name: demis-notification-processing-service
     %{ endif }
-
+      
 # Image Pull Secrets
 imagePullSecrets: 
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
+
+podAnnotations:
+  checksum/redis_reader: "${redis_cus_reader_credentials_checksum}"
   
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
-  NPS_TESTUSER_IDS_0: test-int
-  NPS_TESTUSER_IDS_1: 5-2-123494546
-  NPS_TESTUSER_IDS_2: 1-20014242424
-  NPS_TESTUSER_IDS_3: 5-2-510514181-500
   REDIS_USER: "${redis_user}"
   REDIS_HOST: "redis-cus.idm.svc.cluster.local"
   NPS_CLIENT_VALIDATION: http://validation-service.${namespace}.svc.cluster.local

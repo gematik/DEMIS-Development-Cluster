@@ -30,15 +30,6 @@ variable "google_cloud_access_token" {
   EOT
 }
 
-variable "service_accounts" {
-  description = "Service account details for authentication"
-  type = list(object({
-    secret_name    = string # Name of the Kubernetes secret to store the service account key
-    keyfile_base64 = string # Base64-encoded JSON key file content
-  }))
-  default = []
-}
-
 variable "docker_pull_secrets" {
   type = list(object({
     name          = string
@@ -62,6 +53,15 @@ variable "docker_pull_secrets" {
     condition     = length(var.docker_pull_secrets) > 0 ? alltrue([for cred in var.docker_pull_secrets : cred.registry != "" && cred.user_name != "" && contains(["json_key", "token", "plain"], cred.password_type)]) : true
     error_message = "You must provide valid credentials for the Docker Pull Secrets"
   }
+}
+
+variable "service_accounts" {
+  description = "Service account details for authentication"
+  type = list(object({
+    secret_name    = string # Name of the Kubernetes secret to store the service account key
+    keyfile_base64 = string # Base64-encoded JSON key file content
+  }))
+  default = []
 }
 
 #############################
@@ -102,52 +102,6 @@ variable "postgres_server_key" {
 ################################
 # DEMIS Application Credentials
 ################################
-
-# Notification Gateway Credentials
-variable "gateway_auth_cert_password" {
-  type        = string
-  sensitive   = true
-  description = "The Password for the Gateway Auth Certificate"
-}
-
-variable "gateway_test_auth_cert_password" {
-  type        = string
-  sensitive   = true
-  description = "The Password for the Gateway Test Auth Certificate"
-}
-
-variable "gateway_truststore_password" {
-  type        = string
-  sensitive   = true
-  description = "The Password for the Gateway Truststore"
-}
-
-variable "gateway_token_client_lab" {
-  type        = string
-  sensitive   = true
-  description = "The Client Token for the Gateway LAB Realm"
-}
-
-# Gateway Truststore JKS as Base64
-variable "gateway_truststore_jks" {
-  type        = string
-  sensitive   = true
-  description = "The Truststore JKS for the Gateway"
-}
-
-# Gateway Keystore JKS as Base64
-variable "gateway_keystore_p12" {
-  type        = string
-  sensitive   = true
-  description = "The Keystore P12 for the Gateway"
-}
-
-# Gateway Test Keystore JKS as Base64
-variable "gateway_test_keystore_p12" {
-  type        = string
-  sensitive   = true
-  description = "The Test Keystore P12 for the Gateway"
-}
 
 # CA certificate of storage when accessing externally
 variable "storage_tls_certificate" {

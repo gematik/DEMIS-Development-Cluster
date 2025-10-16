@@ -1,0 +1,7 @@
+# Do not create Istio Resources for this Application
+create: false
+# Application Information
+appName: "surveillance-pseudonym-purger-ars"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Do not create a Service for this Application
+appServiceEnabled: false

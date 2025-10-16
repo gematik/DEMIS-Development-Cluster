@@ -25,15 +25,16 @@ module "portal_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_igs_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    context_path       = var.context_path,
-    csp_hostname       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
-    feature_flags      = try(var.feature_flags[local.portal_igs_name], {}),
-    config_options     = try(var.config_options[local.portal_igs_name], {}),
-    replica_count      = local.portal_igs_replicas,
-    resource_block     = local.portal_igs_resource_block
+    image_pull_secrets        = var.pull_secrets,
+    repository                = var.docker_registry,
+    istio_enable              = var.istio_enabled,
+    context_path              = var.context_path,
+    csp_hostname              = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    feature_flags             = try(var.feature_flags[local.portal_igs_name], {}),
+    config_options            = try(var.config_options[local.portal_igs_name], {}),
+    replica_count             = local.portal_igs_replicas,
+    igs_profile_major_version = local.igs_profile_major_version,
+    resource_block            = local.portal_igs_resource_block
   })
   istio_values = templatefile(local.portal_igs_template_istio, {
     namespace                      = var.target_namespace,
