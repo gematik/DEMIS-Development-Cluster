@@ -2,6 +2,24 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.1.0
+- added versioned s3-controller urls for igs
+- receiving sequence data for outdated api version supported
+- removed Test User IDs from Notification Processing Service Template
+- add scale down and scale up make targets for all demis deployments
+- add secretKeyRef for ars-pseudo-purger
+- fix traffic weight for non-canary deployments
+- adjust tests for modules helm_deployment and flags
+- environment variable added to surveillance-pseudonym-service-ars
+- removed ars-pseudonymization-service 
+- add new cronjob surveillance-pseudonym-purger-ars
+- add starting dependency for keycloak to local idp
+- add checksums to all secrets
+- add secret checksums to all helm charts from all services that use these secrets
+- split file chart-destination-lookup.tf in files chart-destination-lookup-writer.tf, chart-destination-lookup-reader.tf and chart-destination-lookup-purger.tf
+- added sidecar tsl-deliverer-mock for keycloak. Needed only for local and dev deployment
+- changed redis ACL for the reader and writer accounts
+
 ## Release 4.0.0
 #### Breaking:
 - upgrade required terraform version to 1.9.0

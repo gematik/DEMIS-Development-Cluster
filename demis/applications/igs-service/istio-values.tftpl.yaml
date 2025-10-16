@@ -46,7 +46,29 @@ virtualServiceExternalHttpRules:
       ignoreUriCase: true
     rewrite:
       uri: /
+  - headers:
+      request:
+        set:
+          x-fhir-api-version: v${version}
+          x-fhir-profile: igs-profile-snapshots
+    match:
+      - uri:
+          prefix: ${context_path}/surveillance/notification-sequence/v${version}/S3Controller
+        ignoreUriCase: true
+    rewrite:
+      uri: /S3Controller
 %{ endfor ~}
+# Special handling of the read-binary endpoint: if a version is outdated and not longer supported, a document reference may no longer be valid and accessable.
+# To prevent this, versions from 1 to 99 are ignored and the request is forwarded to the corresponding endpoint.
+  - match:
+    - method:
+        exact: GET
+      uri:
+        regex: "(?i)^${context_path}/surveillance/notification-sequence/v([1-9][0-9]?)/fhir/.*binary-access-read$"
+    rewrite:
+      uriRegexRewrite:
+        match: "(?i)^${context_path}/surveillance/notification-sequence/v([1-9][0-9]?)/fhir/(.*)?$"
+        rewrite: "/\\2"
 %{ endif ~}
   - match:
 %{ if feature_flag_new_api_endpoints ~}

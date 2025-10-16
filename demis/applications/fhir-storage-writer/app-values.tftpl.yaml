@@ -20,6 +20,10 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
 
+podAnnotations:
+  checksum/fhir-storage-writer-database-secret: "${db_secret_checksum}"
+  checksum/fhir-storage-writer-ddl-database-secret: "${db_ddl_secret_checksum}"
+
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true

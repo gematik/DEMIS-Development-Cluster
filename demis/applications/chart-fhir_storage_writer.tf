@@ -9,6 +9,22 @@ locals {
   fssw_resources_overrides = try(var.resource_definitions[local.fssw_name], {})
   fssw_replicas            = lookup(local.fssw_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.fssw_name].replicas : null
   fssw_resource_block      = lookup(local.fssw_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.fssw_name].resource_block : null
+
+  fssw_index = try(
+    index(
+      [for cred in var.database_credentials : cred.secret-name],
+      "${local.fssw_name}-database-secret"
+    ),
+    -1 # Default index if not found
+  )
+
+  fssw_ddl_index = try(
+    index(
+      [for cred in var.database_credentials : cred.secret-name],
+      "${local.fssw_name}-ddl-database-secret"
+    ),
+    -1 # Default index if not found
+  )
 }
 
 module "fhir_storage_writer" {
@@ -25,15 +41,17 @@ module "fhir_storage_writer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.fssw_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    namespace          = var.target_namespace,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    feature_flags      = try(var.feature_flags[local.fssw_name], {}),
-    config_options     = try(var.config_options[local.fssw_name], {}),
-    replica_count      = local.fssw_replicas,
-    resource_block     = local.fssw_resource_block
+    image_pull_secrets     = var.pull_secrets,
+    repository             = var.docker_registry,
+    namespace              = var.target_namespace,
+    debug_enable           = var.debug_enabled,
+    istio_enable           = var.istio_enabled,
+    feature_flags          = try(var.feature_flags[local.fssw_name], {}),
+    config_options         = try(var.config_options[local.fssw_name], {}),
+    replica_count          = local.fssw_replicas,
+    resource_block         = local.fssw_resource_block,
+    db_secret_checksum     = try(kubernetes_secret.database_credentials[local.fssw_index].metadata[0].annotations["checksum"], ""),
+    db_ddl_secret_checksum = try(kubernetes_secret.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssw_template_istio, {
     namespace                      = var.target_namespace,

@@ -22,6 +22,11 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
+
+podAnnotations: 
+  checksum/ars-pseudo-hash-pepper: "${ars_pseudo_hash_pepper_checksum}"
+  checksum/ars-pseudo-user-database-secret: "${sps_ars_db_secret_checksum}"
+  checksum/ars-pseudo-ddl-database-secret: "${sps_ars_db_ddl_secret_checksum}"
   
 # IMPORTANT: these values must be defined in the Secret Objects
 config:
@@ -47,6 +52,7 @@ customEnvVars:
   DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/surveillance-pseudonym"
   DB_USER: ars-pseudo-user
   LIQUIBASE_DB_USER: ars-pseudo-ddl
+  PARAM_LIQUIBASE_DB_USER_PURGER: ars-pseudo-purger
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

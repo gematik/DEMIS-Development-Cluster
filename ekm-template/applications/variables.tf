@@ -190,3 +190,9 @@ variable "context_path" {
   type        = string
   default     = ""
 }
+
+variable "reset_values" {
+  type        = bool
+  description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
+  default     = false
+}

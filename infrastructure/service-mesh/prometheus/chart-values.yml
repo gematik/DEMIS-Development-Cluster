@@ -74,7 +74,7 @@ serverFiles:
             - futs-igs.demis.svc.cluster.local:8080
             - igs-service.demis.svc.cluster.local:8080
             - ars-service.demis.svc.cluster.local:8080
-            - ars-pseudonymization-service.demis.svc.cluster.local:8080
+            - surveillance-pseudonym-service-ars.cluster.local:8080
             - gateway-igs.demis.svc.cluster.local:8080
             - pdfgen-service.demis.svc.cluster.local:8080
             - notification-gateway.demis.svc.cluster.local:8080

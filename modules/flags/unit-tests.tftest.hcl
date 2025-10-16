@@ -83,7 +83,7 @@ run "config_options_wrong_test" {
       },
       {
         services     = ["service1", "service2"],
-        option_name  = "CONFIG_TEST_2",
+        option_name  = "",
         option_value = ""
       }
     ]

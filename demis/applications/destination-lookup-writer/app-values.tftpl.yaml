@@ -17,6 +17,10 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
 
+podAnnotations: 
+  checksum/destination-lookup-writer-database-secret: "${db_secret_checksum}"
+  checksum/destination-lookup-writer-ddl-database-secret: "${db_ddl_secret_checksum}"
+
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true

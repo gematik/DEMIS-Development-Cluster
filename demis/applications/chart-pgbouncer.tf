@@ -5,6 +5,7 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   pgbouncer_template_app   = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.application_values_file}"
   pgbouncer_template_istio = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.istio_values_file}"
+
   # Define override for resources
   pgbouncer_resources_overrides = try(var.resource_definitions[local.pgbouncer_name], {})
   pgbouncer_replicas            = lookup(local.pgbouncer_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.pgbouncer_name].replicas : null
@@ -31,12 +32,16 @@ module "pgbouncer" {
     istio_enable                      = var.istio_enabled,
     replica_count                     = local.pgbouncer_replicas,
     resource_block                    = local.pgbouncer_resource_block,
-    config_options                    = try(var.config_options[local.pgbouncer_name], {})
-    pseudonymization_db_enabled       = local.ars_pseudonymization_enabled
-    fhir_storage_db_enabled           = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled
-    surveillance_pseudonym_db_enabled = local.surveillance_pseudonym_enabled
-    destination_lookup_db_enabled     = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled
+    config_options                    = try(var.config_options[local.pgbouncer_name], {}),
+    pseudonymization_db_enabled       = local.pseudo_enabled
+    fhir_storage_db_enabled           = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled,
+    surveillance_pseudonym_db_enabled = local.sps_db_enabled
+    destination_lookup_db_enabled     = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled,
+    userlist_secret_checksum          = try(kubernetes_secret.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
+    postgres_tls_secret_checksum      = try(kubernetes_secret.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
   })
+
+
   istio_values = templatefile(local.pgbouncer_template_istio, {
     namespace = var.target_namespace
   })

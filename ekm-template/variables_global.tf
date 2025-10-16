@@ -1,4 +1,3 @@
-
 ####################
 # Global Settings
 ####################
@@ -48,6 +47,12 @@ variable "docker_registry" {
     condition     = strcontains(var.docker_registry, "docker.io/gematik1") || startswith(var.docker_registry, "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis")
     error_message = "Unsupported Docker Registry provided"
   }
+}
+
+variable "reset_values" {
+  type        = bool
+  description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
+  default     = false
 }
 
 # only used for remote clusters deployment with GCP KMS state encryption

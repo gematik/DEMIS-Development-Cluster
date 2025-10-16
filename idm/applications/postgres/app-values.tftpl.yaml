@@ -17,6 +17,10 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
+
+podAnnotations: 
+  checksum/postgres-tls: "${postgres_tls_secret_checksum}"
+  checksum/db-secret: "${db_secret_checksum}"
   
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

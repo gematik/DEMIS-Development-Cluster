@@ -24,11 +24,14 @@ module "redis_cus" {
 
   # Pass the values for the chart
   application_values = templatefile(local.rediscus_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    replica_count      = local.rediscus_replicas,
-    resource_block     = local.rediscus_resource_block
+    image_pull_secrets                    = var.pull_secrets,
+    repository                            = var.docker_registry,
+    istio_enable                          = var.istio_enabled,
+    replica_count                         = local.rediscus_replicas,
+    resource_block                        = local.rediscus_resource_block
+    redis_cus_reader_credentials_checksum = try(kubernetes_secret.redis_cus_reader_credentials.metadata[0].annotations["checksum"], ""),
+    redis_cus_writer_credentials_checksum = try(kubernetes_secret.redis_cus_writer_credentials.metadata[0].annotations["checksum"], ""),
+    redis_cus_acl_checksum                = try(kubernetes_secret.redis_cus_acl.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.rediscus_template_istio, {
     namespace = var.target_namespace

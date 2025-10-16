@@ -19,13 +19,10 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
-  
-# IMPORTANT: these values must be defined in the Secret Objects
-config:
-  # The (external) Secret Objects containing the API Key entry
-  secrets:
-    # Use default Secret from this Chart
-    useDefault: false
+
+podAnnotations: 
+  checksum/igs-encryption-certificate: "${igs_encryption_certificate_checksum}"
+  checksum/minio-secret: "${minio_secret_checksum}"
 
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

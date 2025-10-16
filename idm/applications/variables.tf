@@ -144,26 +144,6 @@ variable "istio_enabled" {
   default     = true
 }
 
-variable "keycloak_admin_user" {
-  description = "The admin user for keycloak"
-  type        = string
-}
-
-variable "redis_cus_writer_user" {
-  type        = string
-  sensitive   = true
-  description = "The Redis CUS User (with Write Permissions)"
-}
-
-variable "keycloak_portal_admin_user" {
-  description = "The admin user for keycloak PORTAL-Realm"
-  type        = string
-}
-
-variable "keycloak_portal_client_id" {
-  description = "The client id for keycloak PORTAL-Realm"
-  type        = string
-}
 
 # Feature Flags
 
@@ -317,4 +297,10 @@ variable "keycloak_user_import_enabled" {
 variable "bundid_idp_user_import_enabled" {
   type        = bool
   description = "Activate BundID IDP user import"
+}
+
+variable "reset_values" {
+  type        = bool
+  description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
+  default     = false
 }

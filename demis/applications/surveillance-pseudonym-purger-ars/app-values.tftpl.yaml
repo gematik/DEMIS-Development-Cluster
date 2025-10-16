@@ -1,4 +1,7 @@
-# Values for ars-pseudonymization-service
+# Values for the surveillance-pseudonym-purger-ars Helm Template
+fullname: "surveillance-pseudonym-purger-ars"
+fullnameOverride: "surveillance-pseudonym-purger-ars"
+nameOverride: "surveillance-pseudonym-purger-ars"
 
 # Enables debug mode
 debug:
@@ -6,13 +9,17 @@ debug:
 
 istio:
   enable: ${istio_enable}
-  
+
+# Defines the Schedule for the CronJob
+cronJobSchedule: "${cron_schedule}"
+
 required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-ars-pseudonymization-service
+    name: demis-surveillance-pseudonym-purger
     %{ endif }
+  suspend: ${suspend}
 
 # Image Pull Secrets
 imagePullSecrets: 
@@ -20,22 +27,23 @@ imagePullSecrets:
   - name: ${pull_secret}
   %{~ endfor ~}
   
-# IMPORTANT: these values must be defined in the Secret Objects
-config:
-  # The (external) Secret Objects containing the API Key entry
-  secrets:
-    # Use default Secret from this Chart
-    useDefault: false
+secret:
+  name: ars-pseudo-purger-database-secret
+  key: ARS_PSEUDO_PURGER_DB_PASSWORD
 
+# Extra Environment Variables to be defined
 customEnvVars:
-  # Prevents empty values that can delete the default environment variables
+  # preserves default environment variables from helm chart
   TERRAFORM_DEPLOYMENT: true
+  DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/surveillance-pseudonym"
+  DB_USER: ars-pseudo-purger
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
   %{~ for config_name, config_value in config_options ~}
   ${config_name} : "${config_value}"
   %{~ endfor ~}
+
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

@@ -9,6 +9,15 @@ locals {
   postgres_resources_overrides = try(var.resource_definitions[local.postgres_name], {})
   postgres_replicas            = lookup(local.postgres_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.postgres_name].replicas : null
   postgres_resource_block      = lookup(local.postgres_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.postgres_name].resource_block : null
+
+  postgres_index = try(
+    index(
+      [for cred in var.database_credentials : cred.secret-name],
+      "${local.postgres_name}-secret"
+    ),
+    -1 # Default index if not found
+  )
+
 }
 
 module "postgres" {
@@ -33,10 +42,12 @@ module "postgres" {
     replica_count                  = local.postgres_replicas,
     resource_block                 = local.postgres_resource_block
     pseudo_db_enabled              = local.pseudo_enabled
-    surveillance_pseudo_db_enabled = local.surveillance_pseudonym_enabled || local.ars_pseudonymization_enabled
-    ars_pseudo_schema_enabled      = local.ars_pseudonymization_enabled
+    surveillance_pseudo_db_enabled = local.sps_db_enabled
+    ars_pseudo_schema_enabled      = local.sps_ars_enabled
     fhir_storage_db_enabled        = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled
     destination_lookup_db_enabled  = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled
+    postgres_tls_secret_checksum   = try(kubernetes_secret.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
+    db_secret_checksum             = try(kubernetes_secret.database_credentials[local.postgres_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.postgres_template_istio, {
     namespace = var.target_namespace

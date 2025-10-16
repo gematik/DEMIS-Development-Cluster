@@ -39,6 +39,7 @@ No resources.
 | <a name="input_meldung_hostname"></a> [meldung\_hostname](#input\_meldung\_hostname) | The URL for accessing the DEMIS Notification Portal over Internet | `string` | `"meldung"` | no |
 | <a name="input_portal_hostname"></a> [portal\_hostname](#input\_portal\_hostname) | The URL for accessing the DEMIS Notification Portal over Telematikinfrastruktur (TI) | `string` | `"portal"` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
+| <a name="input_reset_values"></a> [reset\_values](#input\_reset\_values) | Reset the values to the ones built into the chart. This will override any custom values and reuse\_values settings. | `bool` | `false` | no |
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>map(object({<br/>    resource_block = optional(string)<br/>    replicas       = number<br/>  }))</pre> | `{}` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The namespace to deploy the application to | `string` | `"demis"` | no |
 

@@ -31,6 +31,7 @@ TERRAFORM_EXTRA_ARGS := ${TF_EXTRA_ARGS}
 TARGET_ARG :=
 MODULE :=
 target :=
+RESET_HELM_VALUES :=
 
 #####################
 ### Default Values
@@ -102,9 +103,9 @@ infrastructure: init-infrastructure validate ## Creates the Kubernetes cluster
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
 	echo "## Computing Plan"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out
 	echo "## Applying Plan"
 	echo "TF_EXTRA_ARGS = ${TF_EXTRA_ARGS}"
 	$(TF_BIN) apply -refresh-only $(TERRAFORM_EXTRA_ARGS) tfplan.out
@@ -136,9 +137,9 @@ idm: init-idm validate ## Deploys the IDM components
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
 	echo "## Computing Plan"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
 	echo "## Applying Plan"
 	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
 
@@ -162,9 +163,9 @@ ifneq ($(target),)
 endif
 	cd $(WORKING_PATH)
 	echo "## Checking for drifts"
-	$(TF_BIN) plan ${VAR_FILE_ARGS} -lock=false -refresh-only
+	$(TF_BIN) plan $(RESET_HELM_VALUES) ${VAR_FILE_ARGS} -lock=false -refresh-only
 	echo "## Computing Plan"
-	$(TF_BIN) plan ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
 	echo "## Applying Plan"
 	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
 
@@ -192,9 +193,9 @@ endif
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
 	echo "## Computing Plan"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
 	echo "## Applying Plan"
 	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
 
@@ -242,9 +243,9 @@ endif
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
 	echo "## Computing Plan"
-	$(TF_BIN) plan -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
 	echo "## Applying Plan"
 	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
 
@@ -283,6 +284,11 @@ local: ## Defines local resources
 	rm -rf $(CURR_FOLDER)/idm/backend.tf
 	rm -rf $(CURR_FOLDER)/mesh/backend.tf
 	rm -rf $(CURR_FOLDER)/infrastructure/backend.tf
+
+.PHONY: reset-helm-values
+reset-helm-values:
+	@echo "## Resetting Helm Values"
+	$(eval RESET_HELM_VALUES=-var=reset_values=true)
 
 .PHONY: init-stage
 init-stage: export ENV_FOLDER=$(ROOT_DIR)/environments/stage-$(STAGE)
@@ -391,14 +397,50 @@ ifneq ($(MODULE),)
 	$(eval MODULE_PATH := "$(ROOT_DIR)/environments/stage-$(STAGE)/$(MODULE)")
 	echo $(shell \
 		if [ -f $(MODULE_PATH)/backend.tfvars ]; then \
-	    	echo -backend-config=$(MODULE_PATH)/backend.tfvars; \
+			echo -backend-config=$(MODULE_PATH)/backend.tfvars; \
 		else \
-		    echo ""; \
+			echo ""; \
 		fi \
 	)
 else
 	echo ""
 endif
+
+.PHONY: scale-down-all
+scale-down-all: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
+scale-down-all:
+	@start=$$(date +%s);
+	@echo "## Scaling down all helm deployments to 0 replicas"
+	@echo "## Scaling down demis deployments"
+	if [ "$(STAGE)" = "adesso-test-fra" ]; then \
+		$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh demis-qs --apply; \
+		$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh demis-qs --apply; \
+	else \
+		$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh demis --apply; \
+		$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh demis --apply; \
+	fi
+	@echo "## Scaling down idm deployments"
+	$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh idm --apply
+	$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh idm --apply
+	end=$$(date +%s);
+	runtime=$$((end-start));
+	minutes=$$((runtime / 60));
+	seconds=$$((runtime % 60));
+	@echo "Runtime of the cluster scale down: $${minutes} minutes and $${seconds} seconds"
+
+# usage: make {STAGE} scale-up-all
+.PHONY: scale-up-all
+scale-up-all: reset-helm-values idm services
+
+.PHONY: activate-maintenance-mode
+activate-maintenance-mode: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
+activate-maintenance-mode: ### Activates the maintenance mode
+	kubectl apply -f $(SCRIPT_FOLDER)/../modules/maintenance_mode/.scripts/maintenance-mode.yaml
+
+.PHONY: deactivate-maintenance-mode
+deactivate-maintenance-mode: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
+deactivate-maintenance-mode: ### Deactivates the maintenance mode
+	kubectl delete -f $(SCRIPT_FOLDER)/../modules/maintenance_mode/.scripts/maintenance-mode.yaml
 
 .PHONY: docs
 docs: ## Generates documentation for all terraform modules
@@ -438,8 +480,8 @@ test-modules: ## Runs tests for all modules
 	@for dir in $(shell find $(ROOT_DIR) -name '*.tftest.hcl' -exec dirname {} \; | sort -u); do \
 		printf "## Testing module: %s\n" "$$dir"; \
 		cd "$$dir"; \
-		tofu init 1> /dev/null; \
-		tofu test -v 1> /dev/null; \
+		$(TF_BIN) init 1> /dev/null; \
+		$(TF_BIN) test; \
 	done
 
 .PHONY: chores

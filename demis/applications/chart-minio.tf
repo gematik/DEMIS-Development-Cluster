@@ -24,13 +24,14 @@ module "minio" {
 
   # Pass the values for the chart
   application_values = templatefile(local.minio_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    feature_flags      = try(var.feature_flags[local.minio_name], {}),
-    config_options     = try(var.config_options[local.minio_name], {}),
-    replica_count      = local.minio_replicas,
-    resource_block     = local.minio_resource_block
+    image_pull_secrets    = var.pull_secrets,
+    repository            = var.docker_registry,
+    istio_enable          = var.istio_enabled,
+    feature_flags         = try(var.feature_flags[local.minio_name], {}),
+    config_options        = try(var.config_options[local.minio_name], {}),
+    replica_count         = local.minio_replicas,
+    resource_block        = local.minio_resource_block,
+    minio_secret_checksum = try(kubernetes_secret.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.minio_template_istio, {
     namespace        = var.target_namespace,
