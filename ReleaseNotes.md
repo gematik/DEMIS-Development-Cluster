@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.2.1
+- truncate checksums
+
 ## Release 4.2.0
 - refactor module fhir-profiles-metadata for better profile update handling on non-canary deployment of validation services (requires service version 2.9.1)
 - Add additional test-configuration for prod-test environment
