@@ -2,6 +2,12 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.2.0
+- refactor module fhir-profiles-metadata for better profile update handling on non-canary deployment of validation services (requires service version 2.9.1)
+- Add additional test-configuration for prod-test environment
+- cron jobs will be only manually triggered if references services or own service will be updated
+- adding coding standards to CONTRIBUTING.md
+
 ## Release 4.1.0
 - added versioned s3-controller urls for igs
 - receiving sequence data for outdated api version supported

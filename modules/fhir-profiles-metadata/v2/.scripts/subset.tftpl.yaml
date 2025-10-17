@@ -1,13 +1,10 @@
 %{ if version != null ~}
 %{ if contains(["dedicated", "combined"], provisioning_mode) && length(versions) > 1 ~}
-- name: ${replace(replace(format("%s-%s%s", version, profile_type, format("-%s", substr(sha256(join("", versions)), 0, 10))), ".", "-"),"_","-")}
+- name: ${replace(format("%s-%s", version, profile_type), ".", "-")}
   labels:
     fhirProfile: ${profile_type}
-    fhirProfileVersion: ${replace(replace(format("%s-%s%s", version, profile_type, format("-%s", substr(sha256(join("", versions)), 0, 10))), ".", "-"),"_","-")}
+    fhirProfileVersion: ${replace(format("%s-%s", version, profile_type), ".", "-")}
     version: ${version}
-%{ for idx, v in versions ~}
-    fhirProfileVersions_${idx}: ${v}
-%{ endfor ~}
   mode: dedicated
   weight: ${weight}
 %{ endif ~}
@@ -19,9 +16,13 @@
     fhirProfileVersion: ${v}
     version: ${version}
   mode: distributed
+%{ if length(extra_versions) > 0 && !contains(extra_versions, v) ~}
+  weight: 0
+%{ else ~}
   weight: ${weight}
+%{ endif ~}
 %{ endfor ~}
 %{ endif ~}
-%{ else }
+%{ else ~}
 []
-%{ endif }
+%{ endif ~}

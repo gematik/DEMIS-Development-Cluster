@@ -41,7 +41,7 @@ It performs the following operations:
 | [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
 | [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
 | [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.0.2/docs/resources/release) | resource |
-| [terraform_data.dls_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.dlp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.spp_ars_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 

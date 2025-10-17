@@ -31,6 +31,32 @@ Scan through our existing issues to find one that interests you. If you find an 
 
 gematik projects follow the [google style guide](https://github.com/google/styleguide) conventions. Please follow them when working on your contributions.
 
+### Coding Standards
+
+#### terraform conventions
+
+When adding new terraform resources, please make sure to follow the existing naming conventions of the other resources. Resource names have to be defined in naming convention of snake-case and files are formatted well (will be enforced).
+
+#### terraform modules
+
+When adding new terraform modules, please make sure to follow the existing structure of the other modules. each module has to be defined in [modules](../modules) folder with its own subfolder. the module has to be tested and documented by adding a README.md file in the module folder (created automatically by terraform-docs).
+
+#### Feature flags
+
+When adding new features, please make sure to add a feature flag to be able to disable the feature if necessary. Feature flags should be disabled by default, names starting with FEATURE_FLAG (will be enforced) and letters are uppercase in naming convention of snake-case.
+
+#### Configuration options
+
+When adding new configuration options, please make sure that the name starts CONFIG and letters are uppercase in naming convention of snake-case. the value has tobe defined as string.
+
+#### Helm charts resources
+
+When adding new helm charts, please make sure to follow the existing structure of the other helm charts. each helm chart has to be defined a new terraform file in naming convention of chart-<chart-name>.tf. if multiple instances of the same helm chart are necessary, they will be defined in the same terraform file with different release names.
+
+#### Database conventions
+
+Database names, table names, column names, user names, role names and similar has to be defined in naming convention of snake-case.
+
 ### Commit your update
 
 Commit the changes once you are happy with them.

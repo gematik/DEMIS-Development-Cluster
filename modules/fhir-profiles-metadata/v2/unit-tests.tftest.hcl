@@ -34,8 +34,8 @@ run "check_profile_versions_main_empty_canary" {
 
   # assert that subset name main is correct
   assert {
-    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")
-    error_message = "Expected output was ${replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")} but is: ${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}."
+    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace("${var.deployment_information.main.version}-${var.profile_type}", ".", "-")
+    error_message = "Expected output was ${replace("${var.deployment_information.main.version}-${var.profile_type}-", ".", "-")} but is: ${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}."
   }
 
   # assert version canary is empty
@@ -92,14 +92,14 @@ run "check_profile_versions_main_and_canary" {
 
   # assert that subset name canary is correct
   assert {
-    condition     = tolist(terraform_data.subsets_canary.output)[0].name == replace(replace("${var.deployment_information.canary.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")
-    error_message = "Expected output was ${replace(replace("${var.deployment_information.canary.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_canary.output)[0].name)}]."
+    condition     = tolist(terraform_data.subsets_canary.output)[0].name == replace("${var.deployment_information.canary.version}-${var.profile_type}", ".", "-")
+    error_message = "Expected output was ${replace("${var.deployment_information.canary.version}-${var.profile_type}", ".", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_canary.output)[0].name)}]."
   }
 
   # assert that subset name main is correct
   assert {
-    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")
-    error_message = "Expected output was ${replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}]."
+    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace("${var.deployment_information.main.version}-${var.profile_type}", ".", "-")
+    error_message = "Expected output was ${replace("${var.deployment_information.main.version}-${var.profile_type}", ".", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}]."
   }
 
   # assert version canary is correct
@@ -152,14 +152,14 @@ run "check_profile_versions_main_and_canary_different_versions" {
 
   # assert that subset name canary is correct
   assert {
-    condition     = tolist(terraform_data.subsets_canary.output)[0].name == replace(replace("${var.deployment_information.canary.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.canary.profiles)), 0, 10)}", ".", "-"), "_", "-")
-    error_message = "Expected output was ${replace(replace("${var.deployment_information.canary.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.canary.profiles)), 0, 10)}", ".", "-"), "_", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_canary.output)[0].name)}]."
+    condition     = tolist(terraform_data.subsets_canary.output)[0].name == replace("${var.deployment_information.canary.version}-${var.profile_type}", ".", "-")
+    error_message = "Expected output was ${replace("${var.deployment_information.canary.version}-${var.profile_type}", ".", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_canary.output)[0].name)}]."
   }
 
   # assert that subset name main is correct
   assert {
-    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")
-    error_message = "Expected output was ${replace(replace("${var.deployment_information.main.version}-${var.profile_type}-${substr(sha256(join("", var.deployment_information.main.profiles)), 0, 10)}", ".", "-"), "_", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}]."
+    condition     = tolist(terraform_data.subsets_main.output)[0].name == replace("${var.deployment_information.main.version}-${var.profile_type}", ".", "-")
+    error_message = "Expected output was ${replace("${var.deployment_information.main.version}-${var.profile_type}", ".", "-")} but is: [${jsonencode(tolist(terraform_data.subsets_main.output)[0].name)}]."
   }
 
   # assert version canary is correct
@@ -363,8 +363,8 @@ run "check_dedicated_main_deployment" {
 
   # assert that subsets_main labels length is correct
   assert {
-    condition     = length(tolist(terraform_data.subsets_main.output)[0].labels) == 5
-    error_message = "Expected output was 5 but is: ${length(tolist(terraform_data.subsets_main.output)[0].labels)}."
+    condition     = length(tolist(terraform_data.subsets_main.output)[0].labels) == 3
+    error_message = "Expected output was 3 but is: ${length(tolist(terraform_data.subsets_main.output)[0].labels)}."
   }
 
   # assert that subsets_canary length is correct
@@ -403,8 +403,8 @@ run "check_dedicated_canary_deployment" {
 
   # assert that subsets_main labels length is correct
   assert {
-    condition     = length(tolist(terraform_data.subsets_main.output)[0].labels) == 5
-    error_message = "Expected output was 5 but is: ${length(tolist(terraform_data.subsets_main.output)[0].labels)}."
+    condition     = length(tolist(terraform_data.subsets_main.output)[0].labels) == 3
+    error_message = "Expected output was 3 but is: ${length(tolist(terraform_data.subsets_main.output)[0].labels)}."
   }
 
   # assert that subsets_canary length is correct
@@ -415,8 +415,8 @@ run "check_dedicated_canary_deployment" {
 
   # assert that subsets_main labels length is correct
   assert {
-    condition     = length(tolist(terraform_data.subsets_canary.output)[0].labels) == 5
-    error_message = "Expected output was 5 but is: ${length(tolist(terraform_data.subsets_canary.output)[0].labels)}."
+    condition     = length(tolist(terraform_data.subsets_canary.output)[0].labels) == 3
+    error_message = "Expected output was 3 but is: ${length(tolist(terraform_data.subsets_canary.output)[0].labels)}."
   }
 }
 
@@ -529,8 +529,8 @@ run "check_combined_main_deployment" {
 
   # assert that subsets_main labels length is correct
   assert {
-    condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (subset.mode == "distributed" ? (length(subset.labels) == 3) : (length(subset.labels) == 5))])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (length(subset.labels) == 3)])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 }
 
@@ -563,8 +563,8 @@ run "check_combined_canary_deployment" {
 
   # assert that subsets_main labels length is correct
   assert {
-    condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (subset.mode == "distributed" ? (length(subset.labels) == 3) : (length(subset.labels) == 5))])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (length(subset.labels) == 3)])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 
   # assert that subsets_canary length is correct
@@ -575,8 +575,8 @@ run "check_combined_canary_deployment" {
 
   # assert that subsets_canary labels length is correct
   assert {
-    condition     = alltrue([for subset in tolist(terraform_data.subsets_canary.output) : (subset.mode == "distributed" ? (length(subset.labels) == 3) : (length(subset.labels) == 5))])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    condition     = alltrue([for subset in tolist(terraform_data.subsets_canary.output) : (length(subset.labels) == 3)])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 }
 
@@ -606,7 +606,7 @@ run "check_combined_main_deployment_profiles_empty" {
   # assert that subsets_main labels length is correct
   assert {
     condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (length(subset.labels) == 3)])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    error_message = "Expected output was 3 all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 }
 
@@ -639,7 +639,7 @@ run "check_combined_canary_deployment_profiles_empty" {
   # assert that subsets_main labels length is correct
   assert {
     condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (length(subset.labels) == 3)])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 
   # assert that subsets_canary length is correct
@@ -651,7 +651,7 @@ run "check_combined_canary_deployment_profiles_empty" {
   # assert that subsets_canary labels length is correct
   assert {
     condition     = alltrue([for subset in tolist(terraform_data.subsets_canary.output) : (length(subset.labels) == 3)])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 
   # assert that canary labels are correct
@@ -697,7 +697,7 @@ run "check_combined_canary_deployment_profiles_filed" {
   # assert that subsets_main labels length is correct
   assert {
     condition     = alltrue([for subset in tolist(terraform_data.subsets_main.output) : (length(subset.labels) == 3)])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 
   # assert that subsets_canary length is correct
@@ -708,8 +708,8 @@ run "check_combined_canary_deployment_profiles_filed" {
 
   # assert that subsets_canary labels length is correct
   assert {
-    condition     = alltrue([for subset in tolist(terraform_data.subsets_canary.output) : (subset.mode == "distributed" ? (length(subset.labels) == 3) : (length(subset.labels) == 5))])
-    error_message = "Expected output was 3 or 5 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+    condition     = alltrue([for subset in tolist(terraform_data.subsets_canary.output) : (length(subset.labels) == 3)])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
   }
 }
 
@@ -798,5 +798,123 @@ run "check_combined_canary_deployment_destination_subsets" {
   assert {
     condition     = tolist(terraform_data.destination_subsets.output.canary)[0].mode == "distributed"
     error_message = "Expected output was distributed but is: ${tolist(terraform_data.destination_subsets.output.canary)[0].mode}."
+  }
+}
+
+# Test for combined main deployment without canary version but canary profiles
+run "check_canary_deployemnt_without_apllication_update" {
+  command = apply
+
+  variables {
+    deployment_information = {
+      main = {
+        version  = "2.7.1"
+        weight   = 100
+        profiles = ["6.0.0", "5.3.1"]
+      }
+      canary = {
+        profiles = ["6.0.8", "5.3.1"]
+      }
+    }
+    profile_type              = "fhir-profile-snapshots"
+    default_profile_snapshots = "5.3.1"
+    provisioning_mode         = "combined"
+  }
+
+  # assert that subsets_canary length is correct
+  assert {
+    condition     = length(tolist(terraform_data.subsets_canary.output)) == 0
+    error_message = "Expected output was 0 but is: ${length(tolist(terraform_data.subsets_canary.output))}."
+  }
+
+  # assert that subsets_main length is correct
+  assert {
+    condition     = length(tolist(terraform_data.subsets_main.output)) == 4
+    error_message = "Expected output was 1 but is: ${length(tolist(terraform_data.subsets_main.output))}."
+  }
+
+  # assert that subsets_main labels length is correct
+  assert {
+    condition = alltrue([
+      for subset in tolist(terraform_data.subsets_main.output) :
+      (length(subset.labels) == 3)
+    ])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+  }
+
+  # assert profiles in main are correct
+  assert {
+    condition     = alltrue([for version in terraform_data.main_profiles.output : contains(concat(var.deployment_information.main.profiles, var.deployment_information.canary.profiles), version)])
+    error_message = "Expected output was ${jsonencode(var.deployment_information.main.profiles)} but is: [${join(",", terraform_data.main_profiles.output)}]."
+  }
+
+  # assert profiles in canary are not empty
+  assert {
+    condition     = length(terraform_data.canary_profiles.output) == 2
+    error_message = "Expected output was empty but is: [${jsonencode(terraform_data.canary_profiles.output)}]."
+  }
+  # assert profiles in canary are correct
+  assert {
+    condition     = alltrue([for version in terraform_data.canary_profiles.output : contains(concat(var.deployment_information.main.profiles, var.deployment_information.canary.profiles), version)])
+    error_message = "Expected output was ${jsonencode(var.deployment_information.canary.profiles)} but is: [${join(",", terraform_data.canary_profiles.output)}]."
+  }
+}
+
+
+# Test for combined main deployment without canary version but canary profiles
+run "check_canary_deployemnt_without_apllication_update" {
+  command = apply
+
+  variables {
+    deployment_information = {
+      main = {
+        version = "2.7.1"
+        weight  = 100
+      }
+      canary = {
+        profiles = ["6.0.8", "5.3.1"]
+      }
+    }
+    profile_type              = "fhir-profile-snapshots"
+    default_profile_snapshots = "5.3.1"
+    provisioning_mode         = "combined"
+  }
+
+  # assert that subsets_canary length is correct
+  assert {
+    condition     = length(tolist(terraform_data.subsets_canary.output)) == 0
+    error_message = "Expected output was 0 but is: ${length(tolist(terraform_data.subsets_canary.output))}."
+  }
+
+  # assert that subsets_main length is correct
+  assert {
+    condition     = length(tolist(terraform_data.subsets_main.output)) == 3
+    error_message = "Expected output was 3 but is: ${length(tolist(terraform_data.subsets_main.output))}."
+  }
+
+  # assert that subsets_main labels length is correct
+  assert {
+    condition = alltrue([
+      for subset in tolist(terraform_data.subsets_main.output) :
+      (length(subset.labels) == 3)
+    ])
+    error_message = "Expected output was 3 for all but is: ${jsonencode([for subset in tolist(terraform_data.subsets_main.output) : length(subset.labels)])}."
+  }
+
+  # assert profiles in main are correct
+  assert {
+    condition     = alltrue([for version in terraform_data.main_profiles.output : contains(concat(var.deployment_information.main.profiles, var.deployment_information.canary.profiles), version)])
+    error_message = "Expected output was ${jsonencode(var.deployment_information.main.profiles)} but is: [${join(",", terraform_data.main_profiles.output)}]."
+  }
+
+  # assert profiles in canary are not empty
+  assert {
+    condition     = length(terraform_data.canary_profiles.output) == 2
+    error_message = "Expected output was empty but is: [${jsonencode(terraform_data.canary_profiles.output)}]."
+  }
+  # assert profiles in canary are correct
+  assert {
+    condition     = alltrue([for version in terraform_data.canary_profiles.output : contains(concat(var.deployment_information.main.profiles, var.deployment_information.canary.profiles), version)])
+    error_message = "Expected output was ${jsonencode(var.deployment_information.canary.profiles)} but is: [${join(",", terraform_data.canary_profiles.output)}]."
   }
 }
