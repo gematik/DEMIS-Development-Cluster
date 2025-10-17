@@ -28,7 +28,7 @@ resource "kubernetes_secret" "database_credentials" {
     name      = var.database_credentials[count.index].secret-name
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.database_credentials[count.index].username, var.database_credentials[count.index].password]))
+      checksum = substr(sha256(jsonencode([var.database_credentials[count.index].username, var.database_credentials[count.index].password])), 0, 61)
     }
   }
 
@@ -49,7 +49,7 @@ resource "kubernetes_secret" "postgresql_tls_certificates" {
     name      = "postgres-tls-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.postgresql_tls_certificates_data))
+      checksum = substr(sha256(jsonencode(local.postgresql_tls_certificates_data)), 0, 61)
     }
   }
 
@@ -64,7 +64,7 @@ resource "kubernetes_secret" "pgbouncer_userlist" {
     name      = "pgbouncer-userlist-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(local.pgbouncer_userlist_content)
+      checksum = substr(sha256(local.pgbouncer_userlist_content), 0, 61)
     }
   }
 
@@ -81,7 +81,7 @@ resource "kubernetes_secret" "keycloak_admin_account" {
     name      = "keycloak-admin-password"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.keycloak_admin_user, var.keycloak_admin_password]))
+      checksum = substr(sha256(jsonencode([var.keycloak_admin_user, var.keycloak_admin_password])), 0, 61)
     }
   }
 
@@ -98,7 +98,7 @@ resource "kubernetes_secret" "keycloak_cus_client_secret" {
     name      = "keycloak-cus-client-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(var.keycloak_cus_client_secret)
+      checksum = substr(sha256(var.keycloak_cus_client_secret), 0, 61)
     }
   }
 
@@ -114,7 +114,7 @@ resource "kubernetes_secret" "keycloak_portal_secret" {
     name      = "keycloak-portal-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.keycloak_portal_admin_password, var.keycloak_portal_client_secret]))
+      checksum = substr(sha256(jsonencode([var.keycloak_portal_admin_password, var.keycloak_portal_client_secret])), 0, 61)
     }
   }
 
@@ -133,7 +133,7 @@ resource "kubernetes_secret" "keycloak_truststore_file" {
     name      = "keycloak-truststore-file"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(var.keycloak_truststore_jks)
+      checksum = substr(sha256(var.keycloak_truststore_jks), 0, 61)
     }
   }
 
@@ -149,7 +149,7 @@ resource "kubernetes_secret" "keycloak_truststore_password" {
     name      = "keycloak-truststore-password"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(var.keycloak_truststore_password)
+      checksum = substr(sha256(var.keycloak_truststore_password), 0, 61)
     }
   }
 
@@ -165,7 +165,7 @@ resource "kubernetes_secret" "ldap_certificates" {
     name      = "ldap-certificates"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.ldap_certificates))
+      checksum = substr(sha256(jsonencode(local.ldap_certificates)), 0, 61)
     }
   }
 
@@ -179,7 +179,7 @@ resource "kubernetes_secret" "redis_cus_reader_credentials" {
     name      = "redis-cus-reader-password"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.redis_cus_reader_user, var.redis_cus_reader_password]))
+      checksum = substr(sha256(jsonencode([var.redis_cus_reader_user, var.redis_cus_reader_password])), 0, 61)
     }
   }
 
@@ -196,7 +196,7 @@ resource "kubernetes_secret" "redis_cus_writer_credentials" {
     name      = "redis-cus-writer-password"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.redis_cus_writer_user, var.redis_cus_writer_password]))
+      checksum = substr(sha256(jsonencode([var.redis_cus_writer_user, var.redis_cus_writer_password])), 0, 61)
     }
   }
 
@@ -213,7 +213,7 @@ resource "kubernetes_secret" "redis_cus_acl" {
     name      = "redis-cus-acl"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.redis_cus_reader_user, var.redis_cus_reader_password, var.redis_cus_writer_user, var.redis_cus_writer_password]))
+      checksum = substr(sha256(jsonencode([var.redis_cus_reader_user, var.redis_cus_reader_password, var.redis_cus_writer_user, var.redis_cus_writer_password])), 0, 61)
     }
   }
 

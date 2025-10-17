@@ -35,7 +35,7 @@ resource "kubernetes_secret" "database_credentials" {
     name      = var.database_credentials[count.index].secret-name
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode([var.database_credentials[count.index].username, var.database_credentials[count.index].password]))
+      checksum = substr(sha256(jsonencode([var.database_credentials[count.index].username, var.database_credentials[count.index].password])), 0, 62)
     }
   }
 
@@ -56,7 +56,7 @@ resource "kubernetes_secret" "postgresql_tls_certificates" {
     name      = "postgres-tls-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.postgresql_tls_certificates_data))
+      checksum = substr(sha256(jsonencode(local.postgresql_tls_certificates_data)), 0, 62)
     }
   }
 
@@ -71,7 +71,7 @@ resource "kubernetes_secret" "minio_credentials" {
     name      = "minio-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.minio_credentials_data))
+      checksum = substr(sha256(jsonencode(local.minio_credentials_data)), 0, 62)
     }
   }
 
@@ -88,7 +88,7 @@ resource "kubernetes_secret" "ars_pseudo_hash_pepper" {
     name      = "ars-pseudo-hash-pepper"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(var.ars_pseudo_hash_pepper)
+      checksum = substr(sha256(var.ars_pseudo_hash_pepper), 0, 61)
     }
   }
 
@@ -104,7 +104,7 @@ resource "kubernetes_secret" "pgbouncer_userlist" {
     name      = "pgbouncer-userlist-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(local.userlist_content)
+      checksum = substr(sha256(local.userlist_content), 0, 61)
     }
   }
 
@@ -121,7 +121,7 @@ resource "kubernetes_secret" "igs_encryption_certificate" {
     name      = "igs-secret"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.igs_encryption_certificate_data))
+      checksum = substr(sha256(jsonencode(local.igs_encryption_certificate_data)), 0, 61)
     }
   }
 
@@ -136,7 +136,7 @@ resource "kubernetes_secret" "redis_cus_reader_credentials" {
     name      = "redis-cus-reader-password"
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(jsonencode(local.redis_cus_reader_password_data))
+      checksum = substr(sha256(jsonencode(local.redis_cus_reader_password_data)), 0, 61)
     }
   }
 
@@ -154,7 +154,7 @@ resource "kubernetes_secret" "service_accounts" {
     name      = each.value.secret_name
     namespace = var.target_namespace
     annotations = {
-      checksum = sha256(each.value.keyfile_base64)
+      checksum = substr(sha256(each.value.keyfile_base64), 0, 61)
     }
   }
 
