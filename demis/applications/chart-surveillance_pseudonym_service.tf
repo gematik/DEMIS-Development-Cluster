@@ -44,7 +44,7 @@ module "surveillance_pseudonym_service_ars" {
   count = local.sps_ars_enabled ? 1 : 0
 
   namespace              = var.target_namespace
-  application_name       = local.sps_ars_enabled
+  application_name       = local.sps_ars_name
   deployment_information = var.deployment_information[local.sps_ars_name]
   helm_settings          = local.common_helm_release_settings
   depends_on             = [module.pgbouncer[0]]
