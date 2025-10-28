@@ -1,6 +1,6 @@
 # applications
 
-Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes Cluster.
+Module responsible for deploying the ARE Services Helm Charts in a Kubernetes Cluster.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -11,9 +11,9 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 
 ## Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_service_demo"></a> [service\_demo](#module\_service\_demo) | ../../modules/helm_deployment | n/a |
+| Name                                                                                              | Source | Version |
+|---------------------------------------------------------------------------------------------------|--------|---------|
+| <a name="module_are_notification_processing_service"></a> [service\_demo](#module\_service\_demo) | ../../modules/helm_deployment | n/a |
 
 ## Resources
 

@@ -1,4 +1,4 @@
-# Values for the service-demo Helm Template
+# Values for the are-notification-processing-service Helm Template
 # Enables debug mode
 debug:
   enable: ${debug_enable}
@@ -10,7 +10,7 @@ required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-service-demo
+    name: are-notification-processing-service
     %{ endif }
 
 # Image Pull Secrets
