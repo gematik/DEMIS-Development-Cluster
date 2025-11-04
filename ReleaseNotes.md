@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.3.1
+- fix default db for ref environment in switch database script
+
 ## Release 4.3.0
 - added truststore-certs-secrets for keycloak
 - Fix new API endpoints routing for portal pathogen and disease to futs
