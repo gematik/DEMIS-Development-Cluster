@@ -19,6 +19,7 @@ required:
     %{ endif }
   profiles:
     repository: ${profile_docker_registry}
+    packageName: rki.demis.igs.snapshot
     %{ if strcontains(repository, "gematik1") }
     name: demis-igs-profile-snapshots
     %{ else }

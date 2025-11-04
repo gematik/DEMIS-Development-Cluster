@@ -26,6 +26,13 @@ customEnvVars:
 # if production mode is true, hex-hex button won't be shown
 config:
   production: ${production_mode}
+
+%{ if feature_flag_new_api_endpoints ~}
+  newApiEndpoints:
+    pathToFuts: ../../translation/ui-data-model/v${profile_major_version}/fhir
+    futsPaths:
+      main: ../../translation/ui-data-model/v${profile_major_version}/fhir/disease
+%{ endif ~}
   featureFlags:
     # Prevents empty values that can delete the default environment variables
     "TERRAFORM_DEPLOYMENT": true

@@ -25,15 +25,17 @@ module "portal_pathogen" {
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_pathogen_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    production_mode    = var.production_mode,
-    csp_hostname       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
-    feature_flags      = try(var.feature_flags[local.portal_pathogen_name], {}),
-    config_options     = try(var.config_options[local.portal_pathogen_name], {}),
-    replica_count      = local.portal_pathogen_replicas,
-    resource_block     = local.portal_pathogen_resource_block
+    image_pull_secrets             = var.pull_secrets,
+    repository                     = var.docker_registry,
+    istio_enable                   = var.istio_enabled,
+    production_mode                = var.production_mode,
+    csp_hostname                   = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    feature_flags                  = try(var.feature_flags[local.portal_pathogen_name], {}),
+    config_options                 = try(var.config_options[local.portal_pathogen_name], {}),
+    replica_count                  = local.portal_pathogen_replicas,
+    resource_block                 = local.portal_pathogen_resource_block,
+    profile_major_version          = regex("^([0-9]+)", can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots)[0], # extract major version
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.portal_disease_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
   istio_values = templatefile(local.portal_pathogen_template_istio, {
     namespace                      = var.target_namespace,

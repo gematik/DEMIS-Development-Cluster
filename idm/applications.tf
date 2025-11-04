@@ -30,6 +30,7 @@ module "idm_services" {
   bundid_idp_user_import_enabled     = var.bundid_idp_user_import_enabled
   keycloak_user_import_enabled       = var.keycloak_user_import_enabled
   reset_values                       = var.reset_values
+  tsl_download_endpoint              = var.tsl_download_endpoint
 
   # Secrets and Credentials needed for the applications
   postgres_server_certificate        = var.postgres_server_certificate
@@ -40,6 +41,7 @@ module "idm_services" {
   keycloak_portal_client_secret      = var.keycloak_portal_client_secret
   keycloak_cus_client_secret         = var.keycloak_cus_client_secret
   keycloak_truststore_jks            = var.keycloak_truststore_jks
+  keycloak_truststore_certs          = var.keycloak_truststore_certs
   keycloak_truststore_password       = var.keycloak_truststore_password
   redis_cus_writer_user              = var.redis_cus_writer_user
   redis_cus_writer_password          = var.redis_cus_writer_password

@@ -103,6 +103,13 @@ variable "keycloak_user_import_enabled" {
   default     = false
 }
 
+# Tsl download endpoint for keycloak
+variable "tsl_download_endpoint" {
+  type        = string
+  description = "Defines the TSL download endpoint for keycloak"
+  default     = ""
+}
+
 # Activation of BundID IDP user import
 variable "bundid_idp_user_import_enabled" {
   type        = bool
