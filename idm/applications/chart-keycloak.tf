@@ -54,11 +54,13 @@ module "keycloak" {
     resource_block                        = local.keycloak_resource_block,
     enable_import                         = var.keycloak_user_import_enabled,
     enable_tsl_deliverer_mock             = local.enable_tsl_deliverer_mock,
+    tsl_download_endpoint                 = var.tsl_download_endpoint,
     keycloak_admin_account_checksum       = try(kubernetes_secret.keycloak_admin_account.metadata[0].annotations["checksum"], ""),
     keycloak_portal_secret_checksum       = try(kubernetes_secret.keycloak_portal_secret.metadata[0].annotations["checksum"], ""),
     keycloak_truststore_file_checksum     = try(kubernetes_secret.keycloak_truststore_file.metadata[0].annotations["checksum"], ""),
     keycloak_truststore_password_checksum = try(kubernetes_secret.keycloak_truststore_password.metadata[0].annotations["checksum"], ""),
     db_secret_checksum                    = try(kubernetes_secret.database_credentials[local.keycloak_index].metadata[0].annotations["checksum"], "")
+    keycloak_truststore_checksum          = try(kubernetes_secret.keycloak_truststore_certs.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.keycloak_template_istio, {
     namespace       = var.target_namespace,

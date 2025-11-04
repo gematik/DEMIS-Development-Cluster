@@ -31,6 +31,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | [kubernetes_secret.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_cus_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
+| [kubernetes_secret.keycloak_truststore_certs](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.ldap_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
@@ -72,6 +73,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The Admin User for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The Client-ID for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_secret"></a> [keycloak\_portal\_client\_secret](#input\_keycloak\_portal\_client\_secret) | The Client-Secret for Keycloak PORTAL-Realm | `string` | n/a | yes |
+| <a name="input_keycloak_truststore_certs"></a> [keycloak\_truststore\_certs](#input\_keycloak\_truststore\_certs) | The Keycloak Truststore Certificates | `map(string)` | n/a | yes |
 | <a name="input_keycloak_truststore_jks"></a> [keycloak\_truststore\_jks](#input\_keycloak\_truststore\_jks) | The Truststore JKS for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_truststore_password"></a> [keycloak\_truststore\_password](#input\_keycloak\_truststore\_password) | The Truststore Password for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_user_import_enabled"></a> [keycloak\_user\_import\_enabled](#input\_keycloak\_user\_import\_enabled) | Activate Keycloak user import | `bool` | n/a | yes |
@@ -95,6 +97,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_ti_idp_redirect_uri"></a> [ti\_idp\_redirect\_uri](#input\_ti\_idp\_redirect\_uri) | The redirect uri to access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |
 | <a name="input_ti_idp_return_sso_token"></a> [ti\_idp\_return\_sso\_token](#input\_ti\_idp\_return\_sso\_token) | Activate return sso token for access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `bool` | `true` | no |
 | <a name="input_ti_idp_server_url"></a> [ti\_idp\_server\_url](#input\_ti\_idp\_server\_url) | The server url for DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |
+| <a name="input_tsl_download_endpoint"></a> [tsl\_download\_endpoint](#input\_tsl\_download\_endpoint) | Defines the TSL download endpoint for keycloak | `string` | `""` | no |
 
 ## Outputs
 

@@ -24,6 +24,12 @@ customEnvVars:
   
 config:
   production: ${production_mode}
+
+%{ if feature_flag_new_api_endpoints ~}
+  newApiEndpoints:
+    pathToFuts: ../../translation/ui-data-model/v${profile_major_version}/fhir
+%{ endif ~}
+
   featureFlags: 
     # Prevents empty values that can delete the default environment variables
     "TERRAFORM_DEPLOYMENT": true

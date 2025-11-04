@@ -35,6 +35,7 @@ module "notification_gateway" {
     core_hostname                  = var.core_hostname,
     issuer_hostname                = var.auth_hostname,
     context_path                   = var.context_path,
+    profile_major_version          = regex("^([0-9]+)", can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots)[0], # extract major version
     feature_flags                  = try(var.feature_flags[local.gateway_name], {}),
     config_options                 = try(var.config_options[local.gateway_name], {}),
     replica_count                  = local.gateway_replicas,

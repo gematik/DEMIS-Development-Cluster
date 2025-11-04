@@ -57,6 +57,7 @@ resource "helm_release" "network_rules_istio" {
       mutual_tls_hosts              = [module.endpoints.core_hostname],
       core_hostname                 = module.endpoints.core_hostname,
       portal_hostname               = module.endpoints.portal_hostname,
+      meldung_hostname              = module.endpoints.meldung_hostname,
       portal_test_token_certificate = var.portal_test_token_certificate,
       keycloak_internal_hostname    = module.endpoints.keycloak_svc_hostname,
       auth_hostname                 = module.endpoints.auth_hostname,

@@ -20,6 +20,7 @@ required:
 %{ endif ~}
   profiles:
     repository: ${profile_docker_registry}
+    packageName: rki.demis.ars.snapshot
 %{ if strcontains(repository, "gematik1") && profile_handling_api_version == "v1" ~}
     name: demis-ars-profile-snapshots
 %{ else ~}

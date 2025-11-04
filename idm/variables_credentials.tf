@@ -122,6 +122,13 @@ variable "keycloak_cus_client_secret" {
   description = "client secret of cus-cli (service account) in realm oegd"
 }
 
+# Keycloak Truststore-Certificates as Base64
+variable "keycloak_truststore_certs" {
+  type        = map(string)
+  sensitive   = true
+  description = "The Keycloak Truststore Certificates"
+}
+
 # Redis CUS Credentials
 variable "redis_cus_writer_user" {
   type        = string

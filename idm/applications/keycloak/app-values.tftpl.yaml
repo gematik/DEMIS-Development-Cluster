@@ -92,6 +92,7 @@ customEnvVars:
   KC_HOSTNAME_ADMIN: "https://${issuer_hostname}"
   KC_HOSTNAME: "https://${issuer_hostname}"
   KC_DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/keycloak"
+  GEMATIK_IDP_TSL_PRIMARY_URL: "${tsl_download_endpoint}"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
@@ -104,6 +105,7 @@ podAnnotations:
   stage.configuration/data-name: ${data_name}
   checksum/keycloak_truststore_file: ${keycloak_truststore_file_checksum}
   checksum/keycloak_truststore_password: ${keycloak_truststore_password_checksum}
+  checksum/keycloak_truststore: ${keycloak_truststore_checksum}
   checksum/db_secret: ${db_secret_checksum}
   checksum/keycloak_admin_account: ${keycloak_admin_account_checksum}
 

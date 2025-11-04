@@ -2,6 +2,14 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.3.0
+- added truststore-certs-secrets for keycloak
+- Fix new API endpoints routing for portal pathogen and disease to futs
+- added tsl-download endpoint
+- added support of FHIR packages
+- add grafana metrics annotations for istiod
+- add meldungs domain for mesh network policies
+
 ## Release 4.2.1
 - truncate checksums
 
