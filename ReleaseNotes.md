@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.3.2
+- fix istio metrics path for metric scraping
+
 ## Release 4.3.1
 - fix default db for ref environment in switch database script
 
