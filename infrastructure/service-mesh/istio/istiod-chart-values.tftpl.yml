@@ -40,7 +40,7 @@ sidecarInjectorWebhook:
 podAnnotations:
   k8s.grafana.com/metrics.portNumber: '15014'
   k8s.grafana.com/scrape: 'true'
-  k8s.grafana.com/metrics.path: /stats/prometheus
+  k8s.grafana.com/metrics.path: /metrics
 
 cni:
   enabled: true
