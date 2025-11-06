@@ -2,6 +2,9 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.3.3
+- fix namespace name for new testenvironment 
+
 ## Release 4.3.2
 - fix istio metrics path for metric scraping
 
