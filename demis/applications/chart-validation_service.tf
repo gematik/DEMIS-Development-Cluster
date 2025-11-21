@@ -123,20 +123,22 @@ module "validation_service_core" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_core_template_app, {
-    image_pull_secrets           = var.pull_secrets,
-    repository                   = var.docker_registry,
-    debug_enable                 = var.debug_enabled,
-    istio_enable                 = var.istio_enabled,
-    profile_version              = local.fhir_profile_snapshots,
-    profile_docker_registry      = var.docker_registry,
-    feature_flags                = try(var.feature_flags[local.vs_core_name], {}),
-    config_options               = try(var.config_options[local.vs_core_name], {}),
-    replica_count                = local.vs_core_replicas,
-    resource_block               = local.vs_core_resource_block,
-    profile_versions             = module.validation_service_core_metadata.current_profile_versions,
-    provisioning_mode            = var.profile_provisioning_mode_vs_core,
-    labels                       = try(yamlencode(module.validation_service_core_metadata.version_labels), "")
-    profile_handling_api_version = local.fhir_profile_metadata_api_version_core
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_version                                    = local.fhir_profile_snapshots,
+    profile_docker_registry                            = var.docker_registry,
+    feature_flags                                      = try(var.feature_flags[local.vs_core_name], {}),
+    config_options                                     = try(var.config_options[local.vs_core_name], {}),
+    replica_count                                      = local.vs_core_replicas,
+    resource_block                                     = local.vs_core_resource_block,
+    profile_versions                                   = module.validation_service_core_metadata.current_profile_versions,
+    provisioning_mode                                  = var.profile_provisioning_mode_vs_core,
+    labels                                             = try(yamlencode(module.validation_service_core_metadata.version_labels), "")
+    profile_handling_api_version                       = local.fhir_profile_metadata_api_version_core
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.vs_core_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.vs_core_template_istio, {
     namespace                         = var.target_namespace,
@@ -178,20 +180,22 @@ module "validation_service_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_igs_template_app, {
-    image_pull_secrets           = var.pull_secrets,
-    repository                   = var.docker_registry,
-    debug_enable                 = var.debug_enabled,
-    istio_enable                 = var.istio_enabled,
-    profile_version              = local.igs_profile_snapshots,
-    profile_docker_registry      = var.docker_registry,
-    feature_flags                = try(var.feature_flags[local.vs_igs_name], {}),
-    config_options               = try(var.config_options[local.vs_igs_name], {}),
-    replica_count                = local.vs_igs_replicas,
-    resource_block               = local.vs_igs_resource_block,
-    profile_versions             = module.validation_service_igs_metadata.current_profile_versions,
-    provisioning_mode            = var.profile_provisioning_mode_vs_igs,
-    labels                       = try(yamlencode(module.validation_service_igs_metadata.version_labels), "")
-    profile_handling_api_version = local.fhir_profile_metadata_api_version_igs
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_version                                    = local.igs_profile_snapshots,
+    profile_docker_registry                            = var.docker_registry,
+    feature_flags                                      = try(var.feature_flags[local.vs_igs_name], {}),
+    config_options                                     = try(var.config_options[local.vs_igs_name], {}),
+    replica_count                                      = local.vs_igs_replicas,
+    resource_block                                     = local.vs_igs_resource_block,
+    profile_versions                                   = module.validation_service_igs_metadata.current_profile_versions,
+    provisioning_mode                                  = var.profile_provisioning_mode_vs_igs,
+    labels                                             = try(yamlencode(module.validation_service_igs_metadata.version_labels), "")
+    profile_handling_api_version                       = local.fhir_profile_metadata_api_version_igs
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.vs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.vs_igs_template_istio, {
     namespace                         = var.target_namespace,
@@ -233,20 +237,22 @@ module "validation_service_ars" {
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_ars_template_app, {
-    image_pull_secrets           = var.pull_secrets,
-    repository                   = var.docker_registry,
-    debug_enable                 = var.debug_enabled,
-    istio_enable                 = var.istio_enabled,
-    profile_version              = local.ars_profile_snapshots,
-    profile_docker_registry      = var.docker_registry,
-    feature_flags                = try(var.feature_flags[local.vs_ars_name], {}),
-    config_options               = try(var.config_options[local.vs_ars_name], {}),
-    replica_count                = local.vs_ars_replicas,
-    resource_block               = local.vs_ars_resource_block,
-    profile_versions             = module.validation_service_ars_metadata.current_profile_versions,
-    provisioning_mode            = var.profile_provisioning_mode_vs_ars,
-    labels                       = try(yamlencode(module.validation_service_ars_metadata.version_labels), "")
-    profile_handling_api_version = local.fhir_profile_metadata_api_version_ars
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_version                                    = local.ars_profile_snapshots,
+    profile_docker_registry                            = var.docker_registry,
+    feature_flags                                      = try(var.feature_flags[local.vs_ars_name], {}),
+    config_options                                     = try(var.config_options[local.vs_ars_name], {}),
+    replica_count                                      = local.vs_ars_replicas,
+    resource_block                                     = local.vs_ars_resource_block,
+    profile_versions                                   = module.validation_service_ars_metadata.current_profile_versions,
+    provisioning_mode                                  = var.profile_provisioning_mode_vs_ars,
+    labels                                             = try(yamlencode(module.validation_service_ars_metadata.version_labels), "")
+    profile_handling_api_version                       = local.fhir_profile_metadata_api_version_ars
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.vs_ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.vs_ars_template_istio, {
     namespace                         = var.target_namespace,

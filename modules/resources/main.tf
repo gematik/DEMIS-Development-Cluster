@@ -1,4 +1,8 @@
 locals {
+  istio_proxy_default_resources = {
+    limits   = { memory = "128Mi" }
+    requests = { cpu = "10m", memory = "64Mi" }
+  }
   # Group all the resource definitions by service and define a YAML Resource Block for the Helm Chart as String
   resource_definitions = {
     for rd in distinct(var.resource_definitions) :
@@ -18,6 +22,10 @@ locals {
           }
         }
       ) : null
+      istio_proxy_resources = {
+        limits   = merge(local.istio_proxy_default_resources.limits, try(rd.istio_proxy_resources.limits, {}))
+        requests = merge(local.istio_proxy_default_resources.requests, try(rd.istio_proxy_resources.requests, {}))
+      }
     }
   }
 

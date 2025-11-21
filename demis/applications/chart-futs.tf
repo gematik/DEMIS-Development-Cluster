@@ -86,16 +86,18 @@ module "futs_core" {
 
   # Pass the values for the chart
   application_values = templatefile(local.futs_core_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_version         = can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots,
-    profile_docker_registry = var.docker_registry,
-    feature_flags           = try(var.feature_flags[local.futs_core_name], {}),
-    config_options          = try(var.config_options[local.futs_core_name], {}),
-    replica_count           = local.futs_core_replicas,
-    resource_block          = local.futs_core_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_version                                    = can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots,
+    profile_docker_registry                            = var.docker_registry,
+    feature_flags                                      = try(var.feature_flags[local.futs_core_name], {}),
+    config_options                                     = try(var.config_options[local.futs_core_name], {}),
+    replica_count                                      = local.futs_core_replicas,
+    resource_block                                     = local.futs_core_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.futs_core_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.futs_core_template_istio, {
     namespace    = var.target_namespace,
@@ -116,16 +118,18 @@ module "futs_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.futs_igs_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_version         = local.igs_profile_snapshots,
-    profile_docker_registry = var.docker_registry,
-    feature_flags           = try(var.feature_flags[local.futs_igs_name], {}),
-    config_options          = try(var.config_options[local.futs_igs_name], {}),
-    replica_count           = local.futs_igs_replicas,
-    resource_block          = local.futs_igs_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_version                                    = local.igs_profile_snapshots,
+    profile_docker_registry                            = var.docker_registry,
+    feature_flags                                      = try(var.feature_flags[local.futs_igs_name], {}),
+    config_options                                     = try(var.config_options[local.futs_igs_name], {}),
+    replica_count                                      = local.futs_igs_replicas,
+    resource_block                                     = local.futs_igs_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.futs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.futs_igs_template_istio, {
     namespace    = var.target_namespace,

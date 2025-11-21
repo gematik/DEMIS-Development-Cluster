@@ -99,7 +99,17 @@ variable "resource_definitions" {
   description = "Defines a list of definition of resources that belong to a service"
   type = map(object({
     resource_block = optional(string)
-    replicas       = number
+    istio_proxy_resources = optional(object({
+      limits = optional(object({
+        cpu    = optional(string)
+        memory = optional(string)
+      }))
+      requests = optional(object({
+        cpu    = optional(string)
+        memory = optional(string)
+      }))
+    }))
+    replicas = number
   }))
   default = {}
 
@@ -107,6 +117,20 @@ variable "resource_definitions" {
     condition     = length(var.resource_definitions) > 0 ? alltrue([for key, value in var.resource_definitions : value != {}]) : true
     error_message = "Service should contain valid resource definitions. No Replicas or resource block defined"
   }
+}
+
+variable "istio_proxy_default_resources" {
+  description = "Default values for istio proxy resource requests and limits"
+  type = object({
+    limits = object({
+      cpu    = optional(string)
+      memory = string
+    })
+    requests = object({
+      cpu    = string
+      memory = string
+    })
+  })
 }
 
 variable "pull_secrets" {

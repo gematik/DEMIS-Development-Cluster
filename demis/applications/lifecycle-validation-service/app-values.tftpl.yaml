@@ -23,6 +23,7 @@ imagePullSecrets:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  LVS_CLIENT_DLS: http://destination-lookup-reader.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
@@ -30,6 +31,12 @@ customEnvVars:
   ${config_name} : "${config_value}"
   %{~ endfor ~}
 
+%{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+podAnnotations:
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+%{endif}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

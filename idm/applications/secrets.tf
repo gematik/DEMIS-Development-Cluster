@@ -7,8 +7,6 @@ locals {
 
   ldap_certificates = merge(local.ca_certificates, local.test_certificates)
 
-  keycloak_truststore_certs = var.keycloak_truststore_certs
-
   postgresql_tls_certificates_data = {
     "server.key" : base64decode(var.postgres_server_key)
     "server.crt" : base64decode(var.postgres_server_certificate)
@@ -175,20 +173,6 @@ resource "kubernetes_secret" "ldap_certificates" {
   immutable = true
 
   binary_data = local.ldap_certificates
-}
-
-resource "kubernetes_secret" "keycloak_truststore_certs" {
-  metadata {
-    name      = "keycloak-truststore-certs"
-    namespace = var.target_namespace
-    annotations = {
-      checksum = substr(sha256(jsonencode(local.keycloak_truststore_certs)), 0, 61)
-    }
-  }
-
-  immutable = true
-
-  binary_data = local.keycloak_truststore_certs
 }
 
 resource "kubernetes_secret" "redis_cus_reader_credentials" {

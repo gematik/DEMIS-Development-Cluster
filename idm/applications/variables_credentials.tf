@@ -59,13 +59,6 @@ variable "keycloak_truststore_jks" {
   description = "The Truststore JKS for Keycloak in Base64 Format"
 }
 
-# Keycloak Truststore-Certificates as Base64
-variable "keycloak_truststore_certs" {
-  type        = map(string)
-  sensitive   = true
-  description = "The Keycloak Truststore Certificates"
-}
-
 variable "keycloak_cus_client_secret" {
   type        = string
   sensitive   = true

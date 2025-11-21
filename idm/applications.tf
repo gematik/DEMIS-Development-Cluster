@@ -23,6 +23,7 @@ module "idm_services" {
   feature_flags                      = module.application_flags.service_feature_flags
   config_options                     = module.application_flags.service_config_options
   resource_definitions               = module.application_resources.service_resource_definitions
+  istio_proxy_default_resources      = module.application_resources.istio_proxy_default_resources
   ti_idp_server_url                  = var.ti_idp_server_url
   ti_idp_client_name                 = var.ti_idp_client_name
   ti_idp_redirect_uri                = var.ti_idp_redirect_uri
@@ -41,7 +42,6 @@ module "idm_services" {
   keycloak_portal_client_secret      = var.keycloak_portal_client_secret
   keycloak_cus_client_secret         = var.keycloak_cus_client_secret
   keycloak_truststore_jks            = var.keycloak_truststore_jks
-  keycloak_truststore_certs          = var.keycloak_truststore_certs
   keycloak_truststore_password       = var.keycloak_truststore_password
   redis_cus_writer_user              = var.redis_cus_writer_user
   redis_cus_writer_password          = var.redis_cus_writer_password

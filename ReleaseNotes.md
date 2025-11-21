@@ -2,6 +2,14 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.4.0
+- added ARE modul (EKM3)
+- added DMZ modul
+- added destination-lookup-service urls to NPS, NRS and LVS
+- fix gitlab urls in scripts
+- removed truststore-certs-secrets for keycloak
+- add resource requests and limits for istio proxy sidecars
+
 ## Release 4.3.3
 - fix namespace name for new testenvironment 
 

@@ -18,6 +18,11 @@ imagePullSecrets:
 podAnnotations: 
   chesksum/userlist: "${userlist_secret_checksum}"
   chesksum/postgres-tls: "${postgres_tls_secret_checksum}"
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
       
 # Define custom configuration values
 config:

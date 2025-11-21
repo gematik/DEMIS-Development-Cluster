@@ -24,14 +24,17 @@ module "lifecycle_validation_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.lcvs_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    feature_flags      = try(var.feature_flags[local.lcvs_name], {}),
-    config_options     = try(var.config_options[local.lcvs_name], {}),
-    replica_count      = local.lcvs_replicas,
-    resource_block     = local.lcvs_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    namespace                                          = var.target_namespace,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    feature_flags                                      = try(var.feature_flags[local.lcvs_name], {}),
+    config_options                                     = try(var.config_options[local.lcvs_name], {}),
+    replica_count                                      = local.lcvs_replicas,
+    resource_block                                     = local.lcvs_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.lcvs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.lcvs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.lcvs_template_istio, {
     namespace = var.target_namespace

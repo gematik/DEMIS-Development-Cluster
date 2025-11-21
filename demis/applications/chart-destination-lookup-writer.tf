@@ -41,18 +41,20 @@ module "destination_lookup_writer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.dls_writer_template_app, {
-    app_name               = local.dls_writer_name,
-    data_base              = replace(local.dls_name, "-", "_"),
-    image_pull_secrets     = var.pull_secrets,
-    repository             = var.docker_registry,
-    namespace              = var.target_namespace,
-    debug_enable           = var.debug_enabled,
-    feature_flags          = try(var.feature_flags[local.dls_writer_name], {}),
-    config_options         = try(var.config_options[local.dls_writer_name], {}),
-    resource_block         = local.dlsw_resource_block,
-    replica_count          = local.dlsw_replicas,
-    db_secret_checksum     = try(kubernetes_secret.database_credentials[local.dlsw_index].metadata[0].annotations["checksum"], ""),
-    db_ddl_secret_checksum = try(kubernetes_secret.database_credentials[local.dlsw_ddl_index].metadata[0].annotations["checksum"], "")
+    app_name                                           = local.dls_writer_name,
+    data_base                                          = replace(local.dls_name, "-", "_"),
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    namespace                                          = var.target_namespace,
+    debug_enable                                       = var.debug_enabled,
+    feature_flags                                      = try(var.feature_flags[local.dls_writer_name], {}),
+    config_options                                     = try(var.config_options[local.dls_writer_name], {}),
+    resource_block                                     = local.dlsw_resource_block,
+    replica_count                                      = local.dlsw_replicas,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.dls_writer_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.dlsw_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.dlsw_index].metadata[0].annotations["checksum"], ""),
+    db_ddl_secret_checksum                             = try(kubernetes_secret.database_credentials[local.dlsw_ddl_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.dls_writer_template_istio, {
     namespace = var.target_namespace,

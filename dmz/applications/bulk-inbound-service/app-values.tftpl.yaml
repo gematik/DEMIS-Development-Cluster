@@ -1,0 +1,60 @@
+# Values for rabbitmq
+
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+  
+required:
+  namespace: ${namespace}
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-rabbitmq
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+  
+# IMPORTANT: these values must be defined in the Secret Objects
+config:
+  # The (external) Secret Objects containing the API Key entry
+  secrets:
+    # Use default Secret from this Chart
+    useDefault: false
+
+podAnnotations:
+  app.kubernetes.io/component: rabbitmq-operator
+  app.kubernetes.io/name: rabbitmq-cluster-operator
+  app.kubernetes.io/part-of: rabbitmq
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
+
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  SPRING_RABBITMQ_HOST: rabbitmq.${namespace}.svc.cluster.local
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

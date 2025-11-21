@@ -23,9 +23,11 @@ TF_BIN := tofu
 INFRASTRUCTURE_PATH := infrastructure
 APPLICATIONS_PATH := demis
 APPLICATIONS_ENV_FOLDER := demis
+DMZ_PATH := dmz
 IDM_PATH := idm
 MESH_PATH := mesh
 EKM_TEMPLATE_PATH := ekm-template
+ARE_PATH := are
 GCP_SECRET_PREFIX :=
 TERRAFORM_EXTRA_ARGS := ${TF_EXTRA_ARGS}
 TARGET_ARG :=
@@ -71,30 +73,31 @@ help:
 	@echo ""
 	@echo "### Local Shortcuts:"
 	@echo ""
-	@echo "create-local-environment       		- Creates a complete local environment with KIND"
-	@echo "cleanup-local-environment      		- Destroys the local environment"
-	@echo "core-test-local                		- Runs the core tests for local cluster"
+	@echo "create-local-environment                 - Creates a complete local environment with KIND"
+	@echo "cleanup-local-environment                - Destroys the local environment"
+	@echo "core-test-local                          - Runs the core tests for local cluster"
 	@echo ""
 	@echo -e "### \e[32mCommands\e[0m available:"
 	@echo ""
-	@echo "init-stage                     		- Pulls the latest changes from the stage repository"
-	@echo "infrastructure                 		- Configures the infrastructure components"
-	@echo "mesh                           		- Configures the mesh network components"
-	@echo "idm                            		- Configures the identity management components"
-	@echo "services                       		- Deploys DEMIS Services"
-	@echo "update-service                 		- call this with image=<image> to update the service with the given image"
-	@echo "update-istio-chart             		- call this with istio=[network-rules, policies-authorizations, policies-authentications] to upgrade the istio helm chart."
-	@echo "cleanup-infrastructure         		- Removes the infrastructure components"
-	@echo "cleanup-mesh         	      		- Removes the mesh network components"
-	@echo "cleanup-idm         			  		- Removes the identity management components"
-	@echo "cleanup-services               		- Removes the DEMIS Services"
-	@echo "cleanup-services               		- Removes the DEMIS Services"
-	@echo "get-backend-config-args-for-folder	- getting backend.tfvars file path as terraform backend-config argument"
-	@echo "get-var-file-args-for-folder   		- getting all tfvars file paths as terraform arguments except backend.tfvars"
-	@echo "docs                                 - updates README.md, after adjustments."
+	@echo "init-stage                               - Pulls the latest changes from the stage repository"
+	@echo "infrastructure                           - Configures the infrastructure components"
+	@echo "mesh                                     - Configures the mesh network components"
+	@echo "idm                                      - Configures the identity management components"
+	@echo "services                                 - Deploys DEMIS Services"
+	@echo "dmz                                      - Deploys DMZ Services"
+	@echo "update-service                           - call this with image=<image> to update the service with the given image"
+	@echo "update-istio-chart                       - call this with istio=[network-rules, policies-authorizations, policies-authentications] to upgrade the istio helm chart."
+	@echo "cleanup-infrastructure                   - Removes the infrastructure components"
+	@echo "cleanup-mesh                             - Removes the mesh network components"
+	@echo "cleanup-idm                              - Removes the identity management components"
+	@echo "cleanup-services                         - Removes the DEMIS Services"
+	@echo "cleanup-dmz                              - Removes the DMZ Services"
+	@echo "get-backend-config-args-for-folder       - getting backend.tfvars file path as terraform backend-config argument"
+	@echo "get-var-file-args-for-folder             - getting all tfvars file paths as terraform arguments except backend.tfvars"
+	@echo "docs                                     - updates README.md, after adjustments."
 	@echo -e "### \e[36mSelectors\e[0m available:"
 	@echo ""
-	@echo "local                          		- Defines the Local environment"
+	@echo "local                                    - Defines the Local environment"
 
 .PHONY: infrastructure
 infrastructure: export WORKING_PATH=$(ROOT_DIR)/$(INFRASTRUCTURE_PATH)
@@ -210,6 +213,33 @@ cleanup-services:
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
 
+.PHONY: dmz
+dmz: export WORKING_PATH=$(ROOT_DIR)/$(DMZ_PATH)
+dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+dmz: init-dmz validate ## Deploys DMZ applications
+ifneq ($(target),)
+	$(eval TARGET_ARG="-target=$(target)")
+endif
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Checking for drifts"
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
+	echo "## Computing Plan"
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	echo "## Applying Plan"
+	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
+
+.PHONY: cleanup-dmz
+cleanup-dmz: export WORKING_PATH=$(ROOT_DIR)/$(DMZ_PATH)
+cleanup-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+cleanup-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+cleanup-dmz:
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Destroying DEMIS Resources"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
+
 init-services: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(APPLICATIONS_ENV_FOLDER) STAGE=$(STAGE))
 init-services: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(APPLICATIONS_ENV_FOLDER) STAGE=$(STAGE))
 init-services: ## Initializes the Terraform DEMIS Services
@@ -232,6 +262,13 @@ init-mesh: ## Initializes the Terraform Mesh components
 	@echo $(TF_BIN) init -reconfigure ${VAR_FILE_ARGS} -upgrade ${BACKEND_CONFIG_VARS}
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	@echo "## Initialising the Mesh project done"
+
+init-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+init-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+init-dmz: ## Initializes the Terraform DMZ components
+	cd $(WORKING_PATH)
+	@echo "## Initialising the DMZ project"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 
 .PHONY: ekm
 ekm-template: export WORKING_PATH=$(ROOT_DIR)/$(EKM_TEMPLATE_PATH)
@@ -267,6 +304,40 @@ init-ekm-template: ## Initializes the Terraform DEMIS Services
 	@echo "## Initialising the ekm-template"
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 
+.PHONY: are
+are: export WORKING_PATH=$(ROOT_DIR)/$(ARE_PATH)
+are: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(ARE_PATH) STAGE=$(STAGE))
+are: init-are validate ## Initializes the Terraform are service
+ifneq ($(target),)
+	$(eval TARGET_ARG="-target=$(target)")
+endif
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Checking for drifts"
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only $(TARGET_ARG)
+	echo "## Computing Plan"
+	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG)
+	echo "## Applying Plan"
+	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out
+
+.PHONY: cleanup-are
+cleanup-are: export WORKING_PATH=$(ROOT_DIR)/$(ARE_PATH)
+cleanup-are: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(ARE_PATH) STAGE=$(STAGE))
+cleanup-are: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(ARE_PATH) STAGE=$(STAGE))
+cleanup-are:
+	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Destroying are Resources"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
+
+init-are: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(ARE_PATH) STAGE=$(STAGE))
+init-are: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(ARE_PATH) STAGE=$(STAGE))
+init-are: ## Initializes the Terraform DEMIS Services
+	cd $(WORKING_PATH)
+	@echo "## Initialising are"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+
 validate: ## Validates the configuration
 	cd $(WORKING_PATH)
 	@echo "## Performing Validation"
@@ -279,6 +350,7 @@ local: ## Defines local resources
 	$(eval GCP_SECRET_PREFIX=$(STAGE))
 	$(eval TERRAFORM_EXTRA_ARGS=$(TERRAFORM_EXTRA_ARGS) -auto-approve)
 	@echo "## Cleaning up Backend Configuration"
+	rm -rf $(CURR_FOLDER)/are/backend.tf
 	rm -rf $(CURR_FOLDER)/ekm-template/backend.tf
 	rm -rf $(CURR_FOLDER)/demis/backend.tf
 	rm -rf $(CURR_FOLDER)/idm/backend.tf
@@ -317,10 +389,13 @@ create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local mesh
 	$(MAKE) local idm
 	$(MAKE) local services
+# 	$(MAKE) local dmz
 
 .PHONY: cleanup-local-environment
 cleanup-local-environment: ## Destroys the local environment
+	$(MAKE) local cleanup-are
 	$(MAKE) local cleanup-ekm-template
+	$(MAKE) local cleanup-dmz
 	$(MAKE) local cleanup-services
 	$(MAKE) local cleanup-idm
 	$(MAKE) local cleanup-mesh

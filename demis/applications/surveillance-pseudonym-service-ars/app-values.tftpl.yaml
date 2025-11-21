@@ -27,6 +27,11 @@ podAnnotations:
   checksum/ars-pseudo-hash-pepper: "${ars_pseudo_hash_pepper_checksum}"
   checksum/ars-pseudo-user-database-secret: "${sps_ars_db_secret_checksum}"
   checksum/ars-pseudo-ddl-database-secret: "${sps_ars_db_ddl_secret_checksum}"
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
   
 # IMPORTANT: these values must be defined in the Secret Objects
 config:

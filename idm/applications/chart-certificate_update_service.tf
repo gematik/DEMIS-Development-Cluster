@@ -25,19 +25,21 @@ module "certificate_update_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.cus_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    namespace          = var.target_namespace,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    suspend            = var.certificate_update_service_suspend,
-    cron_schedule      = var.certificate_update_cron_schedule,
-    redis_user         = var.redis_cus_writer_user,
-    keycloak_admin     = var.keycloak_admin_user,
-    feature_flags      = try(var.feature_flags[local.cus_name], {}),
-    config_options     = try(var.config_options[local.cus_name], {}),
-    replica_count      = local.cus_replicas,
-    resource_block     = local.cus_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    namespace                                          = var.target_namespace,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    suspend                                            = var.certificate_update_service_suspend,
+    cron_schedule                                      = var.certificate_update_cron_schedule,
+    redis_user                                         = var.redis_cus_writer_user,
+    keycloak_admin                                     = var.keycloak_admin_user,
+    feature_flags                                      = try(var.feature_flags[local.cus_name], {}),
+    config_options                                     = try(var.config_options[local.cus_name], {}),
+    replica_count                                      = local.cus_replicas,
+    resource_block                                     = local.cus_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.cus_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.cus_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.cus_template_istio, {
     namespace = var.target_namespace

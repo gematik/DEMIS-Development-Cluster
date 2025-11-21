@@ -25,20 +25,22 @@ module "igs_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.igs_template_app, {
-    image_pull_secrets                  = var.pull_secrets,
-    repository                          = var.docker_registry,
-    namespace                           = var.target_namespace,
-    debug_enable                        = var.debug_enabled,
-    istio_enable                        = var.istio_enabled,
-    core_hostname                       = var.core_hostname,
-    storage_hostname                    = var.storage_hostname,
-    s3_storage_url                      = local.s3_storage_url,
-    feature_flags                       = try(var.feature_flags[local.igs_name], {}),
-    config_options                      = try(var.config_options[local.igs_name], {}),
-    replica_count                       = local.igs_replicas,
-    resource_block                      = local.igs_resource_block,
-    igs_encryption_certificate_checksum = try(kubernetes_secret.igs_encryption_certificate.metadata[0].annotations["checksum"], ""),
-    minio_secret_checksum               = try(kubernetes_secret.minio_credentials.metadata[0].annotations["checksum"], "")
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    namespace                                          = var.target_namespace,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    core_hostname                                      = var.core_hostname,
+    storage_hostname                                   = var.storage_hostname,
+    s3_storage_url                                     = local.s3_storage_url,
+    feature_flags                                      = try(var.feature_flags[local.igs_name], {}),
+    config_options                                     = try(var.config_options[local.igs_name], {}),
+    replica_count                                      = local.igs_replicas,
+    resource_block                                     = local.igs_resource_block,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    igs_encryption_certificate_checksum                = try(kubernetes_secret.igs_encryption_certificate.metadata[0].annotations["checksum"], ""),
+    minio_secret_checksum                              = try(kubernetes_secret.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.igs_template_istio, {
     namespace                      = var.target_namespace,
