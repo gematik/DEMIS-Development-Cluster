@@ -25,17 +25,19 @@ module "portal_shell" {
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_shell_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    istio_enable       = var.istio_enabled,
-    production_mode    = var.production_mode,
-    csp_hostname       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
-    meldung_hostname   = var.meldung_hostname,
-    feature_flags      = try(var.feature_flags[local.portal_shell_name], {}),
-    config_options     = try(var.config_options[local.portal_shell_name], {}),
-    issuer_hostname    = var.auth_hostname,
-    replica_count      = local.portal_shell_replicas,
-    resource_block     = local.portal_shell_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    istio_enable                                       = var.istio_enabled,
+    production_mode                                    = var.production_mode,
+    csp_hostname                                       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    meldung_hostname                                   = var.meldung_hostname,
+    feature_flags                                      = try(var.feature_flags[local.portal_shell_name], {}),
+    config_options                                     = try(var.config_options[local.portal_shell_name], {}),
+    issuer_hostname                                    = var.auth_hostname,
+    replica_count                                      = local.portal_shell_replicas,
+    resource_block                                     = local.portal_shell_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.portal_shell_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.portal_shell_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.portal_shell_template_istio, {
     namespace                      = var.target_namespace,

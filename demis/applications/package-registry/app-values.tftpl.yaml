@@ -24,6 +24,11 @@ podAnnotations:
   %{~ for i, sa_checksum in range(0, length(service_accounts_checksums)) ~}
   checksum/service_account_checksum_${i + 1}: "${service_accounts_checksums[i]}"
   %{~ endfor ~}
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
 
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

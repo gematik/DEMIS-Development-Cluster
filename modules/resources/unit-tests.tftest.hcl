@@ -551,3 +551,81 @@ run "resource_definitions_multiple_services_partial_definitions_test" {
     error_message = "The expected CPU requests does not match."
   }
 }
+
+
+# Test istio proxy default resource values
+run "istio_resources_default_values_test" {
+  command = plan
+
+  variables {
+    resource_definitions = [
+      {
+        service  = "service1",
+        replicas = 1
+      }
+    ]
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources != null
+    error_message = "The output does not contain the correct resource block."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.requests.cpu == "10m"
+    error_message = "The expected CPU requests does not match."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.limits.memory == "128Mi"
+    error_message = "The expected Memory limits does not match."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.requests.memory == "64Mi"
+    error_message = "The expected Memory requests does not match."
+  }
+}
+
+# Test overriding istio proxy default resource values
+run "istio_resources_override_values_test" {
+  command = plan
+
+  variables {
+    resource_definitions = [
+      {
+        service = "service1",
+        istio_proxy_resources = {
+          limits   = { cpu = "500m", memory = "500Mi" }
+          requests = { cpu = "100m", memory = "100Mi" }
+        }
+        replicas = 1
+      }
+    ]
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources != null
+    error_message = "The output does not contain the correct resource block."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.limits.cpu == "500m"
+    error_message = "The expected CPU limits does not match."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.requests.cpu == "100m"
+    error_message = "The expected CPU requests does not match."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.limits.memory == "500Mi"
+    error_message = "The expected Memory limits does not match."
+  }
+
+  assert {
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.requests.memory == "100Mi"
+    error_message = "The expected Memory requests does not match."
+  }
+}

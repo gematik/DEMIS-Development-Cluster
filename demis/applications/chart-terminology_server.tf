@@ -28,19 +28,21 @@ module "terminology_server" {
 
   # Pass the values for the chart
   application_values = templatefile(local.fts_template_app, {
-    image_pull_secrets      = var.pull_secrets,
-    repository              = var.docker_registry,
-    namespace               = var.target_namespace,
-    debug_enable            = var.debug_enabled,
-    istio_enable            = var.istio_enabled,
-    profile_docker_registry = var.docker_registry,
-    ars_profile_versions    = local.fts_ars_profile_snapshots,
-    fhir_profile_versions   = local.fts_fhir_profile_snapshots,
-    igs_profile_versions    = local.fts_igs_profile_snapshots,
-    feature_flags           = try(var.feature_flags[local.fts_name], {}),
-    config_options          = try(var.config_options[local.fts_name], {}),
-    replica_count           = local.fts_replicas,
-    resource_block          = local.fts_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    namespace                                          = var.target_namespace,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    profile_docker_registry                            = var.docker_registry,
+    ars_profile_versions                               = local.fts_ars_profile_snapshots,
+    fhir_profile_versions                              = local.fts_fhir_profile_snapshots,
+    igs_profile_versions                               = local.fts_igs_profile_snapshots,
+    feature_flags                                      = try(var.feature_flags[local.fts_name], {}),
+    config_options                                     = try(var.config_options[local.fts_name], {}),
+    replica_count                                      = local.fts_replicas,
+    resource_block                                     = local.fts_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fts_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.fts_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.fts_template_istio, {
     namespace = var.target_namespace

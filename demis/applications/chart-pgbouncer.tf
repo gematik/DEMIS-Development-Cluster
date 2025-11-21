@@ -26,19 +26,21 @@ module "pgbouncer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.pgbouncer_template_app, {
-    image_pull_secrets                = var.pull_secrets,
-    repository                        = var.docker_registry,
-    database_host                     = var.database_target_host,
-    istio_enable                      = var.istio_enabled,
-    replica_count                     = local.pgbouncer_replicas,
-    resource_block                    = local.pgbouncer_resource_block,
-    config_options                    = try(var.config_options[local.pgbouncer_name], {}),
-    pseudonymization_db_enabled       = local.pseudo_enabled
-    fhir_storage_db_enabled           = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled,
-    surveillance_pseudonym_db_enabled = local.sps_db_enabled
-    destination_lookup_db_enabled     = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled,
-    userlist_secret_checksum          = try(kubernetes_secret.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
-    postgres_tls_secret_checksum      = try(kubernetes_secret.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    database_host                                      = var.database_target_host,
+    istio_enable                                       = var.istio_enabled,
+    replica_count                                      = local.pgbouncer_replicas,
+    resource_block                                     = local.pgbouncer_resource_block,
+    config_options                                     = try(var.config_options[local.pgbouncer_name], {}),
+    pseudonymization_db_enabled                        = local.pseudo_enabled
+    fhir_storage_db_enabled                            = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled,
+    surveillance_pseudonym_db_enabled                  = local.sps_db_enabled
+    destination_lookup_db_enabled                      = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled,
+    userlist_secret_checksum                           = try(kubernetes_secret.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
+    postgres_tls_secret_checksum                       = try(kubernetes_secret.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.pgbouncer_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.pgbouncer_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
 
 

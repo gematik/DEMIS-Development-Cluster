@@ -32,6 +32,7 @@ module "demis_services" {
   feature_flags                                   = module.application_flags.service_feature_flags
   config_options                                  = module.application_flags.service_config_options
   resource_definitions                            = module.application_resources.service_resource_definitions
+  istio_proxy_default_resources                   = module.application_resources.istio_proxy_default_resources
   profile_provisioning_mode_vs_core               = var.profile_provisioning_mode_vs_core
   profile_provisioning_mode_vs_igs                = var.profile_provisioning_mode_vs_igs
   profile_provisioning_mode_vs_ars                = var.profile_provisioning_mode_vs_ars

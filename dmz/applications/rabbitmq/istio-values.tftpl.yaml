@@ -1,0 +1,24 @@
+# Application Information
+appName: "rabbitmq"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServicePortExternal: 5672
+appServicePortTarget: 5672
+appServicePortProtocol: TCP
+appServicePortName: amqp
+appServiceClusterIP: None
+
+# Istio Information
+virtualServiceTcpRules: 
+  - match: 
+    - port: 5672
+
+servicePorts:
+  - name: amqp
+    port: 5672
+  - name: discovery
+    port: 4369
+  - name: clustering
+    port: 25672
+  - name: management
+    port: 15672

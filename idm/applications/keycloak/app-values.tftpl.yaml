@@ -105,9 +105,13 @@ podAnnotations:
   stage.configuration/data-name: ${data_name}
   checksum/keycloak_truststore_file: ${keycloak_truststore_file_checksum}
   checksum/keycloak_truststore_password: ${keycloak_truststore_password_checksum}
-  checksum/keycloak_truststore: ${keycloak_truststore_checksum}
   checksum/db_secret: ${db_secret_checksum}
   checksum/keycloak_admin_account: ${keycloak_admin_account_checksum}
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

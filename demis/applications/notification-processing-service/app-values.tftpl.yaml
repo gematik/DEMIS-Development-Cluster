@@ -21,6 +21,11 @@ imagePullSecrets:
 
 podAnnotations:
   checksum/redis_reader: "${redis_cus_reader_credentials_checksum}"
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
   
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
@@ -36,6 +41,7 @@ customEnvVars:
   NPS_CLIENT_FHIR_STORAGE_WRITER_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local
   NPS_CLIENT_FUTS_ADDRESS: http://futs.${namespace}.svc.cluster.local
   NPS_CLIENT_CONTEXT_ENRICHMENT_SERVICE: http://context-enrichment-service.${namespace}.svc.cluster.local
+  NPS_CLIENT_DLS: http://destination-lookup-writer.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

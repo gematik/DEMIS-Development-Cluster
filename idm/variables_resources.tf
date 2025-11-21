@@ -18,6 +18,16 @@ variable "resource_definitions" {
         memory = optional(string)
       }))
     }))
+    istio_proxy_resources = optional(object({
+      limits = optional(object({
+        cpu    = optional(string)
+        memory = optional(string)
+      }))
+      requests = optional(object({
+        cpu    = optional(string)
+        memory = optional(string)
+      }))
+    }))
   }))
   default = []
 

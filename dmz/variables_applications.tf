@@ -1,0 +1,33 @@
+#########################
+# Application Configuration
+#########################
+
+# Debugging 
+variable "debug_enabled" {
+  type        = bool
+  description = "Defines if the backend Java Services must be started in Debug Mode"
+  default     = false
+}
+
+
+variable "rabbitmq_pvc_config" {
+  type = object({
+    capacity     = string
+    storageClass = string
+    accessModes  = list(string)
+  })
+
+  description = "Defines the configuration for RabbitMQ PVCs"
+
+  validation {
+    condition     = (endswith(var.rabbitmq_pvc_config.capacity, "Mi") || endswith(var.rabbitmq_pvc_config.capacity, "Gi")) && contains(["standard", "demis-storage-delete", "demis-storage-retain"], var.rabbitmq_pvc_config.storageClass)
+    error_message = "Invalid configuration for RabbitMQ PVCs"
+  }
+
+}
+
+variable "allow_even_rabbitmq_replicas" {
+  type        = bool
+  description = "Allows setting even number of RabbitMQ replicas (not recommended)"
+  default     = false
+}

@@ -25,16 +25,18 @@ module "gematik_idp" {
 
   # Pass the values for the chart
   application_values = templatefile(local.gemidp_template_app, {
-    image_pull_secrets = var.pull_secrets,
-    repository         = var.docker_registry,
-    debug_enable       = var.debug_enabled,
-    istio_enable       = var.istio_enabled,
-    serverUrl          = var.ti_idp_server_url,
-    clientName         = var.ti_idp_client_name,
-    redirectUri        = var.ti_idp_redirect_uri,
-    returnSsoToken     = var.ti_idp_return_sso_token,
-    replica_count      = local.gemidp_replicas,
-    resource_block     = local.gemidp_resource_block
+    image_pull_secrets                                 = var.pull_secrets,
+    repository                                         = var.docker_registry,
+    debug_enable                                       = var.debug_enabled,
+    istio_enable                                       = var.istio_enabled,
+    serverUrl                                          = var.ti_idp_server_url,
+    clientName                                         = var.ti_idp_client_name,
+    redirectUri                                        = var.ti_idp_redirect_uri,
+    returnSsoToken                                     = var.ti_idp_return_sso_token,
+    replica_count                                      = local.gemidp_replicas,
+    resource_block                                     = local.gemidp_resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gemidp_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    istio_proxy_resources                              = try(local.gemidp_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.gemidp_template_istio, {
     namespace       = var.target_namespace,
