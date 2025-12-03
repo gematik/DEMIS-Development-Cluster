@@ -29,3 +29,18 @@ variable "config_options" {
     error_message = "Configuration options must not be empty"
   }
 }
+
+variable "all_services" {
+  type        = list(string)
+  description = "List of all services in the deployment"
+  default     = []
+
+  validation {
+    condition     = length(setsubtract(distinct(flatten([for ff in var.feature_flags : ff.services])), concat(var.all_services, ["all"]))) == 0
+    error_message = "there are feature flags defined for services that are not in the all_services list: ${jsonencode(setsubtract(distinct(flatten([for ff in var.feature_flags : ff.services])), concat(var.all_services, ["all"])))}"
+  }
+  validation {
+    condition     = length(setsubtract(distinct(flatten([for co in var.config_options : co.services])), concat(var.all_services, ["all"]))) == 0
+    error_message = "there are config options defined for services that are not in the all_services list: ${jsonencode(setsubtract(distinct(flatten([for co in var.config_options : co.services])), concat(var.all_services, ["all"])))}"
+  }
+}

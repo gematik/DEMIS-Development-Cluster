@@ -37,9 +37,9 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!can(length(service.canary.profiles)) || (can(length(service.canary.version) > 0) || !can(service.canary.weight >= 0 && service.canary.weight <= 100)))
+      (!service.enabled || contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core", "futs-igs"], name) || (!contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core", "futs-igs"], name) && !can(length(service.main.profiles)) && !can(length(service.canary.profiles))))
     ])
-    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in validation-service-core. Canary needs to be defined with a version and weight."
+    error_message = "onyl Services validation-service-core, validation-service-igs, validation-service-ars, futs-core and futs-igs can have profiles defined."
   }
 }
 

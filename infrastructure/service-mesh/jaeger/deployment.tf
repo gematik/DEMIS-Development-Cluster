@@ -79,12 +79,12 @@ resource "kubernetes_deployment_v1" "this" {
 
           resources {
             requests = {
-              "cpu"    = "250m"
+              "cpu"    = "50m"
               "memory" = "256Mi"
             }
             limits = {
               "cpu"    = "500m"
-              "memory" = "512Mi"
+              "memory" = "1024Mi"
             }
           }
           security_context {

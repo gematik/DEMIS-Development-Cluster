@@ -2,6 +2,15 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 4.4.1
+- fixed DMZ terraform backend activation
+- fixed ignoring config options with null value
+- fixed 'all' keyword for feature flags and configs
+- fixed Jaeger Resource requests and limits 
+- added fhir-profiles-metadata module for services futs-core and futs-igs
+- added validation for services are allowed to define profiles in active versions file
+- modified deployment order. Now services validation-service-core, validation-service-igs, validation-service-ars, futs-core and futs-igs depends on package-registry.
+
 ## Release 4.4.0
 - added ARE modul (EKM3)
 - added DMZ modul
@@ -9,6 +18,7 @@
 - fix gitlab urls in scripts
 - removed truststore-certs-secrets for keycloak
 - add resource requests and limits for istio proxy sidecars
+- added prometheus jobs for rabbitmq and improved for services in local
 
 ## Release 4.3.3
 - fix namespace name for new testenvironment 
