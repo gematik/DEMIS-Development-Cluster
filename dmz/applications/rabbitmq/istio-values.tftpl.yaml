@@ -22,3 +22,5 @@ servicePorts:
     port: 25672
   - name: management
     port: 15672
+  - name: metrics
+    port: 15692

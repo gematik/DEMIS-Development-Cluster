@@ -24,7 +24,9 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_fhir_storage_reader"></a> [fhir\_storage\_reader](#module\_fhir\_storage\_reader) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_writer"></a> [fhir\_storage\_writer](#module\_fhir\_storage\_writer) | ../../modules/helm_deployment | n/a |
 | <a name="module_futs_core"></a> [futs\_core](#module\_futs\_core) | ../../modules/helm_deployment | n/a |
+| <a name="module_futs_core_metadata"></a> [futs\_core\_metadata](#module\_futs\_core\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 | <a name="module_futs_igs"></a> [futs\_igs](#module\_futs\_igs) | ../../modules/helm_deployment | n/a |
+| <a name="module_futs_igs_metadata"></a> [futs\_igs\_metadata](#module\_futs\_igs\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 | <a name="module_gateway_igs"></a> [gateway\_igs](#module\_gateway\_igs) | ../../modules/helm_deployment | n/a |
 | <a name="module_hospital_location_service"></a> [hospital\_location\_service](#module\_hospital\_location\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_igs_service"></a> [igs\_service](#module\_igs\_service) | ../../modules/helm_deployment | n/a |

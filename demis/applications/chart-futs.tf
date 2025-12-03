@@ -62,8 +62,8 @@ resource "helm_release" "futs" {
     cluster_gateway                = var.cluster_gateway,
     demis_hostnames                = local.demis_hostnames,
     feature_flag_new_api_endpoints = try(var.feature_flags[local.futs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
-    profile_version_core           = regex("^([0-9]+)", can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots)[0],
-    profile_version_igs            = regex("^([0-9]+)", local.igs_profile_snapshots)[0]
+    profile_versions_core          = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    profile_versions_igs           = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])])
   })]
   timeout = 600
   lifecycle {
@@ -71,6 +71,17 @@ resource "helm_release" "futs" {
   }
 
   depends_on = [module.futs_core[0], module.futs_igs[0]]
+}
+
+module "futs_core_metadata" {
+  source = "../../modules/fhir-profiles-metadata"
+
+  profile_type              = "fhir-profile-snapshots"
+  is_canary                 = can(length(var.deployment_information[local.futs_core_name].canary.version))
+  deployment_information    = var.deployment_information[local.futs_core_name]
+  default_profile_snapshots = local.fhir_profile_snapshots
+  provisioning_mode         = "distributed"
+  api_version               = "v2"
 }
 
 module "futs_core" {
@@ -83,6 +94,7 @@ module "futs_core" {
   application_name       = local.futs_core_name
   deployment_information = var.deployment_information[local.futs_core_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
 
   # Pass the values for the chart
   application_values = templatefile(local.futs_core_template_app, {
@@ -90,7 +102,7 @@ module "futs_core" {
     repository                                         = var.docker_registry,
     debug_enable                                       = var.debug_enabled,
     istio_enable                                       = var.istio_enabled,
-    profile_version                                    = can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots,
+    profile_version                                    = element(module.futs_core_metadata.current_profile_versions, -1),
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.futs_core_name], {}),
     config_options                                     = try(var.config_options[local.futs_core_name], {}),
@@ -105,6 +117,17 @@ module "futs_core" {
   })
 }
 
+module "futs_igs_metadata" {
+  source = "../../modules/fhir-profiles-metadata"
+
+  profile_type              = "igs-profile-snapshots"
+  is_canary                 = can(length(var.deployment_information[local.futs_igs_name].canary.version))
+  deployment_information    = var.deployment_information[local.futs_igs_name]
+  default_profile_snapshots = local.igs_profile_snapshots
+  provisioning_mode         = "distributed"
+  api_version               = "v2"
+}
+
 module "futs_igs" {
   source = "../../modules/helm_deployment"
 
@@ -115,6 +138,7 @@ module "futs_igs" {
   application_name       = local.futs_igs_name
   deployment_information = var.deployment_information[local.futs_igs_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
 
   # Pass the values for the chart
   application_values = templatefile(local.futs_igs_template_app, {
@@ -122,7 +146,7 @@ module "futs_igs" {
     repository                                         = var.docker_registry,
     debug_enable                                       = var.debug_enabled,
     istio_enable                                       = var.istio_enabled,
-    profile_version                                    = local.igs_profile_snapshots,
+    profile_version                                    = element(module.futs_igs_metadata.current_profile_versions, -1),
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.futs_igs_name], {}),
     config_options                                     = try(var.config_options[local.futs_igs_name], {}),

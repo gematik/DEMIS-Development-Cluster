@@ -43,22 +43,22 @@ virtualServiceHttpRules:
       namespace: ${namespace}
 %{ endfor ~}
 %{ if feature_flag_new_api_endpoints ~}
-%{ for entry in [["", profile_version_core], ["igs", profile_version_igs]] ~}
+%{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
   - match:
     - headers:
         x-fhir-profile:
-          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
       uri:
-        prefix: /v${entry[1]}/fhir
+        prefix: /v${entry.version}/fhir
     - headers:
         x-fhir-profile:
-          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
       uri:
         prefix: /
     rewrite: 
       uri: /
     delegate:
-      name: futs-${coalesce(entry[0],"core")}-internal
+      name: futs-${coalesce(entry.prefix,"core")}-internal
       namespace: ${namespace}
 %{ endfor ~}
 %{ endif ~}
@@ -109,17 +109,17 @@ virtualServiceExternalHttpRules:
       namespace: ${namespace}
 %{ endfor ~}
 %{ if feature_flag_new_api_endpoints ~}
-%{ for entry in [["", profile_version_core], ["igs", profile_version_igs]] ~}
+%{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
   - match:
     - headers:
         x-fhir-profile:
-          exact: ${coalesce(entry[0],"fhir")}-profile-snapshots
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
       uri:
-        prefix: ${context_path}/translation/ui-data-model/v${entry[1]}/fhir
+        prefix: ${context_path}/translation/ui-data-model/v${entry.version}/fhir
     rewrite:
       uri: /
     delegate:
-      name: futs-${coalesce(entry[0],"core")}-internal
+      name: futs-${coalesce(entry.prefix,"core")}-internal
       namespace: ${namespace}
 %{ endfor ~}
 %{ endif ~}

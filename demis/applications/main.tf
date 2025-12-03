@@ -25,8 +25,7 @@ locals {
   # The version of the FHIR Profile Snapshots to use
   fhir_profile_snapshots = var.deployment_information["fhir-profile-snapshots"].main.version
   # The version of the IGS Profile Snapshots to use
-  igs_profile_snapshots     = var.deployment_information["igs-profile-snapshots"].main.version
-  igs_profile_major_version = join("", regex("(0|[1-9]\\d*)", local.igs_profile_snapshots))
+  igs_profile_snapshots = var.deployment_information["igs-profile-snapshots"].main.version
   # The version of the ARS Profile Snapshots to use
   ars_profile_snapshots = var.deployment_information["ars-profile-snapshots"].main.version
   # The version of the Routing Data to use

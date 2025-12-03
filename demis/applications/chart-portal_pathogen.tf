@@ -34,7 +34,7 @@ module "portal_pathogen" {
     config_options                                     = try(var.config_options[local.portal_pathogen_name], {}),
     replica_count                                      = local.portal_pathogen_replicas,
     resource_block                                     = local.portal_pathogen_resource_block,
-    profile_major_version                              = regex("^([0-9]+)", can(length(distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))) > 0) ? distinct(compact(var.deployment_information[local.futs_core_name].main.profiles))[0] : local.fhir_profile_snapshots)[0], # extract major version
+    profile_major_version                              = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0], # extract major version
     feature_flag_new_api_endpoints                     = try(var.feature_flags[local.portal_disease_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.portal_pathogen_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.portal_pathogen_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)

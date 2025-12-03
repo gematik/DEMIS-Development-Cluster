@@ -120,6 +120,7 @@ module "validation_service_core" {
   application_name       = local.vs_core_name
   deployment_information = var.deployment_information[local.vs_core_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_core_template_app, {
@@ -177,6 +178,7 @@ module "validation_service_igs" {
   application_name       = local.vs_igs_name
   deployment_information = var.deployment_information[local.vs_igs_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_igs_template_app, {
@@ -234,6 +236,7 @@ module "validation_service_ars" {
   application_name       = local.vs_ars_name
   deployment_information = var.deployment_information[local.vs_ars_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
 
   # Pass the values for the chart
   application_values = templatefile(local.vs_ars_template_app, {
@@ -260,6 +263,5 @@ module "validation_service_ars" {
     custom_destination_subsets        = module.validation_service_ars_metadata.destination_subsets,
     profile_handling_api_version      = local.fhir_profile_metadata_api_version_ars
     destinationSubsets                = try(yamlencode(module.validation_service_ars_metadata.destination_subsets), "")
-
   })
 }
