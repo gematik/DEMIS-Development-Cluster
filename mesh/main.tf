@@ -7,7 +7,7 @@ variable "override_stage_name" {
 
 # Retrieve the namespace metadata from the Istio Namespace,
 # containing information about the stage and region of the cluster.
-data "kubernetes_namespace" "istio_namespace" {
+data "kubernetes_namespace_v1" "istio_namespace" {
   metadata {
     name = "istio-system"
   }
@@ -16,7 +16,7 @@ data "kubernetes_namespace" "istio_namespace" {
 # Define local variables based on input values
 locals {
   # Extract the labels from the Istio Namespace
-  cluster_labels = data.kubernetes_namespace.istio_namespace.metadata[0].labels
+  cluster_labels = data.kubernetes_namespace_v1.istio_namespace.metadata[0].labels
   # define if the current stage is local
   is_local_mode = local.cluster_labels.cluster == "local" || local.cluster_labels.cluster == "public"
 

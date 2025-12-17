@@ -33,7 +33,7 @@ module "minio" {
     resource_block                                     = local.minio_resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.minio_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.minio_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
-    minio_secret_checksum                              = try(kubernetes_secret.minio_credentials.metadata[0].annotations["checksum"], "")
+    minio_secret_checksum                              = try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.minio_template_istio, {
     namespace        = var.target_namespace,

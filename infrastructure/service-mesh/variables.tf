@@ -158,3 +158,31 @@ variable "grafana_public_url" {
   type        = string
   default     = "http://localhost:3000"
 }
+
+variable "jaeger_max_traces" {
+  description = "The maximum number of traces to be kept"
+  type        = number
+  default     = null
+  nullable    = true
+}
+
+variable "jaeger_ttl_spans" {
+  description = "The time to live for spans stored in Jaeger"
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "jaeger_storage_backend" {
+  description = "The storage backend for Jaeger"
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "enable_native_sidecar_injection" {
+  description = "Enable native sidecar injection for Istio (supported in Kubernetes 1.33.0+ and Istio 1.27.0+)"
+  type        = bool
+  nullable    = true
+  default     = null
+}

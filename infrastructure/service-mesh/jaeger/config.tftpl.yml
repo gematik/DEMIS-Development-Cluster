@@ -34,17 +34,24 @@ extensions:
       endpoint: 0.0.0.0:${grpc_query_port}
     http:
       endpoint: 0.0.0.0:${http_query_port}
+    ui:
+      config_file: "/ui/jaeger-ui.json"
   jaeger_storage:
     backends:
       trace_storage:
-        memory:
-          max_traces: ${max_traces}
+%{ if jaeger_storage_backend == "badger" ~}
         badger:
           ephemeral: false
-          consistency: true
+          consistency: false
+          ttl:
+            spans: ${ttl_spans}
           directories:
             keys: /badger/keys
             values: /badger/values
+%{ else ~}
+        memory:
+          max_traces: ${max_traces}
+%{ endif ~}
 
 receivers:
   otlp:

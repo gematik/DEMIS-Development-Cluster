@@ -24,8 +24,8 @@ It performs the following operations:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.0.2 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.38.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.0.1 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | 3.7.2 |
 
 ## Modules
@@ -63,6 +63,9 @@ No resources.
 | <a name="input_falco_falcosidekick_ui_enabled"></a> [falco\_falcosidekick\_ui\_enabled](#input\_falco\_falcosidekick\_ui\_enabled) | enables falcosidekick | `bool` | `false` | no |
 | <a name="input_falco_kubernetes_meta_collector"></a> [falco\_kubernetes\_meta\_collector](#input\_falco\_kubernetes\_meta\_collector) | enables the k8s metacollector plugin | `bool` | `true` | no |
 | <a name="input_google_cloud_access_token"></a> [google\_cloud\_access\_token](#input\_google\_cloud\_access\_token) | The User-Token for accessing the Google Artifact Registry. <br/>  Typically obtained with the command: 'gcloud auth print-access-token' | `string` | `""` | no |
+| <a name="input_jaeger_max_traces"></a> [jaeger\_max\_traces](#input\_jaeger\_max\_traces) | The maximum number of traces to be kept | `number` | `null` | no |
+| <a name="input_jaeger_storage_backend"></a> [jaeger\_storage\_backend](#input\_jaeger\_storage\_backend) | The storage backend for Jaeger | `string` | `null` | no |
+| <a name="input_jaeger_ttl_spans"></a> [jaeger\_ttl\_spans](#input\_jaeger\_ttl\_spans) | The time to live for spans stored in Jaeger | `string` | `null` | no |
 | <a name="input_kind_cluster_name"></a> [kind\_cluster\_name](#input\_kind\_cluster\_name) | Defines the name of the local KIND cluster | `string` | `""` | no |
 | <a name="input_kind_image_tag"></a> [kind\_image\_tag](#input\_kind\_image\_tag) | Defines the KIND Image Tag to use. | `string` | `"v1.32.2"` | no |
 | <a name="input_kind_worker_nodes"></a> [kind\_worker\_nodes](#input\_kind\_worker\_nodes) | Defines the number of KIND Worker Nodes to be created | `number` | `2` | no |
@@ -79,6 +82,7 @@ No resources.
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
 | <a name="input_security_namespace"></a> [security\_namespace](#input\_security\_namespace) | Defines the namespace for the Security-related services | `string` | `"security"` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The Service Account name to be configured | `string` | `"api-service-account"` | no |
+| <a name="input_service_mesh_enable_native_sidecar_injection"></a> [service\_mesh\_enable\_native\_sidecar\_injection](#input\_service\_mesh\_enable\_native\_sidecar\_injection) | Enable native sidecar injection for Istio (supported in Kubernetes 1.33.0+ and Istio 1.27.0+) | `bool` | `null` | no |
 | <a name="input_service_mesh_external_ip"></a> [service\_mesh\_external\_ip](#input\_service\_mesh\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
 | <a name="input_service_mesh_grafana_digest"></a> [service\_mesh\_grafana\_digest](#input\_service\_mesh\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | `""` | no |
 | <a name="input_service_mesh_grafana_url"></a> [service\_mesh\_grafana\_url](#input\_service\_mesh\_grafana\_url) | The Cluster-internal URL of the Grafana Instance to be used | `string` | `"http://grafana:3000"` | no |

@@ -44,7 +44,7 @@ module "destination_lookup_reader" {
     replica_count                                      = local.dlsr_replicas,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.dls_reader_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.dlsr_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
-    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.dlsr_index].metadata[0].annotations["checksum"], "")
+    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.dlsr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.dls_reader_template_istio, {
     namespace       = var.target_namespace,

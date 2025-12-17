@@ -55,11 +55,11 @@ module "keycloak" {
     enable_import                                      = var.keycloak_user_import_enabled,
     enable_tsl_deliverer_mock                          = local.enable_tsl_deliverer_mock,
     tsl_download_endpoint                              = var.tsl_download_endpoint,
-    keycloak_admin_account_checksum                    = try(kubernetes_secret.keycloak_admin_account.metadata[0].annotations["checksum"], ""),
-    keycloak_portal_secret_checksum                    = try(kubernetes_secret.keycloak_portal_secret.metadata[0].annotations["checksum"], ""),
-    keycloak_truststore_file_checksum                  = try(kubernetes_secret.keycloak_truststore_file.metadata[0].annotations["checksum"], ""),
-    keycloak_truststore_password_checksum              = try(kubernetes_secret.keycloak_truststore_password.metadata[0].annotations["checksum"], ""),
-    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.keycloak_index].metadata[0].annotations["checksum"], "")
+    keycloak_admin_account_checksum                    = try(kubernetes_secret_v1.keycloak_admin_account.metadata[0].annotations["checksum"], ""),
+    keycloak_portal_secret_checksum                    = try(kubernetes_secret_v1.keycloak_portal_secret.metadata[0].annotations["checksum"], ""),
+    keycloak_truststore_file_checksum                  = try(kubernetes_secret_v1.keycloak_truststore_file.metadata[0].annotations["checksum"], ""),
+    keycloak_truststore_password_checksum              = try(kubernetes_secret_v1.keycloak_truststore_password.metadata[0].annotations["checksum"], ""),
+    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.keycloak_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.keycloak_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.keycloak_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })

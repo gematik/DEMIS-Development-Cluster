@@ -2,7 +2,7 @@
 # Secrets
 #####################
 
-resource "kubernetes_secret" "rabbit_mq_credentials" {
+resource "kubernetes_secret_v1" "rabbit_mq_credentials" {
   metadata {
     name      = "rabbit-mq-credentials"
     namespace = var.target_namespace

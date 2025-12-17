@@ -1,6 +1,6 @@
 locals {
   istio_proxy_default_resources = {
-    limits   = { memory = "128Mi" }
+    limits   = { memory = "256Mi" }
     requests = { cpu = "10m", memory = "64Mi" }
   }
   # Group all the resource definitions by service and define a YAML Resource Block for the Helm Chart as String

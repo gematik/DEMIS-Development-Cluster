@@ -577,7 +577,7 @@ run "istio_resources_default_values_test" {
   }
 
   assert {
-    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.limits.memory == "128Mi"
+    condition     = output.service_resource_definitions["service1"].istio_proxy_resources.limits.memory == "256Mi"
     error_message = "The expected Memory limits does not match."
   }
 

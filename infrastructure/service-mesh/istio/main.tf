@@ -26,6 +26,7 @@ resource "helm_release" "istiod" {
     trace_sampling         = var.trace_sampling,
     opentelemetry_hostname = "otlp-collector.istio-system.svc.cluster.local",
     opentelemetry_port     = "4317"
+    enable_native_sidecars = var.enable_native_sidecar_injection
   })]
 
   depends_on = [helm_release.istio_base]

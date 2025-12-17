@@ -29,7 +29,7 @@ locals {
 }
 
 # Create a secret for each database credential dynamically
-resource "kubernetes_secret" "database_credentials" {
+resource "kubernetes_secret_v1" "database_credentials" {
   count = length(var.database_credentials)
   metadata {
     name      = var.database_credentials[count.index].secret-name
@@ -51,7 +51,7 @@ resource "kubernetes_secret" "database_credentials" {
   }
 }
 
-resource "kubernetes_secret" "postgresql_tls_certificates" {
+resource "kubernetes_secret_v1" "postgresql_tls_certificates" {
   metadata {
     name      = "postgres-tls-secret"
     namespace = var.target_namespace
@@ -66,7 +66,7 @@ resource "kubernetes_secret" "postgresql_tls_certificates" {
   data = local.postgresql_tls_certificates_data
 }
 
-resource "kubernetes_secret" "minio_credentials" {
+resource "kubernetes_secret_v1" "minio_credentials" {
   metadata {
     name      = "minio-secret"
     namespace = var.target_namespace
@@ -81,7 +81,7 @@ resource "kubernetes_secret" "minio_credentials" {
 }
 
 
-resource "kubernetes_secret" "ars_pseudo_hash_pepper" {
+resource "kubernetes_secret_v1" "ars_pseudo_hash_pepper" {
   count = var.ars_pseudo_hash_pepper == null ? 0 : 1
 
   metadata {
@@ -99,7 +99,7 @@ resource "kubernetes_secret" "ars_pseudo_hash_pepper" {
   }
 }
 
-resource "kubernetes_secret" "pgbouncer_userlist" {
+resource "kubernetes_secret_v1" "pgbouncer_userlist" {
   metadata {
     name      = "pgbouncer-userlist-secret"
     namespace = var.target_namespace
@@ -116,7 +116,7 @@ resource "kubernetes_secret" "pgbouncer_userlist" {
   }
 }
 
-resource "kubernetes_secret" "igs_encryption_certificate" {
+resource "kubernetes_secret_v1" "igs_encryption_certificate" {
   metadata {
     name      = "igs-secret"
     namespace = var.target_namespace
@@ -131,7 +131,7 @@ resource "kubernetes_secret" "igs_encryption_certificate" {
   data = local.igs_encryption_certificate_data
 }
 
-resource "kubernetes_secret" "redis_cus_reader_credentials" {
+resource "kubernetes_secret_v1" "redis_cus_reader_credentials" {
   metadata {
     name      = "redis-cus-reader-password"
     namespace = var.target_namespace
@@ -145,7 +145,7 @@ resource "kubernetes_secret" "redis_cus_reader_credentials" {
   data = local.redis_cus_reader_password_data
 }
 
-resource "kubernetes_secret" "service_accounts" {
+resource "kubernetes_secret_v1" "service_accounts" {
   for_each = {
     for sa in var.service_accounts : sa.secret_name => sa
   }

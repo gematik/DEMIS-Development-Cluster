@@ -1,13 +1,14 @@
 module "istio" {
-  source                 = "./istio"
-  chart_version          = var.istio_version
-  local_deployment       = var.local_deployment
-  local_node_ports_istio = var.local_node_ports_istio
-  namespace              = var.namespace
-  trace_sampling         = var.trace_sampling
-  replica_count          = var.istio_replica_count
-  external_ip            = var.external_ip
-  ingress_annotations    = var.ingress_annotations
+  source                          = "./istio"
+  chart_version                   = var.istio_version
+  local_deployment                = var.local_deployment
+  local_node_ports_istio          = var.local_node_ports_istio
+  namespace                       = var.namespace
+  trace_sampling                  = var.trace_sampling
+  replica_count                   = var.istio_replica_count
+  external_ip                     = var.external_ip
+  ingress_annotations             = var.ingress_annotations
+  enable_native_sidecar_injection = coalesce(var.enable_native_sidecar_injection, false)
 }
 
 module "kiali" {
@@ -39,10 +40,13 @@ module "prometheus" {
 }
 
 module "jaeger" {
-  source           = "./jaeger"
-  jaeger_version   = var.jaeger_version
-  jaeger_digest    = var.jaeger_digest
-  target_namespace = var.namespace
+  source                 = "./jaeger"
+  jaeger_version         = var.jaeger_version
+  jaeger_digest          = var.jaeger_digest
+  target_namespace       = var.namespace
+  jaeger_max_traces      = coalesce(var.jaeger_max_traces, "50000")
+  jaeger_storage_backend = coalesce(var.jaeger_storage_backend, "memory")
+  jaeger_ttl_spans       = coalesce(var.jaeger_ttl_spans, "48h")
   # Enable only if explicitly set
   count = var.jaeger_enabled ? 1 : 0
   # Add dependency
