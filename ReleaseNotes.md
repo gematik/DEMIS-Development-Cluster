@@ -2,6 +2,16 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.0.0
+- added new policies: kubernetes-network-policies for all application namespaces
+- upgraded providers
+  - hashicorp/helm version to 3.1.1
+  - hashicorp/kubernetes version to 3.0.1
+- refactored jaeger deployment
+- fixed naming errors and enforce lint conventions
+- added flag for enabling istio native sidecar usage (default false)
+- increased default memory limit for istio proxy to 256Mi
+
 ## Release 4.4.1
 - fixed DMZ terraform backend activation
 - fixed ignoring config options with null value

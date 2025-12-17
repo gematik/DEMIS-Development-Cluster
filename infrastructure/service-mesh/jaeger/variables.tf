@@ -27,3 +27,19 @@ variable "jaeger_max_traces" {
   type        = number
   default     = "50000"
 }
+
+variable "jaeger_ttl_spans" {
+  description = "The time to live for spans stored in Jaeger"
+  type        = string
+  default     = "48h"
+}
+
+variable "jaeger_storage_backend" {
+  description = "The storage backend for Jaeger"
+  type        = string
+  default     = "memory"
+  validation {
+    condition     = var.jaeger_storage_backend == null || contains(["memory", "badger"], var.jaeger_storage_backend)
+    error_message = "The Jaeger storage backend must be either 'memory' or 'badger'"
+  }
+}

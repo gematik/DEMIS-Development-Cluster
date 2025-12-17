@@ -50,10 +50,10 @@ resource "helm_release" "network_rules_istio" {
   values = [
     templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
       gateway_name   = module.endpoints.istio_gateway_name,
-      tls_credential = kubernetes_secret.demis_gateway_tls_credential.metadata[0].name,
+      tls_credential = kubernetes_secret_v1.demis_gateway_tls_credential.metadata[0].name,
       # In Remote Clusters also the Core Hostname is reachable via TLS and not over mutual TLS
       tls_hosts                     = local.is_local_mode ? module.endpoints.tls_hostnames : concat(module.endpoints.tls_hostnames, [module.endpoints.core_hostname]),
-      mutual_tls_credential         = length(kubernetes_secret.demis_gateway_mutual_tls_credential) > 0 ? kubernetes_secret.demis_gateway_mutual_tls_credential[0].metadata[0].name : "",
+      mutual_tls_credential         = length(kubernetes_secret_v1.demis_gateway_mutual_tls_credential) > 0 ? kubernetes_secret_v1.demis_gateway_mutual_tls_credential[0].metadata[0].name : "",
       mutual_tls_hosts              = [module.endpoints.core_hostname],
       core_hostname                 = module.endpoints.core_hostname,
       portal_hostname               = module.endpoints.portal_hostname,
@@ -65,7 +65,7 @@ resource "helm_release" "network_rules_istio" {
       storage_hostname              = module.endpoints.storage_hostname,
       s3_hostname                   = local.is_local_mode ? "" : var.s3_hostname,
       s3_port                       = local.is_local_mode ? "" : var.s3_port,
-      s3_tls_credential             = local.is_local_mode ? "" : kubernetes_secret.s3_tls_credential[0].metadata[0].name
+      s3_tls_credential             = local.is_local_mode ? "" : kubernetes_secret_v1.s3_tls_credential[0].metadata[0].name
     })
   ]
 

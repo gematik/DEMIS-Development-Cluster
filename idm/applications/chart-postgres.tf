@@ -43,8 +43,8 @@ module "postgres" {
     resource_block                                     = local.postgres_resource_block
     keycloak_db_enabled                                = local.keycloak_enabled
     bundid_db_enabled                                  = local.bundid_enabled
-    postgres_tls_secret_checksum                       = try(kubernetes_secret.postgresql_tls_certificates.metadata[0].annotations["checksum"], ""),
-    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.postgres_index].metadata[0].annotations["checksum"], "")
+    postgres_tls_secret_checksum                       = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], ""),
+    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.postgres_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.postgres_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.postgres_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })

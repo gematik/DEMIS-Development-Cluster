@@ -22,7 +22,7 @@ locals {
 #####################
 
 # Create a secret for each database credential dynamically
-resource "kubernetes_secret" "database_credentials" {
+resource "kubernetes_secret_v1" "database_credentials" {
   count = length(var.database_credentials)
   metadata {
     name      = var.database_credentials[count.index].secret-name
@@ -44,7 +44,7 @@ resource "kubernetes_secret" "database_credentials" {
   }
 }
 
-resource "kubernetes_secret" "postgresql_tls_certificates" {
+resource "kubernetes_secret_v1" "postgresql_tls_certificates" {
   metadata {
     name      = "postgres-tls-secret"
     namespace = var.target_namespace
@@ -59,7 +59,7 @@ resource "kubernetes_secret" "postgresql_tls_certificates" {
   data = local.postgresql_tls_certificates_data
 }
 
-resource "kubernetes_secret" "pgbouncer_userlist" {
+resource "kubernetes_secret_v1" "pgbouncer_userlist" {
   metadata {
     name      = "pgbouncer-userlist-secret"
     namespace = var.target_namespace
@@ -76,7 +76,7 @@ resource "kubernetes_secret" "pgbouncer_userlist" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_admin_account" {
+resource "kubernetes_secret_v1" "keycloak_admin_account" {
   metadata {
     name      = "keycloak-admin-password"
     namespace = var.target_namespace
@@ -93,7 +93,7 @@ resource "kubernetes_secret" "keycloak_admin_account" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_cus_client_secret" {
+resource "kubernetes_secret_v1" "keycloak_cus_client_secret" {
   metadata {
     name      = "keycloak-cus-client-secret"
     namespace = var.target_namespace
@@ -109,7 +109,7 @@ resource "kubernetes_secret" "keycloak_cus_client_secret" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_portal_secret" {
+resource "kubernetes_secret_v1" "keycloak_portal_secret" {
   metadata {
     name      = "keycloak-portal-secret"
     namespace = var.target_namespace
@@ -128,7 +128,7 @@ resource "kubernetes_secret" "keycloak_portal_secret" {
 
 # TODO: Read from file
 
-resource "kubernetes_secret" "keycloak_truststore_file" {
+resource "kubernetes_secret_v1" "keycloak_truststore_file" {
   metadata {
     name      = "keycloak-truststore-file"
     namespace = var.target_namespace
@@ -144,7 +144,7 @@ resource "kubernetes_secret" "keycloak_truststore_file" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_truststore_password" {
+resource "kubernetes_secret_v1" "keycloak_truststore_password" {
   metadata {
     name      = "keycloak-truststore-password"
     namespace = var.target_namespace
@@ -161,7 +161,7 @@ resource "kubernetes_secret" "keycloak_truststore_password" {
 }
 
 
-resource "kubernetes_secret" "ldap_certificates" {
+resource "kubernetes_secret_v1" "ldap_certificates" {
   metadata {
     name      = "ldap-certificates"
     namespace = var.target_namespace
@@ -175,7 +175,7 @@ resource "kubernetes_secret" "ldap_certificates" {
   binary_data = local.ldap_certificates
 }
 
-resource "kubernetes_secret" "redis_cus_reader_credentials" {
+resource "kubernetes_secret_v1" "redis_cus_reader_credentials" {
   metadata {
     name      = "redis-cus-reader-password"
     namespace = var.target_namespace
@@ -192,7 +192,7 @@ resource "kubernetes_secret" "redis_cus_reader_credentials" {
   }
 }
 
-resource "kubernetes_secret" "redis_cus_writer_credentials" {
+resource "kubernetes_secret_v1" "redis_cus_writer_credentials" {
   metadata {
     name      = "redis-cus-writer-password"
     namespace = var.target_namespace
@@ -209,7 +209,7 @@ resource "kubernetes_secret" "redis_cus_writer_credentials" {
   }
 }
 
-resource "kubernetes_secret" "redis_cus_acl" {
+resource "kubernetes_secret_v1" "redis_cus_acl" {
   metadata {
     name      = "redis-cus-acl"
     namespace = var.target_namespace

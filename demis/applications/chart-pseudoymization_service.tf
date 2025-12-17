@@ -42,7 +42,7 @@ module "pseudonymization_service" {
     config_options                                     = try(var.config_options[local.pseudo_name], {}),
     replica_count                                      = local.pseudo_replicas,
     resource_block                                     = local.pseudo_resource_block,
-    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.pseudo_index].metadata[0].annotations["checksum"], "")
+    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.pseudo_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.pseudo_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.pseudo_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })

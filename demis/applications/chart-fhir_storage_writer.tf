@@ -52,8 +52,8 @@ module "fhir_storage_writer" {
     resource_block                                     = local.fssw_resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fssw_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.fssw_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
-    db_secret_checksum                                 = try(kubernetes_secret.database_credentials[local.fssw_index].metadata[0].annotations["checksum"], ""),
-    db_ddl_secret_checksum                             = try(kubernetes_secret.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], "")
+    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.fssw_index].metadata[0].annotations["checksum"], ""),
+    db_ddl_secret_checksum                             = try(kubernetes_secret_v1.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssw_template_istio, {
     namespace                      = var.target_namespace,

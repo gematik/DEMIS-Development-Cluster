@@ -33,8 +33,9 @@ module "service_mesh" {
   namespace        = module.istio_namespace.name
   local_deployment = var.local_cluster
   # Configure Istio
-  istio_version       = var.service_mesh_istio_version
-  istio_replica_count = var.local_cluster ? var.kind_worker_nodes : var.service_mesh_istiod_replica_count
+  istio_version                   = var.service_mesh_istio_version
+  istio_replica_count             = var.local_cluster ? var.kind_worker_nodes : var.service_mesh_istiod_replica_count
+  enable_native_sidecar_injection = var.service_mesh_enable_native_sidecar_injection
   # Configure Monitoring
   grafana_enabled    = var.service_mesh_monitoring_enabled
   grafana_version    = var.service_mesh_grafana_version
@@ -42,9 +43,12 @@ module "service_mesh" {
   prometheus_enabled = var.service_mesh_monitoring_enabled
   prometheus_version = var.service_mesh_prometheus_version
   # Set Trace Sampling
-  jaeger_version = var.service_mesh_jaeger_version
-  jaeger_digest  = var.service_mesh_jaeger_digest
-  trace_sampling = var.service_mesh_tracing_sampling
+  jaeger_version         = var.service_mesh_jaeger_version
+  jaeger_digest          = var.service_mesh_jaeger_digest
+  trace_sampling         = var.service_mesh_tracing_sampling
+  jaeger_max_traces      = var.jaeger_max_traces
+  jaeger_storage_backend = var.jaeger_storage_backend
+  jaeger_ttl_spans       = var.jaeger_ttl_spans
   # Configure Kiali
   kiali_version          = var.service_mesh_kiali_version
   grafana_service_url    = var.service_mesh_grafana_url

@@ -25,12 +25,36 @@ resource "kubernetes_config_map_v1" "jaeger_configuration" {
 
   data = {
     "config.yml" = templatefile("${path.module}/config.tftpl.yml", {
-      health_check_port = local.health_check_port,
-      otlp_grpc_port    = local.grpc_otlp_collector_port,
-      otlp_http_port    = local.http_otlp_collector_port,
-      grpc_query_port   = local.grpc_query_port,
-      http_query_port   = local.http_query_port,
-      max_traces        = var.jaeger_max_traces
+      health_check_port      = local.health_check_port,
+      otlp_grpc_port         = local.grpc_otlp_collector_port,
+      otlp_http_port         = local.http_otlp_collector_port,
+      grpc_query_port        = local.grpc_query_port,
+      http_query_port        = local.http_query_port,
+      max_traces             = var.jaeger_max_traces
+      ttl_spans              = var.jaeger_ttl_spans
+      jaeger_storage_backend = var.jaeger_storage_backend
     })
   }
+}
+
+resource "kubernetes_config_map_v1" "ui_config" {
+  metadata {
+    name      = "jaeger-ui-config"
+    namespace = var.target_namespace
+    labels = {
+      "app"       = local.app
+      "component" = local.app
+      "release"   = local.app
+    }
+  }
+
+  data = {
+    "jaeger-ui.json" = templatestring(<<EOT
+{
+  "themes": {
+    "enabled": true
+  }
+}
+EOT
+  , {}) }
 }

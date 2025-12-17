@@ -27,6 +27,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_enable_native_sidecar_injection"></a> [enable\_native\_sidecar\_injection](#input\_enable\_native\_sidecar\_injection) | Enable native sidecar injection for Istio (supported in Kubernetes 1.33.0+ and Istio 1.27.0+) | `bool` | `null` | no |
 | <a name="input_external_ip"></a> [external\_ip](#input\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
 | <a name="input_grafana_digest"></a> [grafana\_digest](#input\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | `"sha256:5781759b3d27734d4d548fcbaf60b1180dbf4290e708f01f292faa6ae764c5e6"` | no |
 | <a name="input_grafana_enabled"></a> [grafana\_enabled](#input\_grafana\_enabled) | Defines if Grafana has to be deployed | `bool` | `false` | no |
@@ -38,6 +39,9 @@ No resources.
 | <a name="input_istio_version"></a> [istio\_version](#input\_istio\_version) | The version of the Istio Helm Chart to be installed. | `string` | `"1.23.0"` | no |
 | <a name="input_jaeger_digest"></a> [jaeger\_digest](#input\_jaeger\_digest) | The digest of the Jaeger Service to be used | `string` | `"sha256:9864182b4e01350fcc64631bdba5f4085f87daae9d477a04c25d9cb362e787a9"` | no |
 | <a name="input_jaeger_enabled"></a> [jaeger\_enabled](#input\_jaeger\_enabled) | Defines if Jaeger has to be deployed | `bool` | `true` | no |
+| <a name="input_jaeger_max_traces"></a> [jaeger\_max\_traces](#input\_jaeger\_max\_traces) | The maximum number of traces to be kept | `number` | `null` | no |
+| <a name="input_jaeger_storage_backend"></a> [jaeger\_storage\_backend](#input\_jaeger\_storage\_backend) | The storage backend for Jaeger | `string` | `null` | no |
+| <a name="input_jaeger_ttl_spans"></a> [jaeger\_ttl\_spans](#input\_jaeger\_ttl\_spans) | The time to live for spans stored in Jaeger | `string` | `null` | no |
 | <a name="input_jaeger_version"></a> [jaeger\_version](#input\_jaeger\_version) | The version of the Jaeger Service to be installed | `string` | `"1.66.0"` | no |
 | <a name="input_kiali_enabled"></a> [kiali\_enabled](#input\_kiali\_enabled) | Defines if Kiali has to be deployed | `bool` | `true` | no |
 | <a name="input_kiali_version"></a> [kiali\_version](#input\_kiali\_version) | The version of the Kiali Helm Chart to be installed | `string` | `"2.5.0"` | no |

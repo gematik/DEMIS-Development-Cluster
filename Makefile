@@ -526,10 +526,11 @@ docs: ## Generates documentation for all terraform modules
 
 .PHONY: lint
 lint: ## Performs linting
-	tflint --init
+	# Fail on any error, do not suppress output
+	tflint --init && \
 	tflint --recursive \
-			--config="$(ROOT_DIR)/.tflint.hcl" \
-			--minimum-failure-severity=warning
+		--config="$(ROOT_DIR)/.tflint.hcl" \
+		--minimum-failure-severity=notice
 
 .PHONY: format
 format: ## Autoformats the code
@@ -555,7 +556,7 @@ test-modules: ## Runs tests for all modules
 	@for dir in $(shell find $(ROOT_DIR) -name '*.tftest.hcl' -exec dirname {} \; | sort -u); do \
 		printf "## Testing module: %s\n" "$$dir"; \
 		cd "$$dir"; \
-		$(TF_BIN) init 1> /dev/null; \
+		$(TF_BIN) init -upgrade 1> /dev/null; \
 		$(TF_BIN) test; \
 	done
 
