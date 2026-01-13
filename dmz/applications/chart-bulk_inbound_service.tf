@@ -9,6 +9,8 @@ locals {
   bulk_inbound_resources_overrides = try(var.resource_definitions[local.bulk_inbound_name], {})
   bulk_inbound_replicas            = lookup(local.bulk_inbound_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.bulk_inbound_name].replicas : null
   bulk_inbound_resource_block      = lookup(local.bulk_inbound_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.bulk_inbound_name].resource_block : null
+
+  supported_ars_profile_versions = var.deployment_information["ars-profile-snapshots"].main.profiles
 }
 
 module "bulk_inbound_service" {
@@ -38,9 +40,11 @@ module "bulk_inbound_service" {
     istio_proxy_resources                              = try(local.bulk_inbound_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.bulk_inbound_template_istio, {
-    namespace       = var.target_namespace,
-    context_path    = var.context_path,
-    cluster_gateway = var.cluster_gateway,
-    demis_hostnames = local.demis_hostnames
+    namespace                      = var.target_namespace,
+    context_path                   = var.context_path,
+    cluster_gateway                = var.cluster_gateway,
+    fhir_api_versions              = local.supported_ars_profile_versions,
+    demis_hostnames                = local.demis_hostnames,
+    feature_flag_new_api_endpoints = try(var.feature_flags[local.bulk_inbound_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

@@ -9,6 +9,14 @@ appServicePortProtocol: TCP
 appServicePortName: http
 
 # Istio Information
+# the List of the Istio Gateway Objects to be used for external cluster access
+virtualServiceGateways: 
+  - ${cluster_gateway}
+# the List of the Hostnames/Domains that should match the VirtualService definition (external)
+virtualServiceDomains: 
+  %{~ for hostname in demis_hostnames ~}
+  - ${hostname}
+  %{~ endfor ~}
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
@@ -17,4 +25,26 @@ virtualServiceHttpRules:
     - uri:
         prefix: /
     rewrite:
-      uri: /
+      uri: / 
+
+virtualServiceExternalHttpRules:
+%{ if length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
+%{ for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
+  - headers:
+      request:
+        set:
+          x-fhir-api-version: v${version}
+          x-fhir-profile: ars-profile-snapshots
+    match:
+    - uri:
+        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/batch/bundle
+      ignoreUriCase: true
+    rewrite:
+      uri: /batch/bundle
+%{ endfor ~}
+%{ endif ~}
+  - match:
+      - uri:
+          prefix: ${context_path}/surveillance/antibiotic-resistance/fhir/batch/bundle
+    rewrite:
+      uri: /batch/bundle

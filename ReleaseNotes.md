@@ -2,6 +2,14 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.1.0
+- bulk-inbound-service reachable from ingres
+- added functionality of kubeconfig usage for terraform on kkp stages
+- edit depends_on to futs for gateway igs
+- fixed package-registry url for validation-services and futs services
+- added make target for ref-fkb and prod-fkb
+- fixed kiali configuration for connecting to istio resources
+
 ## Release 5.0.0
 - added new policies: kubernetes-network-policies for all application namespaces
 - upgraded providers

@@ -110,6 +110,7 @@ module "futs_core" {
     resource_block                                     = local.futs_core_resource_block
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.futs_core_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.futs_core_template_istio, {
     namespace    = var.target_namespace,
@@ -153,7 +154,8 @@ module "futs_igs" {
     replica_count                                      = local.futs_igs_replicas,
     resource_block                                     = local.futs_igs_resource_block
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.futs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = try(local.futs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.futs_igs_template_istio, {
     namespace    = var.target_namespace,

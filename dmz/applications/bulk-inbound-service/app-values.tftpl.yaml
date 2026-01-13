@@ -27,11 +27,8 @@ config:
   secrets:
     # Use default Secret from this Chart
     useDefault: false
-
+ 
 podAnnotations:
-  app.kubernetes.io/component: rabbitmq-operator
-  app.kubernetes.io/name: rabbitmq-cluster-operator
-  app.kubernetes.io/part-of: rabbitmq
   %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
