@@ -55,15 +55,15 @@ external_services:
       - app_label: istiod
         is_core: true
         is_proxy: false
-        namespace: ''
+        namespace: 'istio-system'
       - app_label: istio-ingressgateway
         is_core: true
         is_proxy: true
-        namespace: ''
+        namespace: 'istio-system'
       - app_label: istio-egressgateway
         is_core: false
         is_proxy: true
-        namespace: ''
+        namespace: 'istio-system'
       enabled: true
     config_map_name: istio
     envoy_admin_local_port: 15000

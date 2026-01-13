@@ -196,9 +196,9 @@ variable "cluster_gateway" {
   }
 }
 
-#########################
-# Application Configuration
-#########################
+#############################
+# Application Configuration #
+#############################
 
 # Debugging 
 variable "debug_enabled" {

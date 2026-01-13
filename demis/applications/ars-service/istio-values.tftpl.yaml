@@ -42,19 +42,22 @@ virtualServiceExternalHttpRules:
           x-fhir-profile: ars-profile-snapshots
     match:
     - uri:
-        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/
-      ignoreUriCase: true
+        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/(\\$|%24)process-notification(.*)"
     rewrite:
-      uri: /
+      uriRegexRewrite:
+        match: "(?i)^${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/(\\$|%24)process-notification(.*)?$"
+        rewrite: "/%24process-notification\\2"
 %{ endfor ~}
 %{ endif ~}
   - match:
 %{ if feature_flag_new_api_endpoints ~}
-      - uri:
-          prefix: ${context_path}/surveillance/antibiotic-resistance/fhir/
+    - uri:
+        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/fhir/(\\$|%24)process-notification(.*)"
 %{ else ~}
-      - uri:
-          prefix: ${context_path}/surveillance/antibiotic-resistance/
+    - uri:
+        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/(\\$|%24)process-notification(.*)"
 %{ endif ~}
     rewrite:
-      uri: /
+      uriRegexRewrite:
+        match: "(?i)^${context_path}/surveillance/antibiotic-resistance/(fhir/)?(\\$|%24)process-notification(.*)?$"
+        rewrite: "/%24process-notification\\3"

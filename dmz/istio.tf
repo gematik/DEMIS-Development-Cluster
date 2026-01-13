@@ -28,7 +28,8 @@ resource "helm_release" "authorization_policies_istio" {
 
   values = [
     templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
-      namespace = var.target_namespace,
+      namespace                     = var.target_namespace,
+      feature_flag_ars_bulk_enabled = try(module.application_flags.service_feature_flags["policies-authorizations"].FEATURE_FLAG_ARS_BULK_ENABLED, false)
     })
   ]
 

@@ -21,7 +21,7 @@ module "gateway_igs" {
   application_name       = local.gateway_igs_name
   deployment_information = var.deployment_information[local.gateway_igs_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.igs_service[0]]
+  depends_on             = [module.igs_service[0], module.futs_igs[0]]
 
   # Pass the values for the chart
   application_values = templatefile(local.gateway_igs_template_app, {
