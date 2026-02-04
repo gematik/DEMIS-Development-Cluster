@@ -36,6 +36,9 @@ virtualServiceHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
@@ -43,29 +46,64 @@ virtualServiceExternalHttpRules:
   - headers:
       request:
         set:
+          x-fhir-api-request-origin: external
+          x-fhir-api-submission-type: disease
           x-fhir-api-version: v${version}
           x-fhir-profile: fhir-profile-snapshots
     match:
     - uri:
         prefix: ${context_path}/notifications/disease/v${version}/fhir/
+      ignoreUriCase: true
+    rewrite:
+      uri: /
+  - headers:
+      request:
+        set:
+          x-fhir-api-request-origin: external
+          x-fhir-api-submission-type: pathogen
+          x-fhir-api-version: v${version}
+          x-fhir-profile: fhir-profile-snapshots
+    match:
     - uri:
         prefix: ${context_path}/notifications/pathogen/v${version}/fhir/
       ignoreUriCase: true
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endfor ~}
 %{ endif ~}
-  - match:
 %{ if feature_flag_new_api_endpoints ~}
+  - headers:
+      request:
+        set:
+          x-fhir-api-request-origin: external
+          x-fhir-api-submission-type: disease
+    match:
     - uri:
         prefix: ${context_path}/hospitalization/fhir
+    rewrite:
+      uri: /
+  - headers:
+      request:
+        set:
+          x-fhir-api-request-origin: external
+          x-fhir-api-submission-type: pathogen
+    match:
     - uri:
         prefix: ${context_path}/notification-api/fhir
+    rewrite:
+      uri: /
 %{ else ~}
+  - match:
     - uri:
         prefix: ${context_path}/hospitalization
     - uri:
         prefix: ${context_path}/notification-api
-%{ endif ~}
     rewrite:
       uri: /
+%{ endif ~}
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}

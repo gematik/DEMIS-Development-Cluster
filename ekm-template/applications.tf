@@ -19,6 +19,7 @@ module "ekm_services" {
   config_options                = module.application_flags.service_config_options
   resource_definitions          = module.application_resources.service_resource_definitions
   istio_proxy_default_resources = module.application_resources.istio_proxy_default_resources
+  timeout_retry_overrides       = var.timeout_retry_overrides
   reset_values                  = var.reset_values
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]

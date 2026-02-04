@@ -39,9 +39,10 @@ module "gematik_idp" {
     istio_proxy_resources                              = try(local.gemidp_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.gemidp_template_istio, {
-    namespace       = var.target_namespace,
-    cluster_gateway = var.cluster_gateway,
-    ti_idp_hostname = local.ti_idp_hostname
+    namespace                = var.target_namespace,
+    cluster_gateway          = var.cluster_gateway,
+    ti_idp_hostname          = local.ti_idp_hostname
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gemidp_name], null)
   })
 
 }

@@ -34,6 +34,9 @@ virtualServiceHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
@@ -49,3 +52,6 @@ virtualServiceExternalHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}

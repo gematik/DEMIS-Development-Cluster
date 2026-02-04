@@ -50,5 +50,6 @@ module "igs_service" {
     support_fhir_api_versions      = var.profile_provisioning_mode_vs_igs != null && var.profile_provisioning_mode_vs_igs != "dedicated"
     fhir_api_versions              = module.validation_service_igs_metadata.current_profile_versions,
     feature_flag_new_api_endpoints = try(var.feature_flags[local.igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.igs_name], null)
   })
 }

@@ -41,9 +41,10 @@ module "gateway_igs" {
     feature_flag_new_api_endpoints                     = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
   istio_values = templatefile(local.gateway_igs_template_istio, {
-    namespace       = var.target_namespace,
-    context_path    = var.context_path,
-    cluster_gateway = var.cluster_gateway,
-    demis_hostnames = local.demis_hostnames
+    namespace                = var.target_namespace,
+    context_path             = var.context_path,
+    cluster_gateway          = var.cluster_gateway,
+    demis_hostnames          = local.demis_hostnames
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_igs_name], null)
   })
 }

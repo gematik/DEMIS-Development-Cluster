@@ -29,6 +29,8 @@ locals {
   vs_core_resource_block                 = lookup(local.vs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_core_name].resource_block : null
   vs_core_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   fhir_profile_metadata_api_version_core = var.profile_provisioning_mode_vs_core == null ? "v1" : "v2"
+  # http timeouts and retries
+  vs_core_http_timeout_retry_block = { core : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_core_name], null) }
 
   ###########################
   # Validation Service IGS  #
@@ -45,6 +47,8 @@ locals {
   vs_igs_resource_block                 = lookup(local.vs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_igs_name].resource_block : null
   vs_igs_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   fhir_profile_metadata_api_version_igs = var.profile_provisioning_mode_vs_igs == null ? "v1" : "v2"
+  # http timeouts and retries
+  vs_igs_http_timeout_retry_block = { igs : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_igs_name], null) }
 
   ###########################
   # Validation Service ARS  #
@@ -61,6 +65,10 @@ locals {
   vs_ars_resource_block                 = lookup(local.vs_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_ars_name].resource_block : null
   vs_ars_template_http_rules            = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   fhir_profile_metadata_api_version_ars = var.profile_provisioning_mode_vs_ars == null ? "v1" : "v2"
+  # http timeouts and retries
+  vs_ars_http_timeout_retry_block = { ars : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_ars_name], null) }
+
+  vs_http_timeout_retry_block = merge(local.vs_core_http_timeout_retry_block, local.vs_igs_http_timeout_retry_block, local.vs_ars_http_timeout_retry_block)
 }
 
 # Creates the Virtual Service for the Validation Service delegates
@@ -82,7 +90,8 @@ resource "helm_release" "validation_service" {
   wait_for_jobs       = true
   cleanup_on_fail     = true
   values = [templatefile(local.vs_template_istio, {
-    namespace = var.target_namespace
+    namespace                = var.target_namespace
+    http_timeout_retry_block = local.vs_http_timeout_retry_block
   })]
   timeout = 600
   lifecycle {

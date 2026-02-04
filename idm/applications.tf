@@ -22,6 +22,7 @@ module "idm_services" {
   istio_enabled                      = var.istio_enabled
   feature_flags                      = module.application_flags.service_feature_flags
   config_options                     = module.application_flags.service_config_options
+  timeout_retry_overrides            = var.timeout_retry_overrides
   resource_definitions               = module.application_resources.service_resource_definitions
   istio_proxy_default_resources      = module.application_resources.istio_proxy_default_resources
   ti_idp_server_url                  = var.ti_idp_server_url

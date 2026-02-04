@@ -31,3 +31,20 @@ variable "allow_even_rabbitmq_replicas" {
   description = "Allows setting even number of RabbitMQ replicas (not recommended)"
   default     = false
 }
+
+# URL of the Secure Message Gateway
+variable "secure_message_gateway_url" {
+  type        = string
+  description = "URL of the Secure Message Gateway"
+  default     = "https://secure-message-gateway.dmz.svc.cluster.local:8080"
+}
+
+# PGBouncer Database Host
+variable "database_target_host" {
+  type        = string
+  description = "Defines the Hostname of the Database Server"
+  validation {
+    condition     = length(var.database_target_host) > 0
+    error_message = "The Database Hostname must be defined"
+  }
+}

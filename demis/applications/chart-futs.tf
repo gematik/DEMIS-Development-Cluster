@@ -21,7 +21,8 @@ locals {
   futs_core_resources_overrides = try(var.resource_definitions[local.futs_core_name], {})
   futs_core_replicas            = lookup(local.futs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.futs_core_name].replicas : null
   futs_core_resource_block      = lookup(local.futs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.futs_core_name].resource_block : null
-
+  # http timeouts and retries
+  futs_core_http_timeout_retry_block = { core : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_core_name], null) }
 
   ###########################
   # FUTS IGS                #
@@ -36,6 +37,10 @@ locals {
   futs_igs_resources_overrides = try(var.resource_definitions[local.futs_igs_name], {})
   futs_igs_replicas            = lookup(local.futs_igs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.futs_igs_name].replicas : null
   futs_igs_resource_block      = lookup(local.futs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.futs_igs_name].resource_block : null
+  # http timeouts and retries
+  futs_igs_http_timeout_retry_block = { igs : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_igs_name], null) }
+
+  futs_http_timeout_retry_block = merge(local.futs_core_http_timeout_retry_block, local.futs_igs_http_timeout_retry_block)
 }
 
 # Creates the Virtual Service for the Validation Service delegates
@@ -63,7 +68,8 @@ resource "helm_release" "futs" {
     demis_hostnames                = local.demis_hostnames,
     feature_flag_new_api_endpoints = try(var.feature_flags[local.futs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
     profile_versions_core          = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
-    profile_versions_igs           = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])])
+    profile_versions_igs           = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    http_timeout_retry_block       = local.futs_http_timeout_retry_block,
   })]
   timeout = 600
   lifecycle {

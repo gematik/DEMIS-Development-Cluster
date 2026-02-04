@@ -45,5 +45,6 @@ module "portal_disease" {
     cluster_gateway                = var.cluster_gateway,
     portal_hostnames               = local.frontend_hostnames
     feature_flag_new_api_endpoints = try(var.feature_flags[local.portal_disease_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_disease_name], null)
   })
 }

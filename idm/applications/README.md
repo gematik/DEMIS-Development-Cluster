@@ -17,6 +17,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_bundid_idp"></a> [bundid\_idp](#module\_bundid\_idp) | ../../modules/helm_deployment | n/a |
 | <a name="module_certificate_update_service"></a> [certificate\_update\_service](#module\_certificate\_update\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_gematik_idp"></a> [gematik\_idp](#module\_gematik\_idp) | ../../modules/helm_deployment | n/a |
+| <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_keycloak"></a> [keycloak](#module\_keycloak) | ../../modules/helm_deployment | n/a |
 | <a name="module_keycloak_user_purger"></a> [keycloak\_user\_purger](#module\_keycloak\_user\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_pgbouncer"></a> [pgbouncer](#module\_pgbouncer) | ../../modules/helm_deployment | n/a |
@@ -96,6 +97,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_ti_idp_redirect_uri"></a> [ti\_idp\_redirect\_uri](#input\_ti\_idp\_redirect\_uri) | The redirect uri to access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |
 | <a name="input_ti_idp_return_sso_token"></a> [ti\_idp\_return\_sso\_token](#input\_ti\_idp\_return\_sso\_token) | Activate return sso token for access the DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `bool` | `true` | no |
 | <a name="input_ti_idp_server_url"></a> [ti\_idp\_server\_url](#input\_ti\_idp\_server\_url) | The server url for DEMIS Notification Portal over the Telematikinfrastruktur (TI) | `string` | `""` | no |
+| <a name="input_timeout_retry_overrides"></a> [timeout\_retry\_overrides](#input\_timeout\_retry\_overrides) | Defines retry and timeout configurations per service. Each definition must include a service name and can optionally include timeout and retry settings. | <pre>list(object({<br/>    service = string<br/>    timeout = optional(string)<br/>    retries = optional(object({<br/>      enable        = optional(bool)<br/>      attempts      = optional(number)<br/>      perTryTimeout = optional(string)<br/>      retryOn       = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_tsl_download_endpoint"></a> [tsl\_download\_endpoint](#input\_tsl\_download\_endpoint) | Defines the TSL download endpoint for keycloak | `string` | `""` | no |
 
 ## Outputs

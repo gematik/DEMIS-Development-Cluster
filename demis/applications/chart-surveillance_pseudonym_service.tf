@@ -68,9 +68,10 @@ module "surveillance_pseudonym_service_ars" {
     istio_proxy_resources                              = try(local.sps_ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.sps_ars_template_istio, {
-    namespace       = var.target_namespace,
-    context_path    = var.context_path,
-    cluster_gateway = var.cluster_gateway,
-    demis_hostnames = local.demis_hostnames
+    namespace                = var.target_namespace,
+    context_path             = var.context_path,
+    cluster_gateway          = var.cluster_gateway,
+    demis_hostnames          = local.demis_hostnames
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.sps_ars_name], null)
   })
 }

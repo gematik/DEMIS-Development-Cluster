@@ -12,6 +12,7 @@ appServicePortName: http
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
+
 virtualServiceHttpRules:
 %{ for profile in [ "", "igs", "ars"] ~}
   - match:
@@ -30,6 +31,9 @@ virtualServiceHttpRules:
     delegate:
       name: validation-service-${coalesce(profile,"core")}-internal
       namespace: ${namespace}
+%{ if http_timeout_retry_block[coalesce(profile,"core")] != null ~}
+    ${indent(4, http_timeout_retry_block[coalesce(profile,"core")])}
+%{ endif ~}
 %{ endfor ~}
   - match:
     - uri:
@@ -39,3 +43,6 @@ virtualServiceHttpRules:
     delegate:
       name: validation-service-core-internal
       namespace: ${namespace}
+%{ if http_timeout_retry_block["core"] != null ~}
+    ${indent(4, http_timeout_retry_block["core"])}
+%{ endif ~}

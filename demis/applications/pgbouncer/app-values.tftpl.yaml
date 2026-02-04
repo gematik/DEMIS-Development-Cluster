@@ -51,6 +51,12 @@ config:
       port: 5432
       dbname: destination_lookup
 %{ endif ~}
+%{ if demis_bulk_stats_db_enabled ~}
+    demis-bulk-stats:
+      host: ${database_host}
+      port: 5432
+      dbname: demis-bulk-stats
+%{ endif ~}
   pgbouncer:
     server_lifetime: "300"
     max_client_conn: "200"

@@ -35,7 +35,6 @@ module "notification_gateway" {
     core_hostname                                      = var.core_hostname,
     issuer_hostname                                    = var.auth_hostname,
     context_path                                       = var.context_path,
-    profile_major_version                              = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0], # extract major version
     feature_flags                                      = try(var.feature_flags[local.gateway_name], {}),
     config_options                                     = try(var.config_options[local.gateway_name], {}),
     replica_count                                      = local.gateway_replicas,
@@ -50,5 +49,7 @@ module "notification_gateway" {
     cluster_gateway                = var.cluster_gateway,
     portal_hostnames               = local.frontend_hostnames
     feature_flag_new_api_endpoints = try(var.feature_flags[local.gateway_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+    profile_major_version          = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0] # extract major version
+    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
   })
 }

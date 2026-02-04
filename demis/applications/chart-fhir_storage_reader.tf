@@ -56,6 +56,7 @@ module "fhir_storage_reader" {
     context_path                   = var.context_path,
     demis_hostnames                = local.demis_hostnames,
     feature_flag_new_api_endpoints = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
   })
 }
 

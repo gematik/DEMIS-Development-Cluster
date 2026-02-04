@@ -38,6 +38,7 @@ module "package_registry" {
 
   })
   istio_values = templatefile(local.fpr_template_istio, {
-    namespace = var.target_namespace
+    namespace                = var.target_namespace
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fpr_name], null)
   })
 }

@@ -31,6 +31,9 @@ virtualServiceHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
@@ -46,6 +49,9 @@ virtualServiceExternalHttpRules:
       ignoreUriCase: true
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
   - headers:
       request:
         set:
@@ -57,6 +63,9 @@ virtualServiceExternalHttpRules:
         ignoreUriCase: true
     rewrite:
       uri: /S3Controller
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endfor ~}
 # Special handling of the read-binary endpoint: if a version is outdated and not longer supported, a document reference may no longer be valid and accessable.
 # To prevent this, versions from 1 to 99 are ignored and the request is forwarded to the corresponding endpoint.
@@ -69,6 +78,9 @@ virtualServiceExternalHttpRules:
       uriRegexRewrite:
         match: "(?i)^${context_path}/surveillance/notification-sequence/v([1-9][0-9]?)/fhir/(.*)?$"
         rewrite: "/\\2"
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}
   - match:
 %{ if feature_flag_new_api_endpoints ~}
@@ -80,11 +92,17 @@ virtualServiceExternalHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
       - uri:
           prefix: ${context_path}/surveillance/notification-sequence/S3Controller/upload/
     rewrite:
       uri: /S3Controller/upload/
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}
 

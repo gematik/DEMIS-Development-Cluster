@@ -30,6 +30,8 @@ config:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/demis-bulk-stats"
+  DB_USER: ars-bulk-stats-user
   DEMIS_NETWORK_CONTENT_ENRICHMENT_SERVICE_ADDRESS: http://context-enrichment-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_VALIDATION_SERVICE_ADDRESS: http://validation-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_FHIR_STORAGE_SERVICE_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local
@@ -41,12 +43,26 @@ customEnvVars:
   ${config_name} : "${config_value}"
   %{~ endfor ~}
 
-%{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
+  checksum/ars-bulk-stats-ddl-database-secret: "${ars_bulk_stats_ddl_db_secret_checksum}"
+  checksum/ars-bulk-stats-user-database-secret: "${ars_bulk_stats_user_db_secret_checksum}"
+  checksum/ars-bulk-stats-purger-database-secret: "${ars_bulk_stats_purger_db_secret_checksum}"
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
-%{endif}
+  %{endif}
+
+secret:
+  dbPwdBulkStatsDdl:
+    name: ars-bulk-stats-ddl-database-secret
+    key: ARS_BULK_STATS_DDL_DB_PASSWORD
+  dbPwdBulkStatsUser:
+    name: ars-bulk-stats-user-database-secret
+    key: ARS_BULK_STATS_USER_DB_PASSWORD
+  dbPwdBulkStatsPurger:
+    name: ars-bulk-stats-purger-database-secret
+    key: ARS_BULK_STATS_PURGER_DB_PASSWORD
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired
