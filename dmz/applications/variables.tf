@@ -154,6 +154,26 @@ variable "config_options" {
   default     = {}
 }
 
+variable "timeout_retry_overrides" {
+  description = "Defines retry and timeout configurations per service. Each definition must include a service name and can optionally include timeout and retry settings."
+  type = list(object({
+    service = string
+    timeout = optional(string)
+    retries = optional(object({
+      enable        = optional(bool)
+      attempts      = optional(number)
+      perTryTimeout = optional(string)
+      retryOn       = optional(string)
+    }))
+  }))
+  default = []
+
+  validation {
+    condition     = length(var.timeout_retry_overrides) > 0 ? alltrue([for conf in var.timeout_retry_overrides : length(conf.service) > 0]) : true
+    error_message = "Service name must not be empty"
+  }
+}
+
 #########################
 # Endpoints
 #########################
@@ -233,4 +253,20 @@ variable "rabbitmq_pvc_config" {
 variable "allow_even_rabbitmq_replicas" {
   type        = bool
   description = "Allows setting even number of RabbitMQ replicas (not recommended)"
+}
+
+# URL of the Secure Message Gateway
+variable "secure_message_gateway_url" {
+  type        = string
+  description = "URL of the Secure Message Gateway"
+}
+
+# PGBouncer Database Host
+variable "database_target_host" {
+  type        = string
+  description = "Defines the Hostname of the Database Server"
+  validation {
+    condition     = length(var.database_target_host) > 0
+    error_message = "The Database Hostname must be defined"
+  }
 }

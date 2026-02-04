@@ -1,0 +1,76 @@
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-postgres
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+podAnnotations: 
+  checksum/postgres-tls: "${postgres_tls_secret_checksum}"
+  checksum/db-secret: "${db_secret_checksum}"
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
+  
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  TERRAFORM_DEPLOYMENT: true
+  CONFIG_KEYCLOAK_DB: false
+  CONFIG_BUNDID_DB: false
+  CONFIG_PSEUDO_DB: false
+  CONFIG_SURVEILLANCE_PSEUDO_DB: false
+  CONFIG_ARS_PSEUDO_SCHEMA: false
+  CONFIG_DESTINATION_LOOKUP_DB: false
+  CONFIG_FHIR_STORAGE_DB: false
+  CONFIG_DEMIS_BULK_DB: ${demis_bulk_db_enabled}
+  CONFIG_DEMIS_BULK_STATS_DB: false
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name}: ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name}: ${config_value}
+  %{~ endfor ~}
+
+extraEnvVars:
+%{ if demis_bulk_db_enabled ~}
+  - name: ARS_BULK_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-ddl-database-secret
+        key: ARS_BULK_DDL_DB_PASSWORD
+  - name: ARS_BULK_USER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-user-database-secret
+        key: ARS_BULK_USER_DB_PASSWORD
+  - name: ARS_BULK_PURGER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-purger-database-secret
+        key: ARS_BULK_PURGER_DB_PASSWORD
+%{ endif ~}
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

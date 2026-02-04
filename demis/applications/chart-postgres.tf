@@ -46,6 +46,7 @@ module "postgres" {
     ars_pseudo_schema_enabled                          = local.sps_ars_enabled
     fhir_storage_db_enabled                            = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled
     destination_lookup_db_enabled                      = local.dls_reader_information.enabled || local.dls_writer_information.enabled || local.dls_purger_information.enabled
+    demis_bulk_stats_db_enabled                        = local.ars_enabled
     postgres_tls_secret_checksum                       = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.postgres_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fssr_enabled].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)

@@ -29,12 +29,18 @@ virtualServiceHttpRules:
         prefix: /igs
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
       - uri:
           prefix: /portal/igs
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
@@ -46,10 +52,16 @@ virtualServiceExternalHttpRules:
           prefix: ${context_path}/igs
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
       - uri:
           prefix: ${context_path}/portal/igs
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}

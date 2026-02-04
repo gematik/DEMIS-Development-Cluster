@@ -29,12 +29,18 @@ virtualServiceHttpRules:
         prefix: /bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
     - uri:
         prefix: /portal/bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
@@ -46,10 +52,16 @@ virtualServiceExternalHttpRules:
           prefix: ${context_path}/bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
     - uri:
         prefix: ${context_path}/portal/bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}

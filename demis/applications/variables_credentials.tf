@@ -46,13 +46,6 @@ variable "postgres_server_key" {
 # DEMIS Application Credentials
 ################################
 
-# CA certificate of storage when accessing externally
-variable "storage_tls_certificate" {
-  type        = string
-  sensitive   = true
-  description = "CA certificate of storage when accessing externally"
-}
-
 # CA certificate of storage when accessing internally
 variable "s3_tls_credential" {
   type        = string

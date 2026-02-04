@@ -28,6 +28,9 @@ virtualServiceHttpRules:
 %{ endif }
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}  
@@ -43,6 +46,9 @@ virtualServiceExternalHttpRules:
       ignoreUriCase: true
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endfor ~}
 %{ endif ~}
   - match:
@@ -50,3 +56,6 @@ virtualServiceExternalHttpRules:
         prefix: ${context_path}/reports/fhir/
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}

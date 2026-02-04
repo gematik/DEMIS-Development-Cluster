@@ -29,6 +29,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_futs_igs_metadata"></a> [futs\_igs\_metadata](#module\_futs\_igs\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 | <a name="module_gateway_igs"></a> [gateway\_igs](#module\_gateway\_igs) | ../../modules/helm_deployment | n/a |
 | <a name="module_hospital_location_service"></a> [hospital\_location\_service](#module\_hospital\_location\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_igs_service"></a> [igs\_service](#module\_igs\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_lifecycle_validation_service"></a> [lifecycle\_validation\_service](#module\_lifecycle\_validation\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_minio"></a> [minio](#module\_minio) | ../../modules/helm_deployment | n/a |
@@ -123,10 +124,10 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_s3_tls_credential"></a> [s3\_tls\_credential](#input\_s3\_tls\_credential) | Base64-encoded, PEM certificate to be used for configuring the TLS Settings for the S3 Storage Server Connection. | `string` | n/a | yes |
 | <a name="input_service_accounts"></a> [service\_accounts](#input\_service\_accounts) | Service account details for authentication | <pre>list(object({<br/>    secret_name    = string # Name of the Kubernetes secret to store the service account key<br/>    keyfile_base64 = string # Base64-encoded JSON key file content<br/>  }))</pre> | `[]` | no |
 | <a name="input_storage_hostname"></a> [storage\_hostname](#input\_storage\_hostname) | The URL to access the S3 compatible storage (minio) | `string` | `"storage"` | no |
-| <a name="input_storage_tls_certificate"></a> [storage\_tls\_certificate](#input\_storage\_tls\_certificate) | CA certificate of storage when accessing externally | `string` | n/a | yes |
 | <a name="input_surveillance_pseudonym_purger_ars_cron_schedule"></a> [surveillance\_pseudonym\_purger\_ars\_cron\_schedule](#input\_surveillance\_pseudonym\_purger\_ars\_cron\_schedule) | Defines the Cron Schedule for the surveillance-pseudonym-purger-ars | `string` | n/a | yes |
 | <a name="input_surveillance_pseudonym_purger_ars_suspend"></a> [surveillance\_pseudonym\_purger\_ars\_suspend](#input\_surveillance\_pseudonym\_purger\_ars\_suspend) | Defines if the surveillance-pseudonym-purger-ars is suspended. | `bool` | `false` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The namespace to deploy the application to | `string` | `"demis"` | no |
+| <a name="input_timeout_retry_overrides"></a> [timeout\_retry\_overrides](#input\_timeout\_retry\_overrides) | Defines retry and timeout configurations per service. Each definition must include a service name and can optionally include timeout and retry settings. | <pre>list(object({<br/>    service = string<br/>    timeout = optional(string)<br/>    retries = optional(object({<br/>      enable        = optional(bool)<br/>      attempts      = optional(number)<br/>      perTryTimeout = optional(string)<br/>      retryOn       = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 

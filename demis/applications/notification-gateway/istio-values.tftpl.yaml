@@ -30,6 +30,9 @@ virtualServiceHttpRules:
         prefix: /gateway/notification/api/ng
     rewrite:
       uri: /api/ng
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ if feature_flag_new_api_endpoints ~}
   - match:
     - uri:
@@ -40,6 +43,9 @@ virtualServiceHttpRules:
         prefix: /gateway/bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
@@ -55,15 +61,47 @@ virtualServiceExternalHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 %{ if feature_flag_new_api_endpoints ~}
-  - match:
+  - headers:
+      request:
+        set:
+          x-fhir-profile: fhir-profile-snapshots
+          x-fhir-api-version: v${profile_major_version}
+          x-fhir-api-request-origin: internal
+          x-fhir-api-submission-type: pathogen
+    match:
     - uri:
         prefix: ${context_path}/gateway/pathogen
+    rewrite:
+      uri: /
+  - headers:
+      request:
+        set:
+          x-fhir-profile: fhir-profile-snapshots
+          x-fhir-api-version: v${profile_major_version}
+          x-fhir-api-request-origin: internal
+          x-fhir-api-submission-type: disease
+    match:
     - uri:
         prefix: ${context_path}/gateway/disease
+    rewrite:
+      uri: /
+  - headers:
+      request:
+        set:
+          x-fhir-profile: fhir-profile-snapshots
+          x-fhir-api-version: v${profile_major_version}
+          x-fhir-api-request-origin: internal
+    match:
     - uri:
         prefix: ${context_path}/gateway/bedoccupancy
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endif ~}

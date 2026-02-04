@@ -31,6 +31,9 @@ virtualServiceHttpRules:
 %{ endif ~}
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
@@ -47,6 +50,9 @@ virtualServiceExternalHttpRules:
       uriRegexRewrite:
         match: "(?i)^${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/(\\$|%24)process-notification(.*)?$"
         rewrite: "/%24process-notification\\2"
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endfor ~}
 %{ endif ~}
   - match:
@@ -61,3 +67,6 @@ virtualServiceExternalHttpRules:
       uriRegexRewrite:
         match: "(?i)^${context_path}/surveillance/antibiotic-resistance/(fhir/)?(\\$|%24)process-notification(.*)?$"
         rewrite: "/%24process-notification\\3"
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}

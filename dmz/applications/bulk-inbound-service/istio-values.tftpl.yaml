@@ -25,7 +25,10 @@ virtualServiceHttpRules:
     - uri:
         prefix: /
     rewrite:
-      uri: / 
+      uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 
 virtualServiceExternalHttpRules:
 %{ if length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
@@ -37,14 +40,12 @@ virtualServiceExternalHttpRules:
           x-fhir-profile: ars-profile-snapshots
     match:
     - uri:
-        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/batch/bundle
+        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/batch
       ignoreUriCase: true
     rewrite:
-      uri: /batch/bundle
+      uri: /batch
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
 %{ endfor ~}
 %{ endif ~}
-  - match:
-      - uri:
-          prefix: ${context_path}/surveillance/antibiotic-resistance/fhir/batch/bundle
-    rewrite:
-      uri: /batch/bundle

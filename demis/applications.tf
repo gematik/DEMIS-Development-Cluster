@@ -33,6 +33,7 @@ module "demis_services" {
   config_options                                  = module.application_flags.service_config_options
   resource_definitions                            = module.application_resources.service_resource_definitions
   istio_proxy_default_resources                   = module.application_resources.istio_proxy_default_resources
+  timeout_retry_overrides                         = var.timeout_retry_overrides
   profile_provisioning_mode_vs_core               = var.profile_provisioning_mode_vs_core
   profile_provisioning_mode_vs_igs                = var.profile_provisioning_mode_vs_igs
   profile_provisioning_mode_vs_ars                = var.profile_provisioning_mode_vs_ars
@@ -44,7 +45,6 @@ module "demis_services" {
   minio_root_user              = var.minio_root_user
   minio_root_password          = var.minio_root_password
   s3_tls_credential            = var.s3_tls_credential
-  storage_tls_certificate      = var.storage_tls_certificate
   postgres_server_certificate  = var.postgres_server_certificate
   postgres_root_ca_certificate = var.postgres_root_ca_certificate
   postgres_server_key          = var.postgres_server_key

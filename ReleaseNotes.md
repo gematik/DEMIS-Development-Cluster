@@ -2,6 +2,20 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.2.0
+- fixed pipeline for infrastructure rollout for correct defining of GOOGLE_APPLICATION_CREDENTIALS
+- added postgres and pgbouncer to dmz namespace
+- added database-configurations for bulk
+- set headers x-fhir-profile, x-fhir-api-version, x-fhir-api-request-origin, x-fhir-api-submission-type in istio-values.yaml of notification-gateway and notification-processing-service
+- modularized http timeouts and retries for all services
+- added hmac secret variable for ars bulk service
+- made bulk-inbound-service reachable for bulk and upload
+- Remove unnecessary IGS-variable storage_tls_certificate
+- added environment variables to dmz/bulk-inbound-service
+- added waf and secure-message-gateway to dmz namespace
+- adjusted paths for ARS bulk upload to current specification
+- set timeout for minio to 5 min for local cluster
+
 ## Release 5.1.0
 - bulk-inbound-service reachable from ingres
 - added functionality of kubeconfig usage for terraform on kkp stages

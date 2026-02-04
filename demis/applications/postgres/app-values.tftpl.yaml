@@ -36,6 +36,8 @@ customEnvVars:
   CONFIG_SURVEILLANCE_PSEUDO_DB: ${surveillance_pseudo_db_enabled}
   CONFIG_ARS_PSEUDO_SCHEMA: ${ars_pseudo_schema_enabled}
   CONFIG_DESTINATION_LOOKUP_DB: ${destination_lookup_db_enabled}
+  CONFIG_DEMIS_BULK_DB: false
+  CONFIG_DEMIS_BULK_STATS_DB: ${demis_bulk_stats_db_enabled}
   CONFIG_FHIR_STORAGE_DB: ${fhir_storage_db_enabled}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name}: ${flag_value}
@@ -112,6 +114,23 @@ extraEnvVars:
       secretKeyRef:
         name: destination-lookup-reader-database-secret
         key: DESTINATION_LOOKUP_READER_DB_PASSWORD
+%{ endif ~}
+%{ if demis_bulk_stats_db_enabled ~}
+  - name: ARS_BULK_STATS_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-stats-ddl-database-secret
+        key: ARS_BULK_STATS_DDL_DB_PASSWORD
+  - name: ARS_BULK_STATS_USER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-stats-user-database-secret
+        key: ARS_BULK_STATS_USER_DB_PASSWORD
+  - name: ARS_BULK_STATS_PURGER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ars-bulk-stats-purger-database-secret
+        key: ARS_BULK_STATS_PURGER_DB_PASSWORD
 %{ endif ~}
 
 %{~ if replica_count != null ~}

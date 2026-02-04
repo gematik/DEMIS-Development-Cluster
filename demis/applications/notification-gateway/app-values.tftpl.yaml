@@ -32,11 +32,6 @@ customEnvVars:
 %{ else ~}
   FHIR_DATA_TRANSLATION_SERVICE_URL: "http://futs.${namespace}.svc.cluster.local/fhir-ui-data-model-translation"
 %{ endif ~}
-%{ if feature_flag_new_api_endpoints ~}
-  HEADER_BED_OCCUPANCY_VERSION: "v${profile_major_version}"
-  HEADER_LABORATORY_NOTIFICATION_VERSION: "v${profile_major_version}"
-  HEADER_DISEASE_NOTIFICATION_VERSION: "v${profile_major_version}"
-%{ endif ~}
   HOSPITAL_LOCATION_SERVICE_URL: "https://${portal_hostname}${context_path}/services"
   NES_BASE_URL: "http://notification-processing-service.${namespace}.svc.cluster.local/"
   RPS_BASE_URL: "http://report-processing-service.${namespace}.svc.cluster.local/"

@@ -47,10 +47,11 @@ module "destination_lookup_reader" {
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.dlsr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.dls_reader_template_istio, {
-    namespace       = var.target_namespace,
-    cluster_gateway = var.cluster_gateway,
-    context_path    = var.context_path,
-    demis_hostnames = local.demis_hostnames,
-    app_name        = local.dls_reader_name
+    namespace                = var.target_namespace,
+    cluster_gateway          = var.cluster_gateway,
+    context_path             = var.context_path,
+    demis_hostnames          = local.demis_hostnames,
+    app_name                 = local.dls_reader_name,
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.dls_reader_name], null)
   })
 }

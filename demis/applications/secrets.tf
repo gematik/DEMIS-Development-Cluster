@@ -18,7 +18,6 @@ locals {
   userlist_content = join("\n", [for cred in var.database_credentials : "\"${cred.username}\" \"${cred.password}\""])
 
   igs_encryption_certificate_data = {
-    S3_STORAGE_TLS_CERTIFICATE          = var.storage_tls_certificate
     S3_STORAGE_TLS_CERTIFICATE_INTERNAL = var.s3_tls_credential
   }
 

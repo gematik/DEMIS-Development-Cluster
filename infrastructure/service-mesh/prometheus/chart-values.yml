@@ -78,7 +78,7 @@ serverFiles:
             regex: demis|dmz
           - source_labels: [__meta_kubernetes_pod_name]
             action: drop
-            regex: .*istio.*|^portal.*|^pgbouncer.*|^rabbitmq.*|^minio.*|^postgres.*
+            regex: .*istio.*|^portal.*|^pgbouncer.*|^rabbitmq.*|^minio.*|^postgres.*|^waf*
           - source_labels: [__meta_kubernetes_pod_label_job_name]
             action: drop
             regex: .+

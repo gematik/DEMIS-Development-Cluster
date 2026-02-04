@@ -1,0 +1,14 @@
+# Application Information
+appName: "pgbouncer"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: 5432
+appServicePortTarget: 5432
+appServicePortProtocol: TCP
+appServicePortName: tcp
+
+# Istio Information
+virtualServiceTcpRules: 
+  - match: 
+    - port: 5432
