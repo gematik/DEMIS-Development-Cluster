@@ -1,0 +1,53 @@
+# Default values for portal-are
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image:
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: portal-are
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets:
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+# Extra Environment Variables to be defined
+# customEnvVars
+#   key: value
+customEnvVars:
+  PORTAL_CSP_HOSTNAME: "${csp_hostname}"
+
+config:
+  mfIgs:
+    igsGatewayUrl: "${context_path}/gateway/are"
+  featureFlags:
+    # Prevents empty values that can delete the default environment variables
+    "TERRAFORM_DEPLOYMENT": true
+    %{~ for flag_name, flag_value in feature_flags ~}
+    "${flag_name}" : ${flag_value}
+    %{~ endfor ~}
+    %{~ for config_name, config_value in config_options ~}
+    "${config_name}" : ${config_value}
+    %{~ endfor ~}
+
+  %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
+podAnnotations:
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{endif}
+  
+  %{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+  %{endif}
+  
+  %{~ if resource_block != null ~}
+  # Override Resource Definitions for Pod
+  ${resource_block}
+  %{endif}

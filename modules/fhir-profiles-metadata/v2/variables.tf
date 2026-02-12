@@ -38,11 +38,11 @@ variable "deployment_information" {
 }
 
 variable "profile_type" {
-  description = "Profile types for the validation services. Allowed values are: fhir-profile-snapshots, igs-profile-snapshots, ars-profile-snapshots"
+  description = "Profile types for the validation services. Allowed values are: fhir-profile-snapshots, igs-profile-snapshots, ars-profile-snapshots, are-profile-snapshots"
   type        = string
   validation {
-    condition     = contains(["fhir-profile-snapshots", "igs-profile-snapshots", "ars-profile-snapshots"], var.profile_type)
-    error_message = "The profile type must be one of the following: fhir-profile-snapshots, igs-profile-snapshots, ars-profile-snapshots"
+    condition     = contains(["fhir-profile-snapshots", "igs-profile-snapshots", "ars-profile-snapshots", "are-profile-snapshots"], var.profile_type)
+    error_message = "The profile type must be one of the following: fhir-profile-snapshots, igs-profile-snapshots, ars-profile-snapshots, are-profile-snapshots"
   }
 }
 

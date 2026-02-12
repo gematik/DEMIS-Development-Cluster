@@ -114,4 +114,5 @@ variable "profile_provisioning_mode_vs_ars" {
     condition     = var.profile_provisioning_mode_vs_ars == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars), false)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
+
 }

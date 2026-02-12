@@ -1,0 +1,35 @@
+# Application Information
+appName: "are-gateway"
+appNamespace: "${namespace}" # defaults to Release.Namespace
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: 8080
+appServicePortTarget: 8080
+appServicePortProtocol: TCP
+appServicePortName: http
+
+# Istio Information
+# the List of the Istio Gateway Objects to be used for external cluster access
+virtualServiceGateways: 
+  - ${cluster_gateway}
+# the List of the Hostnames/Domains that should match the VirtualService definition (external)
+# Portal Hostnames
+virtualServiceDomains:
+  %{~ for hostname in portal_hostnames ~}
+  - ${hostname}
+  %{~ endfor ~}
+
+# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
+# The "route" part is generated using the destination subset information
+virtualServiceHttpRules:
+  - match:
+      - uri:
+          prefix: /gateway/are
+      - uri:
+          prefix: /api/are-token
+virtualServiceExternalHttpRules:
+  - match:
+      - uri:
+          prefix: /gateway/are
+      - uri:
+          prefix: /api/are-token
