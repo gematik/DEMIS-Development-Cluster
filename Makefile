@@ -369,6 +369,24 @@ init-stage:
 	@echo "## Initialising the stage repository"
 	@echo "## Stage Folder: $(ENV_FOLDER)"
 	@echo "## Stage: $(STAGE)"
+
+ifdef STAGE_BRANCH
+	@echo "## Using explicit branch: $(STAGE_BRANCH)"
+	if [ -d "$(ENV_FOLDER)" ]; then \
+		echo "Repository for $(STAGE) already present, try branch-aware git pull"; \
+		cd $(ENV_FOLDER) && \
+		echo "## Ensuring branch $(STAGE_BRANCH) is checked out"; \
+		git fetch origin $(STAGE_BRANCH) || exit 1; \
+		git checkout $(STAGE_BRANCH) || exit 1; \
+		echo "## Pulling latest changes from origin/$(STAGE_BRANCH)"; \
+		git pull origin $(STAGE_BRANCH) || exit 1; \
+	else \
+		echo "## Cloning $(STAGE_REPOSITORY) (branch: $(STAGE_BRANCH))"; \
+		git clone --branch $(STAGE_BRANCH) $(STAGE_REPOSITORY) $(ENV_FOLDER) || exit 1; \
+	fi
+
+else
+	@echo "## No STAGE_BRANCH set, using default behaviour"
 	if [ -d "$(ENV_FOLDER)" ]; then \
 		echo "Repository for $(STAGE) already present, try git pull" && \
 		cd $(ENV_FOLDER) && \
@@ -377,10 +395,12 @@ init-stage:
 			git pull || exit 1; \
 		else \
 			echo "No branch checked out, skip git pull"; \
-		fi \
+		fi; \
 	else \
 		git clone $(STAGE_REPOSITORY) $(ENV_FOLDER) || exit 1; \
 	fi
+endif
+
 	$(LOAD_EXTERNAL_SECRETS)
 
 
@@ -391,6 +411,8 @@ create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local idm
 	@if [ "$${DEPLOY_DMZ:-}" = "true" ]; then $(MAKE) local dmz; fi
 	$(MAKE) local services
+ 	@if [ "$${DEPLOY_ARE:-}" = "true" ]; then $(MAKE) local are; fi
+
 
 .PHONY: cleanup-local-environment
 cleanup-local-environment: ## Destroys the local environment

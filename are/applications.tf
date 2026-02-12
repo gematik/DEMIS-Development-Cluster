@@ -12,6 +12,8 @@ module "are_services" {
   portal_hostname               = module.endpoints.portal_hostname
   meldung_hostname              = module.endpoints.meldung_hostname
   cluster_gateway               = module.endpoints.istio_gateway_fullname
+  auth_hostname                 = module.endpoints.auth_hostname
+  storage_hostname              = module.endpoints.storage_hostname
   debug_enabled                 = var.debug_enabled
   istio_enabled                 = var.istio_enabled
   context_path                  = var.context_path

@@ -1,5 +1,5 @@
 locals {
-  service_name = "service-demo"
+  service_name = "are-notification-processing-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   service_enabled = contains(local.service_names, local.service_name) ? var.deployment_information[local.service_name].enabled : false
   # Check if stage-override templates are provided, otherwise use the project-defined ones
@@ -11,7 +11,7 @@ locals {
   service_resource_block      = lookup(local.service_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.service_name].resource_block : null
 }
 
-module "service_demo" {
+module "are_notification_processing_service" {
   source = "../../modules/helm_deployment"
 
   # Deploy if enabled
@@ -36,10 +36,10 @@ module "service_demo" {
     istio_proxy_resources                              = try(local.service_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.service_template_istio, {
-    namespace                = var.target_namespace,
-    cluster_gateway          = var.cluster_gateway,
-    context_path             = var.context_path,
-    demis_hostnames          = local.demis_hostnames
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.service_name], null)
+    namespace       = var.target_namespace,
+    cluster_gateway = var.cluster_gateway,
+    core_hostname   = var.core_hostname
+    context_path    = var.context_path,
+    demis_hostnames = local.demis_hostnames
   })
 }

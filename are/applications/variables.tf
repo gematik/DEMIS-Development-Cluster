@@ -217,6 +217,22 @@ variable "cluster_gateway" {
   }
 }
 
+variable "auth_hostname" {
+  type        = string
+  description = "The Keycloak Issuer URL to be used for the JSON Web Token (JWT) validation"
+  default     = "auth"
+  validation {
+    condition     = length(var.auth_hostname) > 0
+    error_message = "The Keycloak Issuer hostname must be defined"
+  }
+}
+
+variable "storage_hostname" {
+  type        = string
+  description = "The URL to access the S3 compatible storage (minio)"
+  default     = "storage"
+}
+
 #########################
 # Application Configuration
 #########################
@@ -239,4 +255,15 @@ variable "reset_values" {
   type        = bool
   description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
   default     = false
+}
+
+variable "profile_provisioning_mode_vs_are" {
+  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
+  type        = string
+  nullable    = true
+  default     = null
+  validation {
+    condition     = var.profile_provisioning_mode_vs_are == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_are), false)
+    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
+  }
 }

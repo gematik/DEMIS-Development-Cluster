@@ -1,4 +1,5 @@
-# Values for the service-demo Helm Template
+# Values for are-gateway.
+
 # Enables debug mode
 debug:
   enable: ${debug_enable}
@@ -10,7 +11,7 @@ required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-service-demo
+    name: are-gateway
     %{ endif }
 
 # Image Pull Secrets
@@ -18,17 +19,28 @@ imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
-  
-customEnvVars: 
+
+config:
+  files: {}
+
+# Extra Environment Variables to be defined
+# customEnvVars
+#   key: value
+customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  GATEWAY_SERVER_PORT: "8080"
+
+  ANPS_BASE_URL: "http://are-notification-processing-service.${namespace}.svc.cluster.local"
+  ANPS_SURVEILLANCE_PATH: "/surveillance/respiratory-infections/v1/fhir/$process-are-notification"
+  KEYCLOAK_TOKEN_LAB_URI: "https://${core_hostname}/auth/realms/LAB/protocol/openid-connect/token"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
   %{~ for config_name, config_value in config_options ~}
   ${config_name} : "${config_value}"
   %{~ endfor ~}
-
+  
 %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}

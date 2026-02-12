@@ -44,7 +44,7 @@ variable "docker_registry" {
   type        = string
   description = "The Docker Registry to use for pulling Images"
   validation {
-    condition     = strcontains(var.docker_registry, "docker.io/gematik1") || startswith(var.docker_registry, "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis")
+    condition = strcontains(var.docker_registry, "docker.io/gematik1") || startswith(var.docker_registry, "europe-west3-docker.pkg.dev/gematik-all-infra-prod/demis")
     error_message = "Unsupported Docker Registry provided"
   }
 }
