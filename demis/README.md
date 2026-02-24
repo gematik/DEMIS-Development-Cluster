@@ -79,6 +79,8 @@ It performs the following operations:
 | <a name="input_profile_provisioning_mode_vs_ars"></a> [profile\_provisioning\_mode\_vs\_ars](#input\_profile\_provisioning\_mode\_vs\_ars) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
 | <a name="input_profile_provisioning_mode_vs_core"></a> [profile\_provisioning\_mode\_vs\_core](#input\_profile\_provisioning\_mode\_vs\_core) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
 | <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
+| <a name="input_rabbitmq_password"></a> [rabbitmq\_password](#input\_rabbitmq\_password) | The RabbitMQ password for the application | `string` | n/a | yes |
+| <a name="input_rabbitmq_username"></a> [rabbitmq\_username](#input\_rabbitmq\_username) | The RabbitMQ username for the application | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_password"></a> [redis\_cus\_reader\_password](#input\_redis\_cus\_reader\_password) | The Redis CUS Password (Reader) | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_user"></a> [redis\_cus\_reader\_user](#input\_redis\_cus\_reader\_user) | The Redis CUS User (Reader) | `string` | n/a | yes |
 | <a name="input_reset_values"></a> [reset\_values](#input\_reset\_values) | Reset the values to the ones built into the chart. This will override any custom values and reuse\_values settings. | `bool` | `false` | no |

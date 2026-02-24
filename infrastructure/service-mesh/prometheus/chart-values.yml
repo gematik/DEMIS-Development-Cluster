@@ -78,7 +78,7 @@ serverFiles:
             regex: demis|dmz
           - source_labels: [__meta_kubernetes_pod_name]
             action: drop
-            regex: .*istio.*|^portal.*|^pgbouncer.*|^rabbitmq.*|^minio.*|^postgres.*|^waf*
+            regex: .*istio.*|^portal.*|^pgbouncer.*|^rabbitmq.*|^minio.*|^postgres.*|^waf.*
           - source_labels: [__meta_kubernetes_pod_label_job_name]
             action: drop
             regex: .+
@@ -87,6 +87,10 @@ serverFiles:
             regex: (.+);(.+)
             replacement: $1.$2.svc.cluster.local:8080
             target_label: __address__
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name, __meta_kubernetes_namespace]
+            regex: (.+);(.+)
+            replacement: $1.$2.svc.cluster.local:8080
             target_label: instance
           - source_labels: [__meta_kubernetes_namespace]
             action: replace

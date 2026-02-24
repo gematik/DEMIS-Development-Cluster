@@ -39,3 +39,26 @@ variable "ars_bulk_upload_hmac_secret" {
   description = "The secret to generate HMACs from the preferred usernames in the bulk upload service"
   default     = ""
 }
+
+variable "rabbitmq_username" {
+  description = "The RabbitMQ username for the application"
+  type        = string
+}
+
+variable "rabbitmq_password" {
+  description = "The RabbitMQ password for the application"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_password_hash" {
+  description = "The RabbitMQ password hash for the application"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_erlang_cookie" {
+  description = "The RabbitMQ Erlang cookie for the application"
+  type        = string
+  sensitive   = true
+}

@@ -43,9 +43,9 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for service in var.deployment_information : true &&
-      (!service.enabled || contains(["canary", "update", "replace"], service.deployment-strategy))
+      (!service.enabled || contains(["canary", "update", "replace", "rolling"], service.deployment-strategy))
     ])
-    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update and replace is valid."
+    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update, replace and rolling is valid."
   }
 
   validation {

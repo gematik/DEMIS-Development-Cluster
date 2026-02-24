@@ -108,6 +108,21 @@ variable "service_mesh_external_ip" {
   description = "The external IP of the ingress gateway, only single IP is supported"
 }
 
+variable "service_mesh_ingress_annotations" {
+  description = "The annotations to be used for the ingress gateway"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "service_mesh_loadbalancer_sourceranges" {
+  description = "The load balancer source ranges to be used for the ingress gateway"
+  type        = list(string)
+  default     = []
+}
+
 variable "prometheus_service_url" {
   description = "The Cluster-internal URL of the Prometheus Instance to be used"
   type        = string

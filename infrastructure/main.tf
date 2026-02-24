@@ -55,6 +55,9 @@ module "service_mesh" {
   prometheus_service_url = var.prometheus_service_url
   # Define External IP for the Istio Ingress Gateway
   external_ip = var.service_mesh_external_ip
+  # Define Ingress Annotations for the Istio Ingress Gateway
+  ingress_annotations       = var.service_mesh_ingress_annotations
+  loadbalancer_sourceranges = var.service_mesh_loadbalancer_sourceranges
 }
 
 # Configure Trivy

@@ -41,6 +41,7 @@ podAnnotations:
 customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  SPRING_RABBITMQ_HOST: rabbitmq.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

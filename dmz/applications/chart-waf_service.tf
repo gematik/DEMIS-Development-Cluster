@@ -36,7 +36,6 @@ module "waf_service" {
     resource_block                                     = local.waf_resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.waf_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
     istio_proxy_resources                              = try(local.waf_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
-    secure_message_gateway_url                         = var.secure_message_gateway_url
   })
   istio_values = templatefile(local.waf_template_istio, {
     namespace                = var.target_namespace,

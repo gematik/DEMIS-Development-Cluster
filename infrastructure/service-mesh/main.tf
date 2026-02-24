@@ -8,6 +8,7 @@ module "istio" {
   replica_count                   = var.istio_replica_count
   external_ip                     = var.external_ip
   ingress_annotations             = var.ingress_annotations
+  loadbalancer_sourceranges       = var.loadbalancer_sourceranges
   enable_native_sidecar_injection = coalesce(var.enable_native_sidecar_injection, false)
 }
 

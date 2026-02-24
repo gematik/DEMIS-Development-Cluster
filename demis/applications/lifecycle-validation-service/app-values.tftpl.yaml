@@ -24,6 +24,7 @@ customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   LVS_CLIENT_DLS: http://destination-lookup-reader.${namespace}.svc.cluster.local
+  DEMIS_CODEMAPPING_BASE_URL: http://futs.${namespace}.svc.cluster.local
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

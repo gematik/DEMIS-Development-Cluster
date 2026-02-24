@@ -2,13 +2,14 @@ locals {
   #####################################################
   # Detect if a newer canary version has been provided
   #####################################################
-  is_canary_defined    = var.deployment_information.canary != null && var.deployment_information.canary != {} && var.deployment_information.canary.version != null
-  canary_version       = local.is_canary_defined ? var.deployment_information.canary.version : null
-  canary_weight        = local.is_canary_defined ? var.deployment_information.canary.weight : null
-  main_version         = var.deployment_information.main.version
-  is_canary_deployment = var.deployment_information.deployment-strategy == "canary"
-  replacement_version  = local.is_canary_defined ? var.deployment_information.canary.version : var.deployment_information.main.version
-  available_versions   = local.is_canary_deployment ? toset(compact([local.main_version, local.canary_version])) : toset(compact([local.replacement_version]))
+  is_canary_defined     = var.deployment_information.canary != null && var.deployment_information.canary != {} && var.deployment_information.canary.version != null
+  canary_version        = local.is_canary_defined ? var.deployment_information.canary.version : null
+  canary_weight         = local.is_canary_defined ? var.deployment_information.canary.weight : null
+  main_version          = var.deployment_information.main.version
+  is_canary_deployment  = var.deployment_information.deployment-strategy == "canary"
+  is_rolling_deployment = var.deployment_information.deployment-strategy == "rolling"
+  replacement_version   = local.is_canary_defined ? var.deployment_information.canary.version : var.deployment_information.main.version
+  available_versions    = local.is_rolling_deployment ? toset(["rolling"]) : (local.is_canary_deployment ? toset(compact([local.main_version, local.canary_version])) : toset(compact([local.replacement_version])))
   #####################################################
   # evaluate given helm properties, including optional ones
   #####################################################
@@ -24,13 +25,13 @@ locals {
 # Handle the deployment of the Helm Chart for the main and canary versions
 resource "helm_release" "chart" {
   for_each            = local.available_versions
-  name                = "${var.application_name}-${each.key}"
+  name                = local.is_rolling_deployment ? var.application_name : "${var.application_name}-${each.key}"
   repository          = local.helm_repository
   repository_username = local.helm_repository_username
   repository_password = local.helm_repository_password
   namespace           = var.namespace
   chart               = local.chart_name
-  version             = each.key
+  version             = local.is_rolling_deployment ? local.main_version : each.key
   max_history         = 3
   lint                = true
   atomic              = true
@@ -48,7 +49,7 @@ resource "helm_release" "chart" {
   set = [
     {
       name  = local.image_tag_property
-      value = coalesce(try(var.deployment_information.image-tag, null), each.key)
+      value = coalesce(try(var.deployment_information.image-tag, null), local.is_rolling_deployment ? local.main_version : each.key)
     }
   ]
 }
@@ -73,16 +74,21 @@ resource "helm_release" "istio" {
   reset_values        = var.helm_settings.reset_values
 
 
-  set = flatten([[
-    {
+  set = flatten([
+    (local.is_rolling_deployment ? [{
+      name  = "destinationSubsets.main.name"
+      value = var.application_name
+      }, {
+      name  = "destinationSubsets.main.version"
+      value = ""
+      }] : [{
       name  = "destinationSubsets.main.version"
       value = local.is_canary_deployment ? local.main_version : local.replacement_version
-    },
-    {
+    }]),
+    [{
       name  = "destinationSubsets.main.weight"
       value = local.is_canary_deployment ? var.deployment_information.main.weight : 100
-    }
-    ],
+    }],
     [for version in(local.is_canary_deployment ? compact([local.canary_version]) : []) :
       {
         name  = "destinationSubsets.canary.version"

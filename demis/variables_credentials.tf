@@ -142,3 +142,18 @@ variable "ars_pseudo_hash_pepper" {
   description = "The Pepper used for the ARS Pseudo Hashing (Base64-encoded)"
   default     = null
 }
+
+############################
+# DEMIS RabbitMQ Credentials
+############################
+
+variable "rabbitmq_username" {
+  description = "The RabbitMQ username for the application"
+  type        = string
+}
+
+variable "rabbitmq_password" {
+  description = "The RabbitMQ password for the application"
+  type        = string
+  sensitive   = true
+}

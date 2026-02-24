@@ -206,7 +206,7 @@ module "validation_service_igs" {
     provisioning_mode                                  = var.profile_provisioning_mode_vs_igs,
     labels                                             = try(yamlencode(module.validation_service_igs_metadata.version_labels), "")
     profile_handling_api_version                       = local.fhir_profile_metadata_api_version_igs
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.vs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
     namespace                                          = var.target_namespace
   })
@@ -265,7 +265,7 @@ module "validation_service_ars" {
     provisioning_mode                                  = var.profile_provisioning_mode_vs_ars,
     labels                                             = try(yamlencode(module.validation_service_ars_metadata.version_labels), "")
     profile_handling_api_version                       = local.fhir_profile_metadata_api_version_ars
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.vs_ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
     namespace                                          = var.target_namespace
   })

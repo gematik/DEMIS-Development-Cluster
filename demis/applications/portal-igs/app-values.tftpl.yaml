@@ -25,10 +25,7 @@ customEnvVars:
 config:
   mfIgs:
     igsGatewayUrl: "${context_path}/gateway/igs"
-    igsServiceUrl: "${context_path}/surveillance/notification-sequence"
-  newApiEndpoints:
-    mfIgs:
-      igsServiceUrl: "${context_path}/surveillance/notification-sequence/v${igs_profile_major_version}"
+    igsServiceUrl: "${context_path}/surveillance/notification-sequence/v${igs_profile_major_version}"
   featureFlags:
     # Prevents empty values that can delete the default environment variables
     "TERRAFORM_DEPLOYMENT": true
