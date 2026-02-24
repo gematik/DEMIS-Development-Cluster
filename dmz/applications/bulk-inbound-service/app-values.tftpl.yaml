@@ -61,6 +61,7 @@ customEnvVars:
   LIQUIBASE_DB_USER: ars-bulk-ddl
   EXTERNAL_SERVER_URL: "https://${core_hostname}${context_path}/surveillance/antibiotic-resistance/v1"
   SPRING_RABBITMQ_HOST: rabbitmq.${namespace}.svc.cluster.local
+  DEMIS_NETWORK_WAF_SERVICE_ADDRESS: "waf-service.${namespace}.svc.cluster.local"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

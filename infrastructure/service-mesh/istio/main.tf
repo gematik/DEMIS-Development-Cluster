@@ -69,12 +69,6 @@ resource "helm_release" "istio_ingressgateway" {
         value = var.external_ip
       }
     ],
-    [for annotation in var.ingress_annotations :
-      {
-        name  = "service.annotations.${annotation.name}"
-        value = annotation.value
-      }
-    ],
     flatten(
       [for istio_node_ports in(var.local_deployment ? var.local_node_ports_istio : []) : [
         {
@@ -100,6 +94,18 @@ resource "helm_release" "istio_ingressgateway" {
         ]
   ])])
 
+  # Use values block for annotations to properly handle special characters like slashes
+  values = length(var.ingress_annotations) > 0 ? [yamlencode({
+    service = {
+      annotations = { for annotation in var.ingress_annotations : annotation.name => annotation.value }
+    }
+  })] : []
+
+  set_list = length(var.loadbalancer_sourceranges) > 0 ? [
+    {
+      name = "service.loadBalancerSourceRanges"
+    value = var.loadbalancer_sourceranges }
+  ] : []
 }
 
 resource "helm_release" "istio_egressgateway" {

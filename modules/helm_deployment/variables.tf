@@ -56,8 +56,8 @@ variable "deployment_information" {
   })
   description = "Deployment information for managing the main and optional canary version of the application"
   validation {
-    condition     = contains(["canary", "replace", "update"], var.deployment_information.deployment-strategy)
-    error_message = "The deployment strategy must be 'canary', 'replace' or 'update'"
+    condition     = contains(["canary", "replace", "update", "rolling"], var.deployment_information.deployment-strategy)
+    error_message = "The deployment strategy must be 'canary', 'replace', 'update' or 'rolling'"
   }
 }
 
@@ -72,4 +72,3 @@ variable "istio_values" {
   description = "Custom values in YAML format to override the configuration for the Istio Helm Chart"
   default     = ""
 }
-

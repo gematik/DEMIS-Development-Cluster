@@ -66,6 +66,12 @@ variable "rabbitmq_password" {
   sensitive   = true
 }
 
+variable "rabbitmq_password_hash" {
+  description = "The RabbitMQ password hash for the application"
+  type        = string
+  sensitive   = true
+}
+
 variable "rabbitmq_erlang_cookie" {
   description = "The RabbitMQ Erlang cookie for the application"
   type        = string

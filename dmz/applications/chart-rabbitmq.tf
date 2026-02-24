@@ -47,6 +47,7 @@ module "rabbitmq_service" {
     storage_class                                      = var.rabbitmq_pvc_config.storageClass,
     volume_capacity                                    = var.rabbitmq_pvc_config.capacity,
     access_modes                                       = var.rabbitmq_pvc_config.accessModes
+    rabbitmq_password_hash                             = var.rabbitmq_password_hash,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rabbitmq_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.rabbitmq_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })

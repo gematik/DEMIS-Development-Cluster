@@ -135,6 +135,12 @@ variable "ingress_annotations" {
   default = []
 }
 
+variable "loadbalancer_sourceranges" {
+  description = "The load balancer source ranges to be used for the ingress gateway"
+  type        = list(string)
+  default     = []
+}
+
 variable "prometheus_service_url" {
   description = "The Cluster-internal URL of the Prometheus Instance to be used"
   type        = string

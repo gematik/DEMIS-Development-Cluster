@@ -15,7 +15,7 @@ function google_sdk() {
         echo "##### Installing Google Cloud SDK"
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
         sudo apt-get install apt-transport-https ca-certificates gnupg bash-completion -y
-        curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+        curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
         if grep -q 'USE_GKE_GCLOUD_AUTH_PLUGIN' ~/.bashrc; then
             sed -i 's|^[ \t#]*\(USE_GKE_GCLOUD_AUTH_PLUGIN=\)\(.*\)|\1True|' ~/.bashrc
         else

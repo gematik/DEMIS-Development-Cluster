@@ -24,6 +24,7 @@ INFRASTRUCTURE_PATH := infrastructure
 APPLICATIONS_PATH := demis
 APPLICATIONS_ENV_FOLDER := demis
 DMZ_PATH := dmz
+DMZ_ENV_FOLDER := dmz
 IDM_PATH := idm
 MESH_PATH := mesh
 EKM_TEMPLATE_PATH := ekm-template
@@ -215,7 +216,7 @@ cleanup-services:
 
 .PHONY: dmz
 dmz: export WORKING_PATH=$(ROOT_DIR)/$(DMZ_PATH)
-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_ENV_FOLDER) STAGE=$(STAGE))
 dmz: init-dmz validate ## Deploys DMZ applications
 ifneq ($(target),)
 	$(eval TARGET_ARG="-target=$(target)")
@@ -231,8 +232,8 @@ endif
 
 .PHONY: cleanup-dmz
 cleanup-dmz: export WORKING_PATH=$(ROOT_DIR)/$(DMZ_PATH)
-cleanup-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
-cleanup-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+cleanup-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_ENV_FOLDER) STAGE=$(STAGE))
+cleanup-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_ENV_FOLDER) STAGE=$(STAGE))
 cleanup-dmz:
 	cd $(WORKING_PATH)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
@@ -263,8 +264,8 @@ init-mesh: ## Initializes the Terraform Mesh components
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	@echo "## Initialising the Mesh project done"
 
-init-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
-init-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_PATH) STAGE=$(STAGE))
+init-dmz: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(DMZ_ENV_FOLDER) STAGE=$(STAGE))
+init-dmz: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(DMZ_ENV_FOLDER) STAGE=$(STAGE))
 init-dmz: ## Initializes the Terraform DMZ components
 	cd $(WORKING_PATH)
 	@echo "## Initialising the DMZ project"
@@ -388,8 +389,8 @@ create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local infrastructure
 	$(MAKE) local mesh
 	$(MAKE) local idm
+	@if [ "$${DEPLOY_DMZ:-}" = "true" ]; then $(MAKE) local dmz; fi
 	$(MAKE) local services
-# 	$(MAKE) local dmz
 
 .PHONY: cleanup-local-environment
 cleanup-local-environment: ## Destroys the local environment
@@ -571,3 +572,4 @@ chores: ## Runs all chores
 	@$(MAKE) checkov WORKING_PATH=$(APPLICATIONS_PATH)
 	@$(MAKE) checkov WORKING_PATH=$(IDM_PATH)
 	@$(MAKE) checkov WORKING_PATH=$(MESH_PATH)
+	@$(MAKE) checkov WORKING_PATH=$(DMZ_PATH)

@@ -28,9 +28,6 @@ config:
     # Use default Secret from this Chart
     useDefault: false
 
-secureMessageGateway:
-  url: "${secure_message_gateway_url}"
-
 podAnnotations:
   app.kubernetes.io/component: waf-service-operator
   app.kubernetes.io/name: waf-service-cluster-operator

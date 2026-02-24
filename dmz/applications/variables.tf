@@ -43,9 +43,9 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for service in var.deployment_information : true &&
-      (!service.enabled || contains(["canary", "update", "replace"], service.deployment-strategy))
+      (!service.enabled || contains(["canary", "update", "replace", "rolling"], service.deployment-strategy))
     ])
-    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update and replace is valid."
+    error_message = "Service Configuration is not valid. Please recheck deployment-strategy. Only canary, update, replace and rolling is valid."
   }
 
   validation {
@@ -253,12 +253,6 @@ variable "rabbitmq_pvc_config" {
 variable "allow_even_rabbitmq_replicas" {
   type        = bool
   description = "Allows setting even number of RabbitMQ replicas (not recommended)"
-}
-
-# URL of the Secure Message Gateway
-variable "secure_message_gateway_url" {
-  type        = string
-  description = "URL of the Secure Message Gateway"
 }
 
 # PGBouncer Database Host

@@ -2,6 +2,24 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.3.0
+- fixed prometheus scraping for local cluster
+- added rabbitmq url for secure-message-gateway
+- added spring profiles config for ars-service
+- added new deployment strategy "rolling" to deploy i.a. stateful sets without downtime
+- added RabbitMq secret to demis namespace
+- fix apt-key command in install-tools.sh
+- deploy dmz before services
+- remove profile for ars-service
+- added rabbitmq user password hash
+- changed/fixed refresh rancher api token pipeline for fkb location
+- added new helm values for istio-ingressgateway
+- moved Pipeline to other project
+- added environment variable for code mapping client addresses to futs and lifecycle-validation-service
+- fix typos in validation-service-charts
+- update pipelines/targets of dmz-dev, dmz-qs, dmz-prod-test for test-stages
+- fix mesh secret handling
+
 ## Release 5.2.0
 - fixed pipeline for infrastructure rollout for correct defining of GOOGLE_APPLICATION_CREDENTIALS
 - added postgres and pgbouncer to dmz namespace
@@ -12,9 +30,10 @@
 - made bulk-inbound-service reachable for bulk and upload
 - Remove unnecessary IGS-variable storage_tls_certificate
 - added environment variables to dmz/bulk-inbound-service
-- added waf and secure-message-gateway to dmz namespace
+- added waf and secure-message-gateway to dmz namespace 
 - adjusted paths for ARS bulk upload to current specification
 - set timeout for minio to 5 min for local cluster
+- removed ff NEW_API_ENDPOINTS for protal-igs
 
 ## Release 5.1.0
 - bulk-inbound-service reachable from ingres

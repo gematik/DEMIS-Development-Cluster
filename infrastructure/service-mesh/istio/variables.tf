@@ -73,6 +73,12 @@ variable "external_ip" {
   default     = ""
 }
 
+variable "loadbalancer_sourceranges" {
+  description = "The load balancer source ranges to be used for the ingress gateway"
+  type        = list(string)
+  default     = []
+}
+
 variable "ingress_annotations" {
   description = "The annotations to be used for the ingress gateway"
   type = list(object({

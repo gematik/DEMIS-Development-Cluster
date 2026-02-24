@@ -51,6 +51,8 @@ module "demis_services" {
   database_credentials         = var.database_credentials
   service_accounts             = var.service_accounts
   ars_pseudo_hash_pepper       = var.ars_pseudo_hash_pepper
+  rabbitmq_username            = var.rabbitmq_username
+  rabbitmq_password            = var.rabbitmq_password
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
 }

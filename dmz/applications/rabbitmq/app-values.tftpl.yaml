@@ -14,6 +14,7 @@ required:
     %{ if strcontains(repository, "gematik1") }
     name: demis-rabbitmq
     %{ endif }
+  rabbitUserPasswordHash: ${rabbitmq_password_hash}
 
 # Image Pull Secrets
 imagePullSecrets: 

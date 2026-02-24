@@ -24,12 +24,17 @@ module "dmz_services" {
   rabbitmq_pvc_config           = var.rabbitmq_pvc_config
   allow_even_rabbitmq_replicas  = var.allow_even_rabbitmq_replicas
   database_target_host          = var.database_target_host
-  postgres_server_certificate   = var.postgres_server_certificate
-  postgres_root_ca_certificate  = var.postgres_root_ca_certificate
-  postgres_server_key           = var.postgres_server_key
-  database_credentials          = var.database_credentials
-  ars_bulk_upload_hmac_secret   = var.ars_bulk_upload_hmac_secret
-  secure_message_gateway_url    = var.secure_message_gateway_url
+
+  # Secrets and Credentials needed for the applications
+  postgres_server_certificate  = var.postgres_server_certificate
+  postgres_root_ca_certificate = var.postgres_root_ca_certificate
+  postgres_server_key          = var.postgres_server_key
+  database_credentials         = var.database_credentials
+  ars_bulk_upload_hmac_secret  = var.ars_bulk_upload_hmac_secret
+  rabbitmq_username            = var.rabbitmq_username
+  rabbitmq_password            = var.rabbitmq_password
+  rabbitmq_password_hash       = var.rabbitmq_password_hash
+  rabbitmq_erlang_cookie       = var.rabbitmq_erlang_cookie
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
 }
