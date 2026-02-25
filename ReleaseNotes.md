@@ -2,7 +2,11 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.3.1
+- reverted removed ff NEW_API_ENDPOINTS for portal-igs
+
 ## Release 5.3.0
+- removed ff NEW_API_ENDPOINTS for portal-igs
 - fixed prometheus scraping for local cluster
 - added rabbitmq url for secure-message-gateway
 - added spring profiles config for ars-service
@@ -33,7 +37,6 @@
 - added waf and secure-message-gateway to dmz namespace 
 - adjusted paths for ARS bulk upload to current specification
 - set timeout for minio to 5 min for local cluster
-- removed ff NEW_API_ENDPOINTS for protal-igs
 
 ## Release 5.1.0
 - bulk-inbound-service reachable from ingres
