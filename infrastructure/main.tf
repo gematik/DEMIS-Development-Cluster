@@ -8,6 +8,11 @@ locals {
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
   pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
+
+  # For local KIND clusters: signals that the kube-apiserver is ready after the
+  # ResourceQuota admission-plugin patch (including the static-pod restart).
+  # For remote clusters this is null and has no effect on the dependency graph.
+  api_server_ready = var.local_cluster ? module.local_cluster[0].api_server_ready : null
 }
 
 # Configure a KIND cluster locally

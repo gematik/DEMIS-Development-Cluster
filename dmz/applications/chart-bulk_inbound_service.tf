@@ -70,12 +70,11 @@ module "bulk_inbound_service" {
     istio_proxy_resources                              = try(local.bulk_inbound_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.bulk_inbound_template_istio, {
-    namespace                      = var.target_namespace,
-    context_path                   = var.context_path,
-    cluster_gateway                = var.cluster_gateway,
-    fhir_api_versions              = local.supported_ars_profile_versions,
-    demis_hostnames                = local.demis_hostnames,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.bulk_inbound_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
+    namespace                = var.target_namespace,
+    context_path             = var.context_path,
+    cluster_gateway          = var.cluster_gateway,
+    fhir_api_versions        = local.supported_ars_profile_versions,
+    demis_hostnames          = local.demis_hostnames,
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
   })
 }

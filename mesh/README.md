@@ -25,6 +25,7 @@ It performs the following operations:
 |------|--------|---------|
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | ../modules/endpoints | n/a |
 | <a name="module_mesh_namespace"></a> [mesh\_namespace](#module\_mesh\_namespace) | ../modules/namespace | n/a |
+| <a name="module_mesh_namespace_quota"></a> [mesh\_namespace\_quota](#module\_mesh\_namespace\_quota) | ../modules/namespace_quota | n/a |
 
 ## Resources
 
@@ -53,6 +54,7 @@ It performs the following operations:
 | <a name="input_istio_gateway_tls_private_key"></a> [istio\_gateway\_tls\_private\_key](#input\_istio\_gateway\_tls\_private\_key) | Base64-encoded, PEM private key associated to the certificate for the TLS Settings. | `string` | n/a | yes |
 | <a name="input_kms_encryption_key"></a> [kms\_encryption\_key](#input\_kms\_encryption\_key) | The GCP KMS encryption key for OpenTofu state encryption | `string` | `""` | no |
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `""` | no |
+| <a name="input_namespace_resource_quota"></a> [namespace\_resource\_quota](#input\_namespace\_resource\_quota) | Resource quota configuration for the target Namespace. Set to null to skip quota creation. | <pre>object({<br/>    limits_cpu      = optional(string)<br/>    limits_memory   = optional(string)<br/>    requests_cpu    = optional(string)<br/>    requests_memory = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_override_stage_name"></a> [override\_stage\_name](#input\_override\_stage\_name) | Override the automatically detected stage name (optional) | `string` | `""` | no |
 | <a name="input_portal_test_token_certificate"></a> [portal\_test\_token\_certificate](#input\_portal\_test\_token\_certificate) | Base64-encoded, PEM certificate to be used for injecting the test token into the Portal. | `string` | `""` | no |
 | <a name="input_s3_hostname"></a> [s3\_hostname](#input\_s3\_hostname) | The Hostname of the S3 Storage Server | `string` | `""` | no |

@@ -38,7 +38,6 @@ module "gateway_igs" {
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.gateway_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
     igs_profile_major_version                          = regex("^([0-9]+)", element(module.futs_igs_metadata.current_profile_versions, -1))[0],
-    feature_flag_new_api_endpoints                     = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
   istio_values = templatefile(local.gateway_igs_template_istio, {
     namespace                = var.target_namespace,

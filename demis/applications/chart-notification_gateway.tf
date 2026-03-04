@@ -39,17 +39,15 @@ module "notification_gateway" {
     config_options                                     = try(var.config_options[local.gateway_name], {}),
     replica_count                                      = local.gateway_replicas,
     resource_block                                     = local.gateway_resource_block,
-    feature_flag_new_api_endpoints                     = try(var.feature_flags[local.gateway_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gateway_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.gateway_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.gateway_template_istio, {
-    namespace                      = var.target_namespace,
-    context_path                   = var.context_path,
-    cluster_gateway                = var.cluster_gateway,
-    portal_hostnames               = local.frontend_hostnames
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.gateway_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    profile_major_version          = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0] # extract major version
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
+    namespace                = var.target_namespace,
+    context_path             = var.context_path,
+    cluster_gateway          = var.cluster_gateway,
+    portal_hostnames         = local.frontend_hostnames
+    profile_major_version    = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0] # extract major version
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
   })
 }

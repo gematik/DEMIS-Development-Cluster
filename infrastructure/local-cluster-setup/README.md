@@ -9,6 +9,7 @@ Terraform Module for creating a local Kubernetes Cluster using KIND (Kubernetes 
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_kind"></a> [kind](#requirement\_kind) | >= 0.9.0, < 1.0.0 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.0.0 |
 
 ## Modules
 
@@ -19,6 +20,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [kind_cluster.cluster](https://registry.terraform.io/providers/tehcyx/kind/latest/docs/resources/cluster) | resource |
+| [null_resource.enable_resource_quota](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
 
@@ -32,6 +34,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_api_server_ready"></a> [api\_server\_ready](#output\_api\_server\_ready) | Signals that the kube-apiserver is ready after the ResourceQuota admission-plugin patch. Depend on this output to avoid connection errors during cluster setup. |
 | <a name="output_kind_endpoint"></a> [kind\_endpoint](#output\_kind\_endpoint) | The Kubernetes API Endpoint |
 | <a name="output_kind_version"></a> [kind\_version](#output\_kind\_version) | The version of KIND Image |
 | <a name="output_kind_worker_nodes"></a> [kind\_worker\_nodes](#output\_kind\_worker\_nodes) | The number of KIND Worker Nodes |

@@ -62,14 +62,13 @@ resource "helm_release" "futs" {
   wait_for_jobs       = true
   cleanup_on_fail     = true
   values = [templatefile(local.futs_template_istio, {
-    namespace                      = var.target_namespace,
-    context_path                   = var.context_path,
-    cluster_gateway                = var.cluster_gateway,
-    demis_hostnames                = local.demis_hostnames,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.futs_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
-    profile_versions_core          = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
-    profile_versions_igs           = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
-    http_timeout_retry_block       = local.futs_http_timeout_retry_block,
+    namespace                = var.target_namespace,
+    context_path             = var.context_path,
+    cluster_gateway          = var.cluster_gateway,
+    demis_hostnames          = local.demis_hostnames,
+    profile_versions_core    = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    profile_versions_igs     = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    http_timeout_retry_block = local.futs_http_timeout_retry_block,
   })]
   timeout = 600
   lifecycle {
@@ -83,11 +82,9 @@ module "futs_core_metadata" {
   source = "../../modules/fhir-profiles-metadata"
 
   profile_type              = "fhir-profile-snapshots"
-  is_canary                 = can(length(var.deployment_information[local.futs_core_name].canary.version))
   deployment_information    = var.deployment_information[local.futs_core_name]
   default_profile_snapshots = local.fhir_profile_snapshots
   provisioning_mode         = "distributed"
-  api_version               = "v2"
 }
 
 module "futs_core" {
@@ -128,11 +125,9 @@ module "futs_igs_metadata" {
   source = "../../modules/fhir-profiles-metadata"
 
   profile_type              = "igs-profile-snapshots"
-  is_canary                 = can(length(var.deployment_information[local.futs_igs_name].canary.version))
   deployment_information    = var.deployment_information[local.futs_igs_name]
   default_profile_snapshots = local.igs_profile_snapshots
   provisioning_mode         = "distributed"
-  api_version               = "v2"
 }
 
 module "futs_igs" {

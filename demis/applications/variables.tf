@@ -402,10 +402,9 @@ variable "surveillance_pseudonym_purger_ars_suspend" {
 variable "profile_provisioning_mode_vs_core" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string
-  nullable    = true
-  default     = null
+  nullable    = false
   validation {
-    condition     = var.profile_provisioning_mode_vs_core == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_core), false)
+    condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_core)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
 }
@@ -413,10 +412,9 @@ variable "profile_provisioning_mode_vs_core" {
 variable "profile_provisioning_mode_vs_igs" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string
-  nullable    = true
-  default     = null
+  nullable    = false
   validation {
-    condition     = var.profile_provisioning_mode_vs_igs == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_igs), false)
+    condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_igs)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
 }
@@ -424,10 +422,9 @@ variable "profile_provisioning_mode_vs_igs" {
 variable "profile_provisioning_mode_vs_ars" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string
-  nullable    = true
-  default     = null
+  nullable    = false
   validation {
-    condition     = var.profile_provisioning_mode_vs_ars == null || try(contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars), false)
+    condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
 }

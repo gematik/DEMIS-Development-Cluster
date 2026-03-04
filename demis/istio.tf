@@ -29,8 +29,7 @@ resource "helm_release" "authorization_policies_istio" {
 
   values = [
     templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
-      namespace                      = var.target_namespace,
-      feature_flag_new_api_endpoints = try(module.application_flags.service_feature_flags["policies-authorizations"].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+      namespace = var.target_namespace,
     })
   ]
 
@@ -81,11 +80,10 @@ resource "helm_release" "network_rules_istio" {
 
   values = [
     templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
-      cluster_gateway                = module.endpoints.istio_gateway_fullname,
-      context_path                   = var.context_path,
-      portal_ti_hosts                = [module.endpoints.portal_hostname],
-      portal_internet_hosts          = [module.endpoints.meldung_hostname],
-      feature_flag_new_api_endpoints = try(module.application_flags.service_feature_flags["network-rules"].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
+      cluster_gateway       = module.endpoints.istio_gateway_fullname,
+      context_path          = var.context_path,
+      portal_ti_hosts       = [module.endpoints.portal_hostname],
+      portal_internet_hosts = [module.endpoints.meldung_hostname],
     })
   ]
 

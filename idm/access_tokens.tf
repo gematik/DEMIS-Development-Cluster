@@ -9,5 +9,5 @@ module "pull_secrets" {
   user_name     = each.value.user_name
   user_password = each.value.password_type == "token" ? var.google_cloud_access_token : each.value.user_password
   password_type = each.value.password_type
-  depends_on    = [module.demis_namespace.name]
+  depends_on    = [module.idm_namespace.name]
 }

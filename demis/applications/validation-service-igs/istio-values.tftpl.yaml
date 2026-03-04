@@ -14,14 +14,6 @@ appServicePortName: http
 # See https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
 isDelegate: true
 
-%{ if profile_handling_api_version == "v1" ~}
-# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
-# The "route" part is generated using the destination subset information
-CustomVirtualServiceHttpRules: >-
-  - {{ include "routing.service.destination.subsets" . }}
-
-${destinationSubsets}
-%{ else ~}
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 %{ if custom_virtual_service_http_rules != null && length(custom_virtual_service_http_rules) > 0 ~}
 CustomVirtualServiceHttpRules: >-
@@ -44,5 +36,4 @@ CustomDestinationSubsets: >-
       ${key}: ${value}
 %{ endfor ~}
 %{ endfor ~}
-%{ endif ~}
 %{ endif ~}

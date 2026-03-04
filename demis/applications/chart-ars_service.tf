@@ -64,13 +64,12 @@ module "ars_service" {
     istio_proxy_resources                              = try(local.ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.ars_template_istio, {
-    namespace                      = var.target_namespace,
-    context_path                   = var.context_path,
-    cluster_gateway                = var.cluster_gateway,
-    demis_hostnames                = local.demis_hostnames
-    support_fhir_api_versions      = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
-    fhir_api_versions              = module.validation_service_ars_metadata.current_profile_versions,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.ars_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
+    namespace                 = var.target_namespace,
+    context_path              = var.context_path,
+    cluster_gateway           = var.cluster_gateway,
+    demis_hostnames           = local.demis_hostnames
+    support_fhir_api_versions = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
+    fhir_api_versions         = module.validation_service_ars_metadata.current_profile_versions,
+    http_timeout_retry_block  = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
   })
 }

@@ -45,7 +45,6 @@ virtualServiceHttpRules:
     ${indent(4, http_timeout_retry_block[coalesce(profile,"core")])}
 %{ endif ~}
 %{ endfor ~}
-%{ if feature_flag_new_api_endpoints ~}
 %{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
   - match:
     - headers:
@@ -67,7 +66,6 @@ virtualServiceHttpRules:
     ${indent(4, http_timeout_retry_block["core"])}
 %{ endif ~}
 %{ endfor ~}
-%{ endif ~}
   - match:
       - uri:
           prefix: /services/fhir-ui-data-model-translation
@@ -120,7 +118,6 @@ virtualServiceExternalHttpRules:
     ${indent(4, http_timeout_retry_block[coalesce(profile,"core")])}
 %{ endif ~}
 %{ endfor ~}
-%{ if feature_flag_new_api_endpoints ~}
 %{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
   - match:
     - headers:
@@ -137,7 +134,6 @@ virtualServiceExternalHttpRules:
     ${indent(4, http_timeout_retry_block[coalesce(entry.prefix,"core")])}
 %{ endif ~}
 %{ endfor ~}
-%{ endif ~}
   - match:
       - uri:
           prefix: ${context_path}/services/fhir-ui-data-model-translation

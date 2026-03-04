@@ -22,13 +22,8 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         prefix: /surveillance/antibiotic-resistance/fhir/
-%{ else ~}
-    - uri:
-        prefix: /surveillance/antibiotic-resistance/
-%{ endif ~}
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}
@@ -36,7 +31,7 @@ virtualServiceHttpRules:
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
-%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
+%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 ~}
 %{ for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
   - headers:
       request:
@@ -56,13 +51,8 @@ virtualServiceExternalHttpRules:
 %{ endfor ~}
 %{ endif ~}
   - match:
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/fhir/(\\$|%24)process-notification(.*)"
-%{ else ~}
-    - uri:
-        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/(\\$|%24)process-notification(.*)"
-%{ endif ~}
     rewrite:
       uriRegexRewrite:
         match: "(?i)^${context_path}/surveillance/antibiotic-resistance/(fhir/)?(\\$|%24)process-notification(.*)?$"

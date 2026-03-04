@@ -44,3 +44,15 @@ variable "kms_encryption_key" {
     error_message = "Invalid KMS encryption key format, must start with 'projects/...'"
   }
 }
+
+# Resource Quota for the target Namespace
+variable "namespace_resource_quota" {
+  type = object({
+    limits_cpu      = optional(string)
+    limits_memory   = optional(string)
+    requests_cpu    = optional(string)
+    requests_memory = optional(string)
+  })
+  description = "Resource quota configuration for the target Namespace. Set to null to skip quota creation."
+  default     = null
+}
