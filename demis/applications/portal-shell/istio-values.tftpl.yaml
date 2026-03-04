@@ -18,38 +18,10 @@ virtualServiceDomains:
   - ${hostname}
   %{~ endfor ~}
 
-# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
-# The "route" part is generated using the destination subset information
-virtualServiceHttpRules:
-  - match:
-%{ if feature_flag_new_api_endpoints ~}
-    - uri:
-        prefix: /portal/shell
-%{ else ~}
-    - headers:
-        gateway-request:
-          exact: "false"
-      uri:
-        prefix: /portal
-%{ endif ~}
-    rewrite:
-      uri: /
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-
 virtualServiceExternalHttpRules:
   - match:
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         prefix: ${context_path}/portal/shell
-%{ else ~}
-    - headers:
-        gateway-request:
-          exact: "false"
-      uri:
-        prefix: ${context_path}/portal
-%{ endif ~}
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}

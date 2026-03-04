@@ -19,7 +19,6 @@ virtualServiceDomains:
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
-%{ if feature_flag_new_api_endpoints ~}
   - match:
     - uri:
         prefix: /hospitalization/fhir/
@@ -27,13 +26,6 @@ virtualServiceHttpRules:
         prefix: /notification-api/fhir/
     - uri:
         prefix: /
-%{ else ~}
-  - match:
-    - uri:
-        prefix: /hospitalization
-    - uri:
-        prefix: /notification-api
-%{ endif ~}
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}
@@ -41,7 +33,7 @@ virtualServiceHttpRules:
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
-%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
+%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 ~}
 %{for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
   - headers:
       request:
@@ -74,7 +66,6 @@ virtualServiceExternalHttpRules:
 %{ endif ~}
 %{ endfor ~}
 %{ endif ~}
-%{ if feature_flag_new_api_endpoints ~}
   - headers:
       request:
         set:
@@ -95,15 +86,6 @@ virtualServiceExternalHttpRules:
         prefix: ${context_path}/notification-api/fhir
     rewrite:
       uri: /
-%{ else ~}
-  - match:
-    - uri:
-        prefix: ${context_path}/hospitalization
-    - uri:
-        prefix: ${context_path}/notification-api
-    rewrite:
-      uri: /
-%{ endif ~}
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}

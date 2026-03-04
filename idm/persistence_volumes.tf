@@ -6,7 +6,7 @@ module "persistent_volume_claims" {
   source   = "../modules/persistence_volume_claim"
   for_each = var.volumes
 
-  namespace = module.demis_namespace.name
+  namespace = module.idm_namespace.name
   labels    = local.labels
 
   name             = each.key

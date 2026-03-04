@@ -27,8 +27,9 @@ It performs the following operations:
 | <a name="module_application_flags"></a> [application\_flags](#module\_application\_flags) | ../modules/flags | n/a |
 | <a name="module_application_resources"></a> [application\_resources](#module\_application\_resources) | ../modules/resources | n/a |
 | <a name="module_deactivate_maintenance_mode"></a> [deactivate\_maintenance\_mode](#module\_deactivate\_maintenance\_mode) | ../modules/maintenance_mode | n/a |
-| <a name="module_demis_namespace"></a> [demis\_namespace](#module\_demis\_namespace) | ../modules/namespace | n/a |
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | ../modules/endpoints | n/a |
+| <a name="module_idm_namespace"></a> [idm\_namespace](#module\_idm\_namespace) | ../modules/namespace | n/a |
+| <a name="module_idm_namespace_quota"></a> [idm\_namespace\_quota](#module\_idm\_namespace\_quota) | ../modules/namespace_quota | n/a |
 | <a name="module_idm_services"></a> [idm\_services](#module\_idm\_services) | ./applications | n/a |
 | <a name="module_persistent_volume_claims"></a> [persistent\_volume\_claims](#module\_persistent\_volume\_claims) | ../modules/persistence_volume_claim | n/a |
 | <a name="module_pull_secrets"></a> [pull\_secrets](#module\_pull\_secrets) | ../modules/pull_secret | n/a |
@@ -79,6 +80,7 @@ It performs the following operations:
 | <a name="input_keycloak_user_purger_suspend"></a> [keycloak\_user\_purger\_suspend](#input\_keycloak\_user\_purger\_suspend) | Defines if the keycloak-user-purger is suspended. | `bool` | `false` | no |
 | <a name="input_kms_encryption_key"></a> [kms\_encryption\_key](#input\_kms\_encryption\_key) | The GCP KMS encryption key for OpenTofu state encryption | `string` | `""` | no |
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `""` | no |
+| <a name="input_namespace_resource_quota"></a> [namespace\_resource\_quota](#input\_namespace\_resource\_quota) | Resource quota configuration for the target Namespace. Set to null to skip quota creation. | <pre>object({<br/>    limits_cpu      = optional(string)<br/>    limits_memory   = optional(string)<br/>    requests_cpu    = optional(string)<br/>    requests_memory = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_override_stage_name"></a> [override\_stage\_name](#input\_override\_stage\_name) | Override the automatically detected stage name (optional) | `string` | `""` | no |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |

@@ -31,7 +31,7 @@ virtualServiceHttpRules:
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
-%{ if length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}
+%{ if length(fhir_api_versions) > 0 ~}
 %{ for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
   - headers:
       request:

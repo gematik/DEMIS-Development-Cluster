@@ -56,8 +56,7 @@ module "fhir_storage_writer" {
     db_ddl_secret_checksum                             = try(kubernetes_secret_v1.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssw_template_istio, {
-    namespace                      = var.target_namespace,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.fssw_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssw_name], null)
+    namespace                = var.target_namespace,
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssw_name], null)
   })
 }

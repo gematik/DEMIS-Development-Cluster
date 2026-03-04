@@ -39,13 +39,12 @@ module "notification_processing_service" {
     redis_cus_reader_credentials_checksum              = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.nps_template_istio, {
-    namespace                      = var.target_namespace,
-    context_path                   = var.context_path,
-    cluster_gateway                = var.cluster_gateway,
-    core_hostname                  = var.core_hostname
-    support_fhir_api_versions      = var.profile_provisioning_mode_vs_core != null && var.profile_provisioning_mode_vs_core != "dedicated"
-    fhir_api_versions              = module.validation_service_core_metadata.current_profile_versions,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.nps_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.nps_name], null)
+    namespace                 = var.target_namespace,
+    context_path              = var.context_path,
+    cluster_gateway           = var.cluster_gateway,
+    core_hostname             = var.core_hostname
+    support_fhir_api_versions = var.profile_provisioning_mode_vs_core != null && var.profile_provisioning_mode_vs_core != "dedicated"
+    fhir_api_versions         = module.validation_service_core_metadata.current_profile_versions,
+    http_timeout_retry_block  = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.nps_name], null)
   })
 }

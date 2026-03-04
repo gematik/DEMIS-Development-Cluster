@@ -44,19 +44,17 @@ module "fhir_storage_reader" {
     config_options                                     = try(var.config_options[local.fssr_name], {}),
     replica_count                                      = local.fssr_replicas,
     resource_block                                     = local.fssr_resource_block,
-    feature_flag_new_api_endpoints                     = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false),
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.fssr_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssr_template_istio, {
-    namespace                      = var.target_namespace,
-    cluster_gateway                = var.cluster_gateway,
-    core_hostname                  = var.core_hostname,
-    context_path                   = var.context_path,
-    demis_hostnames                = local.demis_hostnames,
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
-    http_timeout_retry_block       = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
+    namespace                = var.target_namespace,
+    cluster_gateway          = var.cluster_gateway,
+    core_hostname            = var.core_hostname,
+    context_path             = var.context_path,
+    demis_hostnames          = local.demis_hostnames,
+    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
   })
 }
 

@@ -32,7 +32,7 @@ resource "helm_release" "authorization_policies_istio" {
     })
   ]
 
-  depends_on = [module.demis_namespace.name]
+  depends_on = [module.idm_namespace.name]
 }
 
 resource "helm_release" "network_rules_istio" {
@@ -55,5 +55,5 @@ resource "helm_release" "network_rules_istio" {
     file("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml")
   ]
 
-  depends_on = [module.demis_namespace.name]
+  depends_on = [module.idm_namespace.name]
 }

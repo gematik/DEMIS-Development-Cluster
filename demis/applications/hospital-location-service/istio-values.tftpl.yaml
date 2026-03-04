@@ -23,7 +23,6 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         prefix: /v1/locations
     - uri:
@@ -32,21 +31,12 @@ virtualServiceHttpRules:
         prefix: /hospital-locations
     rewrite:
       uri: /locations
-%{ else ~}
-    - uri:
-        prefix: /services/hospital-locations
-    - uri:
-        prefix: /hospital-locations
-    rewrite:
-      uri: /hospital-locations
-%{ endif ~}
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
   - match:
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         prefix: ${context_path}/directory/hospital/v1/locations
     - uri:
@@ -55,14 +45,6 @@ virtualServiceExternalHttpRules:
         prefix: ${context_path}/hospital-locations
     rewrite:
       uri: /locations
-%{ else ~}
-    - uri:
-        prefix: ${context_path}/services/hospital-locations
-    - uri:
-        prefix: ${context_path}/hospital-locations
-    rewrite:
-      uri: /hospital-locations
-%{ endif ~}
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}

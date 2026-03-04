@@ -19,53 +19,7 @@ virtualServiceDomains:
   - ${hostname}
   %{~ endfor ~}
 
-# HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
-# The "route" part is generated using the destination subset information
-virtualServiceHttpRules:
-  - match:
-    - headers:
-        gateway-request:
-          exact: "true"
-      uri:
-        prefix: /gateway/notification/api/ng
-    rewrite:
-      uri: /api/ng
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-%{ if feature_flag_new_api_endpoints ~}
-  - match:
-    - uri:
-        prefix: /gateway/pathogen
-    - uri:
-        prefix: /gateway/disease
-    - uri:
-        prefix: /gateway/bedoccupancy
-    rewrite:
-      uri: /
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-%{ endif ~}
-
 virtualServiceExternalHttpRules:
-  - match:
-    - headers:
-        gateway-request:
-          exact: "true"
-      uri:
-%{ if feature_flag_new_api_endpoints ~}
-        prefix: ${context_path}/gateway/notification/api/ng
-%{ else ~}
-        prefix: ${context_path}/gateway/notification
-%{ endif ~}
-    rewrite:
-      uri: /
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-
-%{ if feature_flag_new_api_endpoints ~}
   - headers:
       request:
         set:
@@ -103,5 +57,4 @@ virtualServiceExternalHttpRules:
       uri: /
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
 %{ endif ~}

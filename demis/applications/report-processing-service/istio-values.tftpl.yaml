@@ -22,10 +22,8 @@ virtualServiceHttpRules:
   - match:
     - uri:
         prefix: /reports/fhir/
-%{ if feature_flag_new_api_endpoints ~}
     - uri:
         prefix: /
-%{ endif }
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}
@@ -33,7 +31,7 @@ virtualServiceHttpRules:
 %{ endif ~}
 
 virtualServiceExternalHttpRules:
-%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 && feature_flag_new_api_endpoints ~}  
+%{ if support_fhir_api_versions && length(fhir_api_versions) > 0 ~}  
 %{for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
   - headers:
       request:

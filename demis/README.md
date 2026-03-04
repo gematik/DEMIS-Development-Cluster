@@ -28,6 +28,7 @@ It performs the following operations:
 | <a name="module_application_resources"></a> [application\_resources](#module\_application\_resources) | ../modules/resources | n/a |
 | <a name="module_deactivate_maintenance_mode"></a> [deactivate\_maintenance\_mode](#module\_deactivate\_maintenance\_mode) | ../modules/maintenance_mode | n/a |
 | <a name="module_demis_namespace"></a> [demis\_namespace](#module\_demis\_namespace) | ../modules/namespace | n/a |
+| <a name="module_demis_namespace_quota"></a> [demis\_namespace\_quota](#module\_demis\_namespace\_quota) | ../modules/namespace_quota | n/a |
 | <a name="module_demis_services"></a> [demis\_services](#module\_demis\_services) | ./applications | n/a |
 | <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | ../modules/endpoints | n/a |
 | <a name="module_persistent_volume_claims"></a> [persistent\_volume\_claims](#module\_persistent\_volume\_claims) | ../modules/persistence_volume_claim | n/a |
@@ -72,13 +73,14 @@ It performs the following operations:
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `""` | no |
 | <a name="input_minio_root_password"></a> [minio\_root\_password](#input\_minio\_root\_password) | The Minio Root Password | `string` | n/a | yes |
 | <a name="input_minio_root_user"></a> [minio\_root\_user](#input\_minio\_root\_user) | The Minio Root User | `string` | n/a | yes |
+| <a name="input_namespace_resource_quota"></a> [namespace\_resource\_quota](#input\_namespace\_resource\_quota) | Resource quota configuration for the target Namespace. Set to null to skip quota creation. | <pre>object({<br/>    limits_cpu      = optional(string)<br/>    limits_memory   = optional(string)<br/>    requests_cpu    = optional(string)<br/>    requests_memory = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_override_stage_name"></a> [override\_stage\_name](#input\_override\_stage\_name) | Override the automatically detected stage name (optional) | `string` | `""` | no |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_key"></a> [postgres\_server\_key](#input\_postgres\_server\_key) | The Server Key for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
-| <a name="input_profile_provisioning_mode_vs_ars"></a> [profile\_provisioning\_mode\_vs\_ars](#input\_profile\_provisioning\_mode\_vs\_ars) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
-| <a name="input_profile_provisioning_mode_vs_core"></a> [profile\_provisioning\_mode\_vs\_core](#input\_profile\_provisioning\_mode\_vs\_core) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
-| <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
+| <a name="input_profile_provisioning_mode_vs_ars"></a> [profile\_provisioning\_mode\_vs\_ars](#input\_profile\_provisioning\_mode\_vs\_ars) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `"combined"` | no |
+| <a name="input_profile_provisioning_mode_vs_core"></a> [profile\_provisioning\_mode\_vs\_core](#input\_profile\_provisioning\_mode\_vs\_core) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `"combined"` | no |
+| <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `"combined"` | no |
 | <a name="input_rabbitmq_password"></a> [rabbitmq\_password](#input\_rabbitmq\_password) | The RabbitMQ password for the application | `string` | n/a | yes |
 | <a name="input_rabbitmq_username"></a> [rabbitmq\_username](#input\_rabbitmq\_username) | The RabbitMQ username for the application | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_password"></a> [redis\_cus\_reader\_password](#input\_redis\_cus\_reader\_password) | The Redis CUS Password (Reader) | `string` | n/a | yes |

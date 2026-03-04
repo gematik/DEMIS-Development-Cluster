@@ -2,6 +2,13 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.4.0
+- Add ResourceQuota configuration for namespaces
+- fix wrong namespace module name in idm
+- removed feature flag FEATURE_FLAG_NEW_API_ENDPOINTS and related configurations
+- upgraded provider hashicorp/random to 3.8.1
+- enable ResourceQuota admission plugin in KIND cluster
+
 ## Release 5.3.1
 - reverted removed ff NEW_API_ENDPOINTS for portal-igs
 
@@ -20,9 +27,11 @@
 - added new helm values for istio-ingressgateway
 - moved Pipeline to other project
 - added environment variable for code mapping client addresses to futs and lifecycle-validation-service
-- fix typos in validation-service-charts
+- fixed typos in validation-service-charts
 - update pipelines/targets of dmz-dev, dmz-qs, dmz-prod-test for test-stages
 - fix mesh secret handling
+- removed feature flag FEATURE_FLAG_NEW_API_ENDPOINTS and related configurations
+- upgraded provider hashicorp/random to 3.8.1
 
 ## Release 5.2.0
 - fixed pipeline for infrastructure rollout for correct defining of GOOGLE_APPLICATION_CREDENTIALS

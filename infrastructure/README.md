@@ -26,7 +26,7 @@ It performs the following operations:
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.0.1 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | 3.7.2 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.8.1 |
 
 ## Modules
 
