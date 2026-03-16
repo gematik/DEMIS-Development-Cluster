@@ -42,14 +42,13 @@ module "validation_service_are" {
   application_name       = local.vs_are_name
   deployment_information = var.deployment_information[local.vs_are_name]
   helm_settings          = local.common_helm_release_settings
-  # remove? depends_on             = [module.package_registry]
   application_values = templatefile(local.vs_are_template_app, {
     image_pull_secrets                                 = var.pull_secrets,
     repository                                         = var.docker_registry,
     debug_enable                                       = var.debug_enabled,
     istio_enable                                       = var.istio_enabled,
     profile_version                                    = local.are_profile_snapshots,
-    profile_docker_registry                            = "crg.apkg.io/noves1", # FIXME This will break at gematik var.docker_registry,
+    profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.vs_are_name], {}),
     config_options                                     = try(var.config_options[local.vs_are_name], {}),
     replica_count                                      = local.vs_are_replicas,

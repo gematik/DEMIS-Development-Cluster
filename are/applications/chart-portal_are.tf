@@ -21,7 +21,6 @@ module "portal_are" {
   application_name       = local.portal_are_name
   deployment_information = var.deployment_information[local.portal_are_name]
   helm_settings          = local.common_helm_release_settings
-  #depends_on             = [module.gateway_are[0]]
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_are_template_app, {
@@ -42,6 +41,5 @@ module "portal_are" {
     context_path                   = var.context_path,
     cluster_gateway                = var.cluster_gateway,
     portal_hostnames               = local.frontend_hostnames
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.portal_are_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }

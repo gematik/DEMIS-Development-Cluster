@@ -53,7 +53,6 @@ resource "helm_release" "authentication_policies_istio" {
     templatefile("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml", {
       issuer_hostname   = module.endpoints.auth_hostname,
       keycloak_hostname = module.endpoints.keycloak_svc_hostname
-      feature_flag_new_api_endpoints = try(module.application_flags.service_feature_flags["network-rules"].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
     })
   ]
 

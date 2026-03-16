@@ -39,7 +39,6 @@ module "notification_are_gateway" {
     config_options                                     = try(var.config_options[local.are_gateway_name], {}),
     replica_count                                      = local.are_gateway_replicas,
     resource_block                                     = local.are_gateway_resource_block,
-    feature_flag_new_api_endpoints                     = try(var.feature_flags[local.are_gateway_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.are_gateway_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.are_gateway_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
@@ -48,6 +47,5 @@ module "notification_are_gateway" {
     context_path                   = var.context_path,
     cluster_gateway                = var.cluster_gateway,
     portal_hostnames               = local.frontend_hostnames
-    feature_flag_new_api_endpoints = try(var.feature_flags[local.are_gateway_name].FEATURE_FLAG_NEW_API_ENDPOINTS, false)
   })
 }
