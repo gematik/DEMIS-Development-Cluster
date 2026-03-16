@@ -21,15 +21,9 @@ virtualServiceDomains:
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
-virtualServiceHttpRules:
-  - match:
-      - uri:
-          prefix: /gateway/are
-      - uri:
-          prefix: /api/are-token
 virtualServiceExternalHttpRules:
   - match:
       - uri:
           prefix: /gateway/are
-      - uri:
-          prefix: /api/are-token
+    rewrite:
+      uri: /

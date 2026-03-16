@@ -21,6 +21,6 @@ virtualServiceDomains:
 virtualServiceHttpRules:
   - match:
       - uri:
-          prefix: /surveillance/respiratory-infections/v1/fhir/
+          prefix: /
     rewrite:
       uri: /

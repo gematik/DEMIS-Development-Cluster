@@ -23,8 +23,6 @@ customEnvVars:
   PORTAL_CSP_HOSTNAME: "${csp_hostname}"
 
 config:
-  mfIgs:
-    igsGatewayUrl: "${context_path}/gateway/are"
   featureFlags:
     # Prevents empty values that can delete the default environment variables
     "TERRAFORM_DEPLOYMENT": true

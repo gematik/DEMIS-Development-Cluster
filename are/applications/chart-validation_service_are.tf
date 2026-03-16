@@ -25,11 +25,9 @@ locals {
 module "validation_service_are_metadata" {
   source = "../../modules/fhir-profiles-metadata"
   profile_type              = local.fhir_profile_metadata_api_version_are == "v1" && strcontains(var.docker_registry, "gematik1") ? "demis-are-profile-snapshots" : "are-profile-snapshots"
-  is_canary                 = can(length(var.deployment_information[local.vs_are_name].canary.version))
   deployment_information    = var.deployment_information[local.vs_are_name]
   default_profile_snapshots = local.are_profile_snapshots
   provisioning_mode         = var.profile_provisioning_mode_vs_are
-  api_version               = local.fhir_profile_metadata_api_version_are
 }
 
 resource "terraform_data" "validation_service_are_http_rules" {

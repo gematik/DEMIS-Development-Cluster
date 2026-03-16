@@ -33,7 +33,6 @@ customEnvVars:
 
   ANPS_BASE_URL: "http://are-notification-processing-service.${namespace}.svc.cluster.local"
   ANPS_SURVEILLANCE_PATH: "/surveillance/respiratory-infections/v1/fhir/$process-are-notification"
-  KEYCLOAK_TOKEN_LAB_URI: "https://${core_hostname}/auth/realms/LAB/protocol/openid-connect/token"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

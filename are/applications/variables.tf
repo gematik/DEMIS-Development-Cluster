@@ -227,12 +227,6 @@ variable "auth_hostname" {
   }
 }
 
-variable "storage_hostname" {
-  type        = string
-  description = "The URL to access the S3 compatible storage (minio)"
-  default     = "storage"
-}
-
 #########################
 # Application Configuration
 #########################

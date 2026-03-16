@@ -29,7 +29,7 @@ module "portal_are" {
     repository                                         = var.docker_registry,
     istio_enable                                       = var.istio_enabled,
     context_path                                       = var.context_path,
-    csp_hostname                                       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    csp_hostname                                       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/",
     feature_flags                                      = try(var.feature_flags[local.portal_are_name], {}),
     config_options                                     = try(var.config_options[local.portal_are_name], {}),
     replica_count                                      = local.portal_are_replicas,
