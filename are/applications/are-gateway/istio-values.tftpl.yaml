@@ -1,5 +1,5 @@
 # Application Information
-appName: "service-demo"
+appName: "are-gateway"
 appNamespace: "${namespace}" # defaults to Release.Namespace
 # Settings for the Kubernetes Service Object for the Application
 appServiceType: ClusterIP
@@ -13,30 +13,17 @@ appServicePortName: http
 virtualServiceGateways: 
   - ${cluster_gateway}
 # the List of the Hostnames/Domains that should match the VirtualService definition (external)
-# Core and Portal Hostnames
+# Portal Hostnames
 virtualServiceDomains:
-  %{~ for hostname in demis_hostnames ~}
+  %{~ for hostname in portal_hostnames ~}
   - ${hostname}
   %{~ endfor ~}
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
-virtualServiceHttpRules:
-  - match:
-    - uri:
-        prefix: /service-demo
-    rewrite:
-      uri: /api/hello
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-
 virtualServiceExternalHttpRules:
   - match:
       - uri:
-          prefix: /service-demo
+          prefix: /gateway/are
     rewrite:
-      uri: /api/hello
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
+      uri: /

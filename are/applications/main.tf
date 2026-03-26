@@ -20,4 +20,6 @@ locals {
     istio_routing_chart_name      = coalesce(try(var.deployment_information["istio-routing"].chart-name, ""), "istio-routing")
     reset_values                  = var.reset_values
   }
+  # The version of the ARE Profile Snapshots to use
+  are_profile_snapshots = var.deployment_information["are-profile-snapshots"].main.version
 }

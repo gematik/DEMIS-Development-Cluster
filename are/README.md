@@ -1,6 +1,6 @@
-# demis
+# are
 
-Module responsible for configuring and deploying the DEMIS Services in a Kubernetes Cluster.
+Module responsible for configuring and deploying the ARE Services in a Kubernetes Cluster.
 
 It performs the following operations:
 
