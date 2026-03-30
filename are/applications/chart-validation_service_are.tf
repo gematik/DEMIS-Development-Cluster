@@ -51,14 +51,14 @@ module "validation_service_are" {
     replica_count                                      = local.vs_are_replicas,
     resource_block                                     = local.vs_are_resource_block,
     profile_versions                                   = module.validation_service_are_metadata.current_profile_versions,
-    provisioning_mode                                  = var.profile_provisioning_mode_vs_are,
+    provisioning_mode                                  = coalesce(var.profile_provisioning_mode_vs_are, "dedicated")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_are_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = try(local.vs_are_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.vs_are_template_istio, {
     namespace                         = var.target_namespace,
-    custom_virtual_service_http_rules = try(terraform_data.validation_service_are_http_rules[0].output, ""), //TODO currently not defined
+    custom_virtual_service_http_rules = try(terraform_data.validation_service_are_http_rules.output, ""), //TODO currently not defined
     custom_destination_subsets        = module.validation_service_are_metadata.destination_subsets,
     destinationSubsets                = try(yamlencode(module.validation_service_are_metadata.destination_subsets), "")
     http_timeout_retry_block          = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_are_name], null)

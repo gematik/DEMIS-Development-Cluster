@@ -31,9 +31,11 @@ module "are_notification_processing_service" {
     feature_flags                                      = try(var.feature_flags[local.service_name], {}),
     config_options                                     = try(var.config_options[local.service_name], {}),
     replica_count                                      = local.service_replicas,
-    resource_block                                     = local.service_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.service_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.service_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    resource_block                                     = local.service_resource_block,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.service_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = try(local.service_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    redis_user                                         = var.redis_cus_reader_user
+    redis_cus_reader_credentials_checksum              = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.service_template_istio, {
     namespace                = var.target_namespace,
