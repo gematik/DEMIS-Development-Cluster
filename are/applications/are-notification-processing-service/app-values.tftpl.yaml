@@ -22,6 +22,15 @@ imagePullSecrets:
 customEnvVars: 
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
+  SERVER_PORT: "8080"
+  REDIS_USER: "${redis_user}"
+  REDIS_HOST: "redis-cus.idm.svc.cluster.local"
+  REDIS_PORT: "6379"
+  SERVLET_CONTEXT_PATH: "/"
+  VALIDATION_SERVICE_URL: "http://validation-service-are.are.svc.cluster.local"
+  ENRICHMENT_SERVICE_URL: "http://context-enrichment-service.demis.svc.cluster.local"
+  FHIR_STORAGE_SERVICE_URL: "http://fhir-storage-writer.demis.svc.cluster.local"
+  FHIR_STORAGE_CONTEXT_PATH: "/notification-clearing-api/fhir"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
@@ -31,6 +40,7 @@ customEnvVars:
 
 %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
+  checksum/redis_reader: "${redis_cus_reader_credentials_checksum}"
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}

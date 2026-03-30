@@ -23,5 +23,9 @@ module "are_services" {
   timeout_retry_overrides       = var.timeout_retry_overrides
   reset_values                  = var.reset_values
 
+  # Secrets and Credentials needed for the applications
+  redis_cus_reader_user        = var.redis_cus_reader_user
+  redis_cus_reader_password    = var.redis_cus_reader_password
+
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
 }
