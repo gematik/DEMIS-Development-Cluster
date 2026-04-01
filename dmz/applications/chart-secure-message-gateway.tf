@@ -20,6 +20,7 @@ module "secure_message_gateway" {
   application_name       = local.secure_message_gateway_name
   deployment_information = var.deployment_information[local.secure_message_gateway_name]
   helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.rabbitmq_service[0]]
 
   # Pass the values for the chart
   application_values = templatefile(local.secure_message_gateway_template_app, {

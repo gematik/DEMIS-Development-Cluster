@@ -1,0 +1,7 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    unexpected_template_property: true
+    http_route_configs:
+      - variables: {}
+

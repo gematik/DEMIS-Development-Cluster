@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Traffic Routes Templates Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "traffic_routes_templates"
+  ],
+  "properties": {
+    "traffic_routes_templates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/template"
+      }
+    }
+  },
+  "definitions": {
+    "variableMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "headers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "withoutHeaders": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      ]
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri_template"
+      ],
+      "properties": {
+        "uri_template": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "exact": {
+                  "enum": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "PATCH"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "prefix": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "regex": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          ]
+        },
+        "match_type": {
+          "enum": [
+            "prefix",
+            "regex"
+          ]
+        },
+        "headers": {
+          "$ref": "#/definitions/headers"
+        },
+        "ignoreUriCase": {
+          "type": "boolean"
+        },
+        "without_headers": {
+          "$ref": "#/definitions/withoutHeaders"
+        }
+      }
+    },
+    "rewrite": {
+      "type": "object",
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "enum": [
+            "simple",
+            "regex"
+          ]
+        },
+        "match_template": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": { "const": "regex" }
+            },
+            "required": ["method"]
+          },
+          "then": {
+            "required": ["match_template", "target"]
+          }
+        }
+      ]
+    },
+    "delegate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "namespace"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "namespace": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "httpRouteConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "variables": {
+          "$ref": "#/definitions/variableMap"
+        },
+        "matches": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/match"
+          }
+        },
+        "additional_headers": {
+          "$ref": "#/definitions/headers"
+        },
+        "rewrite": {
+          "$ref": "#/definitions/rewrite"
+        },
+        "delegate": {
+          "$ref": "#/definitions/delegate"
+        }
+      }
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service",
+        "http_route_configs",
+        "enabled"
+      ],
+      "properties": {
+        "service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "variables": {
+          "$ref": "#/definitions/variableMap"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "delegate": {
+          "$ref": "#/definitions/delegate"
+        },
+        "additional_headers": {
+          "$ref": "#/definitions/headers"
+        },
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/match"
+          }
+        },
+        "rewrite": {
+          "$ref": "#/definitions/rewrite"
+        },
+        "http_route_configs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/httpRouteConfig"
+          }
+        }
+      }
+    }
+  }
+}

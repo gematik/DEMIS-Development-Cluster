@@ -1,0 +1,7 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    http_route_configs:
+      - matches:
+          - uri_template: /items
+            ignoreUriCase: "yes"

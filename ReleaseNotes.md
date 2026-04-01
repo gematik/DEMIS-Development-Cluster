@@ -2,9 +2,29 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.5.0
+- added Kyverno and Policy Reporter Metrics + prometheus scraping annotations
+- added Kyverno Dashboard
+- added Authentication-Policies for idm
+- fixed service annotation for Kyverno
+- handed over the image pull secret to the kyverno policies in all namespaces
+- new batch endpoints in ARS
+- changed REF-FKB postgres host in switchDatabase.sh
+- update Database Pipeline for location switching and add surveillance-pseudonym-service-ars, ars-service to restart list
+- simplified ARS/BIS virtual service configuration
+- changed PROD-FKB postgres host in switchDatabase.sh
+- fixed restart all services for test stages and including handling for dmz and are namespaces
+- fixed service dependencies in the dmz namespace
+- added new module istio_routing_configurations for define to create istio routing rules by yaml file
+- added pgbouncer to dependency to ars-service
+- extended install-tools script with python3-pip and python3-venv
+- added `-m` flag to `.scripts/update-service-local.sh` to patch multiple matching deployments/cronjobs at once (e.g. all variants of a service like `validation-service-*`)
+- fixed HTTP method matching in Istio routing rule generation (`istio_routing_configurations` module now correctly applies `method` filter in match blocks)
+- add ARE Setup
+
 ## Release 5.4.0
-- Add ResourceQuota configuration for namespaces
-- fix wrong namespace module name in idm
+- Added ResourceQuota configuration for namespaces
+- fixed wrong namespace module name in idm
 - removed feature flag FEATURE_FLAG_NEW_API_ENDPOINTS and related configurations
 - upgraded provider hashicorp/random to 3.8.1
 - enable ResourceQuota admission plugin in KIND cluster

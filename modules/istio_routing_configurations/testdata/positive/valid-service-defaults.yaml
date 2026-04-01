@@ -1,0 +1,23 @@
+traffic_routes_templates:
+  - service: svc-defaults
+    enabled: true
+    variables:
+      version: v1
+    delegate:
+      name: delegate-${version}
+      namespace: istio-${version}
+    additional_headers:
+      x-service-version: ${version}
+      x-static: fixed
+    matches:
+      - uri_template: /${version}/patients
+        headers:
+          x-env: prod
+        ignoreUriCase: true
+        without_headers:
+          - x-internal
+    rewrite:
+      target: /${version}/target
+    http_route_configs:
+      - variables: {}
+

@@ -29,7 +29,8 @@ virtualServiceHttpRules:
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
-
+  
+%{ if length(istio_rules_block_external) == 0 ~}
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 ~}
 %{for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
@@ -37,7 +38,10 @@ virtualServiceExternalHttpRules:
       request:
         set:
           x-fhir-api-version: v${version}
+          x-api-version: v${version}
           x-fhir-profile: igs-profile-snapshots
+          x-fhir-package-version: v${version}
+          x-fhir-package: igs-profile-snapshots
     match:
     - uri:
         prefix: ${context_path}/surveillance/notification-sequence/v${version}/fhir/
@@ -51,7 +55,10 @@ virtualServiceExternalHttpRules:
       request:
         set:
           x-fhir-api-version: v${version}
+          x-api-version: v${version}
           x-fhir-profile: igs-profile-snapshots
+          x-fhir-package-version: v${version}
+          x-fhir-package: igs-profile-snapshots
     match:
       - uri:
           prefix: ${context_path}/surveillance/notification-sequence/v${version}/S3Controller
@@ -93,4 +100,10 @@ virtualServiceExternalHttpRules:
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
-
+%{else ~}
+virtualServiceExternalHttpRules:
+%{ for entry in istio_rules_block_external ~}
+  - ${indent(4, yamlencode(entry))}
+    ${indent(4, http_timeout_retry_block)}
+%{ endfor ~}
+%{ endif ~}

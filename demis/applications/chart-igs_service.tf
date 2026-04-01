@@ -43,12 +43,13 @@ module "igs_service" {
     minio_secret_checksum                              = try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.igs_template_istio, {
-    namespace                 = var.target_namespace,
-    context_path              = var.context_path,
-    cluster_gateway           = var.cluster_gateway,
-    demis_hostnames           = local.demis_hostnames
-    support_fhir_api_versions = var.profile_provisioning_mode_vs_igs != null && var.profile_provisioning_mode_vs_igs != "dedicated"
-    fhir_api_versions         = module.validation_service_igs_metadata.current_profile_versions,
-    http_timeout_retry_block  = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.igs_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    demis_hostnames            = local.demis_hostnames
+    support_fhir_api_versions  = var.profile_provisioning_mode_vs_igs != null && var.profile_provisioning_mode_vs_igs != "dedicated"
+    fhir_api_versions          = module.validation_service_igs_metadata.current_profile_versions,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.igs_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.igs_name], [])
   })
 }

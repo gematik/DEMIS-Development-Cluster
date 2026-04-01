@@ -20,7 +20,7 @@ module "waf_service" {
   application_name       = local.waf_name
   deployment_information = var.deployment_information[local.waf_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.secure_message_gateway[0]]
+  depends_on             = [module.secure_message_gateway[0], module.bulk_inbound_service[0]]
 
   # Pass the values for the chart
   application_values = templatefile(local.waf_template_app, {

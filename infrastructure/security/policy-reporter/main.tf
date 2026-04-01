@@ -13,12 +13,38 @@ resource "helm_release" "policy_reporter" {
     value = true
     },
     {
-      name  = "ui.plugins.kyverno"
+      name  = "plugin.kyverno.enabled"
       value = true
     },
     {
-      name  = "kyvernoPlugin.enabled"
+      name  = "metrics.enabled"
       value = true
+    },
+    {
+      name  = "periodicSync.enabled"
+      value = true
+    },
+    # Metrics Annotations for Prometheus (local clusters without ServiceMonitor)
+    {
+      name  = "service.annotations.prometheus\\.io/scrape"
+      type  = "string"
+      value = "true"
+    },
+    # Metrics Annotations for Prometheus (remote clusters (adesso) without ServiceMonitor)
+    {
+      name  = "service.annotations.k8s\\.grafana\\.com/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "service.annotations.prometheus\\.io/port"
+      type  = "string"
+      value = "8080"
+    },
+    {
+      name  = "service.annotations.prometheus\\.io/path"
+      type  = "string"
+      value = "/metrics"
     }
   ]
 }

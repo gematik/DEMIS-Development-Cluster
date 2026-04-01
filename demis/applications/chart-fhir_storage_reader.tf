@@ -49,12 +49,13 @@ module "fhir_storage_reader" {
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssr_template_istio, {
-    namespace                = var.target_namespace,
-    cluster_gateway          = var.cluster_gateway,
-    core_hostname            = var.core_hostname,
-    context_path             = var.context_path,
-    demis_hostnames          = local.demis_hostnames,
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
+    namespace                  = var.target_namespace,
+    cluster_gateway            = var.cluster_gateway,
+    core_hostname              = var.core_hostname,
+    context_path               = var.context_path,
+    demis_hostnames            = local.demis_hostnames,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.fssr_name], [])
   })
 }
 

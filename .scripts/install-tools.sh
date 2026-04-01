@@ -112,6 +112,10 @@ function advanced_tools() {
     sudo tar -zxvf terraform-docs.tar.gz -C /usr/local/bin/ terraform-docs
     sudo chmod +x /usr/local/bin/terraform-docs
     rm -f terraform-docs.tar.gz
+
+    echo "##### Installing python3-pip"
+    sudo apt-get install python3-pip -y
+    sudo apt-get install python3-venv -y
 }
 
 function install_brew() {

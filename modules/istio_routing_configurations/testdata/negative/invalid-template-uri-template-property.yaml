@@ -1,0 +1,7 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    uri_template: /misplaced-template-uri
+    http_route_configs:
+      - variables: {}
+

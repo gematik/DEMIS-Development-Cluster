@@ -1,0 +1,15 @@
+traffic_routes_templates:
+  - service: svc-methods
+    enabled: true
+    http_route_configs:
+      - matches:
+          - uri_template: /exact
+            method:
+              exact: GET
+          - uri_template: /prefix
+            method:
+              prefix: X-
+          - uri_template: /regex
+            method:
+              regex: ^X-.*
+

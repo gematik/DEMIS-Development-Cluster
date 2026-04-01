@@ -19,12 +19,16 @@ virtualServiceDomains:
   - ${hostname}
   %{~ endfor ~}
 
+%{ if length(istio_rules_block_external) == 0 ~}
 virtualServiceExternalHttpRules:
   - headers:
       request:
         set:
+          x-fhir-package: fhir-profile-snapshots
+          x-fhir-package-version: v${profile_major_version}
           x-fhir-profile: fhir-profile-snapshots
           x-fhir-api-version: v${profile_major_version}
+          x-api-version: v${profile_major_version}
           x-fhir-api-request-origin: internal
           x-fhir-api-submission-type: pathogen
     match:
@@ -35,8 +39,11 @@ virtualServiceExternalHttpRules:
   - headers:
       request:
         set:
+          x-fhir-package: fhir-profile-snapshots
+          x-fhir-package-version: v${profile_major_version}
           x-fhir-profile: fhir-profile-snapshots
           x-fhir-api-version: v${profile_major_version}
+          x-api-version: v${profile_major_version}
           x-fhir-api-request-origin: internal
           x-fhir-api-submission-type: disease
     match:
@@ -47,8 +54,11 @@ virtualServiceExternalHttpRules:
   - headers:
       request:
         set:
+          x-fhir-package: fhir-profile-snapshots
+          x-fhir-package-version: v${profile_major_version}
           x-fhir-profile: fhir-profile-snapshots
           x-fhir-api-version: v${profile_major_version}
+          x-api-version: v${profile_major_version}
           x-fhir-api-request-origin: internal
     match:
     - uri:
@@ -57,4 +67,11 @@ virtualServiceExternalHttpRules:
       uri: /
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
+%{else ~}
+virtualServiceExternalHttpRules:
+%{ for entry in istio_rules_block_external ~}
+  - ${indent(4, yamlencode(entry))}
+    ${indent(4, http_timeout_retry_block)}
+%{ endfor ~}
 %{ endif ~}

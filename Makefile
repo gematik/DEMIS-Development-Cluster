@@ -504,31 +504,31 @@ else
 	echo ""
 endif
 
+.PHONY: scale-down
+scale-down: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
+scale-down:
+	$(call scale-down-namespace,$(NAMESPACE))
+
 .PHONY: scale-down-all
 scale-down-all: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
 scale-down-all:
-	@start=$$(date +%s);
-	@echo "## Scaling down all helm deployments to 0 replicas"
-	@echo "## Scaling down demis deployments"
-	if [ "$(STAGE)" = "adesso-test-fra" ]; then \
-		$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh demis-qs --apply; \
-		$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh demis-qs --apply; \
-	else \
-		$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh demis --apply; \
-		$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh demis --apply; \
-	fi
-	@echo "## Scaling down idm deployments"
-	$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh idm --apply
-	$(SCRIPT_FOLDER)/scale_all_deployments_to_zero.sh idm --apply
-	end=$$(date +%s);
-	runtime=$$((end-start));
-	minutes=$$((runtime / 60));
-	seconds=$$((runtime % 60));
-	@echo "Runtime of the cluster scale down: $${minutes} minutes and $${seconds} seconds"
+	$(call scale-down-namespace, are)
+	$(call scale-down-namespace, demis)
+	$(call scale-down-namespace, dmz)
+	$(call scale-down-namespace, idm)
 
 # usage: make {STAGE} scale-up-all
 .PHONY: scale-up-all
-scale-up-all: reset-helm-values idm services
+scale-up-all: reset-helm-values
+	$(call scale-up-namespace, $(filter-out scale-up-all,$(MAKECMDGOALS)),idm,idm)
+	$(call scale-up-namespace, $(filter-out scale-up-all,$(MAKECMDGOALS)),dmz,dmz)
+	$(call scale-up-namespace, $(filter-out scale-up-all,$(MAKECMDGOALS)),demis,demis)
+	$(call scale-up-namespace, $(filter-out scale-up-all,$(MAKECMDGOALS)),are,are)
+
+# usage: make {STAGE} scale-up-all
+.PHONY: scale-up
+scale-up: reset-helm-values
+	$(call scale-up-namespace, $(filter-out scale-up,$(MAKECMDGOALS)),$(NAMESPACE),$(MODULE))
 
 .PHONY: activate-maintenance-mode
 activate-maintenance-mode: export SCRIPT_FOLDER=$(ROOT_DIR)/.scripts
@@ -583,6 +583,28 @@ test-modules: ## Runs tests for all modules
 		$(TF_BIN) test; \
 	done
 
+.Phony: check-external-routing-configuration
+check-external-routing-configuration: export SCRIPT_FOLDER=$(ROOT_DIR)/modules/istio_routing_configurations/.scripts
+check-external-routing-configuration: ## Checks if the routing configuration is correct with an external script
+ifneq ($(NAMESPACE),)
+	$(eval NAMESPACE_PATH := "$(ROOT_DIR)/environments/stage-$(STAGE)/$(NAMESPACE)")
+	@if [ -f $(NAMESPACE_PATH)/external_routing_configuration.yaml ]; then \
+		$(SCRIPT_FOLDER)/python_wrapper.sh python3 $(SCRIPT_FOLDER)/schema_validation.py --input $(NAMESPACE_PATH)/external_routing_configuration.yaml --schema $(SCRIPT_FOLDER)/traffic_routes_templates.schema.json; \
+		result=$$($(SCRIPT_FOLDER)/python_wrapper.sh python3 $(SCRIPT_FOLDER)/generate_istio_rules.py --input $(NAMESPACE_PATH)/external_routing_configuration.yaml --format yaml); \
+		if [ -n "$(SERVICE)" ]; then \
+			echo "Generated routing configuration for service $(SERVICE):"; \
+			echo "$$result" | yq e '.traffic_routes.[] | select(.service == "$(SERVICE)") | .rules'; \
+		else \
+			echo "result:"; \
+			echo "$$result"; \
+		fi; \
+	else \
+		echo "No external routing configuration found for module $(NAMESPACE) at $(NAMESPACE_PATH)/external_routing_configuration.yaml"; \
+	fi
+else
+	@echo "NAMESPACE parameter is required for this target. Usage: make <STAGE> check-external-routing-configuration NAMESPACE=<namespace-name>";
+endif
+
 .PHONY: chores
 chores: ## Runs all chores
 	@echo "## Running chores"
@@ -595,3 +617,25 @@ chores: ## Runs all chores
 	@$(MAKE) checkov WORKING_PATH=$(IDM_PATH)
 	@$(MAKE) checkov WORKING_PATH=$(MESH_PATH)
 	@$(MAKE) checkov WORKING_PATH=$(DMZ_PATH)
+
+define scale-down-namespace
+	@start=$$(date +%s) && \
+	echo "## Scaling down all resources to 0 replicas" && \
+	echo "## Scaling down $(1) deployments" && \
+	$(SCRIPT_FOLDER)/scale_pgbouncer_clients.sh $(1) --apply && \
+	$(SCRIPT_FOLDER)/scale_all_pod_resources_to_zero.sh deployment $(1) --apply && \
+	$(SCRIPT_FOLDER)/scale_all_pod_resources_to_zero.sh statefulsets $(1) --apply && \
+	end=$$(date +%s) && \
+	runtime=$$((end-start)) && \
+	minutes=$$((runtime / 60)) && \
+	seconds=$$((runtime % 60)) && \
+	echo "Runtime of the cluster scale down: $${minutes} minutes and $${seconds} seconds"
+endef
+
+define scale-up-namespace
+	@if kubectl get ns "$(2)" >/dev/null 2>&1; then \
+		$(MAKE) $(1) $(3) RESET_HELM_VALUES=$(RESET_HELM_VALUES); \
+	else \
+     	echo "Namespace '$(2)' not found. Skipped" >&2; \
+    fi
+endef

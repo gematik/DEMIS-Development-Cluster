@@ -29,7 +29,8 @@ virtualServiceHttpRules:
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
-
+  
+%{ if length(istio_rules_block_external) == 0 ~}
 virtualServiceExternalHttpRules:
 %{ if support_fhir_api_versions && length(fhir_api_versions) > 0 ~}
 %{ for version in distinct([ for v in fhir_api_versions: join("",regex("(0|[1-9]\\d*)",v))]) ~}
@@ -37,14 +38,16 @@ virtualServiceExternalHttpRules:
       request:
         set:
           x-fhir-api-version: v${version}
+          x-api-version: v${version}
           x-fhir-profile: ars-profile-snapshots
+          x-fhir-package-version: v${version}
+          x-fhir-package: ars-profile-snapshots
     match:
     - uri:
-        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/(\\$|%24)process-notification(.*)"
+        prefix: ${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/
+      ignoreUriCase: true
     rewrite:
-      uriRegexRewrite:
-        match: "(?i)^${context_path}/surveillance/antibiotic-resistance/v${version}/fhir/(\\$|%24)process-notification(.*)?$"
-        rewrite: "/%24process-notification\\2"
+      uri: /
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
@@ -52,11 +55,28 @@ virtualServiceExternalHttpRules:
 %{ endif ~}
   - match:
     - uri:
-        regex: "(?i)^${context_path}/surveillance/antibiotic-resistance/fhir/(\\$|%24)process-notification(.*)"
+        prefix: ${context_path}/surveillance/antibiotic-resistance/v1/batch/
+      method:
+        exact: GET
+      ignoreUriCase: true
     rewrite:
-      uriRegexRewrite:
-        match: "(?i)^${context_path}/surveillance/antibiotic-resistance/(fhir/)?(\\$|%24)process-notification(.*)?$"
-        rewrite: "/%24process-notification\\3"
+      uri: /batch/
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
+  - match:
+    - uri:
+        prefix: ${context_path}/surveillance/antibiotic-resistance/fhir/
+      ignoreUriCase: true
+    rewrite:
+      uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
+%{else ~}
+virtualServiceExternalHttpRules:
+%{ for entry in istio_rules_block_external ~}
+  - ${indent(4, yamlencode(entry))}
+    ${indent(4, http_timeout_retry_block)}
+%{ endfor ~}
 %{ endif ~}
