@@ -23,7 +23,50 @@ resource "helm_release" "kyverno" {
     {
       name  = "reportsController.replicas"
       value = var.reportscontroller_replicas
-  }]
+    },
+    # Metrics Annotations for Prometheus (local clusters without ServiceMonitor)
+    {
+      name  = "admissionController.metricsService.annotations.prometheus\\.io/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "backgroundController.metricsService.annotations.prometheus\\.io/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "cleanupController.metricsService.annotations.prometheus\\.io/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "reportsController.metricsService.annotations.prometheus\\.io/scrape"
+      value = "true"
+      type  = "string"
+    },
+    # Metrics Annotations for Prometheus (remote clusters (adesso) without ServiceMonitor)
+    {
+      name  = "reportsController.metricsService.annotations.k8s\\.grafana\\.com/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "cleanupController.metricsService.annotations.k8s\\.grafana\\.com/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "backgroundController.metricsService.annotations.k8s\\.grafana\\.com/scrape"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "admissionController.metricsService.annotations.k8s\\.grafana\\.com/scrape"
+      value = "true"
+      type  = "string"
+    }
+  ]
 
   set_list = [{
     name  = "existingImagePullSecrets"

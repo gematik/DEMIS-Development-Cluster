@@ -1,0 +1,34 @@
+traffic_routes_templates:
+  - service: svc-overrides
+    enabled: true
+    variables:
+      prefix: api
+      region: eu
+    delegate:
+      name: default-delegate
+      namespace: mesh-system
+    additional_headers:
+      x-shared: ${region}
+    rewrite:
+      target: /fallback
+    http_route_configs:
+      - variables:
+          region: us
+          version: v2
+        matches:
+          - uri_template: /${prefix}/${version}/items
+            match_type: regex
+            headers:
+              x-version: ${version}
+            without_headers:
+              x-remove: {}
+        additional_headers:
+          x-route: ${version}
+        delegate:
+          name: delegate-${version}
+          namespace: ${region}-ns
+        rewrite:
+          method: regex
+          match_template: /${prefix}/(.*)
+          target: /rewritten/$1/${version}
+

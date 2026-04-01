@@ -24,6 +24,7 @@ module "dmz_services" {
   rabbitmq_pvc_config           = var.rabbitmq_pvc_config
   allow_even_rabbitmq_replicas  = var.allow_even_rabbitmq_replicas
   database_target_host          = var.database_target_host
+  project_feature_flags         = var.project_feature_flags
 
   # Secrets and Credentials needed for the applications
   postgres_server_certificate  = var.postgres_server_certificate

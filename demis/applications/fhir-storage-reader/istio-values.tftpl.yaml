@@ -36,15 +36,30 @@ virtualServiceHttpRules:
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
 %{ endif ~}
-
+  
+%{ if length(istio_rules_block_external) == 0 ~}
 virtualServiceExternalHttpRules:
   - match:
     - uri:
         prefix: ${context_path}/notification-clearing-api/fhir
-    - uri:
-        prefix: ${context_path}/notifications/v1/fhir
+    rewrite:
+      uri: /
+  - headers:
+      request:
+        set:
+          x-api-version: v1
+    match:
+      - uri:
+          prefix: ${context_path}/notifications/v1/fhir
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}
     ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
+%{ else ~}
+virtualServiceExternalHttpRules:
+%{ for entry in istio_rules_block_external ~}
+  - ${indent(4, yamlencode(entry))}
+    ${indent(4, http_timeout_retry_block)}
+%{ endfor ~}
 %{ endif ~}

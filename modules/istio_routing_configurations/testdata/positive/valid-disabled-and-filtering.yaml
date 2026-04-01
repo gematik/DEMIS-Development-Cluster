@@ -1,0 +1,12 @@
+traffic_routes_templates:
+  - service: svc-enabled
+    enabled: true
+    http_route_configs:
+      - matches:
+          - uri_template: /enabled
+  - service: svc-disabled
+    enabled: false
+    http_route_configs:
+      - matches:
+          - uri_template: /disabled
+

@@ -1,0 +1,8 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    delegate:
+      name: delegate-name
+    http_route_configs:
+      - variables: {}
+

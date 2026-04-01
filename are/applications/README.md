@@ -11,19 +11,26 @@ Module responsible for deploying the ARE Services Helm Charts in a Kubernetes Cl
 
 ## Modules
 
-| Name                                                                                              | Source | Version |
-|---------------------------------------------------------------------------------------------------|--------|---------|
-| <a name="module_are_notification_processing_service"></a> [service\_demo](#module\_service\_demo) | ../../modules/helm_deployment | n/a |
-
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_are_notification_processing_service"></a> [are\_notification\_processing\_service](#module\_are\_notification\_processing\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
+| <a name="module_notification_are_gateway"></a> [notification\_are\_gateway](#module\_notification\_are\_gateway) | ../../modules/helm_deployment | n/a |
+| <a name="module_portal_are"></a> [portal\_are](#module\_portal\_are) | ../../modules/helm_deployment | n/a |
+| <a name="module_validation_service_are"></a> [validation\_service\_are](#module\_validation\_service\_are) | ../../modules/helm_deployment | n/a |
+| <a name="module_validation_service_are_metadata"></a> [validation\_service\_are\_metadata](#module\_validation\_service\_are\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [terraform_data.validation_service_are_http_rules](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_auth_hostname"></a> [auth\_hostname](#input\_auth\_hostname) | The Keycloak Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `"auth"` | no |
 | <a name="input_cluster_gateway"></a> [cluster\_gateway](#input\_cluster\_gateway) | Defines the Istio Cluster Gateway to be used | `string` | `"mesh/demis-core-gateway"` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of ops flags to be bound in services | `map(map(string))` | `{}` | no |
 | <a name="input_context_path"></a> [context\_path](#input\_context\_path) | The context path for reaching the DEMIS Services externally | `string` | `""` | no |
@@ -40,6 +47,7 @@ No resources.
 | <a name="input_istio_proxy_default_resources"></a> [istio\_proxy\_default\_resources](#input\_istio\_proxy\_default\_resources) | Default values for istio proxy resource requests and limits | <pre>object({<br/>    limits = object({<br/>      cpu    = optional(string)<br/>      memory = string<br/>    })<br/>    requests = object({<br/>      cpu    = string<br/>      memory = string<br/>    })<br/>  })</pre> | n/a | yes |
 | <a name="input_meldung_hostname"></a> [meldung\_hostname](#input\_meldung\_hostname) | The URL for accessing the DEMIS Notification Portal over Internet | `string` | `"meldung"` | no |
 | <a name="input_portal_hostname"></a> [portal\_hostname](#input\_portal\_hostname) | The URL for accessing the DEMIS Notification Portal over Telematikinfrastruktur (TI) | `string` | `"portal"` | no |
+| <a name="input_profile_provisioning_mode_vs_are"></a> [profile\_provisioning\_mode\_vs\_are](#input\_profile\_provisioning\_mode\_vs\_are) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | `null` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_reset_values"></a> [reset\_values](#input\_reset\_values) | Reset the values to the ones built into the chart. This will override any custom values and reuse\_values settings. | `bool` | `false` | no |
 | <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>map(object({<br/>    resource_block = optional(string)<br/>    istio_proxy_resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>    replicas = number<br/>  }))</pre> | `{}` | no |

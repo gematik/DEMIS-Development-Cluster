@@ -55,6 +55,7 @@ module "idm_services" {
   keycloak_portal_client_id          = var.keycloak_portal_client_id
   database_credentials               = var.database_credentials
   cus_health_department_certificates = var.cus_health_department_certificates
+  project_feature_flags              = var.project_feature_flags
 
   depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode]
 }

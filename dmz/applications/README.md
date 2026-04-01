@@ -16,6 +16,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_bulk_inbound_service"></a> [bulk\_inbound\_service](#module\_bulk\_inbound\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_external_routing_configurations"></a> [external\_routing\_configurations](#module\_external\_routing\_configurations) | ../../modules/istio_routing_configurations | n/a |
 | <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_pgbouncer"></a> [pgbouncer](#module\_pgbouncer) | ../../modules/helm_deployment | n/a |
 | <a name="module_postgres"></a> [postgres](#module\_postgres) | ../../modules/helm_deployment | n/a |
@@ -61,6 +62,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_key"></a> [postgres\_server\_key](#input\_postgres\_server\_key) | The Server Key for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
+| <a name="input_project_feature_flags"></a> [project\_feature\_flags](#input\_project\_feature\_flags) | Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false). | `map(bool)` | `{}` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_rabbitmq_erlang_cookie"></a> [rabbitmq\_erlang\_cookie](#input\_rabbitmq\_erlang\_cookie) | The RabbitMQ Erlang cookie for the application | `string` | n/a | yes |
 | <a name="input_rabbitmq_password"></a> [rabbitmq\_password](#input\_rabbitmq\_password) | The RabbitMQ password for the application | `string` | n/a | yes |

@@ -21,9 +21,22 @@ virtualServiceDomains:
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
+virtualServiceHttpRules:
+  - match:
+      - uri:
+          prefix: /
+    rewrite:
+      uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}
+
 virtualServiceExternalHttpRules:
   - match:
       - uri:
           prefix: /gateway/are
     rewrite:
       uri: /
+%{ if http_timeout_retry_block != null ~}
+    ${indent(4, http_timeout_retry_block)}
+%{ endif ~}

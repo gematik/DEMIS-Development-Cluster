@@ -20,7 +20,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno Policy Reporter | `string` | `"2.24.1"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Kyverno Policy Reporter | `string` | `"3.7.2"` | no |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Chart Repository for Kyverno Policy Reporter | `string` | `"https://kyverno.github.io/policy-reporter"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install Kyverno Policy Reporter | `string` | `"security"` | no |
 

@@ -1,0 +1,8 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    variables:
+      tenant: 123
+    http_route_configs:
+      - variables: {}
+

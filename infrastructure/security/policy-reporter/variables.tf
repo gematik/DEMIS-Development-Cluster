@@ -15,5 +15,5 @@ variable "helm_repository" {
 variable "chart_version" {
   description = "The Helm Chart Version for Kyverno Policy Reporter"
   type        = string
-  default     = "2.24.1"
+  default     = "3.7.2"
 }

@@ -45,6 +45,8 @@ module "ars_service" {
   deployment_information = var.deployment_information[local.ars_name]
   helm_settings          = local.common_helm_release_settings
 
+  depends_on = [module.pgbouncer[0]]
+
   # Pass the values for the chart
   application_values = templatefile(local.ars_template_app, {
     image_pull_secrets                                 = var.pull_secrets,
@@ -53,6 +55,7 @@ module "ars_service" {
     debug_enable                                       = var.debug_enabled,
     istio_enable                                       = var.istio_enabled,
     core_hostname                                      = var.core_hostname,
+    context_path                                       = var.context_path,
     feature_flags                                      = try(var.feature_flags[local.ars_name], {}),
     config_options                                     = try(var.config_options[local.ars_name], {}),
     replica_count                                      = local.ars_replicas,
@@ -64,12 +67,13 @@ module "ars_service" {
     istio_proxy_resources                              = try(local.ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.ars_template_istio, {
-    namespace                 = var.target_namespace,
-    context_path              = var.context_path,
-    cluster_gateway           = var.cluster_gateway,
-    demis_hostnames           = local.demis_hostnames
-    support_fhir_api_versions = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
-    fhir_api_versions         = module.validation_service_ars_metadata.current_profile_versions,
-    http_timeout_retry_block  = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    demis_hostnames            = local.demis_hostnames
+    support_fhir_api_versions  = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
+    fhir_api_versions          = module.validation_service_ars_metadata.current_profile_versions,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.ars_name], [])
   })
 }

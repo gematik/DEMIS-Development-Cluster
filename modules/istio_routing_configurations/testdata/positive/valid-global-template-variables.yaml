@@ -1,0 +1,12 @@
+traffic_routes_templates:
+  - service: svc-global
+    enabled: true
+    variables:
+      tenant: local
+    additional_headers:
+      x-tenant: ${tenant}
+    matches:
+      - uri_template: /${tenant}/records
+    http_route_configs:
+      - variables: {}
+

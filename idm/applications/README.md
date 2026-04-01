@@ -16,6 +16,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 |------|--------|---------|
 | <a name="module_bundid_idp"></a> [bundid\_idp](#module\_bundid\_idp) | ../../modules/helm_deployment | n/a |
 | <a name="module_certificate_update_service"></a> [certificate\_update\_service](#module\_certificate\_update\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_external_routing_configurations"></a> [external\_routing\_configurations](#module\_external\_routing\_configurations) | ../../modules/istio_routing_configurations | n/a |
 | <a name="module_gematik_idp"></a> [gematik\_idp](#module\_gematik\_idp) | ../../modules/helm_deployment | n/a |
 | <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_keycloak"></a> [keycloak](#module\_keycloak) | ../../modules/helm_deployment | n/a |
@@ -82,6 +83,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_key"></a> [postgres\_server\_key](#input\_postgres\_server\_key) | The Server Key for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
+| <a name="input_project_feature_flags"></a> [project\_feature\_flags](#input\_project\_feature\_flags) | Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false). | `map(bool)` | `{}` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_redis_cus_reader_password"></a> [redis\_cus\_reader\_password](#input\_redis\_cus\_reader\_password) | The Redis CUS Password (Reader) | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_user"></a> [redis\_cus\_reader\_user](#input\_redis\_cus\_reader\_user) | The Redis CUS User (Reader) | `string` | n/a | yes |

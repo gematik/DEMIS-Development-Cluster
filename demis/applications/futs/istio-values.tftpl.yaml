@@ -24,27 +24,6 @@ virtualServiceDomains:
 
 virtualServiceHttpRules:
 # old endpoints
-%{ for profile in ["", "igs"] ~}
-  - match:
-    - headers:
-        fhirProfile:
-          exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      uri:
-        prefix: /services/fhir-ui-data-model-translation
-    - headers:
-        fhirProfile:
-          exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      uri:
-        prefix: /fhir-ui-data-model-translation
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-${coalesce(profile,"core")}-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block[coalesce(profile,"core")] != null ~}
-    ${indent(4, http_timeout_retry_block[coalesce(profile,"core")])}
-%{ endif ~}
-%{ endfor ~}
 %{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
   - match:
     - headers:
@@ -53,7 +32,17 @@ virtualServiceHttpRules:
       uri:
         prefix: /v${entry.version}/fhir
     - headers:
+        x-fhir-package:
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
+      uri:
+        prefix: /v${entry.version}/fhir
+    - headers:
         x-fhir-profile:
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
+      uri:
+        prefix: /
+    - headers:
+        x-fhir-package:
           exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
       uri:
         prefix: /
@@ -70,18 +59,18 @@ virtualServiceHttpRules:
       - uri:
           prefix: /services/fhir-ui-data-model-translation
         withoutHeaders:
-          fhirProfile: {}
           x-fhir-profile: {}
+          x-fhir-package: {}
       - uri:
           prefix: /fhir-ui-data-model-translation
         withoutHeaders:
-          fhirProfile: {}
           x-fhir-profile: {}
+          x-fhir-package: {}
       - uri:
           prefix: /
         withoutHeaders:
-          fhirProfile: {}
           x-fhir-profile: {}
+          x-fhir-package: {}
     rewrite:
       uri: /
     delegate:
@@ -91,37 +80,21 @@ virtualServiceHttpRules:
     ${indent(4, http_timeout_retry_block["core"])}
 %{ endif ~}
 
+%{ if length(istio_rules_block_external) == 0 ~}
 virtualServiceExternalHttpRules:
-# old endpoints
-%{ for profile in ["", "igs"] ~}
-  - match:
-    - headers:
-        fhirProfile:
-          exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      withoutHeaders:
-        x-fhir-profile: {}
-      uri:
-        prefix: ${context_path}/services/fhir-ui-data-model-translation
-    - headers:
-        fhirProfile:
-          exact: ${coalesce(profile,"fhir")}-profile-snapshots
-      withoutHeaders:
-        x-fhir-profile: {}
-      uri:
-        prefix: ${context_path}/fhir-ui-data-model-translation
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-${coalesce(profile,"core")}-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block[coalesce(profile,"core")] != null ~}
-    ${indent(4, http_timeout_retry_block[coalesce(profile,"core")])}
-%{ endif ~}
-%{ endfor ~}
 %{ for entry in flatten([[for v in profile_versions_core: {prefix ="", version = v}], [for v in profile_versions_igs: {prefix = "igs", version = v}]]) ~}
-  - match:
+  - headers:
+      request:
+        set:
+          x-api-version: v${entry.version}
+    match:
     - headers:
         x-fhir-profile:
+          exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
+      uri:
+        prefix: ${context_path}/translation/ui-data-model/v${entry.version}/fhir
+    - headers:
+        x-fhir-package:
           exact: ${coalesce(entry.prefix,"fhir")}-profile-snapshots
       uri:
         prefix: ${context_path}/translation/ui-data-model/v${entry.version}/fhir
@@ -138,13 +111,13 @@ virtualServiceExternalHttpRules:
       - uri:
           prefix: ${context_path}/services/fhir-ui-data-model-translation
         withoutHeaders:
-          fhirProfile: {}
           x-fhir-profile: {}
+          x-fhir-package: {}
       - uri:
           prefix: ${context_path}/fhir-ui-data-model-translation
         withoutHeaders:
-          fhirProfile: {}
           x-fhir-profile: {}
+          x-fhir-package: {}
     rewrite:
       uri: /
     delegate:
@@ -152,4 +125,15 @@ virtualServiceExternalHttpRules:
       namespace: ${namespace}
 %{ if http_timeout_retry_block["core"] != null ~}
     ${indent(4, http_timeout_retry_block["core"])}
+%{ endif ~}
+%{ else ~}
+virtualServiceExternalHttpRules:
+%{ for entry in istio_rules_block_external ~}
+  - ${indent(4, yamlencode(entry))}
+%{ if http_timeout_retry_block != null && startswith(entry.delegate.name, "futs-core") ~}
+    ${indent(4, http_timeout_retry_block["core"])}
+%{ else ~}
+    ${indent(4, http_timeout_retry_block["igs"])}
+%{ endif ~}
+%{ endfor ~}
 %{ endif ~}

@@ -1,0 +1,10 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+    delegate:
+      name: delegate-name
+      namespace: mesh
+      extra: nope
+    http_route_configs:
+      - variables: {}
+
