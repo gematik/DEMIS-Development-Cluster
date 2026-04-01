@@ -1,7 +1,8 @@
 %{ for version in distinct(compact([ for subset in concat(tolist(subsets.main), tolist(subsets.canary)): join("",regex("(0|[1-9]\\d*)",subset.labels.fhirProfileVersion)) if ((subset.mode == "distributed") && can(length(subset.labels.fhirProfileVersion))) ])) ~}
+%{ for header in ["x-fhir-api-version", "x-fhir-package-version"] ~}
 - match:
     - headers:
-        x-fhir-api-version:
+        ${header}:
           exact: v${version}
   route:
 %{ for s in [ for subset in concat(tolist(subsets.main), tolist(subsets.canary)): subset if ((subset.mode == "distributed") && try(startswith(subset.labels.fhirProfileVersion, version), false))] ~}
@@ -11,6 +12,7 @@
         port:
           number: {{ .Values.appServicePortExternal }}
       weight: ${s.weight}
+%{ endfor ~}
 %{ endfor ~}
 %{ endfor ~}
 %{ if length([for sub in concat(tolist(subsets.main), tolist(subsets.canary)): sub if (sub.mode == "dedicated")]) >= 1 || (length(distinct(compact([for subset in tolist(subsets.main): subset.labels.fhirProfileVersion if ((subset.mode == "distributed") && can(length(subset.labels.fhirProfileVersion)))]))) <= 1 && length(distinct(compact([for subset in tolist(subsets.canary): subset.labels.fhirProfileVersion if ((subset.mode == "distributed") && can(length(subset.labels.fhirProfileVersion)))]))) <= 1) ~}

@@ -36,10 +36,11 @@ module "minio" {
     minio_secret_checksum                              = try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.minio_template_istio, {
-    namespace                = var.target_namespace,
-    context_path             = var.context_path,
-    cluster_gateway          = var.cluster_gateway,
-    storage_hostname         = var.storage_hostname
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.minio_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    storage_hostname           = var.storage_hostname
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.minio_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.minio_name], [])
   })
 }

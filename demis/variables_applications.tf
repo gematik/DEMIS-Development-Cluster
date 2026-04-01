@@ -111,5 +111,4 @@ variable "profile_provisioning_mode_vs_ars" {
     condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_ars)
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
-
 }

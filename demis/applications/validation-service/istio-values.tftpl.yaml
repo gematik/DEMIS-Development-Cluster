@@ -22,7 +22,7 @@ virtualServiceHttpRules:
       uri:
         prefix: /
     - headers:
-        fhirProfile:
+        x-fhir-package:
           exact: ${coalesce(profile,"fhir")}-profile-snapshots
       uri:
         prefix: /

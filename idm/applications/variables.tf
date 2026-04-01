@@ -355,3 +355,9 @@ variable "reset_values" {
   description = "Reset the values to the ones built into the chart. This will override any custom values and reuse_values settings."
   default     = false
 }
+
+variable "project_feature_flags" {
+  type        = map(bool)
+  description = "Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false)."
+  default     = {}
+}

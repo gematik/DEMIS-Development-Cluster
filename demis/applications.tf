@@ -38,6 +38,7 @@ module "demis_services" {
   profile_provisioning_mode_vs_igs                = var.profile_provisioning_mode_vs_igs
   profile_provisioning_mode_vs_ars                = var.profile_provisioning_mode_vs_ars
   reset_values                                    = var.reset_values
+  project_feature_flags                           = var.project_feature_flags
 
   # Secrets and Credentials needed for the applications
   redis_cus_reader_user        = var.redis_cus_reader_user

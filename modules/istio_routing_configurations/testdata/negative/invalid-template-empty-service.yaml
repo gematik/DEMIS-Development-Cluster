@@ -1,0 +1,6 @@
+traffic_routes_templates:
+  - service: ""
+    enabled: true
+    http_route_configs:
+      - variables: {}
+

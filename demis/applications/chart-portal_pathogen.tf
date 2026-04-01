@@ -39,10 +39,11 @@ module "portal_pathogen" {
     istio_proxy_resources                              = try(local.portal_pathogen_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.portal_pathogen_template_istio, {
-    namespace                = var.target_namespace,
-    context_path             = var.context_path,
-    cluster_gateway          = var.cluster_gateway,
-    portal_hostnames         = local.frontend_hostnames
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_pathogen_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    portal_hostnames           = local.frontend_hostnames
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_pathogen_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.portal_pathogen_name], [])
   })
 }

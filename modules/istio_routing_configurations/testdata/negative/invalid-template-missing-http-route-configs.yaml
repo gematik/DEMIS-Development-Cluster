@@ -1,0 +1,4 @@
+traffic_routes_templates:
+  - service: svc-invalid
+    enabled: true
+

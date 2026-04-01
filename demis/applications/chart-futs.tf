@@ -62,13 +62,14 @@ resource "helm_release" "futs" {
   wait_for_jobs       = true
   cleanup_on_fail     = true
   values = [templatefile(local.futs_template_istio, {
-    namespace                = var.target_namespace,
-    context_path             = var.context_path,
-    cluster_gateway          = var.cluster_gateway,
-    demis_hostnames          = local.demis_hostnames,
-    profile_versions_core    = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
-    profile_versions_igs     = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
-    http_timeout_retry_block = local.futs_http_timeout_retry_block,
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    demis_hostnames            = local.demis_hostnames,
+    profile_versions_core      = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    profile_versions_igs       = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
+    http_timeout_retry_block   = local.futs_http_timeout_retry_block,
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.futs_name], [])
   })]
   timeout = 600
   lifecycle {

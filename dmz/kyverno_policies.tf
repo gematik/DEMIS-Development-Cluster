@@ -26,8 +26,9 @@ resource "helm_release" "kyverno_admission_policies" {
 
   values = [
     templatefile("${local.chart_source_path}/${local.kyverno_policies_name}/values.tftpl.yaml", {
-      namespace  = var.target_namespace
-      repository = var.docker_registry
+      namespace          = var.target_namespace
+      repository         = var.docker_registry
+      image_pull_secrets = local.pull_secrets_credentials
     })
   ]
 }

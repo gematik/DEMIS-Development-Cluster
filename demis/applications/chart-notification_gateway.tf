@@ -43,11 +43,12 @@ module "notification_gateway" {
     istio_proxy_resources                              = try(local.gateway_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.gateway_template_istio, {
-    namespace                = var.target_namespace,
-    context_path             = var.context_path,
-    cluster_gateway          = var.cluster_gateway,
-    portal_hostnames         = local.frontend_hostnames
-    profile_major_version    = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0] # extract major version
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    portal_hostnames           = local.frontend_hostnames
+    profile_major_version      = regex("^([0-9]+)", element(module.futs_core_metadata.current_profile_versions, -1))[0] # extract major version
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.gateway_name], [])
   })
 }

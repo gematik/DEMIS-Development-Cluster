@@ -47,7 +47,7 @@ module "bulk_inbound_service" {
   application_name       = local.bulk_inbound_name
   deployment_information = var.deployment_information[local.bulk_inbound_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.rabbitmq_service[0]]
+  depends_on             = [module.rabbitmq_service[0], module.pgbouncer[0]]
 
   # Pass the values for the chart
   application_values = templatefile(local.bulk_inbound_template_app, {
@@ -70,11 +70,12 @@ module "bulk_inbound_service" {
     istio_proxy_resources                              = try(local.bulk_inbound_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
   })
   istio_values = templatefile(local.bulk_inbound_template_istio, {
-    namespace                = var.target_namespace,
-    context_path             = var.context_path,
-    cluster_gateway          = var.cluster_gateway,
-    fhir_api_versions        = local.supported_ars_profile_versions,
-    demis_hostnames          = local.demis_hostnames,
-    http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
+    namespace                  = var.target_namespace,
+    context_path               = var.context_path,
+    cluster_gateway            = var.cluster_gateway,
+    fhir_api_versions          = local.supported_ars_profile_versions,
+    demis_hostnames            = local.demis_hostnames,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
+    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.bulk_inbound_name], [])
   })
 }

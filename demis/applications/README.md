@@ -20,6 +20,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_destination_lookup_purger"></a> [destination\_lookup\_purger](#module\_destination\_lookup\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_destination_lookup_reader"></a> [destination\_lookup\_reader](#module\_destination\_lookup\_reader) | ../../modules/helm_deployment | n/a |
 | <a name="module_destination_lookup_writer"></a> [destination\_lookup\_writer](#module\_destination\_lookup\_writer) | ../../modules/helm_deployment | n/a |
+| <a name="module_external_routing_configurations"></a> [external\_routing\_configurations](#module\_external\_routing\_configurations) | ../../modules/istio_routing_configurations | n/a |
 | <a name="module_fhir_storage_purger"></a> [fhir\_storage\_purger](#module\_fhir\_storage\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_reader"></a> [fhir\_storage\_reader](#module\_fhir\_storage\_reader) | ../../modules/helm_deployment | n/a |
 | <a name="module_fhir_storage_writer"></a> [fhir\_storage\_writer](#module\_fhir\_storage\_writer) | ../../modules/helm_deployment | n/a |
@@ -115,6 +116,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_profile_provisioning_mode_vs_ars"></a> [profile\_provisioning\_mode\_vs\_ars](#input\_profile\_provisioning\_mode\_vs\_ars) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_core"></a> [profile\_provisioning\_mode\_vs\_core](#input\_profile\_provisioning\_mode\_vs\_core) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
+| <a name="input_project_feature_flags"></a> [project\_feature\_flags](#input\_project\_feature\_flags) | Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false). | `map(bool)` | `{}` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
 | <a name="input_rabbitmq_password"></a> [rabbitmq\_password](#input\_rabbitmq\_password) | The RabbitMQ password for the application | `string` | n/a | yes |
 | <a name="input_rabbitmq_username"></a> [rabbitmq\_username](#input\_rabbitmq\_username) | The RabbitMQ username for the application | `string` | n/a | yes |
