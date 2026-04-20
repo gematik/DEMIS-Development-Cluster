@@ -7,19 +7,19 @@ istio:
   enable: ${istio_enable}
 
 required:
-  image: 
+  image:
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
     name: are-notification-processing-service
     %{ endif }
 
 # Image Pull Secrets
-imagePullSecrets: 
+imagePullSecrets:
   %{~ for pull_secret in image_pull_secrets ~}
   - name: ${pull_secret}
   %{~ endfor ~}
-  
-customEnvVars: 
+
+customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   SERVER_PORT: "8080"
@@ -27,10 +27,10 @@ customEnvVars:
   REDIS_HOST: "redis-cus.idm.svc.cluster.local"
   REDIS_PORT: "6379"
   SERVLET_CONTEXT_PATH: "/"
-  VALIDATION_SERVICE_URL: "http://validation-service-are.are.svc.cluster.local"
+  VALIDATION_SERVICE_URL: "http://validation-service-are.${namespace}.svc.cluster.local"
   ENRICHMENT_SERVICE_URL: "http://context-enrichment-service.demis.svc.cluster.local"
   FHIR_STORAGE_SERVICE_URL: "http://fhir-storage-writer.demis.svc.cluster.local"
-  FHIR_STORAGE_CONTEXT_PATH: "/notification-clearing-api/fhir"
+  FHIR_STORAGE_CONTEXT_PATH: "/"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}
