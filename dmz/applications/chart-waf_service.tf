@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   waf_template_app   = fileexists("${var.external_chart_path}/${local.waf_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.waf_name}/${local.application_values_file}" : "${path.module}/${local.waf_name}/${local.application_values_file}"
   waf_template_istio = fileexists("${var.external_chart_path}/${local.waf_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.waf_name}/${local.istio_values_file}" : "${path.module}/${local.waf_name}/${local.istio_values_file}"
-  # Define override for resources
-  waf_resources_overrides = try(var.resource_definitions[local.waf_name], {})
-  waf_replicas            = lookup(local.waf_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.waf_name].replicas : null
-  waf_resource_block      = lookup(local.waf_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.waf_name].resource_block : null
 }
 
 module "waf_service" {
@@ -32,10 +28,10 @@ module "waf_service" {
     core_hostname                                      = var.core_hostname,
     feature_flags                                      = try(var.feature_flags[local.waf_name], {}),
     config_options                                     = try(var.config_options[local.waf_name], {}),
-    replica_count                                      = local.waf_replicas,
-    resource_block                                     = local.waf_resource_block,
+    replica_count                                      = var.resource_definitions[local.waf_name].replicas,
+    resource_block                                     = var.resource_definitions[local.waf_name].resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.waf_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
-    istio_proxy_resources                              = try(local.waf_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    istio_proxy_resources                              = var.resource_definitions[local.waf_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.waf_template_istio, {
     namespace                = var.target_namespace,

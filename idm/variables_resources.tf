@@ -9,24 +9,12 @@ variable "resource_definitions" {
     service  = string
     replicas = number
     resources = optional(object({
-      limits = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
-      requests = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
+      limits   = optional(map(string))
+      requests = optional(map(string))
     }))
     istio_proxy_resources = optional(object({
-      limits = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
-      requests = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
+      limits   = optional(map(string))
+      requests = optional(map(string))
     }))
   }))
   default = []

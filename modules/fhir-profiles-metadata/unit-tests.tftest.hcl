@@ -1,7 +1,3 @@
-provider "kubernetes" {
-  config_path = "${path.module}/.test_kubeconfig"
-}
-
 # Test profiles output canary is false and canary is empty
 run "check_profile_versions_main_empty_canary" {
   command = apply
@@ -802,7 +798,7 @@ run "check_combined_canary_deployment_destination_subsets" {
 }
 
 # Test for combined main deployment without canary version but canary profiles
-run "check_canary_deployemnt_without_apllication_update" {
+run "check_canary_deployemnt_without_application_update" {
   command = apply
 
   variables {
@@ -862,7 +858,7 @@ run "check_canary_deployemnt_without_apllication_update" {
 
 
 # Test for combined main deployment without canary version but canary profiles
-run "check_canary_deployemnt_without_apllication_update" {
+run "check_canary_deployemnt_without_application_update_empty_profiles" {
   command = apply
 
   variables {

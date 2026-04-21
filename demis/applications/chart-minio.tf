@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   minio_template_app   = fileexists("${var.external_chart_path}/${local.minio_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.minio_name}/${local.application_values_file}" : "${path.module}/${local.minio_name}/${local.application_values_file}"
   minio_template_istio = fileexists("${var.external_chart_path}/${local.minio_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.minio_name}/${local.istio_values_file}" : "${path.module}/${local.minio_name}/${local.istio_values_file}"
-  # Define override for resources
-  minio_resources_overrides = try(var.resource_definitions[local.minio_name], {})
-  minio_replicas            = lookup(local.minio_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.minio_name].replicas : null
-  minio_resource_block      = lookup(local.minio_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.minio_name].resource_block : null
 }
 
 module "minio" {
@@ -29,10 +25,10 @@ module "minio" {
     istio_enable                                       = var.istio_enabled,
     feature_flags                                      = try(var.feature_flags[local.minio_name], {}),
     config_options                                     = try(var.config_options[local.minio_name], {}),
-    replica_count                                      = local.minio_replicas,
-    resource_block                                     = local.minio_resource_block,
+    replica_count                                      = var.resource_definitions[local.minio_name].replicas,
+    resource_block                                     = var.resource_definitions[local.minio_name].resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.minio_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.minio_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.minio_name].istio_proxy_resources,
     minio_secret_checksum                              = try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.minio_template_istio, {
@@ -41,6 +37,6 @@ module "minio" {
     cluster_gateway            = var.cluster_gateway,
     storage_hostname           = var.storage_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.minio_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.minio_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.minio_name], [])
   })
 }

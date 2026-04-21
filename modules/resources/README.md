@@ -31,7 +31,7 @@ module "application_resources" {
 
 ## Tests
 
-The module contains unit tests that can be executed with the following command: 
+The module contains unit tests that can be executed with the following command:
 
 ```sh
 tofu test
@@ -41,7 +41,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
@@ -55,13 +55,14 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service | <pre>list(object({<br/>    service  = string<br/>    replicas = number<br/>    resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>    istio_proxy_resources = optional(object({<br/>      limits = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>      requests = optional(object({<br/>        cpu    = optional(string)<br/>        memory = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_resource_definitions"></a> [resource\_definitions](#input\_resource\_definitions) | Defines a list of definition of resources that belong to a service<br/><br/>  service - is required with min length 1<br/>  replicas - is required<br/>  resources - could be set by properties named limits and requests<br/>  istio\_proxy\_resources- could be set by properties named limits and requests<br/>  limits - could be set by properties named cpu and memory<br/>  requests - could set by properties named cpu and memory | <pre>list(object({<br/>    service  = string<br/>    replicas = number<br/>    resources = optional(object({<br/>      limits   = optional(map(string))<br/>      requests = optional(map(string))<br/>    }))<br/>    istio_proxy_resources = optional(object({<br/>      limits   = optional(map(string))<br/>      requests = optional(map(string))<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_services"></a> [services](#input\_services) | List of available services | `list(string)` | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_istio_proxy_default_resources"></a> [istio\_proxy\_default\_resources](#output\_istio\_proxy\_default\_resources) | Default values for istio proxy resource requests and limits |
 | <a name="output_service_resource_definitions"></a> [service\_resource\_definitions](#output\_service\_resource\_definitions) | Map containing all the resources definitions, grouped by service |
 <!-- END_TF_DOCS -->

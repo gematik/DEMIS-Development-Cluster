@@ -6,13 +6,13 @@ Module responsible for deploying the ARE Services Helm Charts in a Kubernetes Cl
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_are_notification_processing_service"></a> [are\_notification\_processing\_service](#module\_are\_notification\_processing\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_notification_are_gateway"></a> [notification\_are\_gateway](#module\_notification\_are\_gateway) | ../../modules/helm_deployment | n/a |
@@ -23,13 +23,13 @@ Module responsible for deploying the ARE Services Helm Charts in a Kubernetes Cl
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [terraform_data.validation_service_are_http_rules](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_auth_hostname"></a> [auth\_hostname](#input\_auth\_hostname) | The Keycloak Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `"auth"` | no |
 | <a name="input_cluster_gateway"></a> [cluster\_gateway](#input\_cluster\_gateway) | Defines the Istio Cluster Gateway to be used | `string` | `"mesh/demis-core-gateway"` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of ops flags to be bound in services | `map(map(string))` | `{}` | no |
@@ -57,6 +57,6 @@ Module responsible for deploying the ARE Services Helm Charts in a Kubernetes Cl
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_version_istio_routing_chart"></a> [version\_istio\_routing\_chart](#output\_version\_istio\_routing\_chart) | Version of the Istio Routing Chart being used |
 <!-- END_TF_DOCS -->

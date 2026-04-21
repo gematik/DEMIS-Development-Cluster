@@ -2,7 +2,7 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
 
@@ -13,13 +13,13 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [helm_release.trivy_operator](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_additional_report_fields"></a> [additional\_report\_fields](#input\_additional\_report\_fields) | Comma separated list of additional fields which can be added to the VulnerabilityReport. Supported parameters: Description, Links, CVSS, Target, Class, PackagePath and PackageType | `string` | `"Description,Links,CVSS,Target,Class,PackagePath,PackageType"` | no |
 | <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The Helm Chart Version for Trivy Operator | `string` | `"0.23.3"` | no |
 | <a name="input_cron_job_schedule"></a> [cron\_job\_schedule](#input\_cron\_job\_schedule) | Specifies the execution period for the scan | `string` | `"0 */6 * * *"` | no |
@@ -35,7 +35,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_chart_version"></a> [chart\_version](#output\_chart\_version) | Trivy Operator Helm Chart Version |
 | <a name="output_cron_job_schedule"></a> [cron\_job\_schedule](#output\_cron\_job\_schedule) | Trivy Operator Cron Job Schedule |
 | <a name="output_helm_repository"></a> [helm\_repository](#output\_helm\_repository) | Trivy Operator Helm Repository |

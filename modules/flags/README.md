@@ -47,7 +47,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
@@ -61,7 +61,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_all_services"></a> [all\_services](#input\_all\_services) | List of all services in the deployment | `list(string)` | `[]` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of configuration options that belong to services | <pre>list(object({<br/>    services     = list(string)<br/>    option_name  = string<br/>    option_value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_feature_flags"></a> [feature\_flags](#input\_feature\_flags) | Defines a list of feature flags that belong to services | <pre>list(object({<br/>    services   = list(string)<br/>    flag_name  = string<br/>    flag_value = bool<br/>  }))</pre> | `[]` | no |
@@ -69,7 +69,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_service_config_options"></a> [service\_config\_options](#output\_service\_config\_options) | Map containing all the configuration options, grouped by service |
 | <a name="output_service_feature_flags"></a> [service\_feature\_flags](#output\_service\_feature\_flags) | Map containing all the feature flags, grouped by service |
 <!-- END_TF_DOCS -->

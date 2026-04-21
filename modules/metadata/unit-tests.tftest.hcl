@@ -1,13 +1,8 @@
-provider "kubernetes" {
-  config_path = "${path.module}/.test_kubeconfig"
-}
-
 # Test Namespace with Istio Injection
 run "metadata_test" {
   command = plan
 
   variables {
-    name              = "demis"
     cluster           = "adesso-prod"
     region            = "fra"
     component         = "pvc"
@@ -45,7 +40,6 @@ run "metadata_test_local" {
   command = plan
 
   variables {
-    name              = "demis"
     cluster           = "local"
     region            = "local"
     component         = "pvc"

@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   hls_template_app   = fileexists("${var.external_chart_path}/${local.hls_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.hls_name}/${local.application_values_file}" : "${path.module}/${local.hls_name}/${local.application_values_file}"
   hls_template_istio = fileexists("${var.external_chart_path}/${local.hls_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.hls_name}/${local.istio_values_file}" : "${path.module}/${local.hls_name}/${local.istio_values_file}"
-  # Define override for resources
-  hls_resources_overrides = try(var.resource_definitions[local.hls_name], {})
-  hls_replicas            = lookup(local.hls_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.hls_name].replicas : null
-  hls_resource_block      = lookup(local.hls_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.hls_name].resource_block : null
 }
 
 module "hospital_location_service" {
@@ -30,10 +26,10 @@ module "hospital_location_service" {
     istio_enable                                       = var.istio_enabled,
     feature_flags                                      = try(var.feature_flags[local.hls_name], {}),
     config_options                                     = try(var.config_options[local.hls_name], {}),
-    replica_count                                      = local.hls_replicas,
-    resource_block                                     = local.hls_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.hls_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.hls_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.hls_name].replicas,
+    resource_block                                     = var.resource_definitions[local.hls_name].resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.hls_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.hls_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.hls_template_istio, {
     namespace                  = var.target_namespace,
@@ -41,6 +37,6 @@ module "hospital_location_service" {
     context_path               = var.context_path,
     demis_hostnames            = local.demis_hostnames,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.hls_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.hls_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.hls_name], [])
   })
 }

@@ -6,13 +6,13 @@ Module to deploy a complete Service Mesh based on Istio with Sidecar and observa
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_grafana"></a> [grafana](#module\_grafana) | ./grafana | n/a |
 | <a name="module_istio"></a> [istio](#module\_istio) | ./istio | n/a |
 | <a name="module_jaeger"></a> [jaeger](#module\_jaeger) | ./jaeger | n/a |
@@ -26,7 +26,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_enable_native_sidecar_injection"></a> [enable\_native\_sidecar\_injection](#input\_enable\_native\_sidecar\_injection) | Enable native sidecar injection for Istio (supported in Kubernetes 1.33.0+ and Istio 1.27.0+) | `bool` | `null` | no |
 | <a name="input_external_ip"></a> [external\_ip](#input\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
 | <a name="input_grafana_digest"></a> [grafana\_digest](#input\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | `"sha256:5781759b3d27734d4d548fcbaf60b1180dbf4290e708f01f292faa6ae764c5e6"` | no |
@@ -58,7 +58,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_istio_health_port"></a> [istio\_health\_port](#output\_istio\_health\_port) | The Istio Health port |
 | <a name="output_istio_http_port"></a> [istio\_http\_port](#output\_istio\_http\_port) | The Istio HTTP port |
 | <a name="output_istio_https_port"></a> [istio\_https\_port](#output\_istio\_https\_port) | The Istio HTTPS port |

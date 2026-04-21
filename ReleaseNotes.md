@@ -2,6 +2,20 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.6.0
+- updated the release pipeline to automatically add new versions
+- modified local cluster deployment to use resource quotas from startup
+- added subnet address variable for services configuration for local cluster and set default value to '10.0.26.0/16'
+- split internal and external virtual service for minio service
+- extended rabbitmq scraping for specific queues
+- refactored infrastructure resources istio, jaeger and prometheus
+- deactivate validateJwt for bundidp-mock
+- refactored resource module for better handling of resource definitions
+- fixed application modules will not be planned caused by pull secrets implementation
+- refactored module istio_routing_configurations for trigger errors on plan
+- upgraded provider hashicorp/kubernets to 3.1.0
+- updated install-/update-tools scripts for use latest terraform-docs version
+
 ## Release 5.5.0
 - added Kyverno and Policy Reporter Metrics + prometheus scraping annotations
 - added Kyverno Dashboard

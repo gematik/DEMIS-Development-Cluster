@@ -7,21 +7,17 @@ locals {
   kms_encryption_key = length(var.kms_encryption_key) > 0 ? true : false
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
-  pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
-
-  # For local KIND clusters: signals that the kube-apiserver is ready after the
-  # ResourceQuota admission-plugin patch (including the static-pod restart).
-  # For remote clusters this is null and has no effect on the dependency graph.
-  api_server_ready = var.local_cluster ? module.local_cluster[0].api_server_ready : null
+  pull_secrets_credentials = [for k, v in module.pull_secrets : v.metadata.name]
 }
 
 # Configure a KIND cluster locally
 module "local_cluster" {
-  source            = "./local-cluster-setup"
-  count             = var.local_cluster ? 1 : 0
-  kind_image_tag    = var.kind_image_tag
-  kind_cluster_name = var.kind_cluster_name
-  kind_worker_nodes = var.kind_worker_nodes
+  source                      = "./local-cluster-setup"
+  count                       = var.local_cluster ? 1 : 0
+  kind_image_tag              = var.kind_image_tag
+  kind_cluster_name           = var.kind_cluster_name
+  kind_worker_nodes           = var.kind_worker_nodes
+  kind_service_subnet_address = var.kind_service_subnet_address
 }
 
 # Configure a remote cluster
@@ -101,8 +97,6 @@ module "kyverno" {
   backgroundcontroller_replicas = var.kyverno_backgroundcontroller_replicas
   cleanupcontroller_replicas    = var.kyverno_cleanupcontroller_replicas
   reportscontroller_replicas    = var.kyverno_reportscontroller_replicas
-
-  depends_on = [module.pull_secrets]
 }
 
 module "kyverno_policy_reporter" {

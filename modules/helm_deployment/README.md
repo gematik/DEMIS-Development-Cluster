@@ -69,7 +69,7 @@ The tests are pretty limited, since the DEMIS Helm Charts are currently hosted o
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0.0, < 4.0.0 |
 
@@ -80,14 +80,14 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [helm_release.chart](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.istio](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of the application. This can also correspond to the Helm Chart name. | `string` | n/a | yes |
 | <a name="input_application_values"></a> [application\_values](#input\_application\_values) | Custom values in YAML format to override the default configuration for the application Helm Chart | `string` | `""` | no |
 | <a name="input_deployment_information"></a> [deployment\_information](#input\_deployment\_information) | Deployment information for managing the main and optional canary version of the application | <pre>object({<br/>    chart-name          = optional(string) # Optional, uses a different Helm Chart name than the application name<br/>    image-tag           = optional(string) # Optional, uses a different image tag for the deployment<br/>    deployment-strategy = string<br/>    enabled             = bool<br/>    main = object({<br/>      version = string<br/>      weight  = number<br/>    })<br/>    canary = optional(object({<br/>      version = optional(string)<br/>      weight  = optional(string)<br/>    }), {})<br/>  })</pre> | n/a | yes |
@@ -98,7 +98,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_app_chart_versions"></a> [app\_chart\_versions](#output\_app\_chart\_versions) | The Versions of deployed Helm Charts |
 | <a name="output_istio_version"></a> [istio\_version](#output\_istio\_version) | The Version of the deployed Helm Chart of the Istio Routing Rules |
 <!-- END_TF_DOCS -->

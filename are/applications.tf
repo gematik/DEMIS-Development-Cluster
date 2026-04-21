@@ -23,5 +23,5 @@ module "are_services" {
   timeout_retry_overrides       = var.timeout_retry_overrides
   reset_values                  = var.reset_values
 
-  depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
+  depends_on = [module.persistent_volume_claims, module.activate_maintenance_mode]
 }

@@ -49,12 +49,12 @@ resource "kubernetes_config_map_v1" "ui_config" {
   }
 
   data = {
-    "jaeger-ui.json" = templatestring(<<EOT
+    "jaeger-ui.json" = <<EOT
 {
   "themes": {
     "enabled": true
   }
 }
 EOT
-  , {}) }
+  }
 }

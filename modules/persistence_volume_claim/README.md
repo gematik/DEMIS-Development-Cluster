@@ -38,7 +38,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 3.0.0, < 4.0.0 |
 
@@ -49,13 +49,13 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_persistent_volume_claim_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/persistent_volume_claim_v1) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_mode"></a> [access\_mode](#input\_access\_mode) | The Access Mode of the Persistence Volume Claim | `string` | n/a | yes |
 | <a name="input_annotations"></a> [annotations](#input\_annotations) | The Annotations to apply to the Persistence Volume Claim | `map(string)` | `{}` | no |
 | <a name="input_capacity"></a> [capacity](#input\_capacity) | The Capacity of the Persistence Volume Claim | `string` | n/a | yes |
@@ -68,6 +68,6 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_metadata"></a> [metadata](#output\_metadata) | Prints the Metadata Information of the created Kubernetes Persistence Volume Claim |
 <!-- END_TF_DOCS -->

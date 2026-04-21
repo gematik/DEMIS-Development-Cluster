@@ -26,7 +26,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 3.0.0, < 4.0.0 |
 
@@ -37,12 +37,12 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_auth_issuer_subdomain"></a> [auth\_issuer\_subdomain](#input\_auth\_issuer\_subdomain) | The Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `"auth"` | no |
 | <a name="input_bundid_idp_issuer_subdomain"></a> [bundid\_idp\_issuer\_subdomain](#input\_bundid\_idp\_issuer\_subdomain) | The BundID IDP Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `""` | no |
 | <a name="input_check_istio_gateway_exists"></a> [check\_istio\_gateway\_exists](#input\_check\_istio\_gateway\_exists) | Flag to check if the Istio Gateway Object exists | `bool` | `true` | no |
@@ -59,7 +59,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_auth_hostname"></a> [auth\_hostname](#output\_auth\_hostname) | The URL for accessing the Keycloak Authentication Services |
 | <a name="output_bundid_idp_hostname"></a> [bundid\_idp\_hostname](#output\_bundid\_idp\_hostname) | The URL for for performing the login with BundID |
 | <a name="output_core_hostname"></a> [core\_hostname](#output\_core\_hostname) | The URL for accessing the DEMIS Core Services |

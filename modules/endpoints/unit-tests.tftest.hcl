@@ -21,7 +21,7 @@ run "endpoint_test" {
 }
 
 # Test Endpoints
-run "endpoint_test" {
+run "endpoint_test_auth_issuer_subdomain" {
   command = plan
 
   variables {

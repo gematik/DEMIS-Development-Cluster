@@ -17,10 +17,6 @@ locals {
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
   futs_core_template_app   = fileexists("${var.external_chart_path}/${local.futs_core_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.futs_core_name}/${local.application_values_file}" : "${path.module}/${local.futs_core_name}/${local.application_values_file}"
   futs_core_template_istio = fileexists("${var.external_chart_path}/${local.futs_core_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.futs_core_name}/${local.istio_values_file}" : "${path.module}/${local.futs_core_name}/${local.istio_values_file}"
-  ## Define override for resources
-  futs_core_resources_overrides = try(var.resource_definitions[local.futs_core_name], {})
-  futs_core_replicas            = lookup(local.futs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.futs_core_name].replicas : null
-  futs_core_resource_block      = lookup(local.futs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.futs_core_name].resource_block : null
   # http timeouts and retries
   futs_core_http_timeout_retry_block = { core : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_core_name], null) }
 
@@ -33,10 +29,6 @@ locals {
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
   futs_igs_template_app   = fileexists("${var.external_chart_path}/${local.futs_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.futs_igs_name}/${local.application_values_file}" : "${path.module}/${local.futs_igs_name}/${local.application_values_file}"
   futs_igs_template_istio = fileexists("${var.external_chart_path}/${local.futs_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.futs_igs_name}/${local.istio_values_file}" : "${path.module}/${local.futs_igs_name}/${local.istio_values_file}"
-  ## Define override for resources
-  futs_igs_resources_overrides = try(var.resource_definitions[local.futs_igs_name], {})
-  futs_igs_replicas            = lookup(local.futs_igs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.futs_igs_name].replicas : null
-  futs_igs_resource_block      = lookup(local.futs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.futs_igs_name].resource_block : null
   # http timeouts and retries
   futs_igs_http_timeout_retry_block = { igs : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_igs_name], null) }
 
@@ -69,7 +61,7 @@ resource "helm_release" "futs" {
     profile_versions_core      = distinct([for v in module.futs_core_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
     profile_versions_igs       = distinct([for v in module.futs_igs_metadata.current_profile_versions : (regex("^([0-9]+)", v)[0])]),
     http_timeout_retry_block   = local.futs_http_timeout_retry_block,
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.futs_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.futs_name], [])
   })]
   timeout = 600
   lifecycle {
@@ -110,10 +102,10 @@ module "futs_core" {
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.futs_core_name], {}),
     config_options                                     = try(var.config_options[local.futs_core_name], {}),
-    replica_count                                      = local.futs_core_replicas,
-    resource_block                                     = local.futs_core_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.futs_core_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.futs_core_name].replicas,
+    resource_block                                     = var.resource_definitions[local.futs_core_name].resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.futs_core_name].istio_proxy_resources,
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.futs_core_template_istio, {
@@ -153,10 +145,10 @@ module "futs_igs" {
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.futs_igs_name], {}),
     config_options                                     = try(var.config_options[local.futs_igs_name], {}),
-    replica_count                                      = local.futs_igs_replicas,
-    resource_block                                     = local.futs_igs_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.futs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    replica_count                                      = var.resource_definitions[local.futs_igs_name].replicas,
+    resource_block                                     = var.resource_definitions[local.futs_igs_name].resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.futs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.futs_igs_name].istio_proxy_resources,
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.futs_igs_template_istio, {

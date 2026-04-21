@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   gemidp_template_app   = fileexists("${var.external_chart_path}/${local.gemidp_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.gemidp_name}/${local.application_values_file}" : "${path.module}/${local.gemidp_name}/${local.application_values_file}"
   gemidp_template_istio = fileexists("${var.external_chart_path}/${local.gemidp_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.gemidp_name}/${local.istio_values_file}" : "${path.module}/${local.gemidp_name}/${local.istio_values_file}"
-  # Define override for resources
-  gemidp_resources_overrides = try(var.resource_definitions[local.gemidp_name], {})
-  gemidp_replicas            = lookup(local.gemidp_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.gemidp_name].replicas : null
-  gemidp_resource_block      = lookup(local.gemidp_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.gemidp_name].resource_block : null
 }
 
 module "gematik_idp" {
@@ -33,17 +29,17 @@ module "gematik_idp" {
     clientName                                         = var.ti_idp_client_name,
     redirectUri                                        = var.ti_idp_redirect_uri,
     returnSsoToken                                     = var.ti_idp_return_sso_token,
-    replica_count                                      = local.gemidp_replicas,
-    resource_block                                     = local.gemidp_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gemidp_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.gemidp_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.gemidp_name].replicas,
+    resource_block                                     = var.resource_definitions[local.gemidp_name].resource_block,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gemidp_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.gemidp_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.gemidp_template_istio, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     ti_idp_hostname            = local.ti_idp_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gemidp_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.gemidp_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.gemidp_name], [])
   })
 
 }

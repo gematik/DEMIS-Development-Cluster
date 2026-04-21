@@ -21,12 +21,8 @@ locals {
   # Verify whether the service is defined or the deployment is explicitly enabled
   vs_core_enabled = contains(local.service_names, local.vs_core_name) ? var.deployment_information[local.vs_core_name].enabled : false
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
-  vs_core_template_app   = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}" : "${path.module}/${local.vs_core_name}/${local.application_values_file}"
-  vs_core_template_istio = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}" : "${path.module}/${local.vs_core_name}/${local.istio_values_file}"
-  # Define override for resources for Core
-  vs_core_resources_overrides = try(var.resource_definitions[local.vs_core_name], {})
-  vs_core_replicas            = lookup(local.vs_core_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_core_name].replicas : null
-  vs_core_resource_block      = lookup(local.vs_core_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_core_name].resource_block : null
+  vs_core_template_app        = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.application_values_file}" : "${path.module}/${local.vs_core_name}/${local.application_values_file}"
+  vs_core_template_istio      = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.istio_values_file}" : "${path.module}/${local.vs_core_name}/${local.istio_values_file}"
   vs_core_template_http_rules = fileexists("${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_core_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_core_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   # http timeouts and retries
   vs_core_http_timeout_retry_block = { core : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_core_name], null) }
@@ -38,12 +34,8 @@ locals {
   # Verify whether the service is defined or the deployment is explicitly enabled
   vs_igs_enabled = contains(local.service_names, local.vs_igs_name) ? var.deployment_information[local.vs_igs_name].enabled : false
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
-  vs_igs_template_app   = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}" : "${path.module}/${local.vs_igs_name}/${local.application_values_file}"
-  vs_igs_template_istio = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}" : "${path.module}/${local.vs_igs_name}/${local.istio_values_file}"
-  # Define override for resources for IGS
-  vs_igs_resources_overrides = try(var.resource_definitions[local.vs_igs_name], {})
-  vs_igs_replicas            = lookup(local.vs_igs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_igs_name].replicas : null
-  vs_igs_resource_block      = lookup(local.vs_igs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_igs_name].resource_block : null
+  vs_igs_template_app        = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.application_values_file}" : "${path.module}/${local.vs_igs_name}/${local.application_values_file}"
+  vs_igs_template_istio      = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.istio_values_file}" : "${path.module}/${local.vs_igs_name}/${local.istio_values_file}"
   vs_igs_template_http_rules = fileexists("${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_igs_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_igs_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   # http timeouts and retries
   vs_igs_http_timeout_retry_block = { igs : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_igs_name], null) }
@@ -55,12 +47,8 @@ locals {
   # Verify whether the service is defined or the deployment is explicitly enabled
   vs_ars_enabled = contains(local.service_names, local.vs_ars_name) ? var.deployment_information[local.vs_ars_name].enabled : false
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
-  vs_ars_template_app   = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}" : "${path.module}/${local.vs_ars_name}/${local.application_values_file}"
-  vs_ars_template_istio = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}" : "${path.module}/${local.vs_ars_name}/${local.istio_values_file}"
-  # Define override for resources for ARS
-  vs_ars_resources_overrides = try(var.resource_definitions[local.vs_ars_name], {})
-  vs_ars_replicas            = lookup(local.vs_ars_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_ars_name].replicas : null
-  vs_ars_resource_block      = lookup(local.vs_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_ars_name].resource_block : null
+  vs_ars_template_app        = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.application_values_file}" : "${path.module}/${local.vs_ars_name}/${local.application_values_file}"
+  vs_ars_template_istio      = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.istio_values_file}" : "${path.module}/${local.vs_ars_name}/${local.istio_values_file}"
   vs_ars_template_http_rules = fileexists("${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_ars_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_ars_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   # http timeouts and retries
   vs_ars_http_timeout_retry_block = { ars : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_ars_name], null) }
@@ -135,12 +123,12 @@ module "validation_service_core" {
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.vs_core_name], {}),
     config_options                                     = try(var.config_options[local.vs_core_name], {}),
-    replica_count                                      = local.vs_core_replicas,
-    resource_block                                     = local.vs_core_resource_block,
+    replica_count                                      = var.resource_definitions[local.vs_core_name].replicas,
+    resource_block                                     = var.resource_definitions[local.vs_core_name].resource_block,
     profile_versions                                   = module.validation_service_core_metadata.current_profile_versions,
     provisioning_mode                                  = var.profile_provisioning_mode_vs_core,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.vs_core_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    istio_proxy_resources                              = var.resource_definitions[local.vs_core_name].istio_proxy_resources,
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.vs_core_template_istio, {
@@ -188,12 +176,12 @@ module "validation_service_igs" {
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.vs_igs_name], {}),
     config_options                                     = try(var.config_options[local.vs_igs_name], {}),
-    replica_count                                      = local.vs_igs_replicas,
-    resource_block                                     = local.vs_igs_resource_block,
+    replica_count                                      = var.resource_definitions[local.vs_igs_name].replicas,
+    resource_block                                     = var.resource_definitions[local.vs_igs_name].resource_block,
     profile_versions                                   = module.validation_service_igs_metadata.current_profile_versions,
     provisioning_mode                                  = var.profile_provisioning_mode_vs_igs,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.vs_igs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.vs_igs_name].istio_proxy_resources,
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.vs_igs_template_istio, {
@@ -241,12 +229,12 @@ module "validation_service_ars" {
     profile_docker_registry                            = var.docker_registry,
     feature_flags                                      = try(var.feature_flags[local.vs_ars_name], {}),
     config_options                                     = try(var.config_options[local.vs_ars_name], {}),
-    replica_count                                      = local.vs_ars_replicas,
-    resource_block                                     = local.vs_ars_resource_block,
+    replica_count                                      = var.resource_definitions[local.vs_ars_name].replicas,
+    resource_block                                     = var.resource_definitions[local.vs_ars_name].resource_block,
     profile_versions                                   = module.validation_service_ars_metadata.current_profile_versions,
     provisioning_mode                                  = var.profile_provisioning_mode_vs_ars,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.vs_ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.vs_ars_name].istio_proxy_resources,
     namespace                                          = var.target_namespace
   })
   istio_values = templatefile(local.vs_ars_template_istio, {

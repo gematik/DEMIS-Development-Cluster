@@ -22,16 +22,16 @@ It performs the following operations:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.0.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | 3.8.1 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_falco"></a> [falco](#module\_falco) | ./security/falco | n/a |
 | <a name="module_istio_metadata"></a> [istio\_metadata](#module\_istio\_metadata) | ../modules/metadata | n/a |
 | <a name="module_istio_namespace"></a> [istio\_namespace](#module\_istio\_namespace) | ../modules/namespace | n/a |
@@ -53,7 +53,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | The name of the region where the cluster is deployed | `string` | n/a | yes |
 | <a name="input_cluster_role_name"></a> [cluster\_role\_name](#input\_cluster\_role\_name) | Defines the Cluster Role Name to be configured | `string` | `"api-cluster-role"` | no |
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
@@ -68,6 +68,7 @@ No resources.
 | <a name="input_jaeger_ttl_spans"></a> [jaeger\_ttl\_spans](#input\_jaeger\_ttl\_spans) | The time to live for spans stored in Jaeger | `string` | `null` | no |
 | <a name="input_kind_cluster_name"></a> [kind\_cluster\_name](#input\_kind\_cluster\_name) | Defines the name of the local KIND cluster | `string` | `""` | no |
 | <a name="input_kind_image_tag"></a> [kind\_image\_tag](#input\_kind\_image\_tag) | Defines the KIND Image Tag to use. | `string` | `"v1.32.2"` | no |
+| <a name="input_kind_service_subnet_address"></a> [kind\_service\_subnet\_address](#input\_kind\_service\_subnet\_address) | Defines the service subnet address for the KIND cluster | `string` | `"10.0.26.0/16"` | no |
 | <a name="input_kind_worker_nodes"></a> [kind\_worker\_nodes](#input\_kind\_worker\_nodes) | Defines the number of KIND Worker Nodes to be created | `number` | `2` | no |
 | <a name="input_kms_encryption_key"></a> [kms\_encryption\_key](#input\_kms\_encryption\_key) | The GCP KMS encryption key for OpenTofu state encryption | `string` | `""` | no |
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `null` | no |
@@ -112,6 +113,6 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_kms_encryption_key_used"></a> [kms\_encryption\_key\_used](#output\_kms\_encryption\_key\_used) | The flag to indicate if the KMS encryption key is used |
 <!-- END_TF_DOCS -->

@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   secure_message_gateway_template_app   = fileexists("${var.external_chart_path}/${local.secure_message_gateway_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.secure_message_gateway_name}/${local.application_values_file}" : "${path.module}/${local.secure_message_gateway_name}/${local.application_values_file}"
   secure_message_gateway_template_istio = fileexists("${var.external_chart_path}/${local.secure_message_gateway_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.secure_message_gateway_name}/${local.istio_values_file}" : "${path.module}/${local.secure_message_gateway_name}/${local.istio_values_file}"
-  # Define override for resources
-  secure_message_gateway_resources_overrides = try(var.resource_definitions[local.secure_message_gateway_name], {})
-  secure_message_gateway_replicas            = lookup(local.secure_message_gateway_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.secure_message_gateway_name].replicas : null
-  secure_message_gateway_resource_block      = lookup(local.secure_message_gateway_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.secure_message_gateway_name].resource_block : null
 }
 
 module "secure_message_gateway" {
@@ -32,10 +28,10 @@ module "secure_message_gateway" {
     core_hostname                                      = var.core_hostname,
     feature_flags                                      = try(var.feature_flags[local.secure_message_gateway_name], {}),
     config_options                                     = try(var.config_options[local.secure_message_gateway_name], {}),
-    replica_count                                      = local.secure_message_gateway_replicas,
-    resource_block                                     = local.secure_message_gateway_resource_block
+    replica_count                                      = var.resource_definitions[local.secure_message_gateway_name].replicas,
+    resource_block                                     = var.resource_definitions[local.secure_message_gateway_name].resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.secure_message_gateway_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.secure_message_gateway_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources
   })
   istio_values = templatefile(local.secure_message_gateway_template_istio, {
     namespace                = var.target_namespace,

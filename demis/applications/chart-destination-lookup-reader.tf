@@ -11,11 +11,6 @@ locals {
     ),
     -1 # Default index if not found
   )
-
-  # Define override for resources
-  dlsr_resources_overrides = try(var.resource_definitions[local.dls_reader_name], {})
-  dlsr_replicas            = lookup(local.dlsr_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.dls_reader_name].replicas : null
-  dlsr_resource_block      = lookup(local.dlsr_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.dls_reader_name].resource_block : null
 }
 
 module "destination_lookup_reader" {
@@ -40,10 +35,10 @@ module "destination_lookup_reader" {
     debug_enable                                       = var.debug_enabled,
     feature_flags                                      = try(var.feature_flags[local.dls_reader_name], {}),
     config_options                                     = try(var.config_options[local.dls_reader_name], {}),
-    resource_block                                     = local.dlsr_resource_block,
-    replica_count                                      = local.dlsr_replicas,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.dls_reader_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.dlsr_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    resource_block                                     = var.resource_definitions[local.dls_reader_name].resource_block,
+    replica_count                                      = var.resource_definitions[local.dls_reader_name].replicas,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.dls_reader_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.dls_reader_name].istio_proxy_resources,
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.dlsr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.dls_reader_template_istio, {
@@ -53,6 +48,6 @@ module "destination_lookup_reader" {
     demis_hostnames            = local.demis_hostnames,
     app_name                   = local.dls_reader_name,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.dls_reader_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.dls_reader_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.dls_reader_name], [])
   })
 }

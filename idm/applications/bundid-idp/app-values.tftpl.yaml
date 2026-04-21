@@ -112,3 +112,6 @@ replicaCount: ${replica_count}
 # Override Resource Definitions for Pod
 ${resource_block}
 %{endif}
+
+istio:
+  validateJwt: false

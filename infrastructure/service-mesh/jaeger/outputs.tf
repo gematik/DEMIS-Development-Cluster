@@ -21,5 +21,5 @@ output "otlp_http_port" {
 output "tracing_service_url" {
   depends_on  = [kubernetes_deployment_v1.this]
   description = "The Jaeger gRPC Query URL"
-  value       = "http://${kubernetes_service_v1.tracing.metadata[0].name}.${var.target_namespace}:${local.grpc_query_port}/jaeger"
+  value       = "http://${kubernetes_service_v1.tracing.metadata[0].name}.${var.target_namespace}:${local.grpc_query_port}"
 }

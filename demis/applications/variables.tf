@@ -138,14 +138,8 @@ variable "resource_definitions" {
   type = map(object({
     resource_block = optional(string)
     istio_proxy_resources = optional(object({
-      limits = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
-      requests = optional(object({
-        cpu    = optional(string)
-        memory = optional(string)
-      }))
+      limits   = optional(map(string))
+      requests = optional(map(string))
     }))
     replicas = number
   }))
@@ -155,20 +149,6 @@ variable "resource_definitions" {
     condition     = length(var.resource_definitions) > 0 ? alltrue([for key, value in var.resource_definitions : value != {}]) : true
     error_message = "Service should contain valid resource definitions. No Replicas or resource block defined"
   }
-}
-
-variable "istio_proxy_default_resources" {
-  description = "Default values for istio proxy resource requests and limits"
-  type = object({
-    limits = object({
-      cpu    = optional(string)
-      memory = string
-    })
-    requests = object({
-      cpu    = string
-      memory = string
-    })
-  })
 }
 
 variable "pull_secrets" {
@@ -313,7 +293,7 @@ variable "cluster_gateway" {
 # Application Configuration
 #########################
 
-# Debugging 
+# Debugging
 variable "debug_enabled" {
   type        = bool
   description = "Defines if the backend Java Services must be started in Debug Mode"
@@ -435,6 +415,19 @@ variable "reset_values" {
   default     = false
 }
 
+variable "deployment_timeout" {
+  type        = number
+  description = "Timeout for the deployment in minutes"
+  default     = 600
+}
+
+variable "external_routing_configurations" {
+  description = "Defines the rendered Istio routing rules for the application, generated from the input mapping and the template variables. The structure is a map where the keys are service names and the values are lists of routing rules associated with each service."
+  type        = object({ rules = any })
+  default     = { rules = {} }
+}
+
+# tflint-ignore: terraform_unused_declarations
 variable "project_feature_flags" {
   type        = map(bool)
   description = "Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false)."

@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   bundid_template_app   = fileexists("${var.external_chart_path}/${local.bundid_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.bundid_name}/${local.application_values_file}" : "${path.module}/${local.bundid_name}/${local.application_values_file}"
   bundid_template_istio = fileexists("${var.external_chart_path}/${local.bundid_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.bundid_name}/${local.istio_values_file}" : "${path.module}/${local.bundid_name}/${local.istio_values_file}"
-  # Define override for resources
-  bundid_resources_overrides = try(var.resource_definitions[local.bundid_name], {})
-  bundid_replicas            = lookup(local.bundid_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.bundid_name].replicas : null
-  bundid_resource_block      = lookup(local.bundid_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.bundid_name].resource_block : null
 }
 
 module "bundid_idp" {
@@ -34,17 +30,17 @@ module "bundid_idp" {
     data_name                                          = local.stage_configuration_data_name,
     feature_flags                                      = try(var.feature_flags[local.bundid_name], {}),
     config_options                                     = try(var.config_options[local.bundid_name], {}),
-    replica_count                                      = local.bundid_replicas,
-    resource_block                                     = local.bundid_resource_block,
+    replica_count                                      = var.resource_definitions[local.bundid_name].replicas,
+    resource_block                                     = var.resource_definitions[local.bundid_name].resource_block,
     enable_import                                      = var.bundid_idp_user_import_enabled
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.bundid_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.bundid_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.bundid_name].istio_proxy_resources
   })
   istio_values = templatefile(local.bundid_template_istio, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     issuer_hostname            = local.bundid_idp_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bundid_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.bundid_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.bundid_name], [])
   })
 }

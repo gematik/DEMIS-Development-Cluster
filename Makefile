@@ -581,6 +581,10 @@ test-modules: ## Runs tests for all modules
 		cd "$$dir"; \
 		$(TF_BIN) init -upgrade 1> /dev/null; \
 		$(TF_BIN) test; \
+		if [ $$? -ne 0 ]; then \
+			echo "Tests failed for module: $$dir"; \
+			exit 1; \
+		fi; \
 	done
 
 .Phony: check-external-routing-configuration

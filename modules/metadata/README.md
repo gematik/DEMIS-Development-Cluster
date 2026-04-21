@@ -30,7 +30,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 
 ## Modules
@@ -44,7 +44,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_application"></a> [application](#input\_application) | Application name | `string` | n/a | yes |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster name | `string` | n/a | yes |
 | <a name="input_component"></a> [component](#input\_component) | Component name (e.g., web, api, db) | `string` | n/a | yes |
@@ -54,7 +54,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_resource_name"></a> [resource\_name](#output\_resource\_name) | Standardized resource name |
 | <a name="output_stage"></a> [stage](#output\_stage) | Standandized stage name |
 | <a name="output_tags"></a> [tags](#output\_tags) | Standardized set of tags for all resources |

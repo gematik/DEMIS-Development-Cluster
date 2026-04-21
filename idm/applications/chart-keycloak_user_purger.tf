@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   kup_template_app   = fileexists("${var.external_chart_path}/${local.kup_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.kup_name}/${local.application_values_file}" : "${path.module}/${local.kup_name}/${local.application_values_file}"
   kup_template_istio = fileexists("${var.external_chart_path}/${local.kup_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.kup_name}/${local.istio_values_file}" : "${path.module}/${local.kup_name}/${local.istio_values_file}"
-  # Define override for resources
-  kup_resources_overrides = try(var.resource_definitions[local.kup_name], {})
-  kup_replicas            = lookup(local.kup_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.kup_name].replicas : null
-  kup_resource_block      = lookup(local.kup_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.kup_name].resource_block : null
 }
 
 module "keycloak_user_purger" {
@@ -36,10 +32,10 @@ module "keycloak_user_purger" {
     keycloak_portal_client_id                          = var.keycloak_portal_client_id,
     feature_flags                                      = try(var.feature_flags[local.kup_name], {}),
     config_options                                     = try(var.config_options[local.kup_name], {}),
-    replica_count                                      = local.kup_replicas,
-    resource_block                                     = local.kup_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.kup_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.kup_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.kup_name].replicas,
+    resource_block                                     = var.resource_definitions[local.kup_name].resource_block,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.kup_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.kup_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.kup_template_istio, {
     namespace = var.target_namespace

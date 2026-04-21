@@ -4,6 +4,9 @@ output "service_resource_definitions" {
 }
 
 output "istio_proxy_default_resources" {
-  description = "Default values for istio proxy resource requests and limits"
+  description = <<EOT
+  Default values for istio proxy resource requests and limits
+  DEPRECATED: This output 'istio_proxy_default_resources' is deprecated and will be removed in a future version."
+EOT
   value       = local.istio_proxy_default_resources
 }

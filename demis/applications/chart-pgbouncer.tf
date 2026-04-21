@@ -5,11 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   pgbouncer_template_app   = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.application_values_file}"
   pgbouncer_template_istio = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.istio_values_file}"
-
-  # Define override for resources
-  pgbouncer_resources_overrides = try(var.resource_definitions[local.pgbouncer_name], {})
-  pgbouncer_replicas            = lookup(local.pgbouncer_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.pgbouncer_name].replicas : null
-  pgbouncer_resource_block      = lookup(local.pgbouncer_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.pgbouncer_name].resource_block : null
 }
 
 module "pgbouncer" {
@@ -30,8 +25,8 @@ module "pgbouncer" {
     repository                                         = var.docker_registry,
     database_host                                      = var.database_target_host,
     istio_enable                                       = var.istio_enabled,
-    replica_count                                      = local.pgbouncer_replicas,
-    resource_block                                     = local.pgbouncer_resource_block,
+    replica_count                                      = var.resource_definitions[local.pgbouncer_name].replicas,
+    resource_block                                     = var.resource_definitions[local.pgbouncer_name].resource_block,
     config_options                                     = try(var.config_options[local.pgbouncer_name], {}),
     pseudonymization_db_enabled                        = local.pseudo_enabled
     fhir_storage_db_enabled                            = local.fssw_enabled || local.fssr_enabled || local.fsp_enabled,
@@ -41,7 +36,7 @@ module "pgbouncer" {
     userlist_secret_checksum                           = try(kubernetes_secret_v1.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
     postgres_tls_secret_checksum                       = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.pgbouncer_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.pgbouncer_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.pgbouncer_name].istio_proxy_resources
   })
 
 

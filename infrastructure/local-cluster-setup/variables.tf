@@ -23,3 +23,13 @@ variable "kind_worker_nodes" {
     error_message = "Error: Number of Worker Nodes should be greater than 0"
   }
 }
+
+variable "kind_service_subnet_address" {
+  type        = string
+  default     = "10.0.26.0/16"
+  description = "Defines the service subnet address for the KIND cluster"
+  validation {
+    condition     = can(cidrnetmask(var.kind_service_subnet_address))
+    error_message = "Error: Invalid CIDR notation for service subnet address"
+  }
+}

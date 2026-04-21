@@ -1,0 +1,27 @@
+traffic_routes_templates:
+  - service: svc-http-methods
+    enabled: true
+    http_route_configs:
+      - matches:
+          - uri_template: /get-endpoint
+            method:
+              exact: GET
+          - uri_template: /post-endpoint
+            method:
+              exact: POST
+          - uri_template: /put-endpoint
+            method:
+              exact: PUT
+          - uri_template: /delete-endpoint
+            method:
+              exact: DELETE
+          - uri_template: /patch-endpoint
+            method:
+              exact: PATCH
+          - uri_template: /prefix-endpoint
+            method:
+              prefix: GE
+          - uri_template: /regex-endpoint
+            method:
+              regex: ^(GET|POST)$
+

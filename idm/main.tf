@@ -43,7 +43,7 @@ locals {
 
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
-  pull_secrets_credentials = [for pull_secret in var.docker_pull_secrets : pull_secret.name]
+  pull_secrets_credentials = [for k, v in module.pull_secrets : v.metadata.name]
 }
 
 # Define the Endpoints
