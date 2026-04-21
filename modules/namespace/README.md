@@ -35,7 +35,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 3.0.0, < 4.0.0 |
 
@@ -46,13 +46,13 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_namespace_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace_v1) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_annotations"></a> [annotations](#input\_annotations) | The annotations to apply to the Namespace | `map(string)` | `{}` | no |
 | <a name="input_enable_istio_injection"></a> [enable\_istio\_injection](#input\_enable\_istio\_injection) | Enable Istio Sidecar Injection for the Namespace | `bool` | `false` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | The labels to apply to the Namespace | `map(string)` | `{}` | no |
@@ -61,7 +61,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_annotations"></a> [annotations](#output\_annotations) | Prints the annotations of the Namespace |
 | <a name="output_labels"></a> [labels](#output\_labels) | Prints the labels of the Namespace |
 | <a name="output_name"></a> [name](#output\_name) | Prints the name of the Namespace |

@@ -42,7 +42,10 @@ sudo mv checkov/dist/checkov /usr/local/bin/checkov
 rm -rf checkov* 
 
 echo "##### Updating terraform-docs"
-curl -fsSL https://github.com/terraform-docs/terraform-docs/releases/download/v0.19.0/terraform-docs-v0.19.0-linux-amd64.tar.gz -o terraform-docs.tar.gz 
-sudo tar -zxvf terraform-docs.tar.gz -C /usr/local/bin/ terraform-docs
-sudo chmod +x /usr/local/bin/terraform-docs 
-rm -f terraform-docs.tar.gz
+for version in $(curl -sL  https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r 'select(has("name")).name'); do
+  curl -fsSL "https://github.com/terraform-docs/terraform-docs/releases/download/${version}/terraform-docs-${version}-linux-amd64.tar.gz" -o terraform-docs.tar.gz
+   sudo tar -zxvf terraform-docs.tar.gz -C /usr/local/bin/ terraform-docs
+   sudo chmod +x /usr/local/bin/terraform-docs
+   rm -f terraform-docs.tar.gz
+done
+

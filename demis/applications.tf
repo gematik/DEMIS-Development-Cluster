@@ -32,12 +32,13 @@ module "demis_services" {
   feature_flags                                   = module.application_flags.service_feature_flags
   config_options                                  = module.application_flags.service_config_options
   resource_definitions                            = module.application_resources.service_resource_definitions
-  istio_proxy_default_resources                   = module.application_resources.istio_proxy_default_resources
   timeout_retry_overrides                         = var.timeout_retry_overrides
   profile_provisioning_mode_vs_core               = var.profile_provisioning_mode_vs_core
   profile_provisioning_mode_vs_igs                = var.profile_provisioning_mode_vs_igs
   profile_provisioning_mode_vs_ars                = var.profile_provisioning_mode_vs_ars
   reset_values                                    = var.reset_values
+  deployment_timeout                              = var.deployment_timeout
+  external_routing_configurations                 = try(module.external_routing_configurations[0], { rules = {} })
   project_feature_flags                           = var.project_feature_flags
 
   # Secrets and Credentials needed for the applications
@@ -55,5 +56,5 @@ module "demis_services" {
   rabbitmq_username            = var.rabbitmq_username
   rabbitmq_password            = var.rabbitmq_password
 
-  depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode.set_maintenance_mode]
+  depends_on = [module.persistent_volume_claims, module.activate_maintenance_mode]
 }

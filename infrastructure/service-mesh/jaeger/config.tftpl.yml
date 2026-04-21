@@ -27,7 +27,6 @@ extensions:
         enabled: true
         path: "/config"
   jaeger_query:
-    base_path: /jaeger
     storage:
       traces: trace_storage
     grpc:

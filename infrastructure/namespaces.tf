@@ -32,7 +32,7 @@ module "istio_namespace" {
 
   # Wait for the kubeconfig to exist AND for the kube-apiserver to be ready
   # after the ResourceQuota admission-plugin patch (local KIND clusters only).
-  depends_on = [local.kubeconfig_path, local.api_server_ready]
+  depends_on = [local.kubeconfig_path]
 }
 
 module "security_namespace" {
@@ -41,7 +41,7 @@ module "security_namespace" {
   name   = var.security_namespace
   labels = module.security_metadata.tags
 
-  depends_on = [local.kubeconfig_path, local.api_server_ready]
+  depends_on = [local.kubeconfig_path]
 }
 
 module "kyverno_namespace" {
@@ -49,5 +49,5 @@ module "kyverno_namespace" {
 
   name = var.kyverno_namespace
 
-  depends_on = [local.kubeconfig_path, local.api_server_ready]
+  depends_on = [local.kubeconfig_path]
 }

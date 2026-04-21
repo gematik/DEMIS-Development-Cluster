@@ -141,6 +141,72 @@ run "valid_match_method_shapes_test" {
   }
 }
 
+run "valid_http_method_output_test" {
+  command = apply
+
+  variables {
+    input_mapping_path = "testdata/positive/valid-http-method-output.yaml"
+  }
+
+  assert {
+    condition     = length(output.rules["svc-http-methods"]) == 1
+    error_message = "Expected exactly one rule block for svc-http-methods, got ${length(output.rules["svc-http-methods"])}."
+  }
+
+  assert {
+    condition     = length(output.rules["svc-http-methods"][0].match) == 7
+    error_message = "Expected 7 match entries (5 exact + 1 prefix + 1 regex), got ${length(output.rules["svc-http-methods"][0].match)}."
+  }
+
+  # Verify all five valid exact HTTP method enum values are passed through correctly
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[0].method.exact == "GET"
+    error_message = "Expected exact method GET at match[0], got ${jsonencode(output.rules["svc-http-methods"][0].match[0].method)}."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[1].method.exact == "POST"
+    error_message = "Expected exact method POST at match[1], got ${jsonencode(output.rules["svc-http-methods"][0].match[1].method)}."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[2].method.exact == "PUT"
+    error_message = "Expected exact method PUT at match[2], got ${jsonencode(output.rules["svc-http-methods"][0].match[2].method)}."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[3].method.exact == "DELETE"
+    error_message = "Expected exact method DELETE at match[3], got ${jsonencode(output.rules["svc-http-methods"][0].match[3].method)}."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[4].method.exact == "PATCH"
+    error_message = "Expected exact method PATCH at match[4], got ${jsonencode(output.rules["svc-http-methods"][0].match[4].method)}."
+  }
+
+  # Verify prefix and regex method shapes are passed through correctly
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[5].method.prefix == "GE"
+    error_message = "Expected prefix method 'GE' at match[5], got ${jsonencode(output.rules["svc-http-methods"][0].match[5].method)}."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[6].method.regex == "^(GET|POST)$"
+    error_message = "Expected regex method '^(GET|POST)$' at match[6], got ${jsonencode(output.rules["svc-http-methods"][0].match[6].method)}."
+  }
+
+  # Verify URIs are rendered alongside their method constraints
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[0].uri.prefix == "/get-endpoint"
+    error_message = "Expected URI prefix '/get-endpoint' co-rendered with GET method at match[0]."
+  }
+
+  assert {
+    condition     = output.rules["svc-http-methods"][0].match[6].uri.prefix == "/regex-endpoint"
+    error_message = "Expected URI prefix '/regex-endpoint' co-rendered with regex method at match[6]."
+  }
+}
+
 run "valid_disabled_and_filtering_test" {
   command = apply
 
@@ -177,7 +243,7 @@ run "invalid_root_missing_traffic_routes_templates_test" {
     input_mapping_path = "testdata/negative/invalid-root-missing-traffic-routes-templates.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_root_additional_property_test" {
@@ -187,7 +253,7 @@ run "invalid_root_additional_property_test" {
     input_mapping_path = "testdata/negative/invalid-root-additional-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_missing_service_test" {
@@ -197,7 +263,7 @@ run "invalid_template_missing_service_test" {
     input_mapping_path = "testdata/negative/invalid-template-missing-service.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_missing_http_route_configs_test" {
@@ -207,7 +273,7 @@ run "invalid_template_missing_http_route_configs_test" {
     input_mapping_path = "testdata/negative/invalid-template-missing-http-route-configs.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_missing_enabled_test" {
@@ -217,7 +283,7 @@ run "invalid_template_missing_enabled_test" {
     input_mapping_path = "testdata/negative/invalid-template-missing-enabled.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_additional_property_test" {
@@ -227,7 +293,7 @@ run "invalid_template_additional_property_test" {
     input_mapping_path = "testdata/negative/invalid-template-additional-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_empty_service_test" {
@@ -237,7 +303,7 @@ run "invalid_template_empty_service_test" {
     input_mapping_path = "testdata/negative/invalid-template-empty-service.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_enabled_not_boolean_test" {
@@ -247,7 +313,7 @@ run "invalid_template_enabled_not_boolean_test" {
     input_mapping_path = "testdata/negative/invalid-template-enabled-not-boolean.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_variables_non_string_test" {
@@ -257,7 +323,7 @@ run "invalid_template_variables_non_string_test" {
     input_mapping_path = "testdata/negative/invalid-template-variables-non-string.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_delegate_missing_namespace_test" {
@@ -267,7 +333,7 @@ run "invalid_template_delegate_missing_namespace_test" {
     input_mapping_path = "testdata/negative/invalid-template-delegate-missing-namespace.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_delegate_additional_property_test" {
@@ -277,7 +343,7 @@ run "invalid_template_delegate_additional_property_test" {
     input_mapping_path = "testdata/negative/invalid-template-delegate-additional-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_additional_headers_empty_value_test" {
@@ -287,7 +353,7 @@ run "invalid_template_additional_headers_empty_value_test" {
     input_mapping_path = "testdata/negative/invalid-template-additional-headers-empty-value.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_match_empty_uri_template_test" {
@@ -297,7 +363,7 @@ run "invalid_template_match_empty_uri_template_test" {
     input_mapping_path = "testdata/negative/invalid-template-matches-empty.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_rewrite_missing_target_test" {
@@ -307,7 +373,7 @@ run "invalid_template_rewrite_missing_target_test" {
     input_mapping_path = "testdata/negative/invalid-template-rewrite-missing-target.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_http_route_configs_empty_test" {
@@ -317,7 +383,7 @@ run "invalid_template_http_route_configs_empty_test" {
     input_mapping_path = "testdata/negative/invalid-template-http-route-configs-empty.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_empty_object_test" {
@@ -327,7 +393,7 @@ run "invalid_http_route_config_empty_object_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-empty-object.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_additional_property_test" {
@@ -337,7 +403,7 @@ run "invalid_http_route_config_additional_property_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-additional-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_variables_non_string_test" {
@@ -347,7 +413,7 @@ run "invalid_http_route_config_variables_non_string_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-variables-non-string.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_matches_empty_test" {
@@ -357,7 +423,7 @@ run "invalid_http_route_config_matches_empty_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-matches-empty.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_match_missing_uri_template_test" {
@@ -367,7 +433,7 @@ run "invalid_http_route_config_match_missing_uri_template_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-match-missing-uri-template.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_regex_rewrite_missing_match_template_test" {
@@ -377,7 +443,7 @@ run "invalid_http_route_config_regex_rewrite_missing_match_template_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-rewrite-regex-missing-match-template.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_additional_property_test" {
@@ -387,7 +453,7 @@ run "invalid_match_additional_property_test" {
     input_mapping_path = "testdata/negative/invalid-match-additional-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_header_empty_value_test" {
@@ -397,7 +463,7 @@ run "invalid_match_header_empty_value_test" {
     input_mapping_path = "testdata/negative/invalid-match-header-empty-value.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_without_headers_empty_string_test" {
@@ -407,7 +473,7 @@ run "invalid_match_without_headers_empty_string_test" {
     input_mapping_path = "testdata/negative/invalid-match-without-headers-empty-string.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_method_exact_enum_test" {
@@ -417,7 +483,7 @@ run "invalid_match_method_exact_enum_test" {
     input_mapping_path = "testdata/negative/invalid-match-method-exact-enum.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_type_enum_test" {
@@ -427,7 +493,7 @@ run "invalid_match_type_enum_test" {
     input_mapping_path = "testdata/negative/invalid-match-type-enum.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_ignore_uri_case_not_boolean_test" {
@@ -437,7 +503,7 @@ run "invalid_match_ignore_uri_case_not_boolean_test" {
     input_mapping_path = "testdata/negative/invalid-match-ignore-uri-case-not-boolean.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_root_service_property_test" {
@@ -447,7 +513,7 @@ run "invalid_root_service_property_test" {
     input_mapping_path = "testdata/negative/invalid-root-service-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_template_uri_template_property_test" {
@@ -457,7 +523,7 @@ run "invalid_template_uri_template_property_test" {
     input_mapping_path = "testdata/negative/invalid-template-uri-template-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_http_route_config_service_property_test" {
@@ -467,7 +533,7 @@ run "invalid_http_route_config_service_property_test" {
     input_mapping_path = "testdata/negative/invalid-http-route-config-service-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }
 
 run "invalid_match_rewrite_property_test" {
@@ -477,5 +543,5 @@ run "invalid_match_rewrite_property_test" {
     input_mapping_path = "testdata/negative/invalid-match-rewrite-property.yaml"
   }
 
-  expect_failures = [terraform_data.data]
+  expect_failures = [data.external.schema_validation]
 }

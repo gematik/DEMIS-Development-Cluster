@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   fsp_template_app   = fileexists("${var.external_chart_path}/${local.fsp_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fsp_name}/${local.application_values_file}" : "${path.module}/${local.fsp_name}/${local.application_values_file}"
   fsp_template_istio = fileexists("${var.external_chart_path}/${local.fsp_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fsp_name}/${local.istio_values_file}" : "${path.module}/${local.fsp_name}/${local.istio_values_file}"
-  # Define override for resources
-  fsp_resources_overrides = try(var.resource_definitions[local.fsp_name], {})
-  fsp_replicas            = lookup(local.fsp_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.fsp_name].replicas : null
-  fsp_resource_block      = lookup(local.fsp_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.fsp_name].resource_block : null
 }
 
 module "fhir_storage_purger" {
@@ -34,10 +30,10 @@ module "fhir_storage_purger" {
     cron_schedule                                      = var.fhir_storage_purger_cron_schedule,
     feature_flags                                      = try(var.feature_flags[local.fsp_name], {}),
     config_options                                     = try(var.config_options[local.fsp_name], {}),
-    replica_count                                      = local.fsp_replicas,
-    resource_block                                     = local.fsp_resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fsp_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.fsp_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.fsp_name].replicas,
+    resource_block                                     = var.resource_definitions[local.fsp_name].resource_block
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fsp_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.fsp_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.fsp_template_istio, {
     namespace = var.target_namespace

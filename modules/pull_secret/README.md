@@ -34,7 +34,7 @@ tofu test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 3.0.0, < 4.0.0 |
 
@@ -45,13 +45,13 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_secret_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_annotations"></a> [annotations](#input\_annotations) | The Annotations to apply to the Secret | `map(string)` | `{}` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | The Labels to apply to the Secret | `map(string)` | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | The Name of the Pull Secret | `string` | n/a | yes |
@@ -65,6 +65,6 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_metadata"></a> [metadata](#output\_metadata) | Prints the metadata information of the generated Kubernetes Secret for the Pull Credentials. |
 <!-- END_TF_DOCS -->

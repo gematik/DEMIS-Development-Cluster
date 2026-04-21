@@ -24,7 +24,6 @@ module "idm_services" {
   config_options                     = module.application_flags.service_config_options
   timeout_retry_overrides            = var.timeout_retry_overrides
   resource_definitions               = module.application_resources.service_resource_definitions
-  istio_proxy_default_resources      = module.application_resources.istio_proxy_default_resources
   ti_idp_server_url                  = var.ti_idp_server_url
   ti_idp_client_name                 = var.ti_idp_client_name
   ti_idp_redirect_uri                = var.ti_idp_redirect_uri
@@ -33,6 +32,9 @@ module "idm_services" {
   keycloak_user_import_enabled       = var.keycloak_user_import_enabled
   reset_values                       = var.reset_values
   tsl_download_endpoint              = var.tsl_download_endpoint
+  deployment_timeout                 = var.deployment_timeout
+  external_routing_configurations    = try(module.external_routing_configurations[0], { rules = {} })
+  project_feature_flags              = var.project_feature_flags
 
   # Secrets and Credentials needed for the applications
   postgres_server_certificate        = var.postgres_server_certificate
@@ -55,7 +57,6 @@ module "idm_services" {
   keycloak_portal_client_id          = var.keycloak_portal_client_id
   database_credentials               = var.database_credentials
   cus_health_department_certificates = var.cus_health_department_certificates
-  project_feature_flags              = var.project_feature_flags
 
-  depends_on = [module.persistent_volume_claims, module.pull_secrets, module.activate_maintenance_mode]
+  depends_on = [module.persistent_volume_claims, module.activate_maintenance_mode]
 }

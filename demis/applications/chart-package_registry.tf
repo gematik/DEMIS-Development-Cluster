@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   fpr_template_app   = fileexists("${var.external_chart_path}/${local.fpr_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fpr_name}/${local.application_values_file}" : "${path.module}/${local.fpr_name}/${local.application_values_file}"
   fpr_template_istio = fileexists("${var.external_chart_path}/${local.fpr_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fpr_name}/${local.istio_values_file}" : "${path.module}/${local.fpr_name}/${local.istio_values_file}"
-  # Define override for resources
-  fpr_resources_overrides = try(var.resource_definitions[local.fpr_name], {})
-  fpr_replicas            = lookup(local.fpr_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.fpr_name].replicas : null
-  fpr_resource_block      = lookup(local.fpr_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.fpr_name].resource_block : null
 }
 
 module "package_registry" {
@@ -30,10 +26,10 @@ module "package_registry" {
     istio_enable                                       = var.istio_enabled,
     feature_flags                                      = try(var.feature_flags[local.fpr_name], {}),
     config_options                                     = try(var.config_options[local.fpr_name], {}),
-    replica_count                                      = local.fpr_replicas,
-    resource_block                                     = local.fpr_resource_block
+    replica_count                                      = var.resource_definitions[local.fpr_name].replicas,
+    resource_block                                     = var.resource_definitions[local.fpr_name].resource_block
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fpr_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.fpr_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.fpr_name].istio_proxy_resources,
     service_accounts_checksums                         = [for k, v in kubernetes_secret_v1.service_accounts : v.metadata[0].annotations["checksum"]]
 
   })

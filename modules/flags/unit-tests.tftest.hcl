@@ -84,7 +84,7 @@ run "config_options_correct_test" {
 }
 
 # ignore null Configuration Options
-run "config_options_correct_test" {
+run "config_options_correct_test_ignore_null" {
   command = plan
 
   variables {

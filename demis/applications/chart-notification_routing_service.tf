@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   nrs_template_app   = fileexists("${var.external_chart_path}/${local.nrs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.nrs_name}/${local.application_values_file}" : "${path.module}/${local.nrs_name}/${local.application_values_file}"
   nrs_template_istio = fileexists("${var.external_chart_path}/${local.nrs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.nrs_name}/${local.istio_values_file}" : "${path.module}/${local.nrs_name}/${local.istio_values_file}"
-  # Define override for resources
-  nrs_resources_overrides = try(var.resource_definitions[local.nrs_name], {})
-  nrs_replicas            = lookup(local.nrs_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.nrs_name].replicas : null
-  nrs_resource_block      = lookup(local.nrs_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.nrs_name].resource_block : null
 }
 
 module "notification_routing_service" {
@@ -32,10 +28,10 @@ module "notification_routing_service" {
     routing_data_version                               = local.routing_data_version,
     feature_flags                                      = try(var.feature_flags[local.nrs_name], {}),
     config_options                                     = try(var.config_options[local.nrs_name], {}),
-    replica_count                                      = local.nrs_replicas,
-    resource_block                                     = local.nrs_resource_block
+    replica_count                                      = var.resource_definitions[local.nrs_name].replicas,
+    resource_block                                     = var.resource_definitions[local.nrs_name].resource_block
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.nrs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.nrs_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.nrs_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.nrs_template_istio, {
     namespace                = var.target_namespace

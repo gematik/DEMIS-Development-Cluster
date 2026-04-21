@@ -24,7 +24,7 @@ resource "helm_release" "istiod" {
     autoscale_min          = var.replica_count,
     replica_count          = var.replica_count,
     trace_sampling         = var.trace_sampling,
-    opentelemetry_hostname = "otlp-collector.istio-system.svc.cluster.local",
+    opentelemetry_hostname = "otlp-collector.${var.namespace}.svc.cluster.local",
     opentelemetry_port     = "4317"
     enable_native_sidecars = var.enable_native_sidecar_injection
   })]

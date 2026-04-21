@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   rps_template_app   = fileexists("${var.external_chart_path}/${local.rps_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.rps_name}/${local.application_values_file}" : "${path.module}/${local.rps_name}/${local.application_values_file}"
   rps_template_istio = fileexists("${var.external_chart_path}/${local.rps_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.rps_name}/${local.istio_values_file}" : "${path.module}/${local.rps_name}/${local.istio_values_file}"
-  # Define override for resources
-  rps_resources_overrides = try(var.resource_definitions[local.rps_name], {})
-  rps_replicas            = lookup(local.rps_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.rps_name].replicas : null
-  rps_resource_block      = lookup(local.rps_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.rps_name].resource_block : null
 }
 
 module "report_processing_service" {
@@ -32,10 +28,10 @@ module "report_processing_service" {
     keycloak_internal_hostname                         = var.keycloak_internal_hostname,
     feature_flags                                      = try(var.feature_flags[local.rps_name], {}),
     config_options                                     = try(var.config_options[local.rps_name], {}),
-    replica_count                                      = local.rps_replicas,
-    resource_block                                     = local.rps_resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rps_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.rps_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    replica_count                                      = var.resource_definitions[local.rps_name].replicas,
+    resource_block                                     = var.resource_definitions[local.rps_name].resource_block,
+    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rps_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    istio_proxy_resources                              = var.resource_definitions[local.rps_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.rps_template_istio, {
     namespace                  = var.target_namespace,
@@ -45,6 +41,6 @@ module "report_processing_service" {
     support_fhir_api_versions  = var.profile_provisioning_mode_vs_core != null && var.profile_provisioning_mode_vs_core != "dedicated"
     fhir_api_versions          = module.validation_service_core_metadata.current_profile_versions
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.rps_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.rps_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.rps_name], [])
   })
 }

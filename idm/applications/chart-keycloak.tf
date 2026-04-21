@@ -6,10 +6,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   keycloak_template_app   = fileexists("${var.external_chart_path}/${local.keycloak_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.keycloak_name}/${local.application_values_file}" : "${path.module}/${local.keycloak_name}/${local.application_values_file}"
   keycloak_template_istio = fileexists("${var.external_chart_path}/${local.keycloak_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.keycloak_name}/${local.istio_values_file}" : "${path.module}/${local.keycloak_name}/${local.istio_values_file}"
-  # Define override for resources
-  keycloak_resources_overrides = try(var.resource_definitions[local.keycloak_name], {})
-  keycloak_replicas            = lookup(local.keycloak_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.keycloak_name].replicas : null
-  keycloak_resource_block      = lookup(local.keycloak_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.keycloak_name].resource_block : null
 
   # Determine whether to enable the TSL Deliverer Mock based on existence of tsl_deliverer_mock in deployment_information
   enable_tsl_deliverer_mock = try(contains(keys(var.deployment_information), local.tsl_deliverer_mock_name) ? var.deployment_information[local.tsl_deliverer_mock_name].enabled : false, false)
@@ -50,8 +46,8 @@ module "keycloak" {
     tsl_deliverer_mock_version                         = local.tsl_deliverer_mock_version
     feature_flags                                      = try(var.feature_flags[local.keycloak_name], {}),
     config_options                                     = try(var.config_options[local.keycloak_name], {}),
-    replica_count                                      = local.keycloak_replicas,
-    resource_block                                     = local.keycloak_resource_block,
+    replica_count                                      = var.resource_definitions[local.keycloak_name].replicas,
+    resource_block                                     = var.resource_definitions[local.keycloak_name].resource_block,
     enable_import                                      = var.keycloak_user_import_enabled,
     enable_tsl_deliverer_mock                          = local.enable_tsl_deliverer_mock,
     tsl_download_endpoint                              = var.tsl_download_endpoint,
@@ -61,7 +57,7 @@ module "keycloak" {
     keycloak_truststore_password_checksum              = try(kubernetes_secret_v1.keycloak_truststore_password.metadata[0].annotations["checksum"], ""),
     db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.keycloak_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.keycloak_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.keycloak_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.keycloak_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.keycloak_template_istio, {
     namespace                  = var.target_namespace,
@@ -69,6 +65,6 @@ module "keycloak" {
     issuer_hostname            = local.auth_hostname,
     core_hostname              = local.core_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.keycloak_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.keycloak_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.keycloak_name], [])
   })
 }

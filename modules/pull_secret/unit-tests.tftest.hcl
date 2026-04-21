@@ -1,5 +1,5 @@
 provider "kubernetes" {
-  config_path = "${path.module}/.test_kubeconfig"
+  config_path = "testdata/.test_kubeconfig"
 }
 
 # Test common Plain Credentials (e.g. for Docker Hub)

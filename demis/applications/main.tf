@@ -21,6 +21,7 @@ locals {
     istio_routing_chart_version   = try(var.deployment_information["istio-routing"].main.version, "")
     istio_routing_chart_name      = coalesce(try(var.deployment_information["istio-routing"].chart-name, ""), "istio-routing")
     reset_values                  = var.reset_values
+    deployment_timeout            = var.deployment_timeout
   }
   # The version of the FHIR Profile Snapshots to use
   fhir_profile_snapshots = var.deployment_information["fhir-profile-snapshots"].main.version

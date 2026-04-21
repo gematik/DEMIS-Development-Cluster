@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   portal_shell_template_app   = fileexists("${var.external_chart_path}/${local.portal_shell_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.portal_shell_name}/${local.application_values_file}" : "${path.module}/${local.portal_shell_name}/${local.application_values_file}"
   portal_shell_template_istio = fileexists("${var.external_chart_path}/${local.portal_shell_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.portal_shell_name}/${local.istio_values_file}" : "${path.module}/${local.portal_shell_name}/${local.istio_values_file}"
-  # Define override for resources
-  portal_shell_resources_overrides = try(var.resource_definitions[local.portal_shell_name], {})
-  portal_shell_replicas            = lookup(local.portal_shell_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.portal_shell_name].replicas : null
-  portal_shell_resource_block      = lookup(local.portal_shell_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.portal_shell_name].resource_block : null
 }
 
 module "portal_shell" {
@@ -34,10 +30,10 @@ module "portal_shell" {
     feature_flags                                      = try(var.feature_flags[local.portal_shell_name], {}),
     config_options                                     = try(var.config_options[local.portal_shell_name], {}),
     issuer_hostname                                    = var.auth_hostname,
-    replica_count                                      = local.portal_shell_replicas,
-    resource_block                                     = local.portal_shell_resource_block
+    replica_count                                      = var.resource_definitions[local.portal_shell_name].replicas,
+    resource_block                                     = var.resource_definitions[local.portal_shell_name].resource_block
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.portal_shell_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.portal_shell_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.portal_shell_name].istio_proxy_resources
   })
   istio_values = templatefile(local.portal_shell_template_istio, {
     namespace                  = var.target_namespace,
@@ -45,6 +41,6 @@ module "portal_shell" {
     cluster_gateway            = var.cluster_gateway,
     portal_hostnames           = local.frontend_hostnames
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_shell_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.portal_shell_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.portal_shell_name], [])
   })
 }

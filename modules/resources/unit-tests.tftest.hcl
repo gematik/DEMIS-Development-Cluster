@@ -247,7 +247,7 @@ run "resource_definitions_single_service_only_limits_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.requests == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "requests") == false
     error_message = "The expected CPU requests should not exist."
   }
 }
@@ -294,7 +294,7 @@ run "resource_definitions_single_service_only_requests_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.limits == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "limits") == false
     error_message = "The expected CPU limits should not exist."
   }
 }
@@ -341,7 +341,7 @@ run "resource_definitions_single_service_only_memory_requests_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.limits == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "limits") == false
     error_message = "The resource limits should not exist."
   }
 }
@@ -388,7 +388,7 @@ run "resource_definitions_single_service_only_cpu_requests_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.limits == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "limits") == false
     error_message = "The resource limits should not exist."
   }
 }
@@ -435,7 +435,7 @@ run "resource_definitions_single_service_only_memory_limits_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.requests == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "requests") == false
     error_message = "The resources requests should not exist."
   }
 }
@@ -482,7 +482,7 @@ run "resource_definitions_single_service_only_cpu_limits_test" {
   }
 
   assert {
-    condition     = yamldecode(output.service_resource_definitions["service1"].resource_block).resources.requests == null
+    condition     = contains(keys(yamldecode(output.service_resource_definitions["service1"].resource_block).resources), "requests") == false
     error_message = "The resource requests should not exist."
   }
 }

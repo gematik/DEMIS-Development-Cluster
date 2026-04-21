@@ -5,10 +5,6 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   bulk_inbound_template_app   = fileexists("${var.external_chart_path}/${local.bulk_inbound_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.bulk_inbound_name}/${local.application_values_file}" : "${path.module}/${local.bulk_inbound_name}/${local.application_values_file}"
   bulk_inbound_template_istio = fileexists("${var.external_chart_path}/${local.bulk_inbound_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.bulk_inbound_name}/${local.istio_values_file}" : "${path.module}/${local.bulk_inbound_name}/${local.istio_values_file}"
-  # Define override for resources
-  bulk_inbound_resources_overrides = try(var.resource_definitions[local.bulk_inbound_name], {})
-  bulk_inbound_replicas            = lookup(local.bulk_inbound_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.bulk_inbound_name].replicas : null
-  bulk_inbound_resource_block      = lookup(local.bulk_inbound_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.bulk_inbound_name].resource_block : null
 
   supported_ars_profile_versions = var.deployment_information["ars-profile-snapshots"].main.profiles
 
@@ -60,14 +56,14 @@ module "bulk_inbound_service" {
     context_path                                       = var.context_path,
     feature_flags                                      = try(var.feature_flags[local.bulk_inbound_name], {}),
     config_options                                     = try(var.config_options[local.bulk_inbound_name], {}),
-    replica_count                                      = local.bulk_inbound_replicas,
-    resource_block                                     = local.bulk_inbound_resource_block
+    replica_count                                      = var.resource_definitions[local.bulk_inbound_name].replicas,
+    resource_block                                     = var.resource_definitions[local.bulk_inbound_name].resource_block,
     ars_bulk_ddl_db_secret_checksum                    = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_ddl_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_user_db_secret_checksum                   = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_user_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_purger_db_secret_checksum                 = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_purger_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_upload_hmac_secret_checksum               = try(var.ars_bulk_upload_hmac_secret.metadata[0].annotations["checksum"], ""),
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.bulk_inbound_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.bulk_inbound_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.bulk_inbound_template_istio, {
     namespace                  = var.target_namespace,
@@ -76,6 +72,6 @@ module "bulk_inbound_service" {
     fhir_api_versions          = local.supported_ars_profile_versions,
     demis_hostnames            = local.demis_hostnames,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
-    istio_rules_block_external = try(module.external_routing_configurations[0].rules[local.bulk_inbound_name], [])
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.bulk_inbound_name], [])
   })
 }

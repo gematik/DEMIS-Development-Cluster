@@ -8,13 +8,10 @@ locals {
   ########################################
   # Surveilance Pseudonym Service - ARS  #
   ########################################
-  sps_ars_name                = "${local.sps_name}-ars"
-  sps_ars_enabled             = contains(local.service_names, local.sps_ars_name) ? var.deployment_information[local.sps_ars_name].enabled : false
-  sps_ars_template_app        = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}" : "${path.module}/${local.sps_ars_name}/${local.application_values_file}"
-  sps_ars_template_istio      = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}" : "${path.module}/${local.sps_ars_name}/${local.istio_values_file}"
-  sps_ars_resources_overrides = try(var.resource_definitions[local.sps_ars_name], {})
-  sps_ars_replicas            = lookup(local.sps_ars_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.sps_ars_name].replicas : null
-  sps_ars_resource_block      = lookup(local.sps_ars_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.sps_ars_name].resource_block : null
+  sps_ars_name           = "${local.sps_name}-ars"
+  sps_ars_enabled        = contains(local.service_names, local.sps_ars_name) ? var.deployment_information[local.sps_ars_name].enabled : false
+  sps_ars_template_app   = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}" : "${path.module}/${local.sps_ars_name}/${local.application_values_file}"
+  sps_ars_template_istio = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}" : "${path.module}/${local.sps_ars_name}/${local.istio_values_file}"
 
   sps_ars_index = try(
     index(
@@ -59,13 +56,13 @@ module "surveillance_pseudonym_service_ars" {
     core_hostname                                      = var.core_hostname,
     feature_flags                                      = try(var.feature_flags[local.sps_ars_name], {}),
     config_options                                     = try(var.config_options[local.sps_ars_name], {}),
-    replica_count                                      = local.sps_ars_replicas,
-    resource_block                                     = local.sps_ars_resource_block,
+    replica_count                                      = var.resource_definitions[local.sps_ars_name].replicas,
+    resource_block                                     = var.resource_definitions[local.sps_ars_name].resource_block,
     ars_pseudo_hash_pepper_checksum                    = try(kubernetes_secret_v1.ars_pseudo_hash_pepper[0].metadata[0].annotations["checksum"], ""),
     sps_ars_db_secret_checksum                         = try(kubernetes_secret_v1.database_credentials[local.sps_ars_index].metadata[0].annotations["checksum"], ""),
     sps_ars_db_ddl_secret_checksum                     = try(kubernetes_secret_v1.database_credentials[local.sps_ars_ddl_index].metadata[0].annotations["checksum"], "")
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.sps_ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = try(local.sps_ars_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
+    istio_proxy_resources                              = var.resource_definitions[local.sps_ars_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.sps_ars_template_istio, {
     namespace                = var.target_namespace,
