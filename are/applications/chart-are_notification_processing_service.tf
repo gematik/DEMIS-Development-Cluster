@@ -24,6 +24,7 @@ module "are_notification_processing_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.service_template_app, {
+    namespace                                          = var.target_namespace,
     image_pull_secrets                                 = var.pull_secrets,
     repository                                         = var.docker_registry,
     debug_enable                                       = var.debug_enabled,
@@ -34,13 +35,13 @@ module "are_notification_processing_service" {
     resource_block                                     = local.service_resource_block,
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.service_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
     istio_proxy_resources                              = try(local.service_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources),
-    redis_user                                         = var.redis_cus_reader_user
+    redis_user                                         = var.redis_cus_reader_user,
     redis_cus_reader_credentials_checksum              = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.service_template_istio, {
     namespace                = var.target_namespace,
     cluster_gateway          = var.cluster_gateway,
-    core_hostname            = var.core_hostname
+    core_hostname            = var.core_hostname,
     context_path             = var.context_path,
     demis_hostnames          = local.demis_hostnames,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.service_name], null)
