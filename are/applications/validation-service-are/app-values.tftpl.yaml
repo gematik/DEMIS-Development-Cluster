@@ -25,7 +25,7 @@ required:
     imageName: demis-are-profile-snapshots
     version: ${profile_version}
 %{ if length(profile_versions) > 0 ~}
-    versions: 
+    versions:
 %{ for version in profile_versions ~}
       - ${version}
 %{ endfor ~}
