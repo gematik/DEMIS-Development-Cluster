@@ -5,14 +5,19 @@ locals {
   # Check if stage-override templates are provided, otherwise use the project-defined ones
   rabbitmq_template_app     = fileexists("${var.external_chart_path}/${local.rabbitmq_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.rabbitmq_name}/${local.application_values_file}" : "${path.module}/${local.rabbitmq_name}/${local.application_values_file}"
   rabbitmq_template_istio   = fileexists("${var.external_chart_path}/${local.rabbitmq_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.rabbitmq_name}/${local.istio_values_file}" : "${path.module}/${local.rabbitmq_name}/${local.istio_values_file}"
-  rabbitmq_replicas_is_even = try(var.resource_definitions[local.rabbitmq_name] % 2 == 0, false)
+  rabbitmq_replicas_is_even = try(var.resource_definitions[local.rabbitmq_name].replicas % 2 == 0, false)
 }
 
 resource "terraform_data" "check_odd_replicas" {
-  count = local.rabbitmq_enabled && local.rabbitmq_replicas_is_even && !var.allow_even_rabbitmq_replicas ? 1 : 0
+  triggers_replace = [
+    local.rabbitmq_enabled,
+    local.rabbitmq_replicas_is_even,
+    var.allow_even_rabbitmq_replicas
+  ]
+
   lifecycle {
-    postcondition {
-      condition     = !local.rabbitmq_replicas_is_even || var.allow_even_rabbitmq_replicas
+    precondition {
+      condition     = !local.rabbitmq_enabled || !local.rabbitmq_replicas_is_even || var.allow_even_rabbitmq_replicas
       error_message = "RabbitMQ replicas are even (${try(var.resource_definitions[local.rabbitmq_name].replicas, null)}); odd replica count is recommended for high availability. To allow even replicas, set allow_even_rabbitmq_replicas = true."
     }
   }
@@ -53,4 +58,6 @@ module "rabbitmq_service" {
     cluster_gateway = var.cluster_gateway,
     demis_hostnames = local.demis_hostnames
   })
+
+  depends_on = [kubernetes_secret_v1.rabbit_mq_credentials]
 }

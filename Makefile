@@ -411,7 +411,7 @@ create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local idm
 	@if [ "$${DEPLOY_DMZ:-}" = "true" ]; then $(MAKE) local dmz; fi
 	$(MAKE) local services
- 	@if [ "$${DEPLOY_ARE:-}" = "true" ]; then $(MAKE) local are; fi
+	@if [ "$${DEPLOY_ARE:-}" = "true" ]; then $(MAKE) local are; fi
 
 
 .PHONY: cleanup-local-environment

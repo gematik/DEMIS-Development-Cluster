@@ -14,7 +14,6 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [terraform_data.set_maintenance_mode](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [terraform_data.update_services](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 

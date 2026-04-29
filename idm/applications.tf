@@ -6,7 +6,7 @@ module "idm_services" {
   helm_repository                    = var.helm_repository
   helm_repository_username           = var.helm_repository_username
   helm_repository_password           = var.helm_repository_password
-  target_namespace                   = var.target_namespace
+  target_namespace                   = module.idm_namespace.name
   pull_secrets                       = local.pull_secrets_credentials
   deployment_information             = local.deployment_information
   certificate_update_service_suspend = var.certificate_update_service_suspend
@@ -35,6 +35,11 @@ module "idm_services" {
   deployment_timeout                 = var.deployment_timeout
   external_routing_configurations    = try(module.external_routing_configurations[0], { rules = {} })
   project_feature_flags              = var.project_feature_flags
+  # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
+  # This establishes the apply-time ordering (activate → deploy) through data-flow,
+  # which avoids the "known after apply" propagation that module-level depends_on causes.
+  maintenance_mode_trigger = module.activate_maintenance_mode.maintenance_mode_status
+  pvc_trigger              = [for pvc in module.persistent_volume_claims : pvc.metadata.name]
 
   # Secrets and Credentials needed for the applications
   postgres_server_certificate        = var.postgres_server_certificate
@@ -58,5 +63,4 @@ module "idm_services" {
   database_credentials               = var.database_credentials
   cus_health_department_certificates = var.cus_health_department_certificates
 
-  depends_on = [module.persistent_volume_claims, module.activate_maintenance_mode]
 }

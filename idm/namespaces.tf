@@ -10,12 +10,6 @@ module "idm_namespace" {
   labels                 = local.labels
 }
 
-moved {
-  from = module.demis_namespace
-  to   = module.idm_namespace
-}
-
-
 ########################
 # Define the Namespace ResourceQuota
 ########################

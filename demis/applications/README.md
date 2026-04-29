@@ -64,6 +64,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | [helm_release.futs](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.validation_service](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubernetes_secret_v1.ars_pseudo_hash_pepper](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
+| [kubernetes_secret_v1.ars_secure_queue_encryption_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
@@ -81,6 +82,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_ars_pseudo_hash_pepper"></a> [ars\_pseudo\_hash\_pepper](#input\_ars\_pseudo\_hash\_pepper) | The Pepper used for the ARS Pseudo Hashing (Base64-encoded) | `string` | `null` | no |
+| <a name="input_ars_secure_queue_encryption_current_secret"></a> [ars\_secure\_queue\_encryption\_current\_secret](#input\_ars\_secure\_queue\_encryption\_current\_secret) | The current encryption key for the ARS bulk secure queue | `string` | `""` | no |
+| <a name="input_ars_secure_queue_encryption_previous_secret"></a> [ars\_secure\_queue\_encryption\_previous\_secret](#input\_ars\_secure\_queue\_encryption\_previous\_secret) | The previous encryption key for the ARS bulk secure queue | `string` | `""` | no |
 | <a name="input_auth_hostname"></a> [auth\_hostname](#input\_auth\_hostname) | The Keycloak Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `"auth"` | no |
 | <a name="input_cluster_gateway"></a> [cluster\_gateway](#input\_cluster\_gateway) | Defines the Istio Cluster Gateway to be used | `string` | `"mesh/demis-core-gateway"` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of ops flags to be bound in services | `map(map(string))` | `{}` | no |
@@ -105,6 +108,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_is_local_mode"></a> [is\_local\_mode](#input\_is\_local\_mode) | Defines if the deployment is in local mode | `bool` | `false` | no |
 | <a name="input_istio_enabled"></a> [istio\_enabled](#input\_istio\_enabled) | Enable istio for the application | `bool` | `true` | no |
 | <a name="input_keycloak_internal_hostname"></a> [keycloak\_internal\_hostname](#input\_keycloak\_internal\_hostname) | The URL to the Keycloak Service in the internal network | `string` | `"keycloak.idm.svc.cluster.local"` | no |
+| <a name="input_maintenance_mode_trigger"></a> [maintenance\_mode\_trigger](#input\_maintenance\_mode\_trigger) | Output from module.activate\_maintenance\_mode that establishes deploy ordering without known-after-apply propagation. | `string` | `""` | no |
 | <a name="input_meldung_hostname"></a> [meldung\_hostname](#input\_meldung\_hostname) | The URL for accessing the DEMIS Notification Portal over Internet | `string` | `"meldung"` | no |
 | <a name="input_minio_root_password"></a> [minio\_root\_password](#input\_minio\_root\_password) | The Minio Root Password | `string` | n/a | yes |
 | <a name="input_minio_root_user"></a> [minio\_root\_user](#input\_minio\_root\_user) | The Minio Root User | `string` | n/a | yes |
@@ -118,6 +122,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_project_feature_flags"></a> [project\_feature\_flags](#input\_project\_feature\_flags) | Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false). | `map(bool)` | `{}` | no |
 | <a name="input_pull_secrets"></a> [pull\_secrets](#input\_pull\_secrets) | The list of pull secrets to be used for downloading Docker Images | `list(string)` | `[]` | no |
+| <a name="input_pvc_trigger"></a> [pvc\_trigger](#input\_pvc\_trigger) | List of PVC names from module.persistent\_volume\_claims that establishes deploy ordering without known-after-apply propagation. | `list(string)` | `[]` | no |
 | <a name="input_rabbitmq_password"></a> [rabbitmq\_password](#input\_rabbitmq\_password) | The RabbitMQ password for the application | `string` | n/a | yes |
 | <a name="input_rabbitmq_username"></a> [rabbitmq\_username](#input\_rabbitmq\_username) | The RabbitMQ username for the application | `string` | n/a | yes |
 | <a name="input_redis_cus_reader_password"></a> [redis\_cus\_reader\_password](#input\_redis\_cus\_reader\_password) | The Redis CUS Password (Reader) | `string` | n/a | yes |

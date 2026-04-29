@@ -261,3 +261,42 @@ variable "profile_provisioning_mode_vs_are" {
     error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
   }
 }
+
+variable "deployment_timeout" {
+  type        = number
+  description = "Timeout for the deployment in minutes"
+  default     = 600
+}
+
+variable "external_routing_configurations" {
+  description = "Defines the rendered Istio routing rules for the application, generated from the input mapping and the template variables. The structure is a map where the keys are service names and the values are lists of routing rules associated with each service."
+  type        = object({ rules = any })
+  default     = { rules = {} }
+}
+
+# tflint-ignore: terraform_unused_declarations
+variable "project_feature_flags" {
+  type        = map(bool)
+  description = "Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false)."
+  default     = {}
+}
+
+# Used only to establish apply-time ordering: maintenance mode must be activated before
+# services are deployed. Passed as a direct input instead of depends_on to avoid the
+# "known after apply" propagation that module-level depends_on causes.
+# tflint-ignore: terraform_unused_declarations
+variable "maintenance_mode_trigger" {
+  type        = string
+  description = "Output from module.activate_maintenance_mode that establishes deploy ordering without known-after-apply propagation."
+  default     = ""
+}
+
+# Used only to establish apply-time ordering: PVCs must be created before
+# services are deployed. Passed as a direct input instead of depends_on to avoid the
+# "known after apply" propagation that module-level depends_on causes.
+# tflint-ignore: terraform_unused_declarations
+variable "pvc_trigger" {
+  type        = list(string)
+  description = "List of PVC names from module.persistent_volume_claims that establishes deploy ordering without known-after-apply propagation."
+  default     = []
+}
