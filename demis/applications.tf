@@ -7,7 +7,7 @@ module "demis_services" {
   helm_repository                                 = var.helm_repository
   helm_repository_username                        = var.helm_repository_username
   helm_repository_password                        = var.helm_repository_password
-  target_namespace                                = var.target_namespace
+  target_namespace                                = module.demis_namespace.name
   pull_secrets                                    = local.pull_secrets_credentials
   deployment_information                          = local.deployment_information
   fhir_storage_purger_suspend                     = var.fhir_storage_purger_suspend
@@ -40,21 +40,26 @@ module "demis_services" {
   deployment_timeout                              = var.deployment_timeout
   external_routing_configurations                 = try(module.external_routing_configurations[0], { rules = {} })
   project_feature_flags                           = var.project_feature_flags
+  # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
+  # This establishes the apply-time ordering (activate → deploy) through data-flow,
+  # which avoids the "known after apply" propagation that module-level depends_on causes.
+  maintenance_mode_trigger = module.activate_maintenance_mode.maintenance_mode_status
+  pvc_trigger              = [for pvc in module.persistent_volume_claims : pvc.metadata.name]
 
   # Secrets and Credentials needed for the applications
-  redis_cus_reader_user        = var.redis_cus_reader_user
-  redis_cus_reader_password    = var.redis_cus_reader_password
-  minio_root_user              = var.minio_root_user
-  minio_root_password          = var.minio_root_password
-  s3_tls_credential            = var.s3_tls_credential
-  postgres_server_certificate  = var.postgres_server_certificate
-  postgres_root_ca_certificate = var.postgres_root_ca_certificate
-  postgres_server_key          = var.postgres_server_key
-  database_credentials         = var.database_credentials
-  service_accounts             = var.service_accounts
-  ars_pseudo_hash_pepper       = var.ars_pseudo_hash_pepper
-  rabbitmq_username            = var.rabbitmq_username
-  rabbitmq_password            = var.rabbitmq_password
-
-  depends_on = [module.persistent_volume_claims, module.activate_maintenance_mode]
+  redis_cus_reader_user                       = var.redis_cus_reader_user
+  redis_cus_reader_password                   = var.redis_cus_reader_password
+  minio_root_user                             = var.minio_root_user
+  minio_root_password                         = var.minio_root_password
+  s3_tls_credential                           = var.s3_tls_credential
+  postgres_server_certificate                 = var.postgres_server_certificate
+  postgres_root_ca_certificate                = var.postgres_root_ca_certificate
+  postgres_server_key                         = var.postgres_server_key
+  database_credentials                        = var.database_credentials
+  service_accounts                            = var.service_accounts
+  ars_pseudo_hash_pepper                      = var.ars_pseudo_hash_pepper
+  rabbitmq_username                           = var.rabbitmq_username
+  rabbitmq_password                           = var.rabbitmq_password
+  ars_secure_queue_encryption_current_secret  = var.ars_secure_queue_encryption_current_secret
+  ars_secure_queue_encryption_previous_secret = var.ars_secure_queue_encryption_previous_secret
 }

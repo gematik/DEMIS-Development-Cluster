@@ -84,3 +84,16 @@ variable "namespace_resource_quota" {
   description = "Resource quota configuration for the target Namespace. Set to null to skip quota creation."
   default     = null
 }
+
+variable "deployment_timeout" {
+  type        = number
+  description = "Timeout for the deployment in minutes"
+  default     = 600
+}
+
+# tflint-ignore: terraform_unused_declarations
+variable "project_feature_flags" {
+  type        = map(bool)
+  description = "Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false)."
+  default     = {}
+}

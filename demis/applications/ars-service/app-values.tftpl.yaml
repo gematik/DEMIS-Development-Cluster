@@ -48,22 +48,12 @@ podAnnotations:
   checksum/ars-bulk-stats-ddl-database-secret: "${ars_bulk_stats_ddl_db_secret_checksum}"
   checksum/ars-bulk-stats-user-database-secret: "${ars_bulk_stats_user_db_secret_checksum}"
   checksum/ars-bulk-stats-purger-database-secret: "${ars_bulk_stats_purger_db_secret_checksum}"
+  checksum/ars-bulk-secure-queue-encryption-secret: "${ars_bulk_secure_queue_encryption_secret_checksum}"
   %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
   %{endif}
-
-secret:
-  dbPwdBulkStatsDdl:
-    name: ars-bulk-stats-ddl-database-secret
-    key: ARS_BULK_STATS_DDL_DB_PASSWORD
-  dbPwdBulkStatsUser:
-    name: ars-bulk-stats-user-database-secret
-    key: ARS_BULK_STATS_USER_DB_PASSWORD
-  dbPwdBulkStatsPurger:
-    name: ars-bulk-stats-purger-database-secret
-    key: ARS_BULK_STATS_PURGER_DB_PASSWORD
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

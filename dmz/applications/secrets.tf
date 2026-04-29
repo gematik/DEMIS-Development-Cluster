@@ -83,6 +83,42 @@ resource "kubernetes_secret_v1" "ars_bulk_upload_hmac_secret" {
   }
 }
 
+resource "kubernetes_secret_v1" "ars_bis_in_queue_encryption_secret" {
+  metadata {
+    name      = "ars-bis-in-queue-encryption-secret"
+    namespace = var.target_namespace
+    annotations = {
+      checksum = substr(sha256(jsonencode({
+        ARS_BIS_IN_QUEUE_ENCRYPTION_CURRENT_KEY  = var.ars_bis_in_queue_encryption_current_secret
+        ARS_BIS_IN_QUEUE_ENCRYPTION_PREVIOUS_KEY = var.ars_bis_in_queue_encryption_previous_secret
+      })), 0, 61)
+    }
+  }
+
+  immutable = true
+
+  data = {
+    ARS_BIS_IN_QUEUE_ENCRYPTION_CURRENT_KEY  = var.ars_bis_in_queue_encryption_current_secret
+    ARS_BIS_IN_QUEUE_ENCRYPTION_PREVIOUS_KEY = var.ars_bis_in_queue_encryption_previous_secret
+  }
+}
+
+resource "kubernetes_secret_v1" "ars_smg_secure_queue_encryption_secret" {
+  metadata {
+    name      = "ars-smg-secure-queue-encryption-secret"
+    namespace = var.target_namespace
+    annotations = {
+      checksum = substr(sha256(var.ars_secure_queue_encryption_current_secret), 0, 61)
+    }
+  }
+
+  immutable = true
+
+  data = {
+    ARS_SECURE_QUEUE_ENCRYPTION_CURRENT_KEY = var.ars_secure_queue_encryption_current_secret
+  }
+}
+
 #####################
 # Secrets
 #####################

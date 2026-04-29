@@ -22,8 +22,8 @@ run "maintenance_mode_activate" {
   }
 
   assert {
-    condition     = length(terraform_data.update_services.output) == 1
-    error_message = "Expected update_services to have one element but was: [${join(",", terraform_data.update_services.output)}]"
+    condition     = length(local.update_service_keys) == 1
+    error_message = "Expected update_services to have one element but was: [${join(",", local.update_service_keys)}]"
   }
 
   assert {
@@ -54,8 +54,8 @@ run "maintenance_mode_deactivate" {
   }
 
   assert {
-    condition     = length(terraform_data.update_services.output) == 1
-    error_message = "Expected update_services to have one element but was: [${join(",", terraform_data.update_services.output)}]"
+    condition     = length(local.update_service_keys) == 1
+    error_message = "Expected update_services to have one element but was: [${join(",", local.update_service_keys)}]"
   }
 
   assert {
@@ -86,8 +86,8 @@ run "no_maintenance_mode_for_replace" {
   }
 
   assert {
-    condition     = length(terraform_data.update_services.output) == 0
-    error_message = "Expected update_services to have one element but was: [${join(",", terraform_data.update_services.output)}]"
+    condition     = length(local.update_service_keys) == 0
+    error_message = "Expected update_services to have one element but was: [${join(",", local.update_service_keys)}]"
   }
 
   assert {

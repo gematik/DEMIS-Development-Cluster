@@ -18,14 +18,14 @@ locals {
   ###########################
   # Validation Service ARE  #
   ###########################
-  vs_are_name                = "${local.vs_name}-are"
-  vs_are_enabled             = contains(local.service_names, local.vs_are_name) ? var.deployment_information[local.vs_are_name].enabled : false
-  vs_are_template_app        = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.application_values_file}" : "${path.module}/${local.vs_are_name}/${local.application_values_file}"
-  vs_are_template_istio      = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.istio_values_file}" : "${path.module}/${local.vs_are_name}/${local.istio_values_file}"
-  vs_are_resources_overrides = try(var.resource_definitions[local.vs_are_name], {})
-  vs_are_replicas            = lookup(local.vs_are_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_are_name].replicas : null
-  vs_are_resource_block      = lookup(local.vs_are_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_are_name].resource_block : null
-  vs_are_template_http_rules = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_are_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_are_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
+  vs_are_name                     = "${local.vs_name}-are"
+  vs_are_enabled                  = contains(local.service_names, local.vs_are_name) ? var.deployment_information[local.vs_are_name].enabled : false
+  vs_are_template_app             = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.application_values_file}" : "${path.module}/${local.vs_are_name}/${local.application_values_file}"
+  vs_are_template_istio           = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.istio_values_file}" : "${path.module}/${local.vs_are_name}/${local.istio_values_file}"
+  vs_are_resources_overrides      = try(var.resource_definitions[local.vs_are_name], {})
+  vs_are_replicas                 = lookup(local.vs_are_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.vs_are_name].replicas : null
+  vs_are_resource_block           = lookup(local.vs_are_resources_overrides, "resource_block", null) != null ? var.resource_definitions[local.vs_are_name].resource_block : null
+  vs_are_template_http_rules      = fileexists("${var.external_chart_path}/${local.vs_are_name}/${local.vs_http_rules_file}") ? "${var.external_chart_path}/${local.vs_are_name}/${local.vs_http_rules_file}" : (fileexists("${path.module}/${local.vs_are_name}/${local.vs_http_rules_file}") ? "${path.module}/${local.vs_are_name}/${local.vs_http_rules_file}" : local.vs_template_http_rules)
   vs_are_http_timeout_retry_block = { are : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_are_name], null) }
 
   vs_http_timeout_retry_block = merge(local.vs_are_http_timeout_retry_block)
@@ -69,8 +69,10 @@ module "validation_service_are_metadata" {
   provisioning_mode         = var.profile_provisioning_mode_vs_are
 }
 
-resource "terraform_data" "validation_service_are_http_rules" {
-  input = templatefile(local.vs_are_template_http_rules, { subsets = module.validation_service_are_metadata.destination_subsets })
+locals {
+  vs_core_http_rules = templatefile(local.vs_are_template_http_rules, {
+    subsets = module.validation_service_are_metadata.destination_subsets
+  })
 }
 
 module "validation_service_are" {
@@ -99,7 +101,7 @@ module "validation_service_are" {
   })
   istio_values = templatefile(local.vs_are_template_istio, {
     namespace                         = var.target_namespace,
-    custom_virtual_service_http_rules = try(terraform_data.validation_service_are_http_rules.output, ""),
+    custom_virtual_service_http_rules = local.vs_core_http_rules,
     custom_destination_subsets        = module.validation_service_are_metadata.destination_subsets,
     destinationSubsets                = try(yamlencode(module.validation_service_are_metadata.destination_subsets), ""),
     http_timeout_retry_block          = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.vs_are_name], null)

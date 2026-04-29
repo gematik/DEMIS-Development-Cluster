@@ -95,10 +95,15 @@ module "validation_service_core_metadata" {
   provisioning_mode         = var.profile_provisioning_mode_vs_core
 }
 
-resource "terraform_data" "validation_service_core_http_rules" {
-  input = templatefile(local.vs_core_template_http_rules, {
+locals {
+  vs_core_http_rules = templatefile(local.vs_core_template_http_rules, {
     subsets = module.validation_service_core_metadata.destination_subsets
   })
+}
+
+# Legacy: kept to avoid destroy cycle. Input now uses always-known local. Remove in future release.
+resource "terraform_data" "validation_service_core_http_rules" {
+  input = local.vs_core_http_rules
 }
 
 module "validation_service_core" {
@@ -112,7 +117,6 @@ module "validation_service_core" {
   deployment_information = var.deployment_information[local.vs_core_name]
   helm_settings          = local.common_helm_release_settings
   depends_on             = [module.package_registry]
-
   # Pass the values for the chart
   application_values = templatefile(local.vs_core_template_app, {
     image_pull_secrets                                 = var.pull_secrets,
@@ -133,7 +137,7 @@ module "validation_service_core" {
   })
   istio_values = templatefile(local.vs_core_template_istio, {
     namespace                         = var.target_namespace,
-    custom_virtual_service_http_rules = terraform_data.validation_service_core_http_rules.output,
+    custom_virtual_service_http_rules = local.vs_core_http_rules,
     custom_destination_subsets        = module.validation_service_core_metadata.destination_subsets,
     destinationSubsets                = try(yamlencode(module.validation_service_core_metadata.destination_subsets), "")
   })
@@ -148,18 +152,22 @@ module "validation_service_igs_metadata" {
   provisioning_mode         = var.profile_provisioning_mode_vs_igs
 }
 
-resource "terraform_data" "validation_service_igs_http_rules" {
-  input = templatefile(local.vs_igs_template_http_rules, {
+locals {
+  vs_igs_http_rules = templatefile(local.vs_igs_template_http_rules, {
     subsets = module.validation_service_igs_metadata.destination_subsets
   })
+}
+
+# Legacy: kept to avoid destroy cycle. Input now uses always-known local. Remove in future release.
+resource "terraform_data" "validation_service_igs_http_rules" {
+  input = local.vs_igs_http_rules
 }
 
 module "validation_service_igs" {
   source = "../../modules/helm_deployment"
 
   # Deploy if enabled
-  count = local.vs_igs_enabled ? 1 : 0
-
+  count                  = local.vs_igs_enabled ? 1 : 0
   namespace              = var.target_namespace
   application_name       = local.vs_igs_name
   deployment_information = var.deployment_information[local.vs_igs_name]
@@ -186,7 +194,7 @@ module "validation_service_igs" {
   })
   istio_values = templatefile(local.vs_igs_template_istio, {
     namespace                         = var.target_namespace,
-    custom_virtual_service_http_rules = terraform_data.validation_service_igs_http_rules.output,
+    custom_virtual_service_http_rules = local.vs_igs_http_rules,
     custom_destination_subsets        = module.validation_service_igs_metadata.destination_subsets,
     destinationSubsets                = try(yamlencode(module.validation_service_igs_metadata.destination_subsets), "")
   })
@@ -201,10 +209,15 @@ module "validation_service_ars_metadata" {
   provisioning_mode         = var.profile_provisioning_mode_vs_ars
 }
 
-resource "terraform_data" "validation_service_ars_http_rules" {
-  input = templatefile(local.vs_ars_template_http_rules, {
+locals {
+  vs_ars_http_rules = templatefile(local.vs_ars_template_http_rules, {
     subsets = module.validation_service_ars_metadata.destination_subsets
   })
+}
+
+# Legacy: kept to avoid destroy cycle. Input now uses always-known local. Remove in future release.
+resource "terraform_data" "validation_service_ars_http_rules" {
+  input = local.vs_ars_http_rules
 }
 
 module "validation_service_ars" {
@@ -239,7 +252,7 @@ module "validation_service_ars" {
   })
   istio_values = templatefile(local.vs_ars_template_istio, {
     namespace                         = var.target_namespace,
-    custom_virtual_service_http_rules = terraform_data.validation_service_ars_http_rules.output,
+    custom_virtual_service_http_rules = local.vs_ars_http_rules,
     custom_destination_subsets        = module.validation_service_ars_metadata.destination_subsets,
     destinationSubsets                = try(yamlencode(module.validation_service_ars_metadata.destination_subsets), "")
   })

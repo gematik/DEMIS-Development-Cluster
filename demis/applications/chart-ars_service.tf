@@ -60,6 +60,7 @@ module "ars_service" {
     ars_bulk_stats_ddl_db_secret_checksum              = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_ddl_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_stats_user_db_secret_checksum             = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_user_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_stats_purger_db_secret_checksum           = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_purger_index].metadata[0].annotations["checksum"], ""),
+    ars_bulk_secure_queue_encryption_secret_checksum   = try(kubernetes_secret_v1.ars_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
     istio_proxy_resources                              = var.resource_definitions[local.ars_name].istio_proxy_resources,
   })

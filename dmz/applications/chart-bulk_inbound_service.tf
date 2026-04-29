@@ -24,7 +24,6 @@ locals {
     -1 # Default index if not found
   )
 
-
   ars_bulk_purger_index = try(
     index(
       [for cred in var.database_credentials : cred.secret-name],
@@ -32,6 +31,7 @@ locals {
     ),
     -1 # Default index if not found
   )
+
 }
 
 module "bulk_inbound_service" {
@@ -62,6 +62,7 @@ module "bulk_inbound_service" {
     ars_bulk_user_db_secret_checksum                   = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_user_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_purger_db_secret_checksum                 = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_purger_index].metadata[0].annotations["checksum"], ""),
     ars_bulk_upload_hmac_secret_checksum               = try(var.ars_bulk_upload_hmac_secret.metadata[0].annotations["checksum"], ""),
+    bulk_inbound_encryption_secret_checksum            = try(kubernetes_secret_v1.ars_bis_in_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.bulk_inbound_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
     istio_proxy_resources                              = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
   })

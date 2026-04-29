@@ -32,26 +32,13 @@ podAnnotations:
   checksum/ars-bulk-ddl-database-secret: "${ars_bulk_ddl_db_secret_checksum}"
   checksum/ars-bulk-user-database-secret: "${ars_bulk_user_db_secret_checksum}"
   checksum/ars-bulk-purger-database-secret: "${ars_bulk_purger_db_secret_checksum}"
-  checksum/ars_bulk_upload_hmac_secret: "{ars_bulk_upload_hmac_secret_checksum}"
+  checksum/ars_bulk_upload_hmac_secret: "${ars_bulk_upload_hmac_secret_checksum}"
+  checksum/bulk-inbound-encryption-secret: "${bulk_inbound_encryption_secret_checksum}"
   %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
   %{endif}
-
-secret:
-  dbPwdBulkDdl:
-    name: ars-bulk-ddl-database-secret
-    key: ARS_BULK_DDL_DB_PASSWORD
-  dbPwdBulkUser:
-    name: ars-bulk-user-database-secret
-    key: ARS_BULK_USER_DB_PASSWORD
-  dbPwdBulkPurger:
-    name: ars-bulk-purger-database-secret
-    key: ARS_BULK_PURGER_DB_PASSWORD
-  hmacBulk:
-    name: ars-bulk-upload-hmac-secret
-    key: ARS_BULK_UPLOAD_HMAC_SECRET
 
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

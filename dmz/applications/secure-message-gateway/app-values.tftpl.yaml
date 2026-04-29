@@ -32,6 +32,7 @@ podAnnotations:
   app.kubernetes.io/component: secure-message-gateway-operator
   app.kubernetes.io/name: secure-message-gateway-cluster-operator
   app.kubernetes.io/part-of: secure-message-gateway
+  checksum/smg-secure-queue-encryption-secret: "${smg_secure_queue_encryption_secret_checksum}"
   %{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}

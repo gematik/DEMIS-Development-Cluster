@@ -119,3 +119,24 @@ variable "ars_bulk_upload_hmac_secret" {
   description = "The secret to generate HMACs from the preferred usernames in the bulk upload service"
   default     = ""
 }
+
+variable "ars_bis_in_queue_encryption_current_secret" {
+  type        = string
+  sensitive   = true
+  description = "The current encryption key for the bulk upload service"
+  default     = ""
+}
+
+variable "ars_bis_in_queue_encryption_previous_secret" {
+  type        = string
+  sensitive   = true
+  description = "The previous encryption key for the bulk upload service"
+  default     = ""
+}
+
+variable "ars_secure_queue_encryption_current_secret" {
+  type        = string
+  sensitive   = true
+  description = "The current encryption key for the secure queue"
+  default     = ""
+}

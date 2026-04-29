@@ -2,6 +2,17 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.7.0
+- removed dependency for gematik-idp to pg-bouncer in local
+- removed deployment pipelines from project
+- fixed Stage-Parameter for validation Pipeline 
+- added encryption keys for in-queue and secure-queue for services BIS, SMG and ARS
+- refactored modules fhir-profile-metadata and maintenance_mode for planning completely resources in application moduls
+- added Validation Service with Delegation for ARE
+- added istio_routing_configurations module for are
+- fixed remote backend configuration for are deployment
+- fixed Kyverno policies for are deployment
+
 ## Release 5.6.0
 - updated the release pipeline to automatically add new versions
 - modified local cluster deployment to use resource quotas from startup

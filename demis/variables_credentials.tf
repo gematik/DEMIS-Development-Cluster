@@ -157,3 +157,17 @@ variable "rabbitmq_password" {
   type        = string
   sensitive   = true
 }
+
+variable "ars_secure_queue_encryption_current_secret" {
+  type        = string
+  sensitive   = true
+  description = "The current encryption key for the ARS bulk secure queue. Must be 16 bytes."
+  default     = ""
+}
+
+variable "ars_secure_queue_encryption_previous_secret" {
+  type        = string
+  sensitive   = true
+  description = "The previous encryption key for the ARS bulk secure queue. Must be 16 bytes."
+  default     = ""
+}
