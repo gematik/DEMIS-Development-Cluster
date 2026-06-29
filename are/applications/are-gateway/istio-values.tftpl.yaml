@@ -35,7 +35,9 @@ virtualServiceHttpRules:
 virtualServiceExternalHttpRules:
   - match:
       - uri:
-          prefix: /gateway/are
+          prefix: ${context_path}/gateway/are/
+      - uri:
+          prefix: ${context_path}/gateway/are
     rewrite:
       uri: /
 %{ if http_timeout_retry_block != null ~}
