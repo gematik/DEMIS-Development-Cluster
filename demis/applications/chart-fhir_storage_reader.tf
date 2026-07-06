@@ -29,20 +29,19 @@ module "fhir_storage_reader" {
 
   # Pass the values for the chart
   application_values = templatefile(local.fssr_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    core_hostname                                      = var.core_hostname,
-    context_path                                       = var.context_path,
-    feature_flags                                      = try(var.feature_flags[local.fssr_name], {}),
-    config_options                                     = try(var.config_options[local.fssr_name], {}),
-    replica_count                                      = var.resource_definitions[local.fssr_name].replicas,
-    resource_block                                     = var.resource_definitions[local.fssr_name].resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.fssr_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
-    istio_proxy_resources                              = var.resource_definitions[local.fssr_name].istio_proxy_resources,
-    db_secret_checksum                                 = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
+    image_pull_secrets    = var.pull_secrets,
+    repository            = var.docker_registry,
+    namespace             = var.target_namespace,
+    debug_enable          = var.debug_enabled,
+    istio_enable          = var.istio_enabled,
+    core_hostname         = var.core_hostname,
+    context_path          = var.context_path,
+    feature_flags         = try(var.feature_flags[local.fssr_name], {}),
+    config_options        = try(var.config_options[local.fssr_name], {}),
+    replica_count         = var.resource_definitions[local.fssr_name].replicas,
+    resource_block        = var.resource_definitions[local.fssr_name].resource_block,
+    istio_proxy_resources = var.resource_definitions[local.fssr_name].istio_proxy_resources,
+    db_secret_checksum    = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
   })
   istio_values = templatefile(local.fssr_template_istio, {
     namespace                  = var.target_namespace,

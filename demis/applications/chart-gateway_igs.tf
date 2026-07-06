@@ -21,20 +21,19 @@ module "gateway_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.gateway_igs_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    core_hostname                                      = var.core_hostname,
-    namespace                                          = var.target_namespace,
-    feature_flags                                      = try(var.feature_flags[local.gateway_igs_name], {}),
-    config_options                                     = try(var.config_options[local.gateway_igs_name], {}),
-    replica_count                                      = var.resource_definitions[local.gateway_igs_name].replicas,
-    resource_block                                     = var.resource_definitions[local.gateway_igs_name].resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gateway_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
-    istio_proxy_resources                              = var.resource_definitions[local.gateway_igs_name].istio_proxy_resources,
-    igs_profile_major_version                          = regex("^([0-9]+)", element(module.futs_igs_metadata[0].current_profile_versions, -1))[0],
-    igs_package_name                                   = local.fhir_core_split_enabled ? "igs" : "igs-profile-snapshots"
+    image_pull_secrets        = var.pull_secrets,
+    repository                = var.docker_registry,
+    debug_enable              = var.debug_enabled,
+    istio_enable              = var.istio_enabled,
+    core_hostname             = var.core_hostname,
+    namespace                 = var.target_namespace,
+    feature_flags             = try(var.feature_flags[local.gateway_igs_name], {}),
+    config_options            = try(var.config_options[local.gateway_igs_name], {}),
+    replica_count             = var.resource_definitions[local.gateway_igs_name].replicas,
+    resource_block            = var.resource_definitions[local.gateway_igs_name].resource_block,
+    istio_proxy_resources     = var.resource_definitions[local.gateway_igs_name].istio_proxy_resources,
+    igs_profile_major_version = regex("^([0-9]+)", element(module.futs_igs_metadata[0].current_profile_versions, -1))[0],
+    igs_package_name          = local.fhir_core_split_enabled ? "igs" : "igs-profile-snapshots"
   })
   istio_values = templatefile(local.gateway_igs_template_istio, {
     namespace                  = var.target_namespace,

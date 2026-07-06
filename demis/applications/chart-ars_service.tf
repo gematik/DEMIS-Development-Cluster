@@ -6,7 +6,6 @@ locals {
   ars_template_app   = fileexists("${var.external_chart_path}/${local.ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.ars_name}/${local.application_values_file}" : "${path.module}/${local.ars_name}/${local.application_values_file}"
   ars_template_istio = fileexists("${var.external_chart_path}/${local.ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.ars_name}/${local.istio_values_file}" : "${path.module}/${local.ars_name}/${local.istio_values_file}"
 
-
   ars_bulk_stats_ddl_index = try(
     index(
       [for cred in var.database_credentials : cred.secret-name],
@@ -19,14 +18,6 @@ locals {
     index(
       [for cred in var.database_credentials : cred.secret-name],
       "ars-bulk-stats-user-database-secret"
-    ),
-    -1 # Default index if not found
-  )
-
-  ars_bulk_stats_purger_index = try(
-    index(
-      [for cred in var.database_credentials : cred.secret-name],
-      "ars-bulk-stats-purger-database-secret"
     ),
     -1 # Default index if not found
   )
@@ -46,24 +37,22 @@ module "ars_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.ars_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    core_hostname                                      = var.core_hostname,
-    context_path                                       = var.context_path,
-    feature_flags                                      = try(var.feature_flags[local.ars_name], {}),
-    config_options                                     = try(var.config_options[local.ars_name], {}),
-    replica_count                                      = var.resource_definitions[local.ars_name].replicas,
-    resource_block                                     = var.resource_definitions[local.ars_name].resource_block,
-    ars_bulk_stats_ddl_db_secret_checksum              = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_ddl_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_stats_user_db_secret_checksum             = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_user_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_stats_purger_db_secret_checksum           = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_purger_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_secure_queue_encryption_secret_checksum   = try(kubernetes_secret_v1.ars_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
-    ars_rabbitmq_credentials_checksum                  = try(kubernetes_secret_v1.ars_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
-    istio_proxy_resources                              = var.resource_definitions[local.ars_name].istio_proxy_resources,
+    image_pull_secrets                               = var.pull_secrets,
+    repository                                       = var.docker_registry,
+    namespace                                        = var.target_namespace,
+    debug_enable                                     = var.debug_enabled,
+    istio_enable                                     = var.istio_enabled,
+    core_hostname                                    = var.core_hostname,
+    context_path                                     = var.context_path,
+    feature_flags                                    = try(var.feature_flags[local.ars_name], {}),
+    config_options                                   = try(var.config_options[local.ars_name], {}),
+    replica_count                                    = var.resource_definitions[local.ars_name].replicas,
+    resource_block                                   = var.resource_definitions[local.ars_name].resource_block,
+    ars_bulk_stats_ddl_db_secret_checksum            = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_ddl_index].metadata[0].annotations["checksum"], ""),
+    ars_bulk_stats_user_db_secret_checksum           = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_stats_user_index].metadata[0].annotations["checksum"], ""),
+    ars_bulk_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
+    ars_rabbitmq_credentials_checksum                = try(kubernetes_secret_v1.ars_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
+    istio_proxy_resources                            = var.resource_definitions[local.ars_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.ars_template_istio, {
     namespace                  = var.target_namespace,

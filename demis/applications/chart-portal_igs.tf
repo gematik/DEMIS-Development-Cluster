@@ -21,19 +21,18 @@ module "portal_igs" {
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_igs_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    istio_enable                                       = var.istio_enabled,
-    context_path                                       = var.context_path,
-    csp_hostname                                       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
-    feature_flags                                      = try(var.feature_flags[local.portal_igs_name], {}),
-    config_options                                     = try(var.config_options[local.portal_igs_name], {}),
-    replica_count                                      = var.resource_definitions[local.portal_igs_name].replicas,
-    igs_profile_major_version                          = regex("^([0-9]+)", element(module.futs_igs_metadata[0].current_profile_versions, -1))[0],
-    resource_block                                     = var.resource_definitions[local.portal_igs_name].resource_block
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.portal_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.portal_igs_name].istio_proxy_resources
-    mf_logging_disabled                                = !var.mf_logging_enabled
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    istio_enable            = var.istio_enabled,
+    context_path            = var.context_path,
+    csp_hostname            = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    feature_flags           = try(var.feature_flags[local.portal_igs_name], {}),
+    config_options          = try(var.config_options[local.portal_igs_name], {}),
+    replica_count           = var.resource_definitions[local.portal_igs_name].replicas,
+    package_igs_api_version = [for match in try(var.external_routing_configurations.rules[local.gateway_igs_name], []) : try(match.headers.request.set["x-api-version"], match.headers.request.set["x-fhir-api-version"])][0],
+    resource_block          = var.resource_definitions[local.portal_igs_name].resource_block
+    istio_proxy_resources   = var.resource_definitions[local.portal_igs_name].istio_proxy_resources
+    mf_logging_disabled     = !var.mf_logging_enabled
   })
   istio_values = templatefile(local.portal_igs_template_istio, {
     namespace                  = var.target_namespace,

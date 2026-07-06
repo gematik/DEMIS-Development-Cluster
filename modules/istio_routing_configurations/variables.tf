@@ -20,3 +20,9 @@ variable "service_list" {
   type        = list(string)
   default     = []
 }
+
+variable "fhir_package_versions" {
+  description = "Map of fhir packages and their major versions to validate against in the routing configuration. The key is the package name and the value is a list of valid major versions for that package."
+  type        = list(string)
+  default     = []
+}

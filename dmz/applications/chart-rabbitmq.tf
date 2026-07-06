@@ -58,8 +58,7 @@ module "rabbitmq_service" {
       smg   = var.rabbitmq_smg_password_hash,
       ars   = var.rabbitmq_ars_password_hash,
     })), 0, 61),
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rabbitmq_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.rabbitmq_name].istio_proxy_resources
+    istio_proxy_resources = var.resource_definitions[local.rabbitmq_name].istio_proxy_resources
   })
   istio_values = templatefile(local.rabbitmq_template_istio, {
     namespace       = var.target_namespace,

@@ -20,20 +20,19 @@ module "secure_message_gateway" {
 
   # Pass the values for the chart
   application_values = templatefile(local.secure_message_gateway_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    core_hostname                                      = var.core_hostname,
-    feature_flags                                      = try(var.feature_flags[local.secure_message_gateway_name], {}),
-    config_options                                     = try(var.config_options[local.secure_message_gateway_name], {}),
-    replica_count                                      = var.resource_definitions[local.secure_message_gateway_name].replicas,
-    resource_block                                     = var.resource_definitions[local.secure_message_gateway_name].resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.secure_message_gateway_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources
-    smg_secure_queue_encryption_secret_checksum        = try(kubernetes_secret_v1.ars_smg_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
-    smg_rabbitmq_credentials_checksum                  = try(kubernetes_secret_v1.smg_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
+    image_pull_secrets                          = var.pull_secrets,
+    repository                                  = var.docker_registry,
+    namespace                                   = var.target_namespace,
+    debug_enable                                = var.debug_enabled,
+    istio_enable                                = var.istio_enabled,
+    core_hostname                               = var.core_hostname,
+    feature_flags                               = try(var.feature_flags[local.secure_message_gateway_name], {}),
+    config_options                              = try(var.config_options[local.secure_message_gateway_name], {}),
+    replica_count                               = var.resource_definitions[local.secure_message_gateway_name].replicas,
+    resource_block                              = var.resource_definitions[local.secure_message_gateway_name].resource_block,
+    istio_proxy_resources                       = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources
+    smg_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_smg_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
+    smg_rabbitmq_credentials_checksum           = try(kubernetes_secret_v1.smg_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
   })
   istio_values = templatefile(local.secure_message_gateway_template_istio, {
     namespace                = var.target_namespace,

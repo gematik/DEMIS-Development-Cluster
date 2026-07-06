@@ -9,6 +9,15 @@ variable "debug_enabled" {
   default     = false
 }
 
+variable "demis_namespace" {
+  type        = string
+  description = "Defines the Namespace where DEMIS is deployed"
+  default     = "demis"
+  validation {
+    condition     = length(var.demis_namespace) > 0
+    error_message = "The DEMIS Namespace must be defined"
+  }
+}
 
 variable "rabbitmq_pvc_config" {
   type = object({
@@ -39,5 +48,21 @@ variable "database_target_host" {
   validation {
     condition     = length(var.database_target_host) > 0
     error_message = "The Database Hostname must be defined"
+  }
+}
+
+variable "bulk_inbound_purger_suspend" {
+  type        = bool
+  description = "Defines if the bulk-inbound-purger is suspended."
+  default     = false
+}
+
+variable "bulk_inbound_purger_cron_schedule" {
+  type        = string
+  description = "Defines the cron schedule for the bulk-inbound-purger"
+  default     = "0 22 * * *"
+  validation {
+    condition     = length(var.bulk_inbound_purger_cron_schedule) > 0
+    error_message = "The bulk-inbound-purger cron schedule must be defined"
   }
 }

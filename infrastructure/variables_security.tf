@@ -69,6 +69,11 @@ variable "trivy_scan_jobs_limit" {
   default     = "3"
 }
 
+variable "trivy_chart_version" {
+  description = "The Helm Chart Version for Trivy"
+  type        = string
+  default     = "0.23.3"
+}
 ########################
 # Falco Module
 #########################
@@ -103,6 +108,12 @@ variable "falco_driver_kind" {
   default     = "auto"
 }
 
+variable "falco_chart_version" {
+  description = "The Helm Chart Version for Falco"
+  type        = string
+  default     = "9.1.0"
+}
+
 #########################
 # Policy-Reporter Settings
 #########################
@@ -111,4 +122,10 @@ variable "kyverno_policy_reporter_enabled" {
   type        = bool
   default     = false
   description = "Activates/Deactivates the deployment of Policy Reporter"
+}
+
+variable "kyverno_policy_reporter_chart_version" {
+  description = "The Helm Chart Version for Policy Reporter"
+  type        = string
+  default     = "3.7.2"
 }

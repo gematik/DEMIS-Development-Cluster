@@ -28,7 +28,7 @@ virtualServiceExternalHttpRules:
           x-fhir-api-submission-type: pathogen
           x-fhir-package-version: v${package_laboratory_major_version}
           x-fhir-api-version: v${package_laboratory_major_version}
-          x-api-version: v${package_laboratory_major_version}
+          x-api-version: ${package_laboratory_api_version}
 %{ if fhir_core_split_enabled == true ~}
           x-fhir-profile: laboratory
           x-fhir-package: laboratory
@@ -48,7 +48,7 @@ virtualServiceExternalHttpRules:
           x-fhir-api-submission-type: disease
           x-fhir-package-version: v${package_disease_major_version}
           x-fhir-api-version: v${package_disease_major_version}
-          x-api-version: v${package_disease_major_version}
+          x-api-version: ${package_disease_api_version}
 %{ if fhir_core_split_enabled == true ~}
           x-fhir-profile: disease
           x-fhir-package: disease
@@ -68,7 +68,7 @@ virtualServiceExternalHttpRules:
           x-fhir-api-request-origin: internal
           x-fhir-package-version: v${package_statistic_major_version}
           x-fhir-api-version: v${package_statistic_major_version}
-          x-api-version: v${package_statistic_major_version}
+          x-api-version: ${package_statistic_api_version}
 %{ if fhir_core_split_enabled == true ~}
           x-fhir-profile: statistic
           x-fhir-package: statistic

@@ -18,17 +18,6 @@ required:
 %{ if strcontains(repository, "gematik1") ~}
     name: demis-validation-service
 %{ endif ~}
-  profiles:
-    repository: ${profile_docker_registry}
-    packageName: rki.demis.ars.snapshot
-    name: ars-profile-snapshots
-    version: ""
-%{ if length(profile_versions) > 0 ~}
-    versions: 
-%{ for version in profile_versions ~}
-      - ${version}
-%{ endfor ~}
-%{ endif ~}
   packages:
     packageName: rki.demis.ars.snapshot
     name: ars-profile-snapshots
@@ -48,6 +37,9 @@ customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   CONFIG_OPTION_PACKAGE_REGISTRY_URL: http://package-registry.${namespace}.svc.cluster.local
+%{ if length(profile_versions) == 1 ~}
+  JAVA_TOOL_OPTIONS: "-XX:ActiveProcessorCount=2 -XX:MaxRAMPercentage=75.0 -XX:MaxMetaspaceSize=160m -XX:+UseG1GC"
+%{ endif ~}
 %{ for flag_name, flag_value in feature_flags ~}
   ${flag_name}: ${flag_value}
 %{ endfor ~}
@@ -55,12 +47,10 @@ customEnvVars:
   ${config_name}: "${config_value}"
 %{ endfor ~}
   
-%{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
-%{endif}
   
 %{ if replica_count != null ~}
 # Number of Pod Replicas desired
@@ -70,6 +60,15 @@ replicaCount: ${replica_count}
 %{ if resource_block != null ~}
 # Override Resource Definitions for Pod
 ${resource_block}
+%{ endif ~}
+
+%{ if resource_block == null && length(profile_versions) == 1 ~}
+# Override Resource Definitions for Pod if only one profile version is provided
+resources:
+  limits:
+    memory: "1700Mi"
+  requests:
+    memory: "1700Mi"
 %{ endif ~}
 
 # mode for profile provisioning of snapshot profiles

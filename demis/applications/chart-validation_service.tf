@@ -98,12 +98,11 @@ module "validation_service_core_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "fhir-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_core_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }
@@ -136,12 +135,11 @@ module "validation_service_igs_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "igs-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_igs_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }
@@ -174,12 +172,11 @@ module "validation_service_ars_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "ars-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_ars_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }
@@ -212,12 +209,11 @@ module "validation_service_bedoccupancy_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "fhir-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_bedoccupancy_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }
@@ -250,12 +246,11 @@ module "validation_service_disease_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "fhir-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_disease_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }
@@ -288,12 +283,11 @@ module "validation_service_pathogen_apps" {
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "fhir-profile-snapshots"
   app_template_params = {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    profile_docker_registry                            = var.docker_registry,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.vs_pathogen_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_docker_registry = var.docker_registry,
   }
   istio_template_params = {}
 }

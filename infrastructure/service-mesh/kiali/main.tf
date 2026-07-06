@@ -36,7 +36,8 @@ resource "helm_release" "this" {
       # Cluster-internal Url to Prometheus
       prometheus_url = var.prometheus_service_url
       # Cluster-internal Url to Tracing
-      tracing_url = var.tracing_service_url
+      tracing_url  = var.tracing_service_url
+      tracing_port = var.tracing_service_port
       # Cluster-internal Url to Grafana
       grafana_url = var.grafana_service_url
       # External (Public) Url to Grafana

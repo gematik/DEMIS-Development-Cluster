@@ -37,3 +37,9 @@ variable "kyverno_reportscontroller_replicas" {
   type        = number
   default     = 2
 }
+
+variable "kyverno_chart_version" {
+  description = "The Helm Chart Version for Kyverno"
+  type        = string
+  default     = "3.5.3"
+}

@@ -25,14 +25,17 @@ locals {
     application                   = "dmz"
     component                     = "dmz"
   })
-
+  stage_config_base_path = "${path.module}/../environments/stage-${local.stage_name}"
   # define the path to the source of the Helm charts values for the stage
-  chart_source_path = "${path.module}/../environments/stage-${local.stage_name}/${var.target_namespace}"
+  chart_source_path = "${local.stage_config_base_path}/${var.target_namespace}"
   # define the path to the source of the Helm charts versions for the stage
   active_versions_source_path = "${local.chart_source_path}/active-versions.yaml"
 
   # Import the "active-versions.yaml" file
   deployment_information = yamldecode(file(local.active_versions_source_path))
+
+  demis_active_versions_source_path = "${local.stage_config_base_path}/${var.demis_namespace}/active-versions.yaml"
+  demis_deployment_information      = yamldecode(file(local.demis_active_versions_source_path))
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
   pull_secrets_credentials = [for k, v in module.pull_secrets : v.metadata.name]

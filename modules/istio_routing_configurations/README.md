@@ -4,7 +4,7 @@
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_external"></a> [external](#requirement\_external) | 2.3.5 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | 2.4.0 |
 
 ## Modules
 
@@ -19,6 +19,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_fhir_package_versions"></a> [fhir\_package\_versions](#input\_fhir\_package\_versions) | Map of fhir packages and their major versions to validate against in the routing configuration. The key is the package name and the value is a list of valid major versions for that package. | `list(string)` | `[]` | no |
 | <a name="input_global_template_variables"></a> [global\_template\_variables](#input\_global\_template\_variables) | Additional global variables for template substitution, provided as a map. | `map(string)` | `{}` | no |
 | <a name="input_input_mapping_path"></a> [input\_mapping\_path](#input\_input\_mapping\_path) | Path to the traffic routes template YAML file. | `string` | n/a | yes |
 | <a name="input_python_interpreter"></a> [python\_interpreter](#input\_python\_interpreter) | Python interpreter to pass as the first argument to the module's Python wrapper. | `string` | `"python3"` | no |

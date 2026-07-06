@@ -14,6 +14,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
+| <a name="module_bulk_inbound_purger"></a> [bulk\_inbound\_purger](#module\_bulk\_inbound\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_bulk_inbound_service"></a> [bulk\_inbound\_service](#module\_bulk\_inbound\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_pgbouncer"></a> [pgbouncer](#module\_pgbouncer) | ../../modules/helm_deployment | n/a |
@@ -46,6 +47,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_ars_bis_in_queue_encryption_previous_secret"></a> [ars\_bis\_in\_queue\_encryption\_previous\_secret](#input\_ars\_bis\_in\_queue\_encryption\_previous\_secret) | The previous encryption key for the bulk upload service | `string` | `""` | no |
 | <a name="input_ars_bulk_upload_hmac_secret"></a> [ars\_bulk\_upload\_hmac\_secret](#input\_ars\_bulk\_upload\_hmac\_secret) | The secret to generate HMACs from the preferred usernames in the bulk upload service | `string` | `""` | no |
 | <a name="input_ars_secure_queue_encryption_current_secret"></a> [ars\_secure\_queue\_encryption\_current\_secret](#input\_ars\_secure\_queue\_encryption\_current\_secret) | The current encryption key for the secure queue. Must be 16 bytes | `string` | `""` | no |
+| <a name="input_bulk_inbound_purger_cron_schedule"></a> [bulk\_inbound\_purger\_cron\_schedule](#input\_bulk\_inbound\_purger\_cron\_schedule) | Defines the Cron Schedule for the bulk-inbound-purger | `string` | n/a | yes |
+| <a name="input_bulk_inbound_purger_suspend"></a> [bulk\_inbound\_purger\_suspend](#input\_bulk\_inbound\_purger\_suspend) | Defines if the bulk-inbound-purger is suspended. | `bool` | `false` | no |
 | <a name="input_cluster_gateway"></a> [cluster\_gateway](#input\_cluster\_gateway) | Defines the Istio Cluster Gateway to be used | `string` | `"mesh/demis-core-gateway"` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of ops flags to be bound in services | `map(map(string))` | `{}` | no |
 | <a name="input_context_path"></a> [context\_path](#input\_context\_path) | The context path for reaching the DEMIS Services externally | `string` | `""` | no |

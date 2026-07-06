@@ -16,6 +16,8 @@ module "demis_services" {
   destination_lookup_purger_cron_schedule         = var.destination_lookup_purger_cron_schedule
   surveillance_pseudonym_purger_ars_suspend       = var.surveillance_pseudonym_purger_ars_suspend
   surveillance_pseudonym_purger_ars_cron_schedule = var.surveillance_pseudonym_purger_ars_cron_schedule
+  ars_purger_suspend                              = var.ars_purger_suspend
+  ars_purger_cron_schedule                        = var.ars_purger_cron_schedule
   core_hostname                                   = module.endpoints.core_hostname
   portal_hostname                                 = module.endpoints.portal_hostname
   meldung_hostname                                = module.endpoints.meldung_hostname

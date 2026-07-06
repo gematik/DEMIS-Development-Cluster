@@ -283,3 +283,18 @@ variable "pvc_trigger" {
   description = "List of PVC names from module.persistent_volume_claims that establishes deploy ordering without known-after-apply propagation."
   default     = []
 }
+
+variable "bulk_inbound_purger_cron_schedule" {
+  type        = string
+  description = "Defines the Cron Schedule for the bulk-inbound-purger"
+  validation {
+    condition     = length(var.bulk_inbound_purger_cron_schedule) > 0
+    error_message = "The bulk-inbound-purger cron Schedule must be defined"
+  }
+}
+
+variable "bulk_inbound_purger_suspend" {
+  type        = bool
+  description = "Defines if the bulk-inbound-purger is suspended."
+  default     = false
+}

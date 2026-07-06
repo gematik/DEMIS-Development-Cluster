@@ -21,20 +21,19 @@ module "portal_pathogen" {
 
   # Pass the values for the chart
   application_values = templatefile(local.portal_pathogen_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    istio_enable                                       = var.istio_enabled,
-    production_mode                                    = var.production_mode,
-    csp_hostname                                       = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
-    feature_flags                                      = try(var.feature_flags[local.portal_pathogen_name], {}),
-    config_options                                     = try(var.config_options[local.portal_pathogen_name], {}),
-    replica_count                                      = var.resource_definitions[local.portal_pathogen_name].replicas,
-    resource_block                                     = var.resource_definitions[local.portal_pathogen_name].resource_block,
-    package_laboratory_major_version                   = local.futs_package_laboratory_major_version
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.portal_pathogen_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.portal_pathogen_name].istio_proxy_resources
-    fhir_core_split_enabled                            = local.fhir_core_split_enabled
-    mf_logging_disabled                                = !var.mf_logging_enabled
+    image_pull_secrets             = var.pull_secrets,
+    repository                     = var.docker_registry,
+    istio_enable                   = var.istio_enabled,
+    production_mode                = var.production_mode,
+    csp_hostname                   = "https://${var.portal_hostname}/ https://${var.meldung_hostname}/ https://${var.auth_hostname}/ https://${var.storage_hostname}/",
+    feature_flags                  = try(var.feature_flags[local.portal_pathogen_name], {}),
+    config_options                 = try(var.config_options[local.portal_pathogen_name], {}),
+    replica_count                  = var.resource_definitions[local.portal_pathogen_name].replicas,
+    resource_block                 = var.resource_definitions[local.portal_pathogen_name].resource_block,
+    package_laboratory_api_version = local.package_laboratory_api_version
+    istio_proxy_resources          = var.resource_definitions[local.portal_pathogen_name].istio_proxy_resources
+    fhir_core_split_enabled        = local.fhir_core_split_enabled
+    mf_logging_disabled            = !var.mf_logging_enabled
   })
   istio_values = templatefile(local.portal_pathogen_template_istio, {
     namespace                  = var.target_namespace,

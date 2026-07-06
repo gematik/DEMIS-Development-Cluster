@@ -25,7 +25,7 @@ customEnvVars:
 config:
   mfIgs:
     igsGatewayUrl: "${context_path}/gateway/igs"
-    igsServiceUrl: "${context_path}/surveillance/notification-sequence/v${igs_profile_major_version}"
+    igsServiceUrl: "${context_path}/surveillance/notification-sequence/${package_igs_api_version}"
   featureFlags:
     # Prevents empty values that can delete the default environment variables
     "TERRAFORM_DEPLOYMENT": true
@@ -40,12 +40,10 @@ config:
     level: 1
     disableConsoleLogging: ${mf_logging_disabled}
 
-%{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
-%{endif}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

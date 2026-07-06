@@ -1,0 +1,28 @@
+traffic_routes_templates:
+  - service: svc-statistic
+    enabled: true
+    additional_headers:
+      x-fhir-package: statistic
+      x-fhir-package-version: v1
+    matches:
+      - uri_template: /statistic
+    http_route_configs:
+      - variables: {}
+  - service: svc-laboratory
+    enabled: true
+    additional_headers:
+      x-fhir-package: laboratory
+      x-fhir-package-version: v2
+    matches:
+      - uri_template: /laboratory
+    http_route_configs:
+      - variables: {}
+  - service: svc-disease
+    enabled: true
+    additional_headers:
+      x-fhir-package: disease
+      x-fhir-package-version: v3
+    matches:
+      - uri_template: /disease
+    http_route_configs:
+      - variables: {}

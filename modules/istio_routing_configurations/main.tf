@@ -1,5 +1,5 @@
 locals {
-  validator_precheck_command = [
+  schema_validator_precheck_command = [
     "${path.module}/.scripts/python_wrapper.sh",
     var.python_interpreter,
     "${path.module}/.scripts/schema_validation.py",
@@ -7,7 +7,7 @@ locals {
     "--input", var.input_mapping_path,
     "--schema", "${path.module}/.scripts/traffic_routes_templates.schema.json"
   ]
-  validator_command = [
+  schema_validator_command = [
     "${path.module}/.scripts/python_wrapper.sh",
     var.python_interpreter,
     "${path.module}/.scripts/schema_validation.py",
@@ -25,11 +25,11 @@ locals {
 }
 
 data "external" "precheck_schema_validation" {
-  program = local.validator_precheck_command
+  program = local.schema_validator_precheck_command
 }
 
 data "external" "schema_validation" {
-  program = local.validator_command
+  program = local.schema_validator_command
   query = {
     content = yamlencode({
       for key, value in yamldecode(file(var.input_mapping_path)) : key => [
@@ -76,5 +76,19 @@ locals {
     for s in distinct(concat(compact(var.service_list), compact(keys(local.traffic_routes)))) :
     s => try(local.traffic_routes[s], [])
   }
+
+  services_by_package_versions = {
+    for entry in flatten([
+      for service, service_rules in local.rules : [
+        for rule in service_rules : {
+          version = "${rule.headers.request.set["x-fhir-package"]}:${rule.headers.request.set["x-fhir-package-version"]}"
+          service = service
+        }
+        if can(rule.headers.request.set["x-fhir-package"]) && can(rule.headers.request.set["x-fhir-package-version"])
+      ]
+    ]) : entry.version => entry.service...
+  }
+
+  routing_fhir_package_versions = keys(local.services_by_package_versions)
 }
 

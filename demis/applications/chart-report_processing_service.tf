@@ -20,18 +20,17 @@ module "report_processing_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.rps_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    keycloak_internal_hostname                         = var.keycloak_internal_hostname,
-    feature_flags                                      = try(var.feature_flags[local.rps_name], {}),
-    config_options                                     = try(var.config_options[local.rps_name], {}),
-    replica_count                                      = var.resource_definitions[local.rps_name].replicas,
-    resource_block                                     = var.resource_definitions[local.rps_name].resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rps_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false),
-    istio_proxy_resources                              = var.resource_definitions[local.rps_name].istio_proxy_resources,
+    image_pull_secrets         = var.pull_secrets,
+    repository                 = var.docker_registry,
+    namespace                  = var.target_namespace,
+    debug_enable               = var.debug_enabled,
+    istio_enable               = var.istio_enabled,
+    keycloak_internal_hostname = var.keycloak_internal_hostname,
+    feature_flags              = try(var.feature_flags[local.rps_name], {}),
+    config_options             = try(var.config_options[local.rps_name], {}),
+    replica_count              = var.resource_definitions[local.rps_name].replicas,
+    resource_block             = var.resource_definitions[local.rps_name].resource_block,
+    istio_proxy_resources      = var.resource_definitions[local.rps_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.rps_template_istio, {
     namespace                  = var.target_namespace,

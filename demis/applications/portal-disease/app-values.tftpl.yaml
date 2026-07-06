@@ -28,9 +28,9 @@ config:
   production: ${production_mode}
   futsPaths:
     %{~ if fhir_core_split_enabled == true ~}
-    baseUrl: ../../translation/ui-data-model/disease/v${package_disease_major_version}/fhir
+    baseUrl: ../../translation/ui-data-model/disease/${package_disease_api_version}/fhir
     %{ else ~}
-    baseUrl: ../../translation/ui-data-model/v${package_disease_major_version}/fhir
+    baseUrl: ../../translation/ui-data-model/v${package_disease_api_version}/fhir
     %{ endif ~}
 
   featureFlags:
@@ -47,12 +47,10 @@ config:
     level: 1
     disableConsoleLogging: ${mf_logging_disabled}
 
-%{~ if feature_flag_new_istio_sidecar_requests_and_limits && istio_proxy_resources != null ~}
 podAnnotations:
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
-%{endif}
 
 %{~ if replica_count != null ~}
 # Number of Pod Replicas desired

@@ -9,6 +9,7 @@
 *.lock.hcl
 *.json
 *.yaml
+.terraformrc
 **/stage-*/
 .vscode/
 credentials.tfvars
