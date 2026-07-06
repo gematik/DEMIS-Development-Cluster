@@ -343,6 +343,15 @@ variable "surveillance_pseudonym_purger_ars_cron_schedule" {
   }
 }
 
+variable "ars_purger_cron_schedule" {
+  type        = string
+  description = "Defines the Cron Schedule for the ars-purger"
+  validation {
+    condition     = length(var.ars_purger_cron_schedule) > 0
+    error_message = "The ars-purger cron Schedule must be defined"
+  }
+}
+
 # used in environments with different parallel versions of DEMIS Services
 variable "context_path" {
   description = "The context path for reaching the DEMIS Services externally"
@@ -382,6 +391,12 @@ variable "destination_lookup_purger_suspend" {
 variable "surveillance_pseudonym_purger_ars_suspend" {
   type        = bool
   description = "Defines if the surveillance-pseudonym-purger-ars is suspended."
+  default     = false
+}
+
+variable "ars_purger_suspend" {
+  type        = bool
+  description = "Defines if the ars-purger is suspended."
   default     = false
 }
 

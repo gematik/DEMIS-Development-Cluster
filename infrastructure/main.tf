@@ -66,6 +66,7 @@ module "trivy" {
   source    = "./security/trivy"
   namespace = module.security_namespace.name
   # Configure Trivy settings
+  chart_version                 = var.trivy_chart_version
   additional_report_fields      = var.trivy_additional_report_fields
   cron_job_schedule             = var.trivy_cron_job_schedule
   scan_namespaces               = var.trivy_scan_namespaces
@@ -81,6 +82,7 @@ module "falco" {
   count                     = var.falco_enabled ? 1 : 0
   source                    = "./security/falco"
   namespace                 = module.security_namespace.name
+  chart_version             = var.falco_chart_version
   kubernetes_meta_collector = var.falco_kubernetes_meta_collector
   falcosidekick_enabled     = var.falco_falcosidekick_enabled
   falcosidekick_ui_enabled  = var.falco_falcosidekick_ui_enabled
@@ -91,6 +93,7 @@ module "kyverno" {
   count                         = var.kyverno_enabled ? 1 : 0
   source                        = "./kyverno-controller"
   namespace                     = module.kyverno_namespace.name
+  chart_version                 = var.kyverno_chart_version
   pull_secrets                  = local.pull_secrets_credentials
   admissioncontroller_replicas  = var.kyverno_admissioncontroller_replicas
   backgroundcontroller_replicas = var.kyverno_backgroundcontroller_replicas
@@ -99,8 +102,9 @@ module "kyverno" {
 }
 
 module "kyverno_policy_reporter" {
-  count      = var.kyverno_policy_reporter_enabled ? 1 : 0
-  source     = "./security/policy-reporter"
-  namespace  = module.security_namespace.name
-  depends_on = [module.kyverno]
+  count         = var.kyverno_policy_reporter_enabled ? 1 : 0
+  source        = "./security/policy-reporter"
+  namespace     = module.security_namespace.name
+  chart_version = var.kyverno_policy_reporter_chart_version
+  depends_on    = [module.kyverno]
 }

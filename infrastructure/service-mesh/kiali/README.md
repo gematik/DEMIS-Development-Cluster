@@ -34,7 +34,8 @@ No modules.
 | <a name="input_kiali_version"></a> [kiali\_version](#input\_kiali\_version) | The version of Kiali to be installed | `string` | n/a | yes |
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | Namespace where to install the services | `string` | `"istio-system"` | no |
-| <a name="input_tracing_service_url"></a> [tracing\_service\_url](#input\_tracing\_service\_url) | The Cluster-internal URL of the Tracing Instance to be used | `string` | `"http://tracing:16685/jaeger"` | no |
+| <a name="input_tracing_service_port"></a> [tracing\_service\_port](#input\_tracing\_service\_port) | The Cluster-internal URL of the Tracing Instance to be used | `string` | `"16685"` | no |
+| <a name="input_tracing_service_url"></a> [tracing\_service\_url](#input\_tracing\_service\_url) | The Cluster-internal URL of the Tracing Instance to be used | `string` | `"http://tracing:16685"` | no |
 
 ## Outputs
 

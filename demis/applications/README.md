@@ -15,6 +15,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
+| <a name="module_ars_purger"></a> [ars\_purger](#module\_ars\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_ars_service"></a> [ars\_service](#module\_ars\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_context_enrichment_service"></a> [context\_enrichment\_service](#module\_context\_enrichment\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_destination_lookup_purger"></a> [destination\_lookup\_purger](#module\_destination\_lookup\_purger) | ../../modules/helm_deployment | n/a |
@@ -85,6 +86,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_ars_pseudo_hash_pepper"></a> [ars\_pseudo\_hash\_pepper](#input\_ars\_pseudo\_hash\_pepper) | The Pepper used for the ARS Pseudo Hashing (Base64-encoded) | `string` | `null` | no |
+| <a name="input_ars_purger_cron_schedule"></a> [ars\_purger\_cron\_schedule](#input\_ars\_purger\_cron\_schedule) | Defines the Cron Schedule for the ars-purger | `string` | n/a | yes |
+| <a name="input_ars_purger_suspend"></a> [ars\_purger\_suspend](#input\_ars\_purger\_suspend) | Defines if the ars-purger is suspended. | `bool` | `false` | no |
 | <a name="input_ars_secure_queue_encryption_current_secret"></a> [ars\_secure\_queue\_encryption\_current\_secret](#input\_ars\_secure\_queue\_encryption\_current\_secret) | The current encryption key for the ARS bulk secure queue | `string` | `""` | no |
 | <a name="input_ars_secure_queue_encryption_previous_secret"></a> [ars\_secure\_queue\_encryption\_previous\_secret](#input\_ars\_secure\_queue\_encryption\_previous\_secret) | The previous encryption key for the ARS bulk secure queue | `string` | `""` | no |
 | <a name="input_auth_hostname"></a> [auth\_hostname](#input\_auth\_hostname) | The Keycloak Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `"auth"` | no |

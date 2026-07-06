@@ -16,8 +16,8 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.1.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
 
 ## Modules
 
@@ -39,11 +39,11 @@ It performs the following operations:
 
 | Name | Type |
 | ---- | ---- |
-| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
+| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
 
 ## Inputs
 

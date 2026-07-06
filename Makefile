@@ -31,11 +31,15 @@ EKM_TEMPLATE_PATH := ekm-template
 ARE_PATH := are
 ARE_ENV_FOLDER := are
 GCP_SECRET_PREFIX :=
-TERRAFORM_EXTRA_ARGS := ${TF_EXTRA_ARGS}
+TF_EXTRA_ARGS ?=
+TERRAFORM_EXTRA_ARGS := $(TF_EXTRA_ARGS)
 TARGET_ARG :=
 MODULE :=
 target :=
 RESET_HELM_VALUES :=
+NAMESPACE ?=
+STAGE_REPOSITORY ?=
+PREVENT_PLUGIN_CACHE ?=
 
 #####################
 ### Default Values
@@ -48,6 +52,26 @@ ifeq ($(strip $(STAGE_REPOSITORY)),)
 endif
 
 LOAD_EXTERNAL_SECRETS :=
+
+_INTERNAL_TARGETS := get-var-file-args-for-folder get-backend-config-args-for-folder
+_IS_INTERNAL := $(filter $(_INTERNAL_TARGETS),$(MAKECMDGOALS))
+
+ifneq ($(PREVENT_PLUGIN_CACHE),true)
+TF_PLUGIN_CACHE_DIR ?= /tmp/cache/.terraform-plugin-cache
+export TF_PLUGIN_CACHE_DIR
+$(shell mkdir -p $(TF_PLUGIN_CACHE_DIR))
+ifeq ($(MAKELEVEL),0)
+ifeq ($(_IS_INTERNAL),)
+$(shell echo "Info: Terraform plugin cache is enabled at $(TF_PLUGIN_CACHE_DIR). To disable it, set PREVENT_PLUGIN_CACHE=true" >&2)
+endif
+endif
+else
+ifeq ($(MAKELEVEL),0)
+ifeq ($(_IS_INTERNAL),)
+$(shell echo "Info: Terraform plugin cache is disabled due to PREVENT_PLUGIN_CACHE=$(PREVENT_PLUGIN_CACHE)" >&2)
+endif
+endif
+endif
 
 # check if additional Makefile-Targets exists and include them
 ifneq ($(wildcard $(ROOT_DIR)/deployments/local/local.mk),)
@@ -130,10 +154,13 @@ cleanup-infrastructure: export VAR_FILE_ARGS=$(shell make -s --no-print-director
 cleanup-infrastructure: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(INFRASTRUCTURE_PATH) STAGE=$(STAGE))
 cleanup-infrastructure:
 	cd $(WORKING_PATH)
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Destroying Infrastructure Resources"
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
-	$(TF_BIN) destroy ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
-	kubectl get crds | grep istio | awk '{print $1}' | xargs kubectl delete crd
+	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
+	if kubectl get crds >/dev/null 2>&1; then \
+		kubectl get crds | grep istio | awk '{print $$1}' | xargs -r kubectl delete crd || true; \
+	fi
 
 .PHONY: idm
 idm: export WORKING_PATH=$(ROOT_DIR)/$(IDM_PATH)
@@ -272,7 +299,7 @@ init-dmz: ## Initializes the Terraform DMZ components
 	@echo "## Initialising the DMZ project"
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 
-.PHONY: ekm
+.PHONY: ekm-template
 ekm-template: export WORKING_PATH=$(ROOT_DIR)/$(EKM_TEMPLATE_PATH)
 ekm-template: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(EKM_TEMPLATE_PATH) STAGE=$(STAGE))
 ekm-template: init-ekm-template validate ## Initializes the Terraform ekm-template service
@@ -417,12 +444,12 @@ create-local-environment: local ## Creates a complete local environment
 
 .PHONY: cleanup-local-environment
 cleanup-local-environment: ## Destroys the local environment
-	$(MAKE) local cleanup-are
-	$(MAKE) local cleanup-ekm-template
-	$(MAKE) local cleanup-dmz
-	$(MAKE) local cleanup-services
-	$(MAKE) local cleanup-idm
-	$(MAKE) local cleanup-mesh
+	@if kubectl get namespace are >/dev/null 2>&1; then $(MAKE) local cleanup-are; else echo "## Namespace 'are' not found, skipping cleanup-are"; fi
+	@if kubectl get namespace ekm-template >/dev/null 2>&1; then $(MAKE) local cleanup-ekm-template; else echo "## Namespace 'ekm-template' not found, skipping cleanup-ekm-template"; fi
+	@if kubectl get namespace dmz >/dev/null 2>&1; then $(MAKE) local cleanup-dmz; else echo "## Namespace 'dmz' not found, skipping cleanup-dmz"; fi
+	@if kubectl get namespace demis >/dev/null 2>&1; then $(MAKE) local cleanup-services; else echo "## Namespace 'demis' not found, skipping cleanup-services"; fi
+	@if kubectl get namespace idm >/dev/null 2>&1; then $(MAKE) local cleanup-idm; else echo "## Namespace 'idm' not found, skipping cleanup-idm"; fi
+	@if kubectl get namespace mesh >/dev/null 2>&1; then $(MAKE) local cleanup-mesh; else echo "## Namespace 'mesh' not found, skipping cleanup-mesh"; fi
 	$(MAKE) local cleanup-infrastructure
 
 .PHONY: update-service
@@ -588,7 +615,7 @@ test-modules: ## Runs tests for all modules
 		fi; \
 	done
 
-.Phony: check-external-routing-configuration
+.PHONY: check-external-routing-configuration
 check-external-routing-configuration: export SCRIPT_FOLDER=$(ROOT_DIR)/modules/istio_routing_configurations/.scripts
 check-external-routing-configuration: ## Checks if the routing configuration is correct with an external script
 ifneq ($(NAMESPACE),)

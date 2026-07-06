@@ -23,15 +23,6 @@ locals {
     ),
     -1 # Default index if not found
   )
-
-  ars_bulk_purger_index = try(
-    index(
-      [for cred in var.database_credentials : cred.secret-name],
-      "ars-bulk-purger-database-secret"
-    ),
-    -1 # Default index if not found
-  )
-
 }
 
 module "bulk_inbound_service" {
@@ -47,25 +38,23 @@ module "bulk_inbound_service" {
 
   # Pass the values for the chart
   application_values = templatefile(local.bulk_inbound_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    core_hostname                                      = var.core_hostname,
-    context_path                                       = var.context_path,
-    feature_flags                                      = try(var.feature_flags[local.bulk_inbound_name], {}),
-    config_options                                     = try(var.config_options[local.bulk_inbound_name], {}),
-    replica_count                                      = var.resource_definitions[local.bulk_inbound_name].replicas,
-    resource_block                                     = var.resource_definitions[local.bulk_inbound_name].resource_block,
-    ars_bulk_ddl_db_secret_checksum                    = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_ddl_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_user_db_secret_checksum                   = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_user_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_purger_db_secret_checksum                 = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_purger_index].metadata[0].annotations["checksum"], ""),
-    ars_bulk_upload_hmac_secret_checksum               = try(var.ars_bulk_upload_hmac_secret.metadata[0].annotations["checksum"], ""),
-    bulk_inbound_encryption_secret_checksum            = try(kubernetes_secret_v1.ars_bis_in_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
-    bis_rabbitmq_credentials_checksum                  = try(kubernetes_secret_v1.bis_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.bulk_inbound_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
+    image_pull_secrets                      = var.pull_secrets,
+    repository                              = var.docker_registry,
+    namespace                               = var.target_namespace,
+    debug_enable                            = var.debug_enabled,
+    istio_enable                            = var.istio_enabled,
+    core_hostname                           = var.core_hostname,
+    context_path                            = var.context_path,
+    feature_flags                           = try(var.feature_flags[local.bulk_inbound_name], {}),
+    config_options                          = try(var.config_options[local.bulk_inbound_name], {}),
+    replica_count                           = var.resource_definitions[local.bulk_inbound_name].replicas,
+    resource_block                          = var.resource_definitions[local.bulk_inbound_name].resource_block,
+    ars_bulk_ddl_db_secret_checksum         = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_ddl_index].metadata[0].annotations["checksum"], ""),
+    ars_bulk_user_db_secret_checksum        = try(kubernetes_secret_v1.database_credentials[local.ars_bulk_user_index].metadata[0].annotations["checksum"], ""),
+    ars_bulk_upload_hmac_secret_checksum    = try(var.ars_bulk_upload_hmac_secret.metadata[0].annotations["checksum"], ""),
+    bulk_inbound_encryption_secret_checksum = try(kubernetes_secret_v1.ars_bis_in_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
+    bis_rabbitmq_credentials_checksum       = try(kubernetes_secret_v1.bis_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
+    istio_proxy_resources                   = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.bulk_inbound_template_istio, {
     namespace                  = var.target_namespace,

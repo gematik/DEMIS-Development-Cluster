@@ -16,8 +16,8 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.1.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
 
 ## Modules
 
@@ -39,11 +39,11 @@ It performs the following operations:
 
 | Name | Type |
 | ---- | ---- |
-| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
+| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
 | [terraform_data.dlp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.fsp_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.spp_ars_manual_trigger](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
@@ -53,6 +53,8 @@ It performs the following operations:
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_ars_pseudo_hash_pepper"></a> [ars\_pseudo\_hash\_pepper](#input\_ars\_pseudo\_hash\_pepper) | The Pepper used for the ARS Pseudo Hashing (Base64-encoded) | `string` | `null` | no |
+| <a name="input_ars_purger_cron_schedule"></a> [ars\_purger\_cron\_schedule](#input\_ars\_purger\_cron\_schedule) | Defines the cron schedule for the ars-purger | `string` | `"0 22 * * *"` | no |
+| <a name="input_ars_purger_suspend"></a> [ars\_purger\_suspend](#input\_ars\_purger\_suspend) | Defines if the ars-purger is suspended. | `bool` | `false` | no |
 | <a name="input_ars_secure_queue_encryption_current_secret"></a> [ars\_secure\_queue\_encryption\_current\_secret](#input\_ars\_secure\_queue\_encryption\_current\_secret) | The current encryption key for the ARS bulk secure queue. Must be 16 bytes. | `string` | `""` | no |
 | <a name="input_ars_secure_queue_encryption_previous_secret"></a> [ars\_secure\_queue\_encryption\_previous\_secret](#input\_ars\_secure\_queue\_encryption\_previous\_secret) | The previous encryption key for the ARS bulk secure queue. Must be 16 bytes. | `string` | `""` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of configuration options that belong to services | <pre>list(object({<br/>    services     = list(string)<br/>    option_name  = string<br/>    option_value = string<br/>  }))</pre> | `[]` | no |

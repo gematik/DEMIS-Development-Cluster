@@ -20,16 +20,16 @@ module "redis_cus" {
 
   # Pass the values for the chart
   application_values = templatefile(local.rediscus_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    istio_enable                                       = var.istio_enabled,
-    replica_count                                      = var.resource_definitions[local.rediscus_name].replicas,
-    resource_block                                     = var.resource_definitions[local.rediscus_name].resource_block,
-    redis_cus_reader_credentials_checksum              = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], ""),
-    redis_cus_writer_credentials_checksum              = try(kubernetes_secret_v1.redis_cus_writer_credentials.metadata[0].annotations["checksum"], ""),
-    redis_cus_acl_checksum                             = try(kubernetes_secret_v1.redis_cus_acl.metadata[0].annotations["checksum"], "")
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.rediscus_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.rediscus_name].istio_proxy_resources,
+    image_pull_secrets                    = var.pull_secrets,
+    repository                            = var.docker_registry,
+    istio_enable                          = var.istio_enabled,
+    replica_count                         = var.resource_definitions[local.rediscus_name].replicas,
+    resource_block                        = var.resource_definitions[local.rediscus_name].resource_block,
+    redis_cus_reader_credentials_checksum = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], ""),
+    redis_cus_writer_credentials_checksum = try(kubernetes_secret_v1.redis_cus_writer_credentials.metadata[0].annotations["checksum"], ""),
+    redis_cus_acl_checksum                = try(kubernetes_secret_v1.redis_cus_acl.metadata[0].annotations["checksum"], "")
+    istio_proxy_resources                 = var.resource_definitions[local.rediscus_name].istio_proxy_resources,
+    new_redis_cus_annotation_handling     = try(var.project_feature_flags["FEATURE_FLAG_NEW_REDIS_CUS_ANNOTATION_HANDLING"], false)
   })
   istio_values = templatefile(local.rediscus_template_istio, {
     namespace = var.target_namespace

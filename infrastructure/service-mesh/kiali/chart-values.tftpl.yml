@@ -26,6 +26,11 @@ deployment:
       memory: 64Mi
   secret_name: "kiali"
   version_label: "${image_version}"
+  strategy:
+    type: RollingUpdate
+    rolling_update:
+      max_surge: 1
+      max_unavailable: 0
 
 external_services:
   custom_dashboards:
@@ -127,6 +132,7 @@ external_services:
       username: ''
     enabled: true
     internal_url: ${tracing_url}
+    grpc_port: ${tracing_port}
     is_core: false
     namespace_selector: true
     query_scope: {}

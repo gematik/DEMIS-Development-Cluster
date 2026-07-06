@@ -3,8 +3,12 @@ locals {
   # Verify whether the service is defined or the deployment is explicitly enabled
   gateway_enabled = contains(local.service_names, local.gateway_name) ? var.deployment_information[local.gateway_name].enabled : false
   # Check if stage-override templates are provided, otherwise use the project-defined ones
-  gateway_template_app   = fileexists("${var.external_chart_path}/${local.gateway_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.gateway_name}/${local.application_values_file}" : "${path.module}/${local.gateway_name}/${local.application_values_file}"
-  gateway_template_istio = fileexists("${var.external_chart_path}/${local.gateway_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.gateway_name}/${local.istio_values_file}" : "${path.module}/${local.gateway_name}/${local.istio_values_file}"
+  gateway_template_app           = fileexists("${var.external_chart_path}/${local.gateway_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.gateway_name}/${local.application_values_file}" : "${path.module}/${local.gateway_name}/${local.application_values_file}"
+  gateway_template_istio         = fileexists("${var.external_chart_path}/${local.gateway_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.gateway_name}/${local.istio_values_file}" : "${path.module}/${local.gateway_name}/${local.istio_values_file}"
+  gateway_api_versions           = { for match in try(var.external_routing_configurations.rules[local.gateway_name], []) : match.headers.request.set["x-fhir-package"] => match.headers.request.set["x-api-version"] }
+  package_statistic_api_version  = try(local.gateway_api_versions["statistic"], "")
+  package_disease_api_version    = try(local.gateway_api_versions["disease"], "")
+  package_laboratory_api_version = try(local.gateway_api_versions["laboratory"], "")
 }
 
 module "notification_gateway" {
@@ -21,28 +25,30 @@ module "notification_gateway" {
 
   # Pass the values for the chart
   application_values = templatefile(local.gateway_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    namespace                                          = var.target_namespace,
-    debug_enable                                       = var.debug_enabled,
-    istio_enable                                       = var.istio_enabled,
-    portal_hostname                                    = var.portal_hostname,
-    meldung_hostname                                   = var.meldung_hostname,
-    core_hostname                                      = var.core_hostname,
-    issuer_hostname                                    = var.auth_hostname,
-    context_path                                       = var.context_path,
-    feature_flags                                      = try(var.feature_flags[local.gateway_name], {}),
-    config_options                                     = try(var.config_options[local.gateway_name], {}),
-    replica_count                                      = var.resource_definitions[local.gateway_name].replicas,
-    resource_block                                     = var.resource_definitions[local.gateway_name].resource_block,
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.gateway_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.gateway_name].istio_proxy_resources,
+    image_pull_secrets    = var.pull_secrets,
+    repository            = var.docker_registry,
+    namespace             = var.target_namespace,
+    debug_enable          = var.debug_enabled,
+    istio_enable          = var.istio_enabled,
+    portal_hostname       = var.portal_hostname,
+    meldung_hostname      = var.meldung_hostname,
+    core_hostname         = var.core_hostname,
+    issuer_hostname       = var.auth_hostname,
+    context_path          = var.context_path,
+    feature_flags         = try(var.feature_flags[local.gateway_name], {}),
+    config_options        = try(var.config_options[local.gateway_name], {}),
+    replica_count         = var.resource_definitions[local.gateway_name].replicas,
+    resource_block        = var.resource_definitions[local.gateway_name].resource_block,
+    istio_proxy_resources = var.resource_definitions[local.gateway_name].istio_proxy_resources,
   })
   istio_values = templatefile(local.gateway_template_istio, {
     namespace                        = var.target_namespace,
     context_path                     = var.context_path,
     cluster_gateway                  = var.cluster_gateway,
     portal_hostnames                 = local.frontend_hostnames
+    package_statistic_api_version    = local.package_statistic_api_version
+    package_disease_api_version      = local.package_disease_api_version
+    package_laboratory_api_version   = local.package_laboratory_api_version
     package_statistic_major_version  = local.futs_package_statistic_major_version
     package_disease_major_version    = local.futs_package_disease_major_version
     package_laboratory_major_version = local.futs_package_laboratory_major_version

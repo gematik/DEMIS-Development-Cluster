@@ -545,3 +545,39 @@ run "invalid_match_rewrite_property_test" {
 
   expect_failures = [data.external.schema_validation]
 }
+
+run "valid_fhir_package_versions_have_matching_profiles_test" {
+  command = plan
+
+  variables {
+    input_mapping_path    = "testdata/positive/valid-fhir-package-versions.yaml"
+    fhir_package_versions = ["statistic:v1", "laboratory:v2", "disease:v3"]
+  }
+
+  assert {
+    condition     = length(setsubtract(toset(local.routing_fhir_package_versions), toset(var.fhir_package_versions))) == 0
+    error_message = "Expected every FHIR package version to have a matching validation-service profile, missing: ${jsonencode(setsubtract(toset(local.routing_fhir_package_versions), toset(var.fhir_package_versions)))}"
+  }
+}
+
+run "invalid_fhir_package_versions_missing_profiles_test" {
+  command = plan
+
+  variables {
+    input_mapping_path    = "testdata/positive/valid-fhir-package-versions.yaml"
+    fhir_package_versions = ["missing-profile:v1"]
+  }
+
+  expect_failures = [output.rules]
+}
+
+run "invalid_fhir_package_version_mismatch_test" {
+  command = plan
+
+  variables {
+    input_mapping_path    = "testdata/positive/valid-fhir-package-versions.yaml"
+    fhir_package_versions = ["statistic:v1", "laboratory:v2", "disease:v2"] # disease:v2 does not match the routing for v3
+  }
+
+  expect_failures = [output.rules]
+}

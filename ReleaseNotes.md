@@ -2,6 +2,25 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.10.0
+- added new job bulk-inbound-purger for purging old data from bulk-inbound-service
+- added new job ars-purger for purging old data from statistic database
+- added terraform plugin-cache directory
+- changed default keycloak timeout
+- removed feature flag FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, istio sidecar requests and limits are now set by default
+- fixed misspelled podAnnotations key in redis-cus, pod annotations (including istio sidecar resources) for apply annotations use project feature flag FEATURE_FLAG_NEW_REDIS_CUS_ANNOTATION_HANDLING
+- added FHIR profile version validation to istio_routing_configuration module
+- upgraded terraform providers
+  - hashicorp/helm to 3.2.0
+  - hashicorp/kubernetes to 3.2.0
+  - hashicorp/random to 3.9.0
+  - hashicorp/external to 2.4.0
+- enable keycloak debug for teststages
+- fixed typo for local prometheus config & servicename of rabbitMq
+- fixed ARE dockerhub image pull names
+- setup default resources for validation-services with one package in app helm template
+- refactored api versions usage for frontends and gateways
+
 ## Release 5.9.0
 - added new RabbitMQ user credentials for ARS, Bulk-Inbound-Service and Secure-Message-Gateway
 - fixed ARE ANPS routing configuration
@@ -13,6 +32,7 @@
   - all futs and validation service modules needs to define profiles in main section with at least one defined package version
 - added improvements of tests on fhir-profile-metadata and helm_deployment modules
 - removed ignoring cronjobs kiali for referencing scheduled jobs
+- fixed ARE Gateway routing configuration
 
 ## Release 5.8.0
 - added ARE deployment targets for TEST-Stage

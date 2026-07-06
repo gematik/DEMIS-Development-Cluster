@@ -32,7 +32,13 @@ variable "prometheus_service_url" {
 variable "tracing_service_url" {
   description = "The Cluster-internal URL of the Tracing Instance to be used"
   type        = string
-  default     = "http://tracing:16685/jaeger"
+  default     = "http://tracing:16685"
+}
+
+variable "tracing_service_port" {
+  description = "The Cluster-internal URL of the Tracing Instance to be used"
+  type        = string
+  default     = "16685"
 }
 
 variable "grafana_service_url" {

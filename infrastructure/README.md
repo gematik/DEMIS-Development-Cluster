@@ -24,9 +24,9 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.1.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | 3.8.1 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.9.0 |
 
 ## Modules
 
@@ -57,6 +57,7 @@ No resources.
 | <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | The name of the region where the cluster is deployed | `string` | n/a | yes |
 | <a name="input_cluster_role_name"></a> [cluster\_role\_name](#input\_cluster\_role\_name) | Defines the Cluster Role Name to be configured | `string` | `"api-cluster-role"` | no |
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_falco_chart_version"></a> [falco\_chart\_version](#input\_falco\_chart\_version) | The Helm Chart Version for Falco | `string` | `"9.1.0"` | no |
 | <a name="input_falco_driver_kind"></a> [falco\_driver\_kind](#input\_falco\_driver\_kind) | sets the specfifc driver kind of the probe inside the nodes. Default of Falco is auto. The options are: kmod, ebpf, modern\_ebpf, We can enforce that if needed. | `string` | `"auto"` | no |
 | <a name="input_falco_enabled"></a> [falco\_enabled](#input\_falco\_enabled) | Activates/Deactivates the deployment of Falco | `bool` | `false` | no |
 | <a name="input_falco_falcosidekick_enabled"></a> [falco\_falcosidekick\_enabled](#input\_falco\_falcosidekick\_enabled) | enables falcosidekick | `bool` | `false` | no |
@@ -74,9 +75,11 @@ No resources.
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `null` | no |
 | <a name="input_kyverno_admissioncontroller_replicas"></a> [kyverno\_admissioncontroller\_replicas](#input\_kyverno\_admissioncontroller\_replicas) | setting replicas of admission controller | `number` | `3` | no |
 | <a name="input_kyverno_backgroundcontroller_replicas"></a> [kyverno\_backgroundcontroller\_replicas](#input\_kyverno\_backgroundcontroller\_replicas) | setting replicas of background controller | `number` | `2` | no |
+| <a name="input_kyverno_chart_version"></a> [kyverno\_chart\_version](#input\_kyverno\_chart\_version) | The Helm Chart Version for Kyverno | `string` | `"3.5.3"` | no |
 | <a name="input_kyverno_cleanupcontroller_replicas"></a> [kyverno\_cleanupcontroller\_replicas](#input\_kyverno\_cleanupcontroller\_replicas) | setting replicas of cleanup controller | `number` | `2` | no |
 | <a name="input_kyverno_enabled"></a> [kyverno\_enabled](#input\_kyverno\_enabled) | Activates/Deactivates the deployment of Kyverno | `bool` | `false` | no |
 | <a name="input_kyverno_namespace"></a> [kyverno\_namespace](#input\_kyverno\_namespace) | Defines the namespace for Kyverno | `string` | `"kyverno"` | no |
+| <a name="input_kyverno_policy_reporter_chart_version"></a> [kyverno\_policy\_reporter\_chart\_version](#input\_kyverno\_policy\_reporter\_chart\_version) | The Helm Chart Version for Policy Reporter | `string` | `"3.7.2"` | no |
 | <a name="input_kyverno_policy_reporter_enabled"></a> [kyverno\_policy\_reporter\_enabled](#input\_kyverno\_policy\_reporter\_enabled) | Activates/Deactivates the deployment of Policy Reporter | `bool` | `false` | no |
 | <a name="input_kyverno_reportscontroller_replicas"></a> [kyverno\_reportscontroller\_replicas](#input\_kyverno\_reportscontroller\_replicas) | setting replicas of reports controller | `number` | `2` | no |
 | <a name="input_local_cluster"></a> [local\_cluster](#input\_local\_cluster) | Defines if the current setup is for a local cluster (using KIND) | `bool` | `true` | no |
@@ -100,6 +103,7 @@ No resources.
 | <a name="input_service_mesh_tracing_sampling"></a> [service\_mesh\_tracing\_sampling](#input\_service\_mesh\_tracing\_sampling) | The sampling rate option can be used to control what percentage of requests get reported to your tracing system. <br/>  Please refer to the official documentation: https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling" | `string` | `"1.0"` | no |
 | <a name="input_stage_name"></a> [stage\_name](#input\_stage\_name) | The name of the stage | `string` | n/a | yes |
 | <a name="input_trivy_additional_report_fields"></a> [trivy\_additional\_report\_fields](#input\_trivy\_additional\_report\_fields) | Comma separated list of additional fields which can be added to the VulnerabilityReport. Supported parameters: Description, Links, CVSS, Target, Class, PackagePath and PackageType | `string` | `"Description,Links,CVSS,Target,Class,PackagePath,PackageType"` | no |
+| <a name="input_trivy_chart_version"></a> [trivy\_chart\_version](#input\_trivy\_chart\_version) | The Helm Chart Version for Trivy | `string` | `"0.23.3"` | no |
 | <a name="input_trivy_cron_job_schedule"></a> [trivy\_cron\_job\_schedule](#input\_trivy\_cron\_job\_schedule) | Specifies the execution period for the scan for Trivy | `string` | `"0 */6 * * *"` | no |
 | <a name="input_trivy_enabled"></a> [trivy\_enabled](#input\_trivy\_enabled) | Activates/Deactivates the deployment of Trivy Operator | `bool` | `false` | no |
 | <a name="input_trivy_ignore_unfixed"></a> [trivy\_ignore\_unfixed](#input\_trivy\_ignore\_unfixed) | Specifies that Trivy should show only fixed vulnerabilities, if set to true | `bool` | `false` | no |

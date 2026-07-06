@@ -17,8 +17,9 @@ module "kiali" {
   target_namespace = var.namespace
   # Define the Cluster-internal URL for Prometheus
   prometheus_service_url = var.prometheus_enabled ? module.prometheus[0].prometheus_service_url : var.prometheus_service_url
-  # Define the Cluster-internal URL for Tracing (Jaeger)
-  tracing_service_url = var.jaeger_enabled ? module.jaeger[0].tracing_service_url : var.tracing_service_url
+  # Define the Cluster-internal URL and Port for Tracing (Jaeger)
+  tracing_service_url  = var.jaeger_enabled ? module.jaeger[0].tracing_service_url : var.tracing_service_url
+  tracing_service_port = var.jaeger_enabled ? module.jaeger[0].grpc_query_port : "16685"
   # Define the Cluster-internal URL for Grafana
   grafana_service_url = var.grafana_enabled ? module.grafana[0].grafana_service_url : var.grafana_service_url
   # Define the Public URL for Grafana (might require Port-Forwarding)

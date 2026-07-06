@@ -16,8 +16,8 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.1.1 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.1.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
 
 ## Modules
 
@@ -39,11 +39,11 @@ It performs the following operations:
 
 | Name | Type |
 | ---- | ---- |
-| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.1.1/docs/resources/release) | resource |
+| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
 
 ## Inputs
 
@@ -54,11 +54,14 @@ It performs the following operations:
 | <a name="input_ars_bis_in_queue_encryption_previous_secret"></a> [ars\_bis\_in\_queue\_encryption\_previous\_secret](#input\_ars\_bis\_in\_queue\_encryption\_previous\_secret) | The previous encryption key for the bulk upload service | `string` | `""` | no |
 | <a name="input_ars_bulk_upload_hmac_secret"></a> [ars\_bulk\_upload\_hmac\_secret](#input\_ars\_bulk\_upload\_hmac\_secret) | The secret to generate HMACs from the preferred usernames in the bulk upload service | `string` | `""` | no |
 | <a name="input_ars_secure_queue_encryption_current_secret"></a> [ars\_secure\_queue\_encryption\_current\_secret](#input\_ars\_secure\_queue\_encryption\_current\_secret) | The current encryption key for the secure queue | `string` | `""` | no |
+| <a name="input_bulk_inbound_purger_cron_schedule"></a> [bulk\_inbound\_purger\_cron\_schedule](#input\_bulk\_inbound\_purger\_cron\_schedule) | Defines the cron schedule for the bulk-inbound-purger | `string` | `"0 22 * * *"` | no |
+| <a name="input_bulk_inbound_purger_suspend"></a> [bulk\_inbound\_purger\_suspend](#input\_bulk\_inbound\_purger\_suspend) | Defines if the bulk-inbound-purger is suspended. | `bool` | `false` | no |
 | <a name="input_config_options"></a> [config\_options](#input\_config\_options) | Defines a list of configuration options that belong to services | <pre>list(object({<br/>    services     = list(string)<br/>    option_name  = string<br/>    option_value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_context_path"></a> [context\_path](#input\_context\_path) | The context path for reaching the DEMIS Services externally | `string` | `""` | no |
 | <a name="input_database_credentials"></a> [database\_credentials](#input\_database\_credentials) | List of Database Credentials for DEMIS services (a secret) | <pre>list(object({<br/>    username            = string<br/>    password            = string<br/>    secret-name         = string<br/>    secret-key-user     = string<br/>    secret-key-password = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_database_target_host"></a> [database\_target\_host](#input\_database\_target\_host) | Defines the Hostname of the Database Server | `string` | n/a | yes |
 | <a name="input_debug_enabled"></a> [debug\_enabled](#input\_debug\_enabled) | Defines if the backend Java Services must be started in Debug Mode | `bool` | `false` | no |
+| <a name="input_demis_namespace"></a> [demis\_namespace](#input\_demis\_namespace) | Defines the Namespace where DEMIS is deployed | `string` | `"demis"` | no |
 | <a name="input_deployment_timeout"></a> [deployment\_timeout](#input\_deployment\_timeout) | Timeout for the deployment in minutes | `number` | `600` | no |
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_docker_registry"></a> [docker\_registry](#input\_docker\_registry) | The Docker Registry to use for pulling Images | `string` | n/a | yes |

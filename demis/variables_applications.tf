@@ -60,6 +60,12 @@ variable "surveillance_pseudonym_purger_ars_suspend" {
   default     = false
 }
 
+variable "ars_purger_suspend" {
+  type        = bool
+  description = "Defines if the ars-purger is suspended."
+  default     = false
+}
+
 variable "fhir_storage_purger_cron_schedule" {
   type        = string
   description = "Defines the cron schedule for the FHIR storage purger"
@@ -86,6 +92,16 @@ variable "surveillance_pseudonym_purger_ars_cron_schedule" {
   validation {
     condition     = length(var.surveillance_pseudonym_purger_ars_cron_schedule) > 0
     error_message = "The surveillance-pseudonym-purger-ars cron schedule must be defined"
+  }
+}
+
+variable "ars_purger_cron_schedule" {
+  type        = string
+  description = "Defines the cron schedule for the ars-purger"
+  default     = "0 22 * * *"
+  validation {
+    condition     = length(var.ars_purger_cron_schedule) > 0
+    error_message = "The ars-purger cron schedule must be defined"
   }
 }
 

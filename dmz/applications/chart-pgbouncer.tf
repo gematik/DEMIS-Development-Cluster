@@ -21,18 +21,17 @@ module "pgbouncer" {
 
   # Pass the values for the chart
   application_values = templatefile(local.pgbouncer_template_app, {
-    image_pull_secrets                                 = var.pull_secrets,
-    repository                                         = var.docker_registry,
-    database_host                                      = var.database_target_host,
-    istio_enable                                       = var.istio_enabled,
-    replica_count                                      = var.resource_definitions[local.pgbouncer_name].replicas,
-    resource_block                                     = var.resource_definitions[local.pgbouncer_name].resource_block,
-    config_options                                     = try(var.config_options[local.pgbouncer_name], {}),
-    demis_bulk_db_enabled                              = local.bulk_inbound_enabled
-    userlist_secret_checksum                           = try(kubernetes_secret_v1.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
-    postgres_tls_secret_checksum                       = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
-    feature_flag_new_istio_sidecar_requests_and_limits = try(var.feature_flags[local.pgbouncer_name].FEATURE_FLAG_NEW_ISTIO_SIDECAR_REQUEST_AND_LIMITS, false)
-    istio_proxy_resources                              = var.resource_definitions[local.pgbouncer_name].istio_proxy_resources,
+    image_pull_secrets           = var.pull_secrets,
+    repository                   = var.docker_registry,
+    database_host                = var.database_target_host,
+    istio_enable                 = var.istio_enabled,
+    replica_count                = var.resource_definitions[local.pgbouncer_name].replicas,
+    resource_block               = var.resource_definitions[local.pgbouncer_name].resource_block,
+    config_options               = try(var.config_options[local.pgbouncer_name], {}),
+    demis_bulk_db_enabled        = local.bulk_inbound_enabled
+    userlist_secret_checksum     = try(kubernetes_secret_v1.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
+    postgres_tls_secret_checksum = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
+    istio_proxy_resources        = var.resource_definitions[local.pgbouncer_name].istio_proxy_resources,
   })
 
 
