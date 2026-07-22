@@ -2,10 +2,8 @@ locals {
   ########################################
   # ars purger  #
   ########################################
-  ars_purger_name           = "ars-purger"
-  ars_purger_enabled        = contains(local.service_names, local.ars_purger_name) ? var.deployment_information[local.ars_purger_name].enabled : false
-  ars_purger_template_app   = fileexists("${var.external_chart_path}/${local.ars_purger_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.ars_purger_name}/${local.application_values_file}" : "${path.module}/${local.ars_purger_name}/${local.application_values_file}"
-  ars_purger_template_istio = fileexists("${var.external_chart_path}/${local.ars_purger_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.ars_purger_name}/${local.istio_values_file}" : "${path.module}/${local.ars_purger_name}/${local.istio_values_file}"
+  ars_purger_name    = "ars-purger"
+  ars_purger_enabled = contains(local.service_names, local.ars_purger_name) ? var.deployment_information[local.ars_purger_name].enabled : false
 }
 
 module "ars_purger" {
@@ -21,7 +19,7 @@ module "ars_purger" {
   depends_on             = [module.pgbouncer[0], module.ars_service[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.ars_purger_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.ars_purger_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -34,8 +32,8 @@ module "ars_purger" {
     replica_count         = var.resource_definitions[local.ars_purger_name].replicas,
     resource_block        = var.resource_definitions[local.ars_purger_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.ars_purger_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.ars_purger_template_istio, {
+  }), local.chart_files[local.ars_purger_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.ars_purger_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.ars_purger_name].istio_values_override])
 }

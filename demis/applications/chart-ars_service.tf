@@ -2,9 +2,6 @@ locals {
   ars_name = "ars-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   ars_enabled = contains(local.service_names, local.ars_name) ? var.deployment_information[local.ars_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  ars_template_app   = fileexists("${var.external_chart_path}/${local.ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.ars_name}/${local.application_values_file}" : "${path.module}/${local.ars_name}/${local.application_values_file}"
-  ars_template_istio = fileexists("${var.external_chart_path}/${local.ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.ars_name}/${local.istio_values_file}" : "${path.module}/${local.ars_name}/${local.istio_values_file}"
 
   ars_bulk_stats_ddl_index = try(
     index(
@@ -36,7 +33,7 @@ module "ars_service" {
   depends_on = [module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.ars_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.ars_name].app_template, {
     image_pull_secrets                               = var.pull_secrets,
     repository                                       = var.docker_registry,
     namespace                                        = var.target_namespace,
@@ -53,16 +50,13 @@ module "ars_service" {
     ars_bulk_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     ars_rabbitmq_credentials_checksum                = try(kubernetes_secret_v1.ars_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
     istio_proxy_resources                            = var.resource_definitions[local.ars_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.ars_template_istio, {
+  }), local.chart_files[local.ars_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.ars_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     demis_hostnames            = local.demis_hostnames
-    support_fhir_api_versions  = var.profile_provisioning_mode_vs_ars != null && var.profile_provisioning_mode_vs_ars != "dedicated"
-    fhir_api_versions          = module.validation_service_ars_apps[0].profile_metadata.current_profile_versions,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.ars_name], [])
-    fhir_core_split_enabled    = local.fhir_core_split_enabled
-  })
+  }), local.chart_files[local.ars_name].istio_values_override])
 }

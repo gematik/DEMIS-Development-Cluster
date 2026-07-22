@@ -43,7 +43,7 @@ variable "deployment_information" {
       for name, service in var.deployment_information : true &&
       (!can(length(service.canary.profiles)) || (can(length(service.canary.version) > 0) || !can(service.canary.weight >= 0 && service.canary.weight <= 100)))
     ])
-    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in validation-service-core. Canary needs to be defined with a version and weight."
+    error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in validation-service. Canary needs to be defined with a version and weight."
   }
 }
 

@@ -28,11 +28,6 @@ output "spp_ars_enabled" {
   value       = local.spp_ars_enabled
 }
 
-output "fhir_profile_snapshots" {
-  description = "Version of the FHIR Profile Snapshots being used"
-  value       = local.vs_core_enabled ? "[${join(", ", tolist(module.validation_service_core_apps[0].profile_metadata.current_profile_versions))}]" : "[]"
-}
-
 output "igs_profile_snapshots" {
   description = "Version of the IGS Profile Snapshots being used"
   value       = local.vs_igs_enabled ? "[${join(", ", tolist(module.validation_service_igs_apps[0].profile_metadata.current_profile_versions))}]" : "[]"

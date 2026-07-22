@@ -2,9 +2,6 @@ locals {
   kup_name = "keycloak-user-purger"
   # Verify whether the service is defined or the deployment is explicitly enabled
   kup_enabled = contains(local.service_names, local.kup_name) ? var.deployment_information[local.kup_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  kup_template_app   = fileexists("${var.external_chart_path}/${local.kup_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.kup_name}/${local.application_values_file}" : "${path.module}/${local.kup_name}/${local.application_values_file}"
-  kup_template_istio = fileexists("${var.external_chart_path}/${local.kup_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.kup_name}/${local.istio_values_file}" : "${path.module}/${local.kup_name}/${local.istio_values_file}"
 }
 
 module "keycloak_user_purger" {
@@ -20,7 +17,7 @@ module "keycloak_user_purger" {
   depends_on             = [module.keycloak[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.kup_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.kup_name].app_template, {
     image_pull_secrets         = var.pull_secrets,
     repository                 = var.docker_registry,
     namespace                  = var.target_namespace,
@@ -35,8 +32,8 @@ module "keycloak_user_purger" {
     replica_count              = var.resource_definitions[local.kup_name].replicas,
     resource_block             = var.resource_definitions[local.kup_name].resource_block,
     istio_proxy_resources      = var.resource_definitions[local.kup_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.kup_template_istio, {
+  }), local.chart_files[local.kup_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.kup_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.kup_name].istio_values_override])
 }

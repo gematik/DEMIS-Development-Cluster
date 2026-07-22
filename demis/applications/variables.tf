@@ -71,7 +71,7 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["validation-service-core", "validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-core", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.main.profiles)) || can([for v in service.main.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.main.profiles)) || can([for v in service.main.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
     ])
     error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in main."
   }
@@ -79,7 +79,7 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["validation-service-core", "validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-core", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.canary.profiles)) || can([for v in service.canary.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.canary.profiles)) || can([for v in service.canary.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
     ])
     error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in canary."
   }
@@ -87,33 +87,9 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || contains(["validation-service-core", "validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-core", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs"], name) || (!contains(["validation-service-core", "validation-service-igs", "validation-service-ars", "futs-core", "futs-igs"], name) && !can(length(service.main.profiles)) && !can(length(service.canary.profiles))))
+      (!service.enabled || contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs"], name) || (!contains(["validation-service-igs", "validation-service-ars", "futs-igs"], name) && !can(length(service.main.profiles)) && !can(length(service.canary.profiles))))
     ])
-    error_message = "onyl Services validation-service-core, validation-service-igs, validation-service-ars, futs-core, futs-bedoccupancy, futs-disease, futs-pathogen and futs-igs can have profiles defined."
-  }
-
-  validation {
-    condition = alltrue([
-      for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["futs-core", "validation-service-core"], name) || can(length(var.deployment_information["fhir-profile-snapshots"].main.version) > 0))
-    ])
-    error_message = "Service Configuration is not valid. Profile version vor fhir-profile-snapshots is not defined. version is required for services futs-core and validation-service-core"
-  }
-
-  validation {
-    condition = alltrue([
-      for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["futs-igs", "validation-service-igs"], name) || can(length(var.deployment_information["igs-profile-snapshots"].main.version) > 0))
-    ])
-    error_message = "Service Configuration is not valid. Profile version vor igs-profile-snapshots is not defined. Version is required for services futs-igs and validation-service-igs"
-  }
-
-  validation {
-    condition = alltrue([
-      for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["validation-service-ars"], name) || can(var.deployment_information["ars-profile-snapshots"]))
-    ])
-    error_message = "Service Configuration is not valid. Profile version vor ars-profile-snapshots is not defined. Version is required for service validation-service-ars"
+    error_message = "onyl Services validation-service-igs, validation-service-ars, futs-bedoccupancy, futs-disease, futs-pathogen and futs-igs can have profiles defined."
   }
 
   validation {
@@ -264,7 +240,7 @@ variable "meldung_hostname" {
 # No explicit validation, it is only available in local and dev environments
 variable "storage_hostname" {
   type        = string
-  description = "The URL to access the S3 compatible storage (minio)"
+  description = "The URL to access the S3 compatible storage"
   default     = "storage"
 }
 
@@ -400,16 +376,6 @@ variable "ars_purger_suspend" {
   default     = false
 }
 
-variable "profile_provisioning_mode_vs_core" {
-  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
-  type        = string
-  nullable    = false
-  validation {
-    condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_core)
-    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
-  }
-}
-
 variable "profile_provisioning_mode_vs_igs" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string
@@ -468,7 +434,7 @@ variable "reset_values" {
 
 variable "deployment_timeout" {
   type        = number
-  description = "Timeout for the deployment in minutes"
+  description = "Timeout for the deployment in seconds"
   default     = 600
 }
 

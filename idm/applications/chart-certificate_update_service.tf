@@ -2,9 +2,6 @@ locals {
   cus_name = "certificate-update-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   cus_enabled = contains(local.service_names, local.cus_name) ? var.deployment_information[local.cus_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  cus_template_app   = fileexists("${var.external_chart_path}/${local.cus_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.cus_name}/${local.application_values_file}" : "${path.module}/${local.cus_name}/${local.application_values_file}"
-  cus_template_istio = fileexists("${var.external_chart_path}/${local.cus_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.cus_name}/${local.istio_values_file}" : "${path.module}/${local.cus_name}/${local.istio_values_file}"
 }
 
 module "certificate_update_service" {
@@ -20,7 +17,7 @@ module "certificate_update_service" {
   depends_on             = [module.keycloak[0], module.redis_cus[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.cus_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.cus_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -35,8 +32,8 @@ module "certificate_update_service" {
     replica_count         = var.resource_definitions[local.cus_name].replicas,
     resource_block        = var.resource_definitions[local.cus_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.cus_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.cus_template_istio, {
+  }), local.chart_files[local.cus_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.cus_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.cus_name].istio_values_override])
 }

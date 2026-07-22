@@ -27,11 +27,7 @@ customEnvVars:
 config:
   production: ${production_mode}
   futsPaths:
-    %{~ if fhir_core_split_enabled == true ~}
     baseUrl: ../../translation/ui-data-model/disease/${package_disease_api_version}/fhir
-    %{ else ~}
-    baseUrl: ../../translation/ui-data-model/v${package_disease_api_version}/fhir
-    %{ endif ~}
 
   featureFlags:
     # Prevents empty values that can delete the default environment variables

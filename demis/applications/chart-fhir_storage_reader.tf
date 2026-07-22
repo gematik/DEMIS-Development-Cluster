@@ -2,9 +2,6 @@ locals {
   fssr_name = "fhir-storage-reader"
   # Verify whether the service is defined or the deployment is explicitly enabled
   fssr_enabled = contains(local.service_names, local.fssr_name) ? var.deployment_information[local.fssr_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  fssr_template_app   = fileexists("${var.external_chart_path}/${local.fssr_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fssr_name}/${local.application_values_file}" : "${path.module}/${local.fssr_name}/${local.application_values_file}"
-  fssr_template_istio = fileexists("${var.external_chart_path}/${local.fssr_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fssr_name}/${local.istio_values_file}" : "${path.module}/${local.fssr_name}/${local.istio_values_file}"
 
   fssr_index = try(
     index(
@@ -25,10 +22,10 @@ module "fhir_storage_reader" {
   application_name       = local.fssr_name
   deployment_information = var.deployment_information[local.fssr_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.pgbouncer[0]]
+  depends_on             = [module.pgbouncer[0], module.fhir_storage_writer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.fssr_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.fssr_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -42,8 +39,8 @@ module "fhir_storage_reader" {
     resource_block        = var.resource_definitions[local.fssr_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.fssr_name].istio_proxy_resources,
     db_secret_checksum    = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
-  })
-  istio_values = templatefile(local.fssr_template_istio, {
+  }), local.chart_files[local.fssr_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.fssr_name].istio_template, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     core_hostname              = var.core_hostname,
@@ -51,5 +48,5 @@ module "fhir_storage_reader" {
     demis_hostnames            = local.demis_hostnames,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.fssr_name], [])
-  })
+  }), local.chart_files[local.fssr_name].istio_values_override])
 }

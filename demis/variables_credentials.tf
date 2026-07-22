@@ -123,6 +123,19 @@ variable "minio_root_password" {
   description = "The Minio Root Password"
 }
 
+# object-storage-service Credentials
+variable "object_storage_service_access_key" {
+  type        = string
+  sensitive   = true
+  description = "The object-storage-service access key"
+}
+
+variable "object_storage_service_secret_key" {
+  type        = string
+  sensitive   = true
+  description = "The object-storage-service secret key"
+}
+
 # Redis CUS Credentials for Notification Processing Service
 variable "redis_cus_reader_user" {
   type        = string

@@ -44,7 +44,7 @@ resource "helm_release" "chart" {
   # check if values must be reused for the main version
   reuse_values = length(local.available_versions) > 1 && (each.key == local.main_version) ? true : false
   # When doing a canary deployment, we need to ensure that the values of the main version are not updated
-  values = length(local.available_versions) > 1 && (each.key == local.main_version) ? [] : [var.application_values]
+  values = length(local.available_versions) > 1 && (each.key == local.main_version) ? [] : var.application_values
 
   set = [
     {
@@ -69,7 +69,7 @@ resource "helm_release" "istio" {
   wait                = true
   wait_for_jobs       = true
   cleanup_on_fail     = true
-  values              = [var.istio_values]
+  values              = var.istio_values
   timeout             = local.deployment_timeout
   reset_values        = var.helm_settings.reset_values
 

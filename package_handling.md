@@ -36,7 +36,7 @@ this will provide package change for only one specific fhir package by exchange 
 For alternative package or multiple package usage definition it's possible to define extra properties like:
 
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -64,19 +64,21 @@ the modes can be defined under specific ([./environments](./environments)) in ap
 # settings for validation service profile provisioning mode
 # null disabled the profile provisioning mode and deploy in old mode
 # possible values are: dedicated, distributed, combined
-profile_provisioning_mode_vs_core = "combined"
-profile_provisioning_mode_vs_igs  = "combined"
-profile_provisioning_mode_vs_ars  = "combined"
+profile_provisioning_mode_vs_disease      = "combined"
+profile_provisioning_mode_vs_pathogen     = "combined"
+profile_provisioning_mode_vs_bedoccupancy = "combined"
+profile_provisioning_mode_vs_igs          = "combined"
+profile_provisioning_mode_vs_ars          = "combined"
 ```
 
 ## Profile Update Process
 
 ### futs
 
-The futs service supports only one package. Tthe package can be set by specifying the package version in the futs service section of active-versions.yaml, like:
+The futs service supports only one package. The package can be set by specifying the package version in the futs service section of active-versions.yaml, like:
 
 ```yaml
-futs-core:
+futs-disease:
   main:
     version: 2.2.4-b323
     weight: 100
@@ -91,7 +93,7 @@ in this case the default package will not be used and only the first item in pac
 The validation service supports multiple packages. For multiple packages, they can be specified in the validation-service section of active-versions.yaml, like:
 
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -106,7 +108,7 @@ validation-service-core:
 #### Case: Change alternative packages with inplace change of packages (not recommended for production)
 initial state:
 ```diff
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -118,7 +120,7 @@ validation-service-core:
 ```
 during the upgrade, services for package 6.1.4-b8 will be deleted before services for package 6.1.7-b2 are created in the dedicated or distributed profile provisioning modes. This can cause temporary unavailability of the validation service for v6 endpoints. The result will be:
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -130,7 +132,7 @@ validation-service-core:
 #### Case: Change alternative packages with canary change of packages (recommended for production)
 initial state:
 ```diff
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -145,7 +147,7 @@ validation-service-core:
 ```
 during the upgrade, services for package 6.1.7-b2 will be created in both provisioning modes: dedicated (upgraded to support all packages from main and canary) and distributed. The traffic transfer action will move the canary packages to main when the status is:
 ```diff
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -161,7 +163,7 @@ validation-service-core:
 ```
 during the upgrade, services for package 6.1.4-b8 will be deleted after services for package 6.1.7-b2 are created in the dedicated provisioning mode (upgraded to support all packages from main) and in the distributed mode. This prevents temporary unavailability of the validation service for v6 endpoints. The result will be:
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -173,7 +175,7 @@ validation-service-core:
 #### Case: Change app versions with alternative packages without changing alternative packages (recommended for production)
 initial state:
 ```diff
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -187,7 +189,7 @@ validation-service-core:
 ```
 after the upgrade, validation-service version 2.9.1 will be created with the packages defined in the main section, using the dedicated provisioning mode (upgraded to support all main packages) and the distributed mode in canary. After a successful traffic switch, the old version 2.9.0 will be deleted. The result will be:
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.1
     weight: 100
@@ -199,7 +201,7 @@ validation-service-core:
 #### Case: Change app versions with alternative packages with changing alternative packages (recommended for production)
 initial state:
 ```diff
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.0
     weight: 100
@@ -216,7 +218,7 @@ validation-service-core:
 ```
 after the upgrade, validation-service version 2.9.1 will be created with the packages defined in the canary section, using the dedicated provisioning mode (upgraded to support all packages from the specified sections) and the distributed mode in canary for each service. After a successful traffic switch, the old version 2.9.0 will be deleted. The result will be:
 ```yaml
-validation-service-core:
+validation-service-disease:
   main:
     version: 2.9.1
     weight: 100

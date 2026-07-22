@@ -8,6 +8,11 @@ locals {
     MINIO_ROOT_PASSWORD = var.minio_root_password
   }
 
+  object_storage_service_credentials_data = {
+    S3_ACCESS_KEY = var.object_storage_service_access_key
+    S3_SECRET_KEY = var.object_storage_service_secret_key
+  }
+
   postgresql_tls_certificates_data = {
     "server.key" : base64decode(var.postgres_server_key)
     "server.crt" : base64decode(var.postgres_server_certificate)
@@ -79,6 +84,19 @@ resource "kubernetes_secret_v1" "minio_credentials" {
   data = local.minio_credentials_data
 }
 
+resource "kubernetes_secret_v1" "object_storage_service_credentials" {
+  metadata {
+    name      = "object-storage-service-secret"
+    namespace = var.target_namespace
+    annotations = {
+      checksum = substr(sha256(jsonencode(local.object_storage_service_credentials_data)), 0, 62)
+    }
+  }
+
+  immutable = true
+
+  data = local.object_storage_service_credentials_data
+}
 
 resource "kubernetes_secret_v1" "ars_pseudo_hash_pepper" {
   count = var.ars_pseudo_hash_pepper == null ? 0 : 1

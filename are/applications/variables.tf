@@ -231,7 +231,7 @@ variable "auth_hostname" {
 # Application Configuration
 #########################
 
-# Debugging 
+# Debugging
 variable "debug_enabled" {
   type        = bool
   description = "Defines if the backend Java Services must be started in Debug Mode"
@@ -264,7 +264,7 @@ variable "profile_provisioning_mode_vs_are" {
 
 variable "deployment_timeout" {
   type        = number
-  description = "Timeout for the deployment in minutes"
+  description = "Timeout for the deployment in seconds"
   default     = 600
 }
 

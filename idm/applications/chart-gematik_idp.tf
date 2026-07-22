@@ -2,9 +2,6 @@ locals {
   gemidp_name = "gematik-idp"
   # Verify whether the service is defined or the deployment is explicitly enabled
   gemidp_enabled = contains(local.service_names, local.gemidp_name) ? var.deployment_information[local.gemidp_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  gemidp_template_app   = fileexists("${var.external_chart_path}/${local.gemidp_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.gemidp_name}/${local.application_values_file}" : "${path.module}/${local.gemidp_name}/${local.application_values_file}"
-  gemidp_template_istio = fileexists("${var.external_chart_path}/${local.gemidp_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.gemidp_name}/${local.istio_values_file}" : "${path.module}/${local.gemidp_name}/${local.istio_values_file}"
 }
 
 module "gematik_idp" {
@@ -19,7 +16,7 @@ module "gematik_idp" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.gemidp_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.gemidp_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     debug_enable          = var.debug_enabled,
@@ -31,13 +28,13 @@ module "gematik_idp" {
     replica_count         = var.resource_definitions[local.gemidp_name].replicas,
     resource_block        = var.resource_definitions[local.gemidp_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.gemidp_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.gemidp_template_istio, {
+  }), local.chart_files[local.gemidp_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.gemidp_name].istio_template, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     ti_idp_hostname            = local.ti_idp_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gemidp_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.gemidp_name], [])
-  })
+  }), local.chart_files[local.gemidp_name].istio_values_override])
 
 }

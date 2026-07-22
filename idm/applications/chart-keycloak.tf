@@ -3,9 +3,6 @@ locals {
   tsl_deliverer_mock_name = "tsl-deliverer-mock"
   # Verify whether the service is defined or the deployment is explicitly enabled
   keycloak_enabled = contains(local.service_names, local.keycloak_name) ? var.deployment_information[local.keycloak_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  keycloak_template_app   = fileexists("${var.external_chart_path}/${local.keycloak_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.keycloak_name}/${local.application_values_file}" : "${path.module}/${local.keycloak_name}/${local.application_values_file}"
-  keycloak_template_istio = fileexists("${var.external_chart_path}/${local.keycloak_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.keycloak_name}/${local.istio_values_file}" : "${path.module}/${local.keycloak_name}/${local.istio_values_file}"
 
   # Determine whether to enable the TSL Deliverer Mock based on existence of tsl_deliverer_mock in deployment_information
   enable_tsl_deliverer_mock = try(contains(keys(var.deployment_information), local.tsl_deliverer_mock_name) ? var.deployment_information[local.tsl_deliverer_mock_name].enabled : false, false)
@@ -33,7 +30,7 @@ module "keycloak" {
   depends_on             = [module.pgbouncer[0], module.gematik_idp[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.keycloak_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.keycloak_name].app_template, {
     image_pull_secrets                    = var.pull_secrets,
     repository                            = var.docker_registry,
     namespace                             = var.target_namespace,
@@ -58,13 +55,13 @@ module "keycloak" {
     keycloak_truststore_password_checksum = try(kubernetes_secret_v1.keycloak_truststore_password.metadata[0].annotations["checksum"], ""),
     db_secret_checksum                    = try(kubernetes_secret_v1.database_credentials[local.keycloak_index].metadata[0].annotations["checksum"], "")
     istio_proxy_resources                 = var.resource_definitions[local.keycloak_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.keycloak_template_istio, {
+  }), local.chart_files[local.keycloak_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.keycloak_name].istio_template, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     issuer_hostname            = local.auth_hostname,
     core_hostname              = local.core_hostname
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.keycloak_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.keycloak_name], [])
-  })
+  }), local.chart_files[local.keycloak_name].istio_values_override])
 }

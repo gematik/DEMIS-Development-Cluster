@@ -2,9 +2,6 @@ locals {
   rps_name = "report-processing-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   rps_enabled = contains(local.service_names, local.rps_name) ? var.deployment_information[local.rps_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  rps_template_app   = fileexists("${var.external_chart_path}/${local.rps_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.rps_name}/${local.application_values_file}" : "${path.module}/${local.rps_name}/${local.application_values_file}"
-  rps_template_istio = fileexists("${var.external_chart_path}/${local.rps_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.rps_name}/${local.istio_values_file}" : "${path.module}/${local.rps_name}/${local.istio_values_file}"
 }
 
 module "report_processing_service" {
@@ -19,7 +16,7 @@ module "report_processing_service" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.rps_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.rps_name].app_template, {
     image_pull_secrets         = var.pull_secrets,
     repository                 = var.docker_registry,
     namespace                  = var.target_namespace,
@@ -31,16 +28,13 @@ module "report_processing_service" {
     replica_count              = var.resource_definitions[local.rps_name].replicas,
     resource_block             = var.resource_definitions[local.rps_name].resource_block,
     istio_proxy_resources      = var.resource_definitions[local.rps_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.rps_template_istio, {
+  }), local.chart_files[local.rps_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.rps_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     core_hostname              = var.core_hostname
-    support_fhir_api_versions  = var.profile_provisioning_mode_vs_core != null && var.profile_provisioning_mode_vs_core != "dedicated"
-    fhir_api_versions          = local.fhir_core_split_enabled ? module.validation_service_bedoccupancy_apps[0].profile_metadata.current_profile_versions : module.validation_service_core_apps[0].profile_metadata.current_profile_versions
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.rps_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.rps_name], [])
-    fhir_core_split_enabled    = local.fhir_core_split_enabled
-  })
+  }), local.chart_files[local.rps_name].istio_values_override])
 }

@@ -19,11 +19,6 @@ output "version_istio_routing_chart" {
   description = "Version of the Istio Routing Chart being used"
 }
 
-output "version_fhir_profile_snapshots" {
-  value       = module.demis_services.fhir_profile_snapshots
-  description = "Version of the FHIR Profile Snapshots being used"
-}
-
 output "version_igs_profile_snapshots" {
   value       = module.demis_services.igs_profile_snapshots
   description = "Version of the IGS Profile Snapshots being used"

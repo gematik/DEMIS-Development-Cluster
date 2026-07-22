@@ -24,9 +24,10 @@ resource "helm_release" "authorization_policies_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    file("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml")
-  ]
+  values = compact([
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") : "",
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.mesh_namespace.name]
 }
@@ -47,8 +48,8 @@ resource "helm_release" "network_rules_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
       gateway_name   = module.endpoints.istio_gateway_name,
       tls_credential = kubernetes_secret_v1.demis_gateway_tls_credential.metadata[0].name,
       # In Remote Clusters also the Core Hostname is reachable via TLS and not over mutual TLS
@@ -66,8 +67,9 @@ resource "helm_release" "network_rules_istio" {
       s3_hostname                   = local.is_local_mode ? "" : var.s3_hostname,
       s3_port                       = local.is_local_mode ? "" : var.s3_port,
       s3_tls_credential             = local.is_local_mode ? "" : kubernetes_secret_v1.s3_tls_credential[0].metadata[0].name
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/network-rules/istio-values.yaml") ? file("${local.chart_source_path}/network-rules/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.mesh_namespace.name]
 }

@@ -2,9 +2,6 @@ locals {
   nps_name = "notification-processing-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   nps_enabled = contains(local.service_names, local.nps_name) ? var.deployment_information[local.nps_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  nps_template_app   = fileexists("${var.external_chart_path}/${local.nps_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.nps_name}/${local.application_values_file}" : "${path.module}/${local.nps_name}/${local.application_values_file}"
-  nps_template_istio = fileexists("${var.external_chart_path}/${local.nps_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.nps_name}/${local.istio_values_file}" : "${path.module}/${local.nps_name}/${local.istio_values_file}"
 }
 
 module "notification_processing_service" {
@@ -20,7 +17,7 @@ module "notification_processing_service" {
   depends_on             = [helm_release.futs[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.nps_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.nps_name].app_template, {
     image_pull_secrets                    = var.pull_secrets,
     repository                            = var.docker_registry,
     namespace                             = var.target_namespace,
@@ -33,16 +30,13 @@ module "notification_processing_service" {
     resource_block                        = var.resource_definitions[local.nps_name].resource_block,
     istio_proxy_resources                 = var.resource_definitions[local.nps_name].istio_proxy_resources,
     redis_cus_reader_credentials_checksum = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
-  })
-  istio_values = templatefile(local.nps_template_istio, {
+  }), local.chart_files[local.nps_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.nps_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     core_hostname              = var.core_hostname
-    support_fhir_api_versions  = var.profile_provisioning_mode_vs_core != null && var.profile_provisioning_mode_vs_core != "dedicated"
-    fhir_api_versions          = local.fhir_core_split_enabled ? module.validation_service_disease_apps[0].profile_metadata.current_profile_versions : module.validation_service_core_apps[0].profile_metadata.current_profile_versions
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.nps_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.nps_name], [])
-    fhir_core_split_enabled    = local.fhir_core_split_enabled
-  })
+  }), local.chart_files[local.nps_name].istio_values_override])
 }

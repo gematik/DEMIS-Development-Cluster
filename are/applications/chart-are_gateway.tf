@@ -2,9 +2,6 @@ locals {
   are_gateway_name = "are-gateway"
   # Verify whether the service is defined or the deployment is explicitly enabled
   are_gateway_enabled = contains(local.service_names, local.are_gateway_name) ? var.deployment_information[local.are_gateway_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  are_gateway_template_app   = fileexists("${var.external_chart_path}/${local.are_gateway_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.are_gateway_name}/${local.application_values_file}" : "${path.module}/${local.are_gateway_name}/${local.application_values_file}"
-  are_gateway_template_istio = fileexists("${var.external_chart_path}/${local.are_gateway_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.are_gateway_name}/${local.istio_values_file}" : "${path.module}/${local.are_gateway_name}/${local.istio_values_file}"
   # Define override for resources
   are_gateway_resources_overrides = try(var.resource_definitions[local.are_gateway_name], {})
   are_gateway_replicas            = lookup(local.are_gateway_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.are_gateway_name].replicas : null
@@ -24,7 +21,7 @@ module "notification_are_gateway" {
   depends_on             = [module.are_notification_processing_service[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.are_gateway_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.are_gateway_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -40,13 +37,13 @@ module "notification_are_gateway" {
     replica_count         = local.are_gateway_replicas,
     resource_block        = local.are_gateway_resource_block,
     istio_proxy_resources = try(local.are_gateway_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
-  })
-  istio_values = templatefile(local.are_gateway_template_istio, {
+  }), local.chart_files[local.are_gateway_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.are_gateway_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     portal_hostnames           = local.frontend_hostnames,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.are_gateway_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.are_gateway_name], [])
-  })
+  }), local.chart_files[local.are_gateway_name].istio_values_override])
 }

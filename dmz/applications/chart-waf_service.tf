@@ -2,9 +2,6 @@ locals {
   waf_name = "waf-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   waf_enabled = contains(local.service_names, local.waf_name) ? var.deployment_information[local.waf_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  waf_template_app   = fileexists("${var.external_chart_path}/${local.waf_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.waf_name}/${local.application_values_file}" : "${path.module}/${local.waf_name}/${local.application_values_file}"
-  waf_template_istio = fileexists("${var.external_chart_path}/${local.waf_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.waf_name}/${local.istio_values_file}" : "${path.module}/${local.waf_name}/${local.istio_values_file}"
 }
 
 module "waf_service" {
@@ -19,7 +16,7 @@ module "waf_service" {
   depends_on             = [module.secure_message_gateway[0], module.bulk_inbound_service[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.waf_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.waf_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -31,12 +28,12 @@ module "waf_service" {
     replica_count         = var.resource_definitions[local.waf_name].replicas,
     resource_block        = var.resource_definitions[local.waf_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.waf_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.waf_template_istio, {
+  }), local.chart_files[local.waf_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.waf_name].istio_template, {
     namespace                = var.target_namespace,
     context_path             = var.context_path,
     cluster_gateway          = var.cluster_gateway,
     demis_hostnames          = local.demis_hostnames,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.waf_name], null)
-  })
+  }), local.chart_files[local.waf_name].istio_values_override])
 }

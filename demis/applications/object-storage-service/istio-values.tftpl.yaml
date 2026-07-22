@@ -1,5 +1,5 @@
 # Application Information
-appName: "minio"
+appName: "object-storage-service"
 appNamespace: "${namespace}" # defaults to Release.Namespace
 # Settings for the Kubernetes Service Object for the Application
 appServiceType: ClusterIP
@@ -10,38 +10,26 @@ appServicePortName: http
 
 # Istio Information
 # the List of the Istio Gateway Objects to be used for external cluster access
-virtualServiceGateways: 
+virtualServiceGateways:
   - ${cluster_gateway}
 # the List of the Hostnames/Domains that should match the VirtualService definition (external)
-virtualServiceDomains: 
+virtualServiceDomains:
   - ${storage_hostname}
 
 # HTTP Rules for internal endpoints - https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRoute
 # The "route" part is generated using the destination subset information
 virtualServiceHttpRules:
   - match:
-    - uri:
-        prefix: /
+      - uri:
+          prefix: /
     rewrite:
       uri: /
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~} 
+  %{ if http_timeout_retry_block != null ~}
+  ${indent(4, http_timeout_retry_block)}
+  %{ endif ~}
 
-%{ if length(istio_rules_block_external) == 0 ~}
-virtualServiceExternalHttpRules:
-  - match:
-    - uri:
-        prefix: /
-    rewrite:
-      uri: /
-%{ if http_timeout_retry_block != null ~}
-    ${indent(4, http_timeout_retry_block)}
-%{ endif ~}
-%{else ~}
 virtualServiceExternalHttpRules:
 %{ for entry in istio_rules_block_external ~}
   - ${indent(4, yamlencode(entry))}
     ${indent(4, http_timeout_retry_block)}
 %{ endfor ~}
-%{ endif ~}

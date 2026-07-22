@@ -2,9 +2,6 @@ locals {
   pgbouncer_name = "pgbouncer"
   # Verify whether the service is defined or the deployment is explicitly enabled
   pgbouncer_enabled = contains(local.service_names, local.pgbouncer_name) ? var.deployment_information[local.pgbouncer_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  pgbouncer_template_app   = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.application_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.application_values_file}"
-  pgbouncer_template_istio = fileexists("${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.pgbouncer_name}/${local.istio_values_file}" : "${path.module}/${local.pgbouncer_name}/${local.istio_values_file}"
 }
 
 module "pgbouncer" {
@@ -20,7 +17,7 @@ module "pgbouncer" {
   depends_on             = [module.postgres[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.pgbouncer_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.pgbouncer_name].app_template, {
     image_pull_secrets           = var.pull_secrets,
     repository                   = var.docker_registry,
     database_host                = var.database_target_host,
@@ -32,10 +29,10 @@ module "pgbouncer" {
     userlist_secret_checksum     = try(kubernetes_secret_v1.pgbouncer_userlist.metadata[0].annotations["checksum"], ""),
     postgres_tls_secret_checksum = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], "")
     istio_proxy_resources        = var.resource_definitions[local.pgbouncer_name].istio_proxy_resources,
-  })
+  }), local.chart_files[local.pgbouncer_name].app_values_override])
 
 
-  istio_values = templatefile(local.pgbouncer_template_istio, {
+  istio_values = compact([templatefile(local.chart_files[local.pgbouncer_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.pgbouncer_name].istio_values_override])
 }

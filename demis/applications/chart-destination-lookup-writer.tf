@@ -1,9 +1,7 @@
 locals {
-  dls_name                  = "destination-lookup"
-  dls_writer_name           = "destination-lookup-writer"
-  dls_writer_information    = try(var.deployment_information[local.dls_writer_name], { enabled = false, main = { version = "" } })
-  dls_writer_template_app   = fileexists("${var.external_chart_path}/${local.dls_writer_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.dls_writer_name}/${local.application_values_file}" : "${path.module}/${local.dls_writer_name}/${local.application_values_file}"
-  dls_writer_template_istio = fileexists("${var.external_chart_path}/${local.dls_writer_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.dls_writer_name}/${local.istio_values_file}" : "${path.module}/${local.dls_writer_name}/${local.istio_values_file}"
+  dls_name               = "destination-lookup"
+  dls_writer_name        = "destination-lookup-writer"
+  dls_writer_information = try(var.deployment_information[local.dls_writer_name], { enabled = false, main = { version = "" } })
 
   dlsw_ddl_index = try(
     index(
@@ -35,7 +33,7 @@ module "destination_lookup_writer" {
   depends_on             = [module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.dls_writer_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.dls_writer_name].app_template, {
     app_name               = local.dls_writer_name,
     data_base              = replace(local.dls_name, "-", "_"),
     image_pull_secrets     = var.pull_secrets,
@@ -49,10 +47,10 @@ module "destination_lookup_writer" {
     istio_proxy_resources  = var.resource_definitions[local.dls_writer_name].istio_proxy_resources,
     db_secret_checksum     = try(kubernetes_secret_v1.database_credentials[local.dlsw_index].metadata[0].annotations["checksum"], ""),
     db_ddl_secret_checksum = try(kubernetes_secret_v1.database_credentials[local.dlsw_ddl_index].metadata[0].annotations["checksum"], "")
-  })
-  istio_values = templatefile(local.dls_writer_template_istio, {
+  }), local.chart_files[local.dls_writer_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.dls_writer_name].istio_template, {
     namespace                = var.target_namespace,
     app_name                 = local.dls_writer_name
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.dls_writer_name], null)
-  })
+  }), local.chart_files[local.dls_writer_name].istio_values_override])
 }

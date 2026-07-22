@@ -1,4 +1,4 @@
-# Values for futs-core.
+# Values for futs-pathogen.
 fullName: "futs-pathogen"
 fullnameOverride: "futs-pathogen"
 nameOverride: "futs-pathogen"

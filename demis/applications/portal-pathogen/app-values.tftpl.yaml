@@ -24,11 +24,7 @@ customEnvVars:
   
 config:
   production: ${production_mode}
-  %{~ if fhir_core_split_enabled == true ~}
   pathToFuts: ../../translation/ui-data-model/laboratory/${package_laboratory_api_version}/fhir
-  %{ else ~}
-  pathToFuts: ../../translation/ui-data-model/${package_laboratory_api_version}/fhir
-  %{~ endif ~}
 
   featureFlags:
     # Prevents empty values that can delete the default environment variables

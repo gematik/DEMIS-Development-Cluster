@@ -5,8 +5,6 @@ locals {
   vs_name = "validation-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   vs_enabled = contains(local.service_names, local.vs_name) ? var.deployment_information[local.vs_name].enabled : false
-  ## Check if stage-override templates are provided, otherwise use the project-defined ones
-  vs_template_istio = fileexists("${var.external_chart_path}/${local.vs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.vs_name}/${local.istio_values_file}" : "${path.module}/${local.vs_name}/${local.istio_values_file}"
 
   ###########################
   # Validation Service ARE  #
@@ -33,24 +31,15 @@ resource "helm_release" "validation_service" {
   wait                = true
   wait_for_jobs       = true
   cleanup_on_fail     = true
-  values = [templatefile(local.vs_template_istio, {
+  values = [templatefile(local.chart_files[local.vs_name].istio_template, {
     namespace = var.target_namespace
-  })]
+  }), local.chart_files[local.vs_name].istio_values_override]
   timeout = 600
   lifecycle {
     create_before_destroy = true
   }
 
   depends_on = [module.validation_service_are_apps[0]]
-}
-
-moved {
-  from = module.validation_service_are[0].helm_release.chart
-  to   = module.validation_service_are_apps[0].module.validation_service_legacy[0].helm_release.chart
-}
-moved {
-  from = module.validation_service_are[0].helm_release.istio[0]
-  to   = module.validation_service_are_apps[0].helm_release.istio
 }
 
 module "validation_service_are_apps" {
@@ -70,6 +59,7 @@ module "validation_service_are_apps" {
   resource_definitions        = var.resource_definitions
   timeout_retries             = module.http_timeouts_retries.service_timeout_retry_definitions
   package_type                = "are-profile-snapshots"
+  app_template_file           = local.chart_files[local.vs_are_name].app_template
   app_template_params = {
     image_pull_secrets      = var.pull_secrets,
     repository              = var.docker_registry,
@@ -77,5 +67,8 @@ module "validation_service_are_apps" {
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
   }
+  app_values_override   = local.chart_files[local.vs_are_name].app_values_override
+  istio_template_file   = local.chart_files[local.vs_are_name].istio_template
   istio_template_params = {}
+  istio_values_override = local.chart_files[local.vs_are_name].istio_values_override
 }

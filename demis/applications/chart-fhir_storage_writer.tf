@@ -2,9 +2,6 @@ locals {
   fssw_name = "fhir-storage-writer"
   # Verify whether the service is defined or the deployment is explicitly enabled
   fssw_enabled = contains(local.service_names, local.fssw_name) ? var.deployment_information[local.fssw_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  fssw_template_app   = fileexists("${var.external_chart_path}/${local.fssw_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fssw_name}/${local.application_values_file}" : "${path.module}/${local.fssw_name}/${local.application_values_file}"
-  fssw_template_istio = fileexists("${var.external_chart_path}/${local.fssw_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fssw_name}/${local.istio_values_file}" : "${path.module}/${local.fssw_name}/${local.istio_values_file}"
 
   fssw_index = try(
     index(
@@ -36,7 +33,7 @@ module "fhir_storage_writer" {
   depends_on             = [module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.fssw_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.fssw_name].app_template, {
     image_pull_secrets     = var.pull_secrets,
     repository             = var.docker_registry,
     namespace              = var.target_namespace,
@@ -49,9 +46,9 @@ module "fhir_storage_writer" {
     istio_proxy_resources  = var.resource_definitions[local.fssw_name].istio_proxy_resources,
     db_secret_checksum     = try(kubernetes_secret_v1.database_credentials[local.fssw_index].metadata[0].annotations["checksum"], ""),
     db_ddl_secret_checksum = try(kubernetes_secret_v1.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], "")
-  })
-  istio_values = templatefile(local.fssw_template_istio, {
+  }), local.chart_files[local.fssw_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.fssw_name].istio_template, {
     namespace                = var.target_namespace,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssw_name], null)
-  })
+  }), local.chart_files[local.fssw_name].istio_values_override])
 }
