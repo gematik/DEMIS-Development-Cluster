@@ -1,10 +1,7 @@
 locals {
   rabbitmq_name = "rabbitmq"
   # Verify whether the service is defined or the deployment is explicitly enabled
-  rabbitmq_enabled = contains(local.service_names, local.rabbitmq_name) ? var.deployment_information[local.rabbitmq_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  rabbitmq_template_app     = fileexists("${var.external_chart_path}/${local.rabbitmq_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.rabbitmq_name}/${local.application_values_file}" : "${path.module}/${local.rabbitmq_name}/${local.application_values_file}"
-  rabbitmq_template_istio   = fileexists("${var.external_chart_path}/${local.rabbitmq_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.rabbitmq_name}/${local.istio_values_file}" : "${path.module}/${local.rabbitmq_name}/${local.istio_values_file}"
+  rabbitmq_enabled          = contains(local.service_names, local.rabbitmq_name) ? var.deployment_information[local.rabbitmq_name].enabled : false
   rabbitmq_replicas_is_even = try(var.resource_definitions[local.rabbitmq_name].replicas % 2 == 0, false)
 }
 
@@ -34,7 +31,7 @@ module "rabbitmq_service" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.rabbitmq_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.rabbitmq_name].app_template, {
     image_pull_secrets           = var.pull_secrets,
     repository                   = var.docker_registry,
     namespace                    = var.target_namespace,
@@ -59,13 +56,13 @@ module "rabbitmq_service" {
       ars   = var.rabbitmq_ars_password_hash,
     })), 0, 61),
     istio_proxy_resources = var.resource_definitions[local.rabbitmq_name].istio_proxy_resources
-  })
-  istio_values = templatefile(local.rabbitmq_template_istio, {
+  }), local.chart_files[local.rabbitmq_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.rabbitmq_name].istio_template, {
     namespace       = var.target_namespace,
     context_path    = var.context_path,
     cluster_gateway = var.cluster_gateway,
     demis_hostnames = local.demis_hostnames
-  })
+  }), local.chart_files[local.rabbitmq_name].istio_values_override])
 
   depends_on = [kubernetes_secret_v1.rabbitmq_admin_credentials]
 }

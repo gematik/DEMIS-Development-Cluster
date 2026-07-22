@@ -26,12 +26,13 @@ resource "helm_release" "authorization_policies_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
       namespace                     = var.target_namespace,
       feature_flag_ars_bulk_enabled = try(module.application_flags.service_feature_flags["policies-authorizations"].FEATURE_FLAG_ARS_BULK_ENABLED, false)
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.dmz_namespace.name]
 }
@@ -52,12 +53,13 @@ resource "helm_release" "authentication_policies_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml", {
       issuer_hostname   = module.endpoints.auth_hostname,
       keycloak_hostname = module.endpoints.keycloak_svc_hostname
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/policies-authentications/istio-values.yaml") ? file("${local.chart_source_path}/policies-authentications/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.dmz_namespace.name]
 }
@@ -78,14 +80,15 @@ resource "helm_release" "network_rules_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
       cluster_gateway       = module.endpoints.istio_gateway_fullname,
       context_path          = var.context_path,
       portal_ti_hosts       = [module.endpoints.portal_hostname],
       portal_internet_hosts = [module.endpoints.meldung_hostname],
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/network-rules/istio-values.yaml") ? file("${local.chart_source_path}/network-rules/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.dmz_namespace.name]
 }

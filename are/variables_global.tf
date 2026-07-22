@@ -87,7 +87,7 @@ variable "namespace_resource_quota" {
 
 variable "deployment_timeout" {
   type        = number
-  description = "Timeout for the deployment in minutes"
+  description = "Timeout for the deployment in seconds"
   default     = 600
 }
 

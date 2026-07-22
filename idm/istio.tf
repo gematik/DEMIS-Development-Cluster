@@ -26,13 +26,14 @@ resource "helm_release" "authorization_policies_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
       namespace     = var.target_namespace,
       core_hostname = module.endpoints.core_hostname,
       auth_hostname = module.endpoints.auth_hostname
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/policies-authorizations/istio-values.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.idm_namespace.name]
 }
@@ -54,12 +55,13 @@ resource "helm_release" "authentication_policies_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authentications/istio-values.tftpl.yaml", {
       issuer_hostname   = module.endpoints.auth_hostname,
       keycloak_hostname = module.endpoints.keycloak_svc_hostname
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/policies-authentications/istio-values.yaml") ? file("${local.chart_source_path}/policies-authentications/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.idm_namespace.name]
 }
@@ -80,9 +82,13 @@ resource "helm_release" "network_rules_istio" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    file("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml")
-  ]
+  values = compact([
+    fileexists("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/network-rules/istio-values.tftpl.yaml", {
+      namespace  = var.target_namespace
+      repository = var.docker_registry
+    }) : "",
+    fileexists("${local.chart_source_path}/network-rules/istio-values.yaml") ? file("${local.chart_source_path}/network-rules/istio-values.yaml") : ""
+  ])
 
   depends_on = [module.idm_namespace.name]
 }

@@ -1,4 +1,4 @@
-# Values for minio
+# Values for object-storage-service
 
 istio:
   enable: ${istio_enable}
@@ -7,7 +7,7 @@ required:
   image: 
     repository: ${repository}
     %{ if strcontains(repository, "gematik1") }
-    name: demis-minio
+    name: demis-object-storage-service
     %{ endif }
 
 # Image Pull Secrets
@@ -17,7 +17,7 @@ imagePullSecrets:
   %{~ endfor ~}
 
 # podAnnotations: 
-#  checksum/minio-secret: "${minio_secret_checksum}"
+#  checksum/object-storage-service-secret: "${object_storage_service_secret_checksum}"
   
 # Define custom configuration values
 # The Entries will be read from the given (external) Secrets and injected in the container with the same name.
@@ -26,8 +26,8 @@ config:
   useDefault: true
   settings:
     configMap:
-      name: minio-config
-  # Defines if MinIO data must be persisted on disk
+      name: object-storage-service-config
+  # Defines if object-storage-service data must be persisted on disk
   persistence:
     enabled: true
     # The Persistence Volume Claim where the files are available
@@ -35,7 +35,7 @@ config:
       # Use default Persistence Volume Claim from this Chart
       useDefault: false
       # The (external) Persistence Volume Claim to be used
-      name: minio-volume-claim
+      name: object-storage-volume-claim
     # The Persistence Volume where to store the data
     volume: 
       # Use the default embedded Persistence Volume (hostpath, for localhost)
@@ -44,13 +44,13 @@ config:
   secrets:
     # Use default Secret from this Chart
     useDefault: false
-    # The (external) Secret for MinIO Keys
-    minio:
-      # The name of the (external) Secret for MinIO and the entries to be used and mapped
-      name: minio-secret
+    # The (external) Secret for object-storage-service Keys
+    s3:
+      # The name of the (external) Secret for object-storage-service and the entries to be used and mapped
+      name: object-storage-service-secret
       entries:
-        MINIO_ROOT_USER: MINIO_ROOT_USER
-        MINIO_ROOT_PASSWORD: MINIO_ROOT_PASSWORD
+        S3_ACCESS_KEY: S3_ACCESS_KEY
+        S3_SECRET_KEY: S3_SECRET_KEY
 
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

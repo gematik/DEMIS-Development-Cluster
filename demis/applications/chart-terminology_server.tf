@@ -2,12 +2,9 @@ locals {
   fts_name = "terminology-server"
   # Verify whether the service is defined or the deployment is explicitly enabled
   fts_enabled = contains(local.service_names, local.fts_name) ? var.deployment_information[local.fts_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  fts_template_app   = fileexists("${var.external_chart_path}/${local.fts_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fts_name}/${local.application_values_file}" : "${path.module}/${local.fts_name}/${local.application_values_file}"
-  fts_template_istio = fileexists("${var.external_chart_path}/${local.fts_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fts_name}/${local.istio_values_file}" : "${path.module}/${local.fts_name}/${local.istio_values_file}"
   # FHIR Profile Snapshots
   fts_ars_profile_snapshots  = local.vs_ars_enabled ? module.validation_service_ars_apps[0].profile_metadata.current_profile_versions : []
-  fts_fhir_profile_snapshots = local.vs_core_enabled ? module.validation_service_core_apps[0].profile_metadata.current_profile_versions : []
+  fts_fhir_profile_snapshots = []
   fts_igs_profile_snapshots  = local.vs_igs_enabled ? module.validation_service_igs_apps[0].profile_metadata.current_profile_versions : []
 }
 
@@ -23,7 +20,7 @@ module "terminology_server" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.fts_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.fts_name].app_template, {
     image_pull_secrets      = var.pull_secrets,
     repository              = var.docker_registry,
     namespace               = var.target_namespace,
@@ -37,10 +34,10 @@ module "terminology_server" {
     config_options          = try(var.config_options[local.fts_name], {}),
     replica_count           = var.resource_definitions[local.fts_name].replicas,
     resource_block          = var.resource_definitions[local.fts_name].resource_block,
-    istio_proxy_resources   = var.resource_definitions[local.vs_core_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.fts_template_istio, {
+    istio_proxy_resources   = var.resource_definitions[local.fts_name].istio_proxy_resources,
+  }), local.chart_files[local.fts_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.fts_name].istio_template, {
     namespace                = var.target_namespace
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fts_name], null)
-  })
+  }), local.chart_files[local.fts_name].istio_values_override])
 }

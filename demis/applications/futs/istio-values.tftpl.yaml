@@ -23,7 +23,6 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 
 virtualServiceHttpRules:
-%{ if fhir_core_split_enabled == true ~}
 %{ for entry in [{package = "disease", service = "disease"}, {package = "laboratory", service = "pathogen"}, {package = "statistic", service = "bedoccupancy"}, {package = "igs", service = "igs"}] ~}
   - match:
     - headers:
@@ -45,142 +44,13 @@ virtualServiceHttpRules:
     ${indent(4, http_timeout_retry_block[entry.service])}
 %{ endif ~}
 %{ endfor ~}
-%{ else ~}
-%{ for entry in flatten([[for v in profile_versions_core: {prefix="fhir", service="core", version=v}], [for v in profile_versions_igs: {prefix="igs", service="igs", version=v}]]) ~}
-  - match:
-    - headers:
-        x-fhir-profile:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: /v${entry.version}/fhir
-    - headers:
-        x-fhir-package:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: /v${entry.version}/fhir
-    - headers:
-        x-fhir-profile:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: /
-    - headers:
-        x-fhir-package:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: /
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-${entry.service}-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block[entry.service] != null ~}
-    ${indent(4, http_timeout_retry_block[entry.service])}
-%{ endif ~}
-%{ endfor ~}
-%{ endif ~}
-# old endpoints
-%{ if fhir_core_split_enabled == false ~}
-  - match:
-      - uri:
-          prefix: /services/fhir-ui-data-model-translation
-        withoutHeaders:
-          x-fhir-profile: {}
-          x-fhir-package: {}
-      - uri:
-          prefix: /fhir-ui-data-model-translation
-        withoutHeaders:
-          x-fhir-profile: {}
-          x-fhir-package: {}
-      - uri:
-          prefix: /
-        withoutHeaders:
-          x-fhir-profile: {}
-          x-fhir-package: {}
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-core-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block["core"] != null ~}
-    ${indent(4, http_timeout_retry_block["core"])}
-%{ endif ~}
-%{ endif ~}
 
-%{ if length(istio_rules_block_external) == 0 ~}
-virtualServiceExternalHttpRules:
-%{ if fhir_core_split_enabled == true ~}
-%{ for entry in flatten([[for v in profile_versions_bedoccupancy: {package = "statistic", service = "bedoccupancy", version = v}], [for v in profile_versions_disease: {package = "disease", service = "disease", version = v}], [for v in profile_versions_pathogen: {package = "laboratory", service = "pathogen", version = v}], [for v in profile_versions_igs: {package = "igs", service = "igs", version = v}]]) ~}
-  - headers:
-      request:
-        set:
-          x-fhir-package: ${entry.package}
-          x-fhir-profile: ${entry.package}
-    match:
-    - uri:
-        prefix: ${context_path}/translation/ui-data-model/${entry.package}/v${entry.version}/fhir
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-${entry.service}-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block[entry.service] != null ~}
-    ${indent(4, http_timeout_retry_block[entry.service])}
-%{ endif ~}
-%{ endfor ~}
-%{ else ~}
-%{ for entry in flatten([[for v in profile_versions_core: {prefix ="fhir", service="core", version = v}], [for v in profile_versions_igs: {prefix = "igs", service="igs", version = v}]]) ~}
-  - headers:
-      request:
-        set:
-          x-api-version: v${entry.version}
-    match:
-    - headers:
-        x-fhir-profile:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: ${context_path}/translation/ui-data-model/v${entry.version}/fhir
-    - headers:
-        x-fhir-package:
-          exact: ${entry.prefix}-profile-snapshots
-      uri:
-        prefix: ${context_path}/translation/ui-data-model/v${entry.version}/fhir
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-${entry.service}-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block[entry.service] != null ~}
-    ${indent(4, http_timeout_retry_block[entry.service])}
-%{ endif ~}
-%{ endfor ~}
-%{ endif ~}
-  - match:
-      - uri:
-          prefix: ${context_path}/services/fhir-ui-data-model-translation
-        withoutHeaders:
-          x-fhir-profile: {}
-          x-fhir-package: {}
-      - uri:
-          prefix: ${context_path}/fhir-ui-data-model-translation
-        withoutHeaders:
-          x-fhir-profile: {}
-          x-fhir-package: {}
-    rewrite:
-      uri: /
-    delegate:
-      name: futs-core-internal
-      namespace: ${namespace}
-%{ if http_timeout_retry_block["core"] != null ~}
-    ${indent(4, http_timeout_retry_block["core"])}
-%{ endif ~}
-%{ else ~}
 virtualServiceExternalHttpRules:
 %{ for entry in istio_rules_block_external ~}
   - ${indent(4, yamlencode(entry))}
-%{ for service in (fhir_core_split_enabled ? ["bedoccupancy", "disease", "pathogen", "igs"] : ["core", "igs"]) ~}
+%{ for service in ["bedoccupancy", "disease", "pathogen", "igs"] ~}
 %{ if http_timeout_retry_block != null && startswith(entry.delegate.name, "futs-${service}") && http_timeout_retry_block[service] != null ~}
     ${indent(4, http_timeout_retry_block[service])}
 %{ endif ~}
 %{ endfor ~}
 %{ endfor ~}
-%{ endif ~}

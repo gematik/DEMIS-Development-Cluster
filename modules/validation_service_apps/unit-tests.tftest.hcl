@@ -11,6 +11,8 @@ variables {
   external_template_directory = "/nonexistent"
   local_template_directory    = "test-fixtures"
   package_type                = "fhir-profile-snapshots"
+  app_template_file           = "test-fixtures/validation-service-pathogen/app-values.tftpl.yaml"
+  istio_template_file         = "test-fixtures/validation-service-pathogen/istio-values.tftpl.yaml"
 
   helm_release_settings = {
     chart_image_tag_property_name = "required.image.tag"
@@ -439,4 +441,151 @@ run "dedicated_single_profile_no_legacy_test" {
   }
 }
 
+# ---------------------------------------------------------------------------
+# 12. istio_template_file – the referenced template is rendered into the
+#     Istio Helm release values (app_name / namespace substituted).
+# ---------------------------------------------------------------------------
+run "istio_template_file_rendering_test" {
+  command = apply
 
+  variables {
+    profile_provisioning_mode = "distributed"
+  }
+
+  # The first (templated) element must contain the substituted app_name.
+  assert {
+    condition     = strcontains(helm_release.istio.values[0], "app_name: validation-service-pathogen")
+    error_message = "Expected rendered istio_template_file to contain 'app_name: validation-service-pathogen', got: ${jsonencode(helm_release.istio.values)}"
+  }
+
+  # And the substituted target namespace.
+  assert {
+    condition     = strcontains(helm_release.istio.values[0], "namespace: demis")
+    error_message = "Expected rendered istio_template_file to contain 'namespace: demis', got: ${jsonencode(helm_release.istio.values)}"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# 13a. istio_values_override – when set it is appended as an extra values
+#      entry (compact keeps the non-empty override alongside the template).
+# ---------------------------------------------------------------------------
+run "istio_values_override_appended_test" {
+  command = apply
+
+  variables {
+    profile_provisioning_mode = "distributed"
+    istio_values_override     = "istioOverrideKey: istioOverrideValue"
+  }
+
+  # Two entries: the rendered template plus the override.
+  assert {
+    condition     = length(helm_release.istio.values) == 2
+    error_message = "Expected 2 istio values entries (template + override), got: ${length(helm_release.istio.values)} – ${jsonencode(helm_release.istio.values)}"
+  }
+
+  # The override content is the appended (last) entry.
+  assert {
+    condition     = helm_release.istio.values[1] == "istioOverrideKey: istioOverrideValue"
+    error_message = "Expected the override to be appended verbatim, got: ${jsonencode(helm_release.istio.values)}"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# 13b. istio_values_override – when left at its empty default, compact()
+#      drops it so only the rendered template entry remains.
+# ---------------------------------------------------------------------------
+run "istio_values_override_empty_default_test" {
+  command = apply
+
+  variables {
+    profile_provisioning_mode = "distributed"
+  }
+
+  # Only the rendered template entry – the empty override is stripped by compact().
+  assert {
+    condition     = length(helm_release.istio.values) == 1
+    error_message = "Expected 1 istio values entry when no override is set, got: ${length(helm_release.istio.values)} – ${jsonencode(helm_release.istio.values)}"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# 14. app_template_file – the referenced application values template is
+#     readable and renders the supplied parameters. The template feeds the
+#     (mocked) child Helm deployment, so it is exercised via the same
+#     templatefile() call the module performs for a distributed variant.
+# ---------------------------------------------------------------------------
+run "app_template_file_rendering_test" {
+  command = apply
+
+  variables {
+    profile_provisioning_mode = "distributed"
+  }
+
+  # app_name substitution.
+  assert {
+    condition     = strcontains(templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), "app_name: validation-service-pathogen-v6")
+    error_message = "Expected rendered app_template_file to contain 'app_name: validation-service-pathogen-v6'."
+  }
+
+  # profile_versions substitution (JSON-encoded).
+  assert {
+    condition     = strcontains(templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), "profile_versions: [\"6.1.4\"]")
+    error_message = "Expected rendered app_template_file to contain the JSON-encoded profile_versions."
+  }
+
+  # A full apply with the custom app_template_file must succeed and create the
+  # per-variant Helm deployments.
+  assert {
+    condition     = length(module.validation_service) == 2
+    error_message = "Expected app_template_file to be accepted and 2 validation_service instances created, got: ${length(module.validation_service)}"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# 15a. app_values_override – when set it is appended after the rendered
+#      application values (same compact() handling the module applies).
+# ---------------------------------------------------------------------------
+run "app_values_override_appended_test" {
+  command = apply
+
+  variables {
+    profile_provisioning_mode = "distributed"
+    app_values_override       = "appOverrideKey: appOverrideValue"
+  }
+
+  # compact([<rendered-template>, <override>]) keeps both entries.
+  assert {
+    condition     = length(compact([templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), var.app_values_override])) == 2
+    error_message = "Expected the non-empty app_values_override to be appended, got: ${jsonencode(compact([templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), var.app_values_override]))}"
+  }
+
+  # The override is the appended (last) entry.
+  assert {
+    condition     = element(compact([templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), var.app_values_override]), 1) == "appOverrideKey: appOverrideValue"
+    error_message = "Expected app_values_override to be appended verbatim as the last entry."
+  }
+
+  # The apply with the override must succeed and still create both variants.
+  assert {
+    condition     = length(module.validation_service) == 2
+    error_message = "Expected app_values_override to be accepted and 2 validation_service instances created, got: ${length(module.validation_service)}"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# 15b. app_values_override – when left at its empty default, compact() drops
+#      it so only the rendered application values remain.
+# ---------------------------------------------------------------------------
+run "app_values_override_empty_default_test" {
+  command = apply
+
+  variables {
+    profile_provisioning_mode = "distributed"
+  }
+
+  # Empty override is stripped by compact() → a single rendered entry remains.
+  assert {
+    condition     = length(compact([templatefile(var.app_template_file, { provisioning_mode = "distributed", app_name = "${var.name}-v6", profile_versions = ["6.1.4"], feature_flags = {}, config_options = {}, replica_count = 1 }), var.app_values_override])) == 1
+    error_message = "Expected the empty app_values_override to be stripped by compact()."
+  }
+}

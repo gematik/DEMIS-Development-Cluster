@@ -8,10 +8,8 @@ locals {
   ########################################
   # Surveilance Pseudonym Service - ARS  #
   ########################################
-  sps_ars_name           = "${local.sps_name}-ars"
-  sps_ars_enabled        = contains(local.service_names, local.sps_ars_name) ? var.deployment_information[local.sps_ars_name].enabled : false
-  sps_ars_template_app   = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.application_values_file}" : "${path.module}/${local.sps_ars_name}/${local.application_values_file}"
-  sps_ars_template_istio = fileexists("${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.sps_ars_name}/${local.istio_values_file}" : "${path.module}/${local.sps_ars_name}/${local.istio_values_file}"
+  sps_ars_name    = "${local.sps_name}-ars"
+  sps_ars_enabled = contains(local.service_names, local.sps_ars_name) ? var.deployment_information[local.sps_ars_name].enabled : false
 
   sps_ars_index = try(
     index(
@@ -47,7 +45,7 @@ module "surveillance_pseudonym_service_ars" {
   depends_on             = [module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.sps_ars_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.sps_ars_name].app_template, {
     image_pull_secrets              = var.pull_secrets,
     repository                      = var.docker_registry,
     namespace                       = var.target_namespace,
@@ -62,12 +60,12 @@ module "surveillance_pseudonym_service_ars" {
     sps_ars_db_secret_checksum      = try(kubernetes_secret_v1.database_credentials[local.sps_ars_index].metadata[0].annotations["checksum"], ""),
     sps_ars_db_ddl_secret_checksum  = try(kubernetes_secret_v1.database_credentials[local.sps_ars_ddl_index].metadata[0].annotations["checksum"], "")
     istio_proxy_resources           = var.resource_definitions[local.sps_ars_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.sps_ars_template_istio, {
+  }), local.chart_files[local.sps_ars_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.sps_ars_name].istio_template, {
     namespace                = var.target_namespace,
     context_path             = var.context_path,
     cluster_gateway          = var.cluster_gateway,
     demis_hostnames          = local.demis_hostnames
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.sps_ars_name], null)
-  })
+  }), local.chart_files[local.sps_ars_name].istio_values_override])
 }

@@ -2,9 +2,6 @@ locals {
   pseudo_name = "pseudonymization-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   pseudo_enabled = contains(local.service_names, local.pseudo_name) ? var.deployment_information[local.pseudo_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  pseudo_template_app   = fileexists("${var.external_chart_path}/${local.pseudo_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.pseudo_name}/${local.application_values_file}" : "${path.module}/${local.pseudo_name}/${local.application_values_file}"
-  pseudo_template_istio = fileexists("${var.external_chart_path}/${local.pseudo_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.pseudo_name}/${local.istio_values_file}" : "${path.module}/${local.pseudo_name}/${local.istio_values_file}"
 
   pseudo_index = try(
     index(
@@ -28,7 +25,7 @@ module "pseudonymization_service" {
   depends_on             = [module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.pseudo_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.pseudo_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -40,9 +37,9 @@ module "pseudonymization_service" {
     resource_block        = var.resource_definitions[local.pseudo_name].resource_block,
     db_secret_checksum    = try(kubernetes_secret_v1.database_credentials[local.pseudo_index].metadata[0].annotations["checksum"], "")
     istio_proxy_resources = var.resource_definitions[local.pseudo_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.pseudo_template_istio, {
+  }), local.chart_files[local.pseudo_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.pseudo_name].istio_template, {
     namespace                = var.target_namespace
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.pseudo_name], null)
-  })
+  }), local.chart_files[local.pseudo_name].istio_values_override])
 }

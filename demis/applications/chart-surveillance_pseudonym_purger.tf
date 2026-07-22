@@ -7,10 +7,8 @@ locals {
   ########################################
   # Surveilance Pseudonym Purger - ARS   #
   ########################################
-  spp_ars_name           = "${local.spp_name}-ars"
-  spp_ars_enabled        = contains(local.service_names, local.spp_ars_name) ? var.deployment_information[local.spp_ars_name].enabled : false
-  spp_ars_template_app   = fileexists("${var.external_chart_path}/${local.spp_ars_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.spp_ars_name}/${local.application_values_file}" : "${path.module}/${local.spp_ars_name}/${local.application_values_file}"
-  spp_ars_template_istio = fileexists("${var.external_chart_path}/${local.spp_ars_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.spp_ars_name}/${local.istio_values_file}" : "${path.module}/${local.spp_ars_name}/${local.istio_values_file}"
+  spp_ars_name    = "${local.spp_name}-ars"
+  spp_ars_enabled = contains(local.service_names, local.spp_ars_name) ? var.deployment_information[local.spp_ars_name].enabled : false
 }
 
 module "surveillance_pseudonym_purger_ars" {
@@ -23,10 +21,10 @@ module "surveillance_pseudonym_purger_ars" {
   application_name       = local.spp_ars_name
   deployment_information = var.deployment_information[local.spp_ars_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.pgbouncer[0]]
+  depends_on             = [module.pgbouncer[0], module.surveillance_pseudonym_service_ars[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.spp_ars_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.spp_ars_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -39,8 +37,8 @@ module "surveillance_pseudonym_purger_ars" {
     replica_count         = var.resource_definitions[local.spp_ars_name].replicas,
     resource_block        = var.resource_definitions[local.spp_ars_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.spp_ars_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.spp_ars_template_istio, {
+  }), local.chart_files[local.spp_ars_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.spp_ars_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.spp_ars_name].istio_values_override])
 }

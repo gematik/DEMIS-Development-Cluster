@@ -26,7 +26,7 @@ module "dmz_services" {
   allow_even_rabbitmq_replicas      = var.allow_even_rabbitmq_replicas
   database_target_host              = var.database_target_host
   deployment_timeout                = var.deployment_timeout
-  external_routing_configurations   = try(module.external_routing_configurations[0], { rules = {} })
+  external_routing_configurations   = module.external_routing_configurations
   project_feature_flags             = var.project_feature_flags
   # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
   # This establishes the apply-time ordering (activate → deploy) through data-flow,

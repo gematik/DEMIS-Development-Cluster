@@ -2,9 +2,6 @@ locals {
   portal_igs_name = "portal-igs"
   # Verify whether the service is defined or the deployment is explicitly enabled
   portal_igs_enabled = contains(local.service_names, local.portal_igs_name) ? var.deployment_information[local.portal_igs_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  portal_igs_template_app   = fileexists("${var.external_chart_path}/${local.portal_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.portal_igs_name}/${local.application_values_file}" : "${path.module}/${local.portal_igs_name}/${local.application_values_file}"
-  portal_igs_template_istio = fileexists("${var.external_chart_path}/${local.portal_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.portal_igs_name}/${local.istio_values_file}" : "${path.module}/${local.portal_igs_name}/${local.istio_values_file}"
 }
 
 module "portal_igs" {
@@ -20,7 +17,7 @@ module "portal_igs" {
   depends_on             = [module.gateway_igs[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.portal_igs_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.portal_igs_name].app_template, {
     image_pull_secrets      = var.pull_secrets,
     repository              = var.docker_registry,
     istio_enable            = var.istio_enabled,
@@ -33,13 +30,13 @@ module "portal_igs" {
     resource_block          = var.resource_definitions[local.portal_igs_name].resource_block
     istio_proxy_resources   = var.resource_definitions[local.portal_igs_name].istio_proxy_resources
     mf_logging_disabled     = !var.mf_logging_enabled
-  })
-  istio_values = templatefile(local.portal_igs_template_istio, {
+  }), local.chart_files[local.portal_igs_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.portal_igs_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     portal_hostnames           = local.frontend_hostnames
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_igs_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.portal_igs_name], [])
-  })
+  }), local.chart_files[local.portal_igs_name].istio_values_override])
 }

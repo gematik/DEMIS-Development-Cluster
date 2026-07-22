@@ -60,10 +60,34 @@ variable "app_template_params" {
   default     = {}
 }
 
+variable "app_template_file" {
+  type        = string
+  description = "Path to the application values template file for the Validation Service. If not provided, the default template will be used."
+  default     = ""
+}
+
+variable "app_values_override" {
+  type        = string
+  description = "Content of the application values override file for the Validation Service. If not provided, it will be ignored."
+  default     = ""
+}
+
 variable "istio_template_params" {
   type        = any
   description = "Map of variables to be passed to the Istio values template for the Validation Service. This allows for dynamic configuration of the Istio-related Helm values based on user input or other variables."
   default     = {}
+}
+
+variable "istio_template_file" {
+  type        = string
+  description = "Path to the Istio values template file for the Validation Service. If not provided, the default template will be used."
+  default     = ""
+}
+
+variable "istio_values_override" {
+  type        = string
+  description = "Content of the Istio values override file for the Validation Service. If not provided, it will be ignored."
+  default     = ""
 }
 
 variable "helm_release_settings" {

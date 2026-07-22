@@ -94,6 +94,6 @@ variable "project_feature_flags" {
 
 variable "deployment_timeout" {
   type        = number
-  description = "Timeout for the deployment in minutes"
+  description = "Timeout for the deployment in seconds"
   default     = 600
 }

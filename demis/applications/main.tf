@@ -1,7 +1,22 @@
 locals {
   # Define how are named the Files overriding the Helm Charts
-  application_values_file = "app-values.tftpl.yaml"
-  istio_values_file       = "istio-values.tftpl.yaml"
+  application_values_file     = "app-values.tftpl.yaml"
+  istio_values_file           = "istio-values.tftpl.yaml"
+  application_values_override = "app-values.yaml"
+  istio_values_override       = "istio-values.yaml"
+
+  chart_dirs = distinct(concat(
+    [for f in fileset(path.module, "*/${local.application_values_file}") : dirname(f)],
+    [for f in fileset(path.module, "*/${local.istio_values_file}") : dirname(f)],
+  ))
+  chart_files = {
+    for name in local.chart_dirs : name => {
+      app_template          = fileexists("${var.external_chart_path}/${name}/${local.application_values_file}") ? "${var.external_chart_path}/${name}/${local.application_values_file}" : (fileexists("${path.module}/${name}/${local.application_values_file}") ? "${path.module}/${name}/${local.application_values_file}" : null)
+      istio_template        = fileexists("${var.external_chart_path}/${name}/${local.istio_values_file}") ? "${var.external_chart_path}/${name}/${local.istio_values_file}" : (fileexists("${path.module}/${name}/${local.istio_values_file}") ? "${path.module}/${name}/${local.istio_values_file}" : null)
+      app_values_override   = fileexists("${var.external_chart_path}/${name}/${local.application_values_override}") ? file("${var.external_chart_path}/${name}/${local.application_values_override}") : ""
+      istio_values_override = fileexists("${var.external_chart_path}/${name}/${local.istio_values_override}") ? file("${var.external_chart_path}/${name}/${local.istio_values_override}") : ""
+    }
+  }
 
   # Get all the Service Names from the Deployment Information
   service_names = keys(var.deployment_information)
@@ -9,7 +24,7 @@ locals {
   frontend_hostnames = [var.portal_hostname, var.meldung_hostname]
   # Define the Hostnames for the DEMIS Services Istio Virtual Services
   demis_hostnames = concat(local.frontend_hostnames, [var.core_hostname])
-  # Define the S3 Storage URL - Use MinIO if in local mode with default Istio Port
+  # Define the S3 Storage URL - Use object-storage-service if in local mode with default Istio Port
   s3_storage_url = var.is_local_mode ? "http://${var.s3_hostname}" : "https://${var.s3_hostname}:${var.s3_port}"
 
   # Define common Helm Release Settings
@@ -26,6 +41,4 @@ locals {
 
   # The version of the Routing Data to use
   routing_data_version = var.deployment_information["notification-routing-data"].main.version
-  # FEATURE_FLAG_FHIR_CORE_SPLIT
-  fhir_core_split_enabled = try(var.project_feature_flags["FEATURE_FLAG_FHIR_CORE_SPLIT"], false)
 }

@@ -2,6 +2,14 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.11.0
+- removed feature flag FEATURE_FLAG_SEPARATION_API_VERSION_AND_PROFILE_VERSION, external routing configuration is now applied by default
+- removed FEATURE_FLAG_FHIR_CORE_SPLIT and vs-core + futs-core services
+- removed default profile-snapshots fhir-, ars-, igs-, are-profile-snapshots from deployment project
+- added new object-storage-service as new service for storing and managing object data
+- refactored helm template usage for helm values to accept also yaml files for overriding helm values
+- renamed stage name `test-fra` to `test`
+
 ## Release 5.10.0
 - added new job bulk-inbound-purger for purging old data from bulk-inbound-service
 - added new job ars-purger for purging old data from statistic database

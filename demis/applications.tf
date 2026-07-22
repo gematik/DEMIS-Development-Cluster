@@ -36,7 +36,6 @@ module "demis_services" {
   config_options                                  = module.application_flags.service_config_options
   resource_definitions                            = module.application_resources.service_resource_definitions
   timeout_retry_overrides                         = var.timeout_retry_overrides
-  profile_provisioning_mode_vs_core               = var.profile_provisioning_mode_vs_core
   profile_provisioning_mode_vs_igs                = var.profile_provisioning_mode_vs_igs
   profile_provisioning_mode_vs_ars                = var.profile_provisioning_mode_vs_ars
   profile_provisioning_mode_vs_bedoccupancy       = var.profile_provisioning_mode_vs_bedoccupancy
@@ -44,7 +43,7 @@ module "demis_services" {
   profile_provisioning_mode_vs_pathogen           = var.profile_provisioning_mode_vs_pathogen
   reset_values                                    = var.reset_values
   deployment_timeout                              = var.deployment_timeout
-  external_routing_configurations                 = try(module.external_routing_configurations[0], { rules = {} })
+  external_routing_configurations                 = module.external_routing_configurations
   project_feature_flags                           = var.project_feature_flags
   # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
   # This establishes the apply-time ordering (activate → deploy) through data-flow,
@@ -57,6 +56,8 @@ module "demis_services" {
   redis_cus_reader_password                   = var.redis_cus_reader_password
   minio_root_user                             = var.minio_root_user
   minio_root_password                         = var.minio_root_password
+  object_storage_service_access_key           = var.object_storage_service_access_key
+  object_storage_service_secret_key           = var.object_storage_service_secret_key
   s3_tls_credential                           = var.s3_tls_credential
   postgres_server_certificate                 = var.postgres_server_certificate
   postgres_root_ca_certificate                = var.postgres_root_ca_certificate

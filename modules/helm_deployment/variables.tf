@@ -62,13 +62,13 @@ variable "deployment_information" {
 }
 
 variable "application_values" {
-  type        = string
+  type        = list(string)
   description = "Custom values in YAML format to override the default configuration for the application Helm Chart"
-  default     = ""
+  default     = []
 }
 
 variable "istio_values" {
-  type        = string
+  type        = list(string)
   description = "Custom values in YAML format to override the configuration for the Istio Helm Chart"
-  default     = ""
+  default     = []
 }

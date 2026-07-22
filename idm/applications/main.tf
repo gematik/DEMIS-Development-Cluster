@@ -1,7 +1,22 @@
 locals {
   # Define how are named the Files overriding the Helm Charts
-  application_values_file = "app-values.tftpl.yaml"
-  istio_values_file       = "istio-values.tftpl.yaml"
+  application_values_file     = "app-values.tftpl.yaml"
+  istio_values_file           = "istio-values.tftpl.yaml"
+  application_values_override = "app-values.yaml"
+  istio_values_override       = "istio-values.yaml"
+
+  chart_dirs = distinct(concat(
+    [for f in fileset(path.module, "*/${local.application_values_file}") : dirname(f)],
+    [for f in fileset(path.module, "*/${local.istio_values_file}") : dirname(f)],
+  ))
+  chart_files = {
+    for name in local.chart_dirs : name => {
+      app_template          = fileexists("${var.external_chart_path}/${name}/${local.application_values_file}") ? "${var.external_chart_path}/${name}/${local.application_values_file}" : (fileexists("${path.module}/${name}/${local.application_values_file}") ? "${path.module}/${name}/${local.application_values_file}" : null)
+      istio_template        = fileexists("${var.external_chart_path}/${name}/${local.istio_values_file}") ? "${var.external_chart_path}/${name}/${local.istio_values_file}" : (fileexists("${path.module}/${name}/${local.istio_values_file}") ? "${path.module}/${name}/${local.istio_values_file}" : null)
+      app_values_override   = fileexists("${var.external_chart_path}/${name}/${local.application_values_override}") ? file("${var.external_chart_path}/${name}/${local.application_values_override}") : ""
+      istio_values_override = fileexists("${var.external_chart_path}/${name}/${local.istio_values_override}") ? file("${var.external_chart_path}/${name}/${local.istio_values_override}") : ""
+    }
+  }
 
   # Get all the Service Names from the Deployment Information
   service_names = keys(var.deployment_information)

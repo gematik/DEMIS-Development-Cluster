@@ -2,9 +2,6 @@ locals {
   service_name = "service-demo"
   # Verify whether the service is defined or the deployment is explicitly enabled
   service_enabled = contains(local.service_names, local.service_name) ? var.deployment_information[local.service_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  service_template_app   = fileexists("${var.external_chart_path}/${local.service_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.service_name}/${local.application_values_file}" : "${path.module}/${local.service_name}/${local.application_values_file}"
-  service_template_istio = fileexists("${var.external_chart_path}/${local.service_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.service_name}/${local.istio_values_file}" : "${path.module}/${local.service_name}/${local.istio_values_file}"
   # Define override for resources
   service_resources_overrides = try(var.resource_definitions[local.service_name], {})
   service_replicas            = lookup(local.service_resources_overrides, "replicas", null) != null ? var.resource_definitions[local.service_name].replicas : null
@@ -23,7 +20,7 @@ module "service_demo" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.service_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.service_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     debug_enable          = var.debug_enabled,
@@ -33,12 +30,12 @@ module "service_demo" {
     replica_count         = local.service_replicas,
     resource_block        = local.service_resource_block
     istio_proxy_resources = try(local.service_resources_overrides.istio_proxy_resources, var.istio_proxy_default_resources)
-  })
-  istio_values = templatefile(local.service_template_istio, {
+  }), local.chart_files[local.service_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.service_name].istio_template, {
     namespace                = var.target_namespace,
     cluster_gateway          = var.cluster_gateway,
     context_path             = var.context_path,
     demis_hostnames          = local.demis_hostnames
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.service_name], null)
-  })
+  }), local.chart_files[local.service_name].istio_values_override])
 }

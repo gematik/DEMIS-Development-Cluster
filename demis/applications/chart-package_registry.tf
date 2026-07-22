@@ -2,9 +2,6 @@ locals {
   fpr_name = "package-registry"
   # Verify whether the service is defined or the deployment is explicitly enabled
   fpr_enabled = contains(local.service_names, local.fpr_name) ? var.deployment_information[local.fpr_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  fpr_template_app   = fileexists("${var.external_chart_path}/${local.fpr_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fpr_name}/${local.application_values_file}" : "${path.module}/${local.fpr_name}/${local.application_values_file}"
-  fpr_template_istio = fileexists("${var.external_chart_path}/${local.fpr_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fpr_name}/${local.istio_values_file}" : "${path.module}/${local.fpr_name}/${local.istio_values_file}"
 }
 
 module "package_registry" {
@@ -19,7 +16,7 @@ module "package_registry" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.fpr_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.fpr_name].app_template, {
     image_pull_secrets         = var.pull_secrets,
     repository                 = var.docker_registry,
     debug_enable               = var.debug_enabled,
@@ -31,9 +28,9 @@ module "package_registry" {
     istio_proxy_resources      = var.resource_definitions[local.fpr_name].istio_proxy_resources,
     service_accounts_checksums = [for k, v in kubernetes_secret_v1.service_accounts : v.metadata[0].annotations["checksum"]]
 
-  })
-  istio_values = templatefile(local.fpr_template_istio, {
+  }), local.chart_files[local.fpr_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.fpr_name].istio_template, {
     namespace                = var.target_namespace
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fpr_name], null)
-  })
+  }), local.chart_files[local.fpr_name].istio_values_override])
 }

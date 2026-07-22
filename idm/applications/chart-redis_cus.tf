@@ -2,9 +2,6 @@ locals {
   rediscus_name = "redis-cus"
   # Verify whether the service is defined or the deployment is explicitly enabled
   rediscus_enabled = contains(local.service_names, local.rediscus_name) ? var.deployment_information[local.rediscus_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  rediscus_template_app   = fileexists("${var.external_chart_path}/${local.rediscus_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.rediscus_name}/${local.application_values_file}" : "${path.module}/${local.rediscus_name}/${local.application_values_file}"
-  rediscus_template_istio = fileexists("${var.external_chart_path}/${local.rediscus_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.rediscus_name}/${local.istio_values_file}" : "${path.module}/${local.rediscus_name}/${local.istio_values_file}"
 }
 
 module "redis_cus" {
@@ -19,7 +16,7 @@ module "redis_cus" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.rediscus_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.rediscus_name].app_template, {
     image_pull_secrets                    = var.pull_secrets,
     repository                            = var.docker_registry,
     istio_enable                          = var.istio_enabled,
@@ -30,8 +27,8 @@ module "redis_cus" {
     redis_cus_acl_checksum                = try(kubernetes_secret_v1.redis_cus_acl.metadata[0].annotations["checksum"], "")
     istio_proxy_resources                 = var.resource_definitions[local.rediscus_name].istio_proxy_resources,
     new_redis_cus_annotation_handling     = try(var.project_feature_flags["FEATURE_FLAG_NEW_REDIS_CUS_ANNOTATION_HANDLING"], false)
-  })
-  istio_values = templatefile(local.rediscus_template_istio, {
+  }), local.chart_files[local.rediscus_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.rediscus_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.rediscus_name].istio_values_override])
 }

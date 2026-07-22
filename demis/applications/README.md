@@ -26,8 +26,6 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_fhir_storage_writer"></a> [fhir\_storage\_writer](#module\_fhir\_storage\_writer) | ../../modules/helm_deployment | n/a |
 | <a name="module_futs_bedoccupancy"></a> [futs\_bedoccupancy](#module\_futs\_bedoccupancy) | ../../modules/helm_deployment | n/a |
 | <a name="module_futs_bedoccupancy_metadata"></a> [futs\_bedoccupancy\_metadata](#module\_futs\_bedoccupancy\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
-| <a name="module_futs_core"></a> [futs\_core](#module\_futs\_core) | ../../modules/helm_deployment | n/a |
-| <a name="module_futs_core_metadata"></a> [futs\_core\_metadata](#module\_futs\_core\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 | <a name="module_futs_disease"></a> [futs\_disease](#module\_futs\_disease) | ../../modules/helm_deployment | n/a |
 | <a name="module_futs_disease_metadata"></a> [futs\_disease\_metadata](#module\_futs\_disease\_metadata) | ../../modules/fhir-profiles-metadata | n/a |
 | <a name="module_futs_igs"></a> [futs\_igs](#module\_futs\_igs) | ../../modules/helm_deployment | n/a |
@@ -39,10 +37,10 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_http_timeouts_retries"></a> [http\_timeouts\_retries](#module\_http\_timeouts\_retries) | ../../modules/http_timeouts_retries | n/a |
 | <a name="module_igs_service"></a> [igs\_service](#module\_igs\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_lifecycle_validation_service"></a> [lifecycle\_validation\_service](#module\_lifecycle\_validation\_service) | ../../modules/helm_deployment | n/a |
-| <a name="module_minio"></a> [minio](#module\_minio) | ../../modules/helm_deployment | n/a |
 | <a name="module_notification_gateway"></a> [notification\_gateway](#module\_notification\_gateway) | ../../modules/helm_deployment | n/a |
 | <a name="module_notification_processing_service"></a> [notification\_processing\_service](#module\_notification\_processing\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_notification_routing_service"></a> [notification\_routing\_service](#module\_notification\_routing\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_object_storage_service"></a> [object\_storage\_service](#module\_object\_storage\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_package_registry"></a> [package\_registry](#module\_package\_registry) | ../../modules/helm_deployment | n/a |
 | <a name="module_pdfgen_service"></a> [pdfgen\_service](#module\_pdfgen\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_pgbouncer"></a> [pgbouncer](#module\_pgbouncer) | ../../modules/helm_deployment | n/a |
@@ -59,7 +57,6 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="module_terminology_server"></a> [terminology\_server](#module\_terminology\_server) | ../../modules/helm_deployment | n/a |
 | <a name="module_validation_service_ars_apps"></a> [validation\_service\_ars\_apps](#module\_validation\_service\_ars\_apps) | ../../modules/validation_service_apps | n/a |
 | <a name="module_validation_service_bedoccupancy_apps"></a> [validation\_service\_bedoccupancy\_apps](#module\_validation\_service\_bedoccupancy\_apps) | ../../modules/validation_service_apps | n/a |
-| <a name="module_validation_service_core_apps"></a> [validation\_service\_core\_apps](#module\_validation\_service\_core\_apps) | ../../modules/validation_service_apps | n/a |
 | <a name="module_validation_service_disease_apps"></a> [validation\_service\_disease\_apps](#module\_validation\_service\_disease\_apps) | ../../modules/validation_service_apps | n/a |
 | <a name="module_validation_service_igs_apps"></a> [validation\_service\_igs\_apps](#module\_validation\_service\_igs\_apps) | ../../modules/validation_service_apps | n/a |
 | <a name="module_validation_service_pathogen_apps"></a> [validation\_service\_pathogen\_apps](#module\_validation\_service\_pathogen\_apps) | ../../modules/validation_service_apps | n/a |
@@ -76,6 +73,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | [kubernetes_secret_v1.database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.igs_encryption_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.minio_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
+| [kubernetes_secret_v1.object_storage_service_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.pgbouncer_userlist](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.postgresql_tls_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.redis_cus_reader_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
@@ -99,7 +97,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_database_target_host"></a> [database\_target\_host](#input\_database\_target\_host) | Defines the Hostname of the Database Server | `string` | n/a | yes |
 | <a name="input_debug_enabled"></a> [debug\_enabled](#input\_debug\_enabled) | Defines if the backend Java Services must be started in Debug Mode | `bool` | `false` | no |
 | <a name="input_deployment_information"></a> [deployment\_information](#input\_deployment\_information) | Structure holding deployment information for the Helm Charts | <pre>map(object({<br/>    chart-name          = optional(string) # Optional, uses a different Helm Chart name than the application name<br/>    image-tag           = optional(string) # Optional, uses a different image tag for the deployment<br/>    deployment-strategy = string<br/>    enabled             = bool<br/>    main = object({<br/>      version  = string<br/>      weight   = number<br/>      profiles = optional(list(string))<br/>    })<br/>    canary = optional(object({<br/>      version  = optional(string)<br/>      weight   = optional(string)<br/>      profiles = optional(list(string))<br/>    }), {})<br/>  }))</pre> | n/a | yes |
-| <a name="input_deployment_timeout"></a> [deployment\_timeout](#input\_deployment\_timeout) | Timeout for the deployment in minutes | `number` | `600` | no |
+| <a name="input_deployment_timeout"></a> [deployment\_timeout](#input\_deployment\_timeout) | Timeout for the deployment in seconds | `number` | `600` | no |
 | <a name="input_destination_lookup_purger_cron_schedule"></a> [destination\_lookup\_purger\_cron\_schedule](#input\_destination\_lookup\_purger\_cron\_schedule) | Defines the Cron Schedule for the destination-lookup-purger | `string` | n/a | yes |
 | <a name="input_destination_lookup_purger_suspend"></a> [destination\_lookup\_purger\_suspend](#input\_destination\_lookup\_purger\_suspend) | Defines if the destination-lookup-purger is suspended. | `bool` | `false` | no |
 | <a name="input_docker_registry"></a> [docker\_registry](#input\_docker\_registry) | The docker registry to use for the application | `string` | n/a | yes |
@@ -119,6 +117,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_mf_logging_enabled"></a> [mf\_logging\_enabled](#input\_mf\_logging\_enabled) | Defines if the microfronted Angular Services are starting with enabled console logging for debugging purposes | `bool` | `false` | no |
 | <a name="input_minio_root_password"></a> [minio\_root\_password](#input\_minio\_root\_password) | The Minio Root Password | `string` | n/a | yes |
 | <a name="input_minio_root_user"></a> [minio\_root\_user](#input\_minio\_root\_user) | The Minio Root User | `string` | n/a | yes |
+| <a name="input_object_storage_service_access_key"></a> [object\_storage\_service\_access\_key](#input\_object\_storage\_service\_access\_key) | The object-storage-service access key | `string` | n/a | yes |
+| <a name="input_object_storage_service_secret_key"></a> [object\_storage\_service\_secret\_key](#input\_object\_storage\_service\_secret\_key) | The object-storage-service secret key | `string` | n/a | yes |
 | <a name="input_portal_hostname"></a> [portal\_hostname](#input\_portal\_hostname) | The URL for accessing the DEMIS Notification Portal over Telematikinfrastruktur (TI) | `string` | `"portal"` | no |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
@@ -126,7 +126,6 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_production_mode"></a> [production\_mode](#input\_production\_mode) | Enables the frontend production mode | `bool` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_ars"></a> [profile\_provisioning\_mode\_vs\_ars](#input\_profile\_provisioning\_mode\_vs\_ars) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_bedoccupancy"></a> [profile\_provisioning\_mode\_vs\_bedoccupancy](#input\_profile\_provisioning\_mode\_vs\_bedoccupancy) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
-| <a name="input_profile_provisioning_mode_vs_core"></a> [profile\_provisioning\_mode\_vs\_core](#input\_profile\_provisioning\_mode\_vs\_core) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_disease"></a> [profile\_provisioning\_mode\_vs\_disease](#input\_profile\_provisioning\_mode\_vs\_disease) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_igs"></a> [profile\_provisioning\_mode\_vs\_igs](#input\_profile\_provisioning\_mode\_vs\_igs) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
 | <a name="input_profile_provisioning_mode_vs_pathogen"></a> [profile\_provisioning\_mode\_vs\_pathogen](#input\_profile\_provisioning\_mode\_vs\_pathogen) | Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined | `string` | n/a | yes |
@@ -142,7 +141,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_s3_port"></a> [s3\_port](#input\_s3\_port) | The Port of the Remote S3 Storage | `number` | `9000` | no |
 | <a name="input_s3_tls_credential"></a> [s3\_tls\_credential](#input\_s3\_tls\_credential) | Base64-encoded, PEM certificate to be used for configuring the TLS Settings for the S3 Storage Server Connection. | `string` | n/a | yes |
 | <a name="input_service_accounts"></a> [service\_accounts](#input\_service\_accounts) | Service account details for authentication | <pre>list(object({<br/>    secret_name    = string # Name of the Kubernetes secret to store the service account key<br/>    keyfile_base64 = string # Base64-encoded JSON key file content<br/>  }))</pre> | `[]` | no |
-| <a name="input_storage_hostname"></a> [storage\_hostname](#input\_storage\_hostname) | The URL to access the S3 compatible storage (minio) | `string` | `"storage"` | no |
+| <a name="input_storage_hostname"></a> [storage\_hostname](#input\_storage\_hostname) | The URL to access the S3 compatible storage | `string` | `"storage"` | no |
 | <a name="input_surveillance_pseudonym_purger_ars_cron_schedule"></a> [surveillance\_pseudonym\_purger\_ars\_cron\_schedule](#input\_surveillance\_pseudonym\_purger\_ars\_cron\_schedule) | Defines the Cron Schedule for the surveillance-pseudonym-purger-ars | `string` | n/a | yes |
 | <a name="input_surveillance_pseudonym_purger_ars_suspend"></a> [surveillance\_pseudonym\_purger\_ars\_suspend](#input\_surveillance\_pseudonym\_purger\_ars\_suspend) | Defines if the surveillance-pseudonym-purger-ars is suspended. | `bool` | `false` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | The namespace to deploy the application to | `string` | `"demis"` | no |
@@ -156,7 +155,6 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="output_disease_package_versions"></a> [disease\_package\_versions](#output\_disease\_package\_versions) | Version of the disease package being used |
 | <a name="output_dlp_enabled"></a> [dlp\_enabled](#output\_dlp\_enabled) | Whether destination-lookup-purger is enabled |
 | <a name="output_dlp_version"></a> [dlp\_version](#output\_dlp\_version) | The version of destination-lookup-purger |
-| <a name="output_fhir_profile_snapshots"></a> [fhir\_profile\_snapshots](#output\_fhir\_profile\_snapshots) | Version of the FHIR Profile Snapshots being used |
 | <a name="output_fsp_enabled"></a> [fsp\_enabled](#output\_fsp\_enabled) | Whether FHIR-Storage-Purger is enabled |
 | <a name="output_fsp_version"></a> [fsp\_version](#output\_fsp\_version) | The version of FHIR-Storage-Purger |
 | <a name="output_igs_profile_snapshots"></a> [igs\_profile\_snapshots](#output\_igs\_profile\_snapshots) | Version of the IGS Profile Snapshots being used |

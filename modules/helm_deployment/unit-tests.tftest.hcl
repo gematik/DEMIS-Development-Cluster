@@ -30,13 +30,14 @@ run "helm_deployment_canary_with_istio_test" {
     }
 
     # your custom settings
-    application_values = <<EOT
+    application_values = [<<EOT
     image:
       pullPolicy: Always
     extraEnvVars:
       - name: LOG_LEVEL
         value: error
     EOT
+    ]
   }
 
   # assert that the output versions are correct
@@ -113,11 +114,12 @@ run "helm_deployment_canary_no_istio_test" {
       }
     }
 
-    application_values = <<EOF
+    application_values = [<<EOF
     extraEnvVars:
       - name: LOG_LEVEL
         value: error
     EOF
+    ]
   }
 
   # assert that the versions are correct
@@ -211,11 +213,12 @@ run "helm_deployment_replace_or_update_canary_version_test" {
         weight  = 0
       }
     }
-    application_values = <<EOF
+    application_values = [<<EOF
     extraEnvVars:
       - name: LOG_LEVEL
         value: error
     EOF
+    ]
   }
 
   # assert that the output versions are correct

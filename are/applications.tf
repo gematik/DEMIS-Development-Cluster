@@ -24,7 +24,7 @@ module "are_services" {
   reset_values                     = var.reset_values
   profile_provisioning_mode_vs_are = var.profile_provisioning_mode_vs_are
   deployment_timeout               = var.deployment_timeout
-  external_routing_configurations  = try(module.external_routing_configurations[0], { rules = {} })
+  external_routing_configurations  = module.external_routing_configurations
   project_feature_flags            = var.project_feature_flags
   # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
   # This establishes the apply-time ordering (activate → deploy) through data-flow,

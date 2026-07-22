@@ -1,8 +1,6 @@
 locals {
-  dls_reader_name           = "destination-lookup-reader"
-  dls_reader_information    = try(var.deployment_information[local.dls_reader_name], { enabled = false, main = { version = "" } })
-  dls_reader_template_app   = fileexists("${var.external_chart_path}/${local.dls_reader_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.dls_reader_name}/${local.application_values_file}" : "${path.module}/${local.dls_reader_name}/${local.application_values_file}"
-  dls_reader_template_istio = fileexists("${var.external_chart_path}/${local.dls_reader_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.dls_reader_name}/${local.istio_values_file}" : "${path.module}/${local.dls_reader_name}/${local.istio_values_file}"
+  dls_reader_name        = "destination-lookup-reader"
+  dls_reader_information = try(var.deployment_information[local.dls_reader_name], { enabled = false, main = { version = "" } })
 
   dlsr_index = try(
     index(
@@ -26,7 +24,7 @@ module "destination_lookup_reader" {
   depends_on             = [module.pgbouncer[0], module.destination_lookup_writer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.dls_reader_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.dls_reader_name].app_template, {
     app_name              = local.dls_reader_name,
     data_base             = replace(local.dls_name, "-", "_"),
     image_pull_secrets    = var.pull_secrets,
@@ -39,8 +37,8 @@ module "destination_lookup_reader" {
     replica_count         = var.resource_definitions[local.dls_reader_name].replicas,
     istio_proxy_resources = var.resource_definitions[local.dls_reader_name].istio_proxy_resources,
     db_secret_checksum    = try(kubernetes_secret_v1.database_credentials[local.dlsr_index].metadata[0].annotations["checksum"], "")
-  })
-  istio_values = templatefile(local.dls_reader_template_istio, {
+  }), local.chart_files[local.dls_reader_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.dls_reader_name].istio_template, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     context_path               = var.context_path,
@@ -48,5 +46,5 @@ module "destination_lookup_reader" {
     app_name                   = local.dls_reader_name,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.dls_reader_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.dls_reader_name], [])
-  })
+  }), local.chart_files[local.dls_reader_name].istio_values_override])
 }

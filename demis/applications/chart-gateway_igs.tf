@@ -2,9 +2,6 @@ locals {
   gateway_igs_name = "gateway-igs"
   # Verify whether the service is defined or the deployment is explicitly enabled
   gateway_igs_enabled = contains(local.service_names, local.gateway_igs_name) ? var.deployment_information[local.gateway_igs_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  gateway_igs_template_app   = fileexists("${var.external_chart_path}/${local.gateway_igs_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.gateway_igs_name}/${local.application_values_file}" : "${path.module}/${local.gateway_igs_name}/${local.application_values_file}"
-  gateway_igs_template_istio = fileexists("${var.external_chart_path}/${local.gateway_igs_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.gateway_igs_name}/${local.istio_values_file}" : "${path.module}/${local.gateway_igs_name}/${local.istio_values_file}"
 }
 
 module "gateway_igs" {
@@ -20,7 +17,7 @@ module "gateway_igs" {
   depends_on             = [module.igs_service[0], helm_release.futs[0], module.futs_igs[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.gateway_igs_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.gateway_igs_name].app_template, {
     image_pull_secrets        = var.pull_secrets,
     repository                = var.docker_registry,
     debug_enable              = var.debug_enabled,
@@ -33,14 +30,14 @@ module "gateway_igs" {
     resource_block            = var.resource_definitions[local.gateway_igs_name].resource_block,
     istio_proxy_resources     = var.resource_definitions[local.gateway_igs_name].istio_proxy_resources,
     igs_profile_major_version = regex("^([0-9]+)", element(module.futs_igs_metadata[0].current_profile_versions, -1))[0],
-    igs_package_name          = local.fhir_core_split_enabled ? "igs" : "igs-profile-snapshots"
-  })
-  istio_values = templatefile(local.gateway_igs_template_istio, {
+    igs_package_name          = "igs"
+  }), local.chart_files[local.gateway_igs_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.gateway_igs_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     demis_hostnames            = local.demis_hostnames
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_igs_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.gateway_igs_name], [])
-  })
+  }), local.chart_files[local.gateway_igs_name].istio_values_override])
 }

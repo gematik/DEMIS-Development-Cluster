@@ -2,10 +2,8 @@ locals {
   ########################################
   # Bulk Inbound Purger  #
   ########################################
-  bip_name           = "bulk-inbound-purger"
-  bip_enabled        = contains(local.service_names, local.bip_name) ? var.deployment_information[local.bip_name].enabled : false
-  bip_template_app   = fileexists("${var.external_chart_path}/${local.bip_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.bip_name}/${local.application_values_file}" : "${path.module}/${local.bip_name}/${local.application_values_file}"
-  bip_template_istio = fileexists("${var.external_chart_path}/${local.bip_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.bip_name}/${local.istio_values_file}" : "${path.module}/${local.bip_name}/${local.istio_values_file}"
+  bip_name    = "bulk-inbound-purger"
+  bip_enabled = contains(local.service_names, local.bip_name) ? var.deployment_information[local.bip_name].enabled : false
 }
 
 module "bulk_inbound_purger" {
@@ -21,7 +19,7 @@ module "bulk_inbound_purger" {
   depends_on             = [module.pgbouncer[0], module.bulk_inbound_service[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.bip_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.bip_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -34,8 +32,8 @@ module "bulk_inbound_purger" {
     replica_count         = var.resource_definitions[local.bip_name].replicas,
     resource_block        = var.resource_definitions[local.bip_name].resource_block,
     istio_proxy_resources = var.resource_definitions[local.bip_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.bip_template_istio, {
+  }), local.chart_files[local.bip_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.bip_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.bip_name].istio_values_override])
 }

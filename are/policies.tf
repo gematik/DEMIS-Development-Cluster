@@ -20,10 +20,11 @@ resource "helm_release" "kubernetes_network_policies" {
   cleanup_on_fail     = true
   timeout             = 600
 
-  values = [
-    templatefile("${local.chart_source_path}/${local.kubernetes_network_policies_name}/values.tftpl.yaml", {
+  values = compact([
+    fileexists("${local.chart_source_path}/${local.kubernetes_network_policies_name}/values.tftpl.yaml") ? templatefile("${local.chart_source_path}/${local.kubernetes_network_policies_name}/values.tftpl.yaml", {
       namespace  = var.target_namespace
       repository = var.docker_registry
-    })
-  ]
+    }) : "",
+    fileexists("${local.chart_source_path}/${local.kubernetes_network_policies_name}/app-values.yaml") ? file("${local.chart_source_path}/${local.kubernetes_network_policies_name}/app-values.yaml") : ""
+  ])
 }

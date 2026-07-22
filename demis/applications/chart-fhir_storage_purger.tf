@@ -2,9 +2,6 @@ locals {
   fsp_name = "fhir-storage-purger"
   # Verify whether the service is defined or the deployment is explicitly enabled
   fsp_enabled = contains(local.service_names, local.fsp_name) ? var.deployment_information[local.fsp_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  fsp_template_app   = fileexists("${var.external_chart_path}/${local.fsp_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.fsp_name}/${local.application_values_file}" : "${path.module}/${local.fsp_name}/${local.application_values_file}"
-  fsp_template_istio = fileexists("${var.external_chart_path}/${local.fsp_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.fsp_name}/${local.istio_values_file}" : "${path.module}/${local.fsp_name}/${local.istio_values_file}"
 }
 
 module "fhir_storage_purger" {
@@ -17,10 +14,10 @@ module "fhir_storage_purger" {
   application_name       = local.fsp_name
   deployment_information = var.deployment_information[local.fsp_name]
   helm_settings          = local.common_helm_release_settings
-  depends_on             = [module.pgbouncer[0]]
+  depends_on             = [module.pgbouncer[0], module.fhir_storage_writer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.fsp_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.fsp_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     namespace             = var.target_namespace,
@@ -33,8 +30,8 @@ module "fhir_storage_purger" {
     replica_count         = var.resource_definitions[local.fsp_name].replicas,
     resource_block        = var.resource_definitions[local.fsp_name].resource_block
     istio_proxy_resources = var.resource_definitions[local.fsp_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.fsp_template_istio, {
+  }), local.chart_files[local.fsp_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.fsp_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.fsp_name].istio_values_override])
 }

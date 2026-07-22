@@ -220,14 +220,8 @@ You can use the new module as a base for your own services and will likely want 
 If your services need to communicate with services in other namespaces (idm, demis, etc.) you need to request the necessary changes as pull-request or ticket to the gematik repository for [istio-policies](https://github.com/gematik/DEMIS-istio-policies) .
 
 ### Setup Routing Configuration for external access
-To set up the routing configuration for external access to a service in the cluster. this could be defined specific stage in corresponding `external_routing_configuration.yaml` file (e.g. `environments/stage-local/external_routing_configuration.yaml`). this could be activated by setting feature flag `FEATURE_FLAG_SEPARATION_API_VERSION_AND_PROFILE_VERSION` to `true` in `application-configuration.yaml` of namespaces idm or demis.
+To set up the routing configuration for external access to a service in the cluster. this could be defined specific stage in corresponding `external_routing_configuration.yaml` file (e.g. `environments/stage-local/external_routing_configuration.yaml`). The external routing configuration is applied by default for the namespaces idm, demis, dmz and are.
 
-```hcl
-# Definition of the feature flags for the project
-project_feature_flags = {
-   FEATURE_FLAG_SEPARATION_API_VERSION_AND_PROFILE_VERSION = true
-}
-```
 Validation for external routing configuration file, could be performed by the command:
 ```sh
 make <STAGE> check-external-routing-configuration NAMESPACE=<idm|demis|dmz>

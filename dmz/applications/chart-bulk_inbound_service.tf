@@ -2,11 +2,6 @@ locals {
   bulk_inbound_name = "bulk-inbound-service"
   # Verify whether the service is defined or the deployment is explicitly enabled
   bulk_inbound_enabled = contains(local.service_names, local.bulk_inbound_name) ? var.deployment_information[local.bulk_inbound_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  bulk_inbound_template_app   = fileexists("${var.external_chart_path}/${local.bulk_inbound_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.bulk_inbound_name}/${local.application_values_file}" : "${path.module}/${local.bulk_inbound_name}/${local.application_values_file}"
-  bulk_inbound_template_istio = fileexists("${var.external_chart_path}/${local.bulk_inbound_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.bulk_inbound_name}/${local.istio_values_file}" : "${path.module}/${local.bulk_inbound_name}/${local.istio_values_file}"
-
-  supported_ars_profile_versions = var.deployment_information["ars-profile-snapshots"].main.profiles
 
   ars_bulk_ddl_index = try(
     index(
@@ -37,7 +32,7 @@ module "bulk_inbound_service" {
   depends_on             = [module.rabbitmq_service[0], module.pgbouncer[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.bulk_inbound_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.bulk_inbound_name].app_template, {
     image_pull_secrets                      = var.pull_secrets,
     repository                              = var.docker_registry,
     namespace                               = var.target_namespace,
@@ -55,15 +50,13 @@ module "bulk_inbound_service" {
     bulk_inbound_encryption_secret_checksum = try(kubernetes_secret_v1.ars_bis_in_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     bis_rabbitmq_credentials_checksum       = try(kubernetes_secret_v1.bis_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
     istio_proxy_resources                   = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.bulk_inbound_template_istio, {
+  }), local.chart_files[local.bulk_inbound_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.bulk_inbound_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    fhir_api_versions          = local.supported_ars_profile_versions,
     demis_hostnames            = local.demis_hostnames,
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.bulk_inbound_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.bulk_inbound_name], [])
-    fhir_core_split_enabled    = local.fhir_core_split_enabled
-  })
+  }), local.chart_files[local.bulk_inbound_name].istio_values_override])
 }

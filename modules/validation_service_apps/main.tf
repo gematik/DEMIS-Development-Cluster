@@ -2,9 +2,7 @@ locals {
   ##############################
   # Validation Service statics #
   ##############################
-  http_rules_file         = "http-rules.tftpl.yaml"
-  application_values_file = "app-values.tftpl.yaml"
-  istio_values_file       = "istio-values.tftpl.yaml"
+  http_rules_file = "http-rules.tftpl.yaml"
 
   ####################################
   # Validation Service http template #
@@ -15,8 +13,6 @@ locals {
   # Validation Service params #
   #############################
   ## Check if stage-override templates are provided, otherwise use the project-defined ones
-  template_app        = fileexists("${var.external_template_directory}/${var.name}/${local.application_values_file}") ? "${var.external_template_directory}/${var.name}/${local.application_values_file}" : "${var.local_template_directory}/${var.name}/${local.application_values_file}"
-  template_istio      = fileexists("${var.external_template_directory}/${var.name}/${local.istio_values_file}") ? "${var.external_template_directory}/${var.name}/${local.istio_values_file}" : "${var.local_template_directory}/${var.name}/${local.istio_values_file}"
   template_http_rules = fileexists("${var.external_template_directory}/${var.name}/${local.http_rules_file}") ? "${var.external_template_directory}/${var.name}/${local.http_rules_file}" : (fileexists("${var.local_template_directory}/${var.name}/${local.http_rules_file}") ? "${var.local_template_directory}/${var.name}/${local.http_rules_file}" : local.default_template_http_rules)
 
   app_helm_settings = { for k, v in var.helm_release_settings : k => v if k != "istio_routing_chart_version" } # remove istio routing chart version from app helm settings, as it's only relevant for the istio chart
@@ -78,7 +74,7 @@ module "validation_service" {
   deployment_information = var.deployment_information
   helm_settings          = local.app_helm_settings
   # Pass the values for the chart
-  application_values = templatefile(local.template_app, merge({
+  application_values = compact([templatefile(var.app_template_file, merge({
     namespace         = var.target_namespace
     provisioning_mode = "distributed", # for distributed subsets, the app values template needs to know to set the correct labels and not create dedicated subsets
     feature_flags = merge(
@@ -97,7 +93,8 @@ module "validation_service" {
     ),
     profile_versions = [each.value.version],
     app_name         = each.value.name
-  }, var.app_template_params))
+    }, var.app_template_params)), var.app_values_override
+  ])
 }
 
 module "validation_service_legacy" {
@@ -110,7 +107,7 @@ module "validation_service_legacy" {
   deployment_information = var.deployment_information
   helm_settings          = local.app_helm_settings
   # Pass the values for the chart
-  application_values = templatefile(local.template_app, merge({
+  application_values = compact([templatefile(var.app_template_file, merge({
     namespace             = var.target_namespace
     provisioning_mode     = "dedicated" # for dedicated subsets, the app values template needs to know to set the correct labels and create dedicated subsets
     profile_versions      = module.validation_service_metadata.current_profile_versions,
@@ -120,7 +117,7 @@ module "validation_service_legacy" {
     resource_block        = var.resource_definitions[var.name].resource_block,
     istio_proxy_resources = var.resource_definitions[var.name].istio_proxy_resources,
     app_name              = var.name
-  }, var.app_template_params))
+  }, var.app_template_params)), var.app_values_override])
 }
 
 resource "helm_release" "istio" {
@@ -136,7 +133,7 @@ resource "helm_release" "istio" {
   wait                = true
   wait_for_jobs       = true
   cleanup_on_fail     = true
-  values = [templatefile(local.template_istio, merge({
+  values = compact([templatefile(var.istio_template_file, merge({
     app_name  = var.name
     namespace = var.target_namespace
     custom_virtual_service_http_rules = templatefile(local.template_http_rules, {
@@ -144,7 +141,7 @@ resource "helm_release" "istio" {
       http_timeout_retry_block = local.vs_timeout_retries_blocks,
     }),
     custom_destination_subsets = module.validation_service_metadata.destination_subsets,
-  }, var.istio_template_params))]
+  }, var.istio_template_params)), var.istio_values_override])
   timeout      = var.helm_release_settings.deployment_timeout
   reset_values = var.helm_release_settings.reset_values
 

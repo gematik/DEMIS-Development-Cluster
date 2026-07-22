@@ -105,16 +105,6 @@ variable "ars_purger_cron_schedule" {
   }
 }
 
-variable "profile_provisioning_mode_vs_core" {
-  description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
-  type        = string
-  default     = "combined"
-  validation {
-    condition     = contains(["dedicated", "distributed", "combined"], var.profile_provisioning_mode_vs_core)
-    error_message = "The provisioning mode must be one of the following: dedicated, distributed, combined"
-  }
-}
-
 variable "profile_provisioning_mode_vs_igs" {
   description = "Provisioning mode for the FHIR Profiles services. Allowed values are: dedicated, distributed, combined"
   type        = string

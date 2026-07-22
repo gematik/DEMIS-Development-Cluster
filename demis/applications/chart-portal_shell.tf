@@ -2,9 +2,6 @@ locals {
   portal_shell_name = "portal-shell"
   # Verify whether the service is defined or the deployment is explicitly enabled
   portal_shell_enabled = contains(local.service_names, local.portal_shell_name) ? var.deployment_information[local.portal_shell_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  portal_shell_template_app   = fileexists("${var.external_chart_path}/${local.portal_shell_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.portal_shell_name}/${local.application_values_file}" : "${path.module}/${local.portal_shell_name}/${local.application_values_file}"
-  portal_shell_template_istio = fileexists("${var.external_chart_path}/${local.portal_shell_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.portal_shell_name}/${local.istio_values_file}" : "${path.module}/${local.portal_shell_name}/${local.istio_values_file}"
 }
 
 module "portal_shell" {
@@ -20,7 +17,7 @@ module "portal_shell" {
   depends_on             = [module.portal_bedoccupancy[0], module.portal_disease[0], module.portal_pathogen[0], module.portal_igs[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.portal_shell_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.portal_shell_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
     istio_enable          = var.istio_enabled,
@@ -34,13 +31,13 @@ module "portal_shell" {
     resource_block        = var.resource_definitions[local.portal_shell_name].resource_block
     istio_proxy_resources = var.resource_definitions[local.portal_shell_name].istio_proxy_resources
     mf_logging_disabled   = !var.mf_logging_enabled
-  })
-  istio_values = templatefile(local.portal_shell_template_istio, {
+  }), local.chart_files[local.portal_shell_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.portal_shell_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
     portal_hostnames           = local.frontend_hostnames
     http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.portal_shell_name], null)
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.portal_shell_name], [])
-  })
+  }), local.chart_files[local.portal_shell_name].istio_values_override])
 }

@@ -2,9 +2,6 @@ locals {
   postgres_name = "postgres"
   # Verify whether the service is defined or the deployment is explicitly enabled
   postgres_enabled = contains(local.service_names, local.postgres_name) ? var.deployment_information[local.postgres_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  postgres_template_app   = fileexists("${var.external_chart_path}/${local.postgres_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.postgres_name}/${local.application_values_file}" : "${path.module}/${local.postgres_name}/${local.application_values_file}"
-  postgres_template_istio = fileexists("${var.external_chart_path}/${local.postgres_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.postgres_name}/${local.istio_values_file}" : "${path.module}/${local.postgres_name}/${local.istio_values_file}"
 
   postgres_index = try(
     index(
@@ -28,7 +25,7 @@ module "postgres" {
   helm_settings          = local.common_helm_release_settings
 
   # Pass the values for the chart
-  application_values = templatefile(local.postgres_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.postgres_name].app_template, {
     image_pull_secrets           = var.pull_secrets,
     repository                   = var.docker_registry,
     istio_enable                 = var.istio_enabled,
@@ -42,8 +39,8 @@ module "postgres" {
     postgres_tls_secret_checksum = try(kubernetes_secret_v1.postgresql_tls_certificates.metadata[0].annotations["checksum"], ""),
     db_secret_checksum           = try(kubernetes_secret_v1.database_credentials[local.postgres_index].metadata[0].annotations["checksum"], "")
     istio_proxy_resources        = var.resource_definitions[local.postgres_name].istio_proxy_resources,
-  })
-  istio_values = templatefile(local.postgres_template_istio, {
+  }), local.chart_files[local.postgres_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.postgres_name].istio_template, {
     namespace = var.target_namespace
-  })
+  }), local.chart_files[local.postgres_name].istio_values_override])
 }

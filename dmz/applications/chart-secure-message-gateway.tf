@@ -2,9 +2,6 @@ locals {
   secure_message_gateway_name = "secure-message-gateway"
   # Verify whether the service is defined or the deployment is explicitly enabled
   secure_message_gateway_enabled = contains(local.service_names, local.secure_message_gateway_name) ? var.deployment_information[local.secure_message_gateway_name].enabled : false
-  # Check if stage-override templates are provided, otherwise use the project-defined ones
-  secure_message_gateway_template_app   = fileexists("${var.external_chart_path}/${local.secure_message_gateway_name}/${local.application_values_file}") ? "${var.external_chart_path}/${local.secure_message_gateway_name}/${local.application_values_file}" : "${path.module}/${local.secure_message_gateway_name}/${local.application_values_file}"
-  secure_message_gateway_template_istio = fileexists("${var.external_chart_path}/${local.secure_message_gateway_name}/${local.istio_values_file}") ? "${var.external_chart_path}/${local.secure_message_gateway_name}/${local.istio_values_file}" : "${path.module}/${local.secure_message_gateway_name}/${local.istio_values_file}"
 }
 
 module "secure_message_gateway" {
@@ -19,7 +16,7 @@ module "secure_message_gateway" {
   depends_on             = [module.rabbitmq_service[0]]
 
   # Pass the values for the chart
-  application_values = templatefile(local.secure_message_gateway_template_app, {
+  application_values = compact([templatefile(local.chart_files[local.secure_message_gateway_name].app_template, {
     image_pull_secrets                          = var.pull_secrets,
     repository                                  = var.docker_registry,
     namespace                                   = var.target_namespace,
@@ -33,12 +30,12 @@ module "secure_message_gateway" {
     istio_proxy_resources                       = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources
     smg_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_smg_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     smg_rabbitmq_credentials_checksum           = try(kubernetes_secret_v1.smg_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
-  })
-  istio_values = templatefile(local.secure_message_gateway_template_istio, {
+  }), local.chart_files[local.secure_message_gateway_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.secure_message_gateway_name].istio_template, {
     namespace                = var.target_namespace,
     context_path             = var.context_path,
     cluster_gateway          = var.cluster_gateway,
     demis_hostnames          = local.demis_hostnames,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.secure_message_gateway_name], null)
-  })
+  }), local.chart_files[local.secure_message_gateway_name].istio_values_override])
 }
