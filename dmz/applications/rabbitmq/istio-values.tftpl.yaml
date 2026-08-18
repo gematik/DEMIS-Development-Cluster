@@ -16,11 +16,16 @@ virtualServiceTcpRules:
 servicePorts:
   - name: amqp
     port: 5672
+    appProtocol: tcp
   - name: discovery
     port: 4369
+    appProtocol: tcp
   - name: clustering
     port: 25672
+    appProtocol: tcp
   - name: management
     port: 15672
+    appProtocol: http
   - name: metrics
     port: 15692
+    appProtocol: http

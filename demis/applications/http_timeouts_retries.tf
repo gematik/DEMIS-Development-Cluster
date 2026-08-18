@@ -1,46 +1,35 @@
-locals {
-  no_retries                 = { retries = { attempts = 0 } }
-  common_timeout_retry_value = { timeout : "5s", retries = { attempts = 1, perTryTimeout = "5s" } }
-}
-
-
 module "http_timeouts_retries" {
   source                  = "../../modules/http_timeouts_retries"
   timeout_retry_overrides = var.timeout_retry_overrides
-  timeout_retry_defaults = [
-    merge({ service = local.ars_name }, local.no_retries),
-    merge({ service = local.ces_name }, local.common_timeout_retry_value),
-    merge({ service = local.dls_reader_name }, local.no_retries),
-    merge({ service = local.dls_writer_name }, local.no_retries),
-    merge({ service = local.fssr_name }, local.no_retries),
-    merge({ service = local.fssw_name }, local.no_retries),
-    merge({ service = local.futs_bedoccupancy_name }, local.common_timeout_retry_value),
-    merge({ service = local.futs_disease_name }, local.common_timeout_retry_value),
-    merge({ service = local.futs_pathogen_name }, local.common_timeout_retry_value),
-    merge({ service = local.futs_igs_name }, local.common_timeout_retry_value),
-    merge({ service = local.gateway_igs_name }, local.no_retries),
-    merge({ service = local.hls_name }, local.common_timeout_retry_value),
-    merge({ service = local.igs_name }, local.no_retries),
-    merge({ service = local.lcvs_name }, local.common_timeout_retry_value),
+
+  # All deployed services; those without an explicit configuration below receive the
+  # built-in common default (timeout 5s, 1 attempt, perTryTimeout 5s).
+  service_names = local.service_names
+
+  # Services using the built-in no-retries default (0 attempts)
+  no_retries_services = [
+    local.ars_name,
+    local.dls_reader_name,
+    local.dls_writer_name,
+    local.fssr_name,
+    local.fssw_name,
+    local.gateway_igs_name,
+    local.igs_name,
+    local.gateway_name,
+    local.nps_name,
+    local.fpr_name,
+    local.portal_bedoccupancy_name,
+    local.portal_disease_name,
+    local.portal_igs_name,
+    local.portal_pathogen_name,
+    local.portal_shell_name,
+    local.rps_name,
+    local.sps_ars_name,
+    local.fts_name,
+  ]
+
+  # Services with non-standard configurations
+  custom_timeout_retry = [
     merge({ service = local.object_storage_service_name }, { retries = { attempts = 3, perTryTimeout = "300s" } }),
-    merge({ service = local.gateway_name }, local.no_retries),
-    merge({ service = local.nps_name }, local.no_retries),
-    merge({ service = local.nrs_name }, local.common_timeout_retry_value),
-    merge({ service = local.fpr_name }, local.no_retries),
-    merge({ service = local.pdfgen_name }, local.common_timeout_retry_value),
-    merge({ service = local.portal_bedoccupancy_name }, local.no_retries),
-    merge({ service = local.portal_disease_name }, local.no_retries),
-    merge({ service = local.portal_igs_name }, local.no_retries),
-    merge({ service = local.portal_pathogen_name }, local.no_retries),
-    merge({ service = local.portal_shell_name }, local.no_retries),
-    merge({ service = local.pseudo_name }, local.common_timeout_retry_value),
-    merge({ service = local.rps_name }, local.no_retries),
-    merge({ service = local.sps_ars_name }, local.no_retries),
-    merge({ service = local.fts_name }, local.no_retries),
-    merge({ service = local.vs_igs_name }, local.common_timeout_retry_value),
-    merge({ service = local.vs_ars_name }, local.common_timeout_retry_value),
-    merge({ service = local.vs_bedoccupancy_name }, local.common_timeout_retry_value),
-    merge({ service = local.vs_disease_name }, local.common_timeout_retry_value),
-    merge({ service = local.vs_pathogen_name }, local.common_timeout_retry_value),
   ]
 }

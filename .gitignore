@@ -14,8 +14,7 @@
 .vscode/
 credentials.tfvars
 kind-config
-!infrastructure/service-mesh/grafana/config/dashboardproviders.yaml
-!infrastructure/service-mesh/grafana/config/datasources.yaml
+!infrastructure/service-mesh/grafana/config/*.yaml
 !infrastructure/service-mesh/grafana/dashboards/custom/*
 !infrastructure/service-mesh/grafana/dashboards/downloader.sh
 !modules/maintenance_mode/maintenance-mode.yaml

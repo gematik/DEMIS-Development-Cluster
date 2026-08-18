@@ -36,3 +36,26 @@ variable "docker_pull_secrets" {
     error_message = "You must provide valid credentials for the Docker Pull Secrets"
   }
 }
+###########################################
+# Loki - External S3 Object Storage
+###########################################
+
+variable "loki_s3_access_key_id" {
+  sensitive   = true
+  type        = string
+  default     = ""
+  description = <<-EOT
+  The S3 access key id used by Loki when service_mesh_loki_storage_type is "s3".
+  Leave empty to rely on an IAM role / instance profile (workload identity).
+  EOT
+}
+
+variable "loki_s3_secret_access_key" {
+  sensitive   = true
+  type        = string
+  default     = ""
+  description = <<-EOT
+  The S3 secret access key used by Loki when service_mesh_loki_storage_type is "s3".
+  Leave empty to rely on an IAM role / instance profile (workload identity).
+  EOT
+}

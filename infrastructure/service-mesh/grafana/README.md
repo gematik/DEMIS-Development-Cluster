@@ -31,6 +31,8 @@ No modules.
 | <a name="input_grafana_digest"></a> [grafana\_digest](#input\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | n/a | yes |
 | <a name="input_grafana_version"></a> [grafana\_version](#input\_grafana\_version) | The version of the Grafana Service to be installed | `string` | n/a | yes |
 | <a name="input_istio_version"></a> [istio\_version](#input\_istio\_version) | The version of the Istio Services for downloading the correct dashboards | `string` | n/a | yes |
+| <a name="input_loki_enabled"></a> [loki\_enabled](#input\_loki\_enabled) | Defines if a Loki datasource has to be added to Grafana | `bool` | `false` | no |
+| <a name="input_loki_service_url"></a> [loki\_service\_url](#input\_loki\_service\_url) | Cluster-internal base URL of the Loki service, used for the Grafana Loki datasource (only relevant when loki\_enabled is true) | `string` | `"http://loki:3100"` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | Namespace where to install the services | `string` | `"istio-system"` | no |
 
 ## Outputs

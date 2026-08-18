@@ -31,3 +31,15 @@ variable "istio_version" {
     error_message = "The Istio version must be provided in a valid Semantic Version format (e.g., 1.2.3)"
   }
 }
+
+variable "loki_enabled" {
+  description = "Defines if a Loki datasource has to be added to Grafana"
+  type        = bool
+  default     = false
+}
+
+variable "loki_service_url" {
+  description = "Cluster-internal base URL of the Loki service, used for the Grafana Loki datasource (only relevant when loki_enabled is true)"
+  type        = string
+  default     = "http://loki:3100"
+}

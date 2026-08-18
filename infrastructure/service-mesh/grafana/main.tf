@@ -20,7 +20,7 @@ resource "kubernetes_config_map_v1" "grafana_config" {
   data = {
     allow-snippet-annotations = "false"
     "grafana.ini"             = file("${path.module}/config/grafana.ini")
-    "datasources.yaml"        = file("${path.module}/config/datasources.yaml")
+    "datasources.yaml"        = templatefile("${path.module}/config/datasources.tftpl.yaml", { loki_enabled = var.loki_enabled, loki_url = var.loki_service_url })
     "dashboardproviders.yaml" = file("${path.module}/config/dashboardproviders.yaml")
   }
 }

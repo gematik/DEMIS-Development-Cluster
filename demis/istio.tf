@@ -29,7 +29,9 @@ resource "helm_release" "authorization_policies_istio" {
 
   values = compact([
     fileexists("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
-      namespace = var.target_namespace,
+      namespace        = var.target_namespace,
+      als_fssw_enabled = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSW_ENABLED"], false),
+      als_fssr_enabled = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSR_ENABLED"], false)
     }) : "",
     fileexists("${local.chart_source_path}/policies-authorizations/istio-values.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.yaml") : "",
   ])

@@ -17,6 +17,8 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | ---- | ------ | ------- |
 | <a name="module_ars_purger"></a> [ars\_purger](#module\_ars\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_ars_service"></a> [ars\_service](#module\_ars\_service) | ../../modules/helm_deployment | n/a |
+| <a name="module_audit_log_service_fssr"></a> [audit\_log\_service\_fssr](#module\_audit\_log\_service\_fssr) | ../../modules/helm_deployment | n/a |
+| <a name="module_audit_log_service_fssw"></a> [audit\_log\_service\_fssw](#module\_audit\_log\_service\_fssw) | ../../modules/helm_deployment | n/a |
 | <a name="module_context_enrichment_service"></a> [context\_enrichment\_service](#module\_context\_enrichment\_service) | ../../modules/helm_deployment | n/a |
 | <a name="module_destination_lookup_purger"></a> [destination\_lookup\_purger](#module\_destination\_lookup\_purger) | ../../modules/helm_deployment | n/a |
 | <a name="module_destination_lookup_reader"></a> [destination\_lookup\_reader](#module\_destination\_lookup\_reader) | ../../modules/helm_deployment | n/a |

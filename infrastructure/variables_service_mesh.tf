@@ -70,6 +70,102 @@ variable "service_mesh_prometheus_version" {
   default     = ""
 }
 
+variable "service_mesh_loki_enabled" {
+  type        = bool
+  default     = false
+  description = "Activates/Deactivates the deployment of Loki. Loki is only deployed if Monitoring (Grafana) is also enabled."
+}
+
+variable "service_mesh_loki_version" {
+  type        = string
+  description = "The version of the Loki Helm Chart to be installed."
+  default     = ""
+}
+
+variable "service_mesh_loki_storage_type" {
+  type        = string
+  default     = "filesystem"
+  description = "Storage backend for Loki. Options: \"filesystem\" (local disk, default) or \"s3\" (external S3-compatible object storage)."
+}
+
+variable "service_mesh_loki_deployment_mode" {
+  type        = string
+  default     = "Monolithic"
+  description = "Loki deployment topology. Options: \"Monolithic\" (single-binary, default) or \"SimpleScalable\" (read/write/backend behind a gateway, requires \"s3\" storage)."
+}
+
+variable "service_mesh_loki_s3_endpoint" {
+  type        = string
+  default     = ""
+  description = "S3 endpoint host used when service_mesh_loki_storage_type is \"s3\"."
+}
+
+variable "service_mesh_loki_s3_region" {
+  type        = string
+  default     = ""
+  description = "S3 region used when service_mesh_loki_storage_type is \"s3\" (may be empty for MinIO / non-AWS)."
+}
+
+variable "service_mesh_loki_s3_bucket_chunks" {
+  type        = string
+  default     = ""
+  description = "S3 bucket for Loki chunks."
+}
+
+variable "service_mesh_loki_s3_bucket_ruler" {
+  type        = string
+  default     = ""
+  description = "S3 bucket for Loki ruler rules."
+}
+
+variable "service_mesh_loki_s3_bucket_admin" {
+  type        = string
+  default     = ""
+  description = "S3 bucket for Loki admin/compactor objects."
+}
+
+variable "service_mesh_loki_s3_force_path_style" {
+  type        = bool
+  default     = true
+  description = "Use path-style S3 URLs (true for MinIO / non-AWS, false for real AWS S3)."
+}
+
+variable "service_mesh_loki_s3_insecure" {
+  type        = bool
+  default     = false
+  description = "Talk to the S3 endpoint over plain HTTP instead of HTTPS."
+}
+
+variable "service_mesh_loki_replicas" {
+  type        = number
+  default     = 1
+  description = "Number of Loki instances. Must be 1 for filesystem storage; values > 1 require S3 storage. In SimpleScalable mode this is the default for the read/write/backend targets unless overridden."
+}
+
+variable "service_mesh_loki_read_replicas" {
+  type        = number
+  default     = null
+  description = "Replica count for the SimpleScalable read target. Defaults to service_mesh_loki_replicas when not set."
+}
+
+variable "service_mesh_loki_write_replicas" {
+  type        = number
+  default     = null
+  description = "Replica count for the SimpleScalable write target. Defaults to service_mesh_loki_replicas when not set."
+}
+
+variable "service_mesh_loki_backend_replicas" {
+  type        = number
+  default     = null
+  description = "Replica count for the SimpleScalable backend target. Defaults to service_mesh_loki_replicas when not set."
+}
+
+variable "service_mesh_loki_retention_period" {
+  type        = string
+  default     = "168h"
+  description = "How long ingested logs are kept before deletion (Go duration, e.g. 168h)."
+}
+
 variable "service_mesh_istiod_replica_count" {
   description = "The number of replicas that have to be configured for the Istiod services"
   type        = number

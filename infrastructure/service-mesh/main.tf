@@ -63,6 +63,38 @@ module "grafana" {
   count = var.grafana_enabled ? 1 : 0
   # Used for downloading the Dashboards
   istio_version = var.istio_version
-  # Add dependency
-  depends_on = [module.prometheus]
+  # Enable the Loki datasource only if Loki is deployed
+  loki_enabled = var.loki_enabled && var.grafana_enabled
+  # Point the datasource at the topology-aware Loki service URL
+  loki_service_url = var.loki_enabled && var.grafana_enabled ? module.loki[0].loki_service_url : ""
+  # Loki must exist before Grafana so its datasource resolves on first start
+  depends_on = [module.prometheus, module.loki]
+}
+
+module "loki" {
+  source           = "./loki"
+  loki_version     = var.loki_version
+  target_namespace = var.namespace
+  # Deployment topology (Monolithic or SimpleScalable)
+  loki_deployment_mode = var.loki_deployment_mode
+  # Storage configuration (local filesystem or external S3)
+  loki_storage_type         = var.loki_storage_type
+  loki_s3_endpoint          = var.loki_s3_endpoint
+  loki_s3_region            = var.loki_s3_region
+  loki_s3_bucket_chunks     = var.loki_s3_bucket_chunks
+  loki_s3_bucket_ruler      = var.loki_s3_bucket_ruler
+  loki_s3_bucket_admin      = var.loki_s3_bucket_admin
+  loki_s3_force_path_style  = var.loki_s3_force_path_style
+  loki_s3_insecure          = var.loki_s3_insecure
+  loki_s3_access_key_id     = var.loki_s3_access_key_id
+  loki_s3_secret_access_key = var.loki_s3_secret_access_key
+  loki_replicas             = var.loki_replicas
+  loki_read_replicas        = var.loki_read_replicas
+  loki_write_replicas       = var.loki_write_replicas
+  loki_backend_replicas     = var.loki_backend_replicas
+  loki_retention_period     = var.loki_retention_period
+  # Only deploy Loki if explicitly enabled AND Grafana is installed
+  count = var.loki_enabled && var.grafana_enabled ? 1 : 0
+  # Deploy Loki before Grafana; only the mesh is required beforehand
+  depends_on = [module.istio]
 }

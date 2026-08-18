@@ -1,0 +1,72 @@
+# Values for the fhir-storage-writer Helm Template
+fullname: "${app_name}"
+fullnameOverride: "${app_name}"
+nameOverride: "${app_name}"
+
+# Enables debug mode
+debug:
+  enable: ${debug_enable}
+
+istio:
+  enable: ${istio_enable}
+
+required:
+  image: 
+    repository: ${repository}
+    %{ if strcontains(repository, "gematik1") }
+    name: demis-audit-log-service
+    %{ endif }
+
+# Image Pull Secrets
+imagePullSecrets: 
+  %{~ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+  %{~ endfor ~}
+
+podAnnotations:
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+
+customEnvVars:
+  # Prevents empty values that can delete the default environment variables
+  %{~ for flag_name, flag_value in feature_flags ~}
+  ${flag_name} : ${flag_value}
+  %{~ endfor ~}
+  %{~ for config_name, config_value in config_options ~}
+  ${config_name} : "${config_value}"
+  %{~ endfor ~}
+
+istio:
+  extProc:
+    enabled: true
+    # 'app' label of the workload whose inbound traffic is observed
+    targetWorkload: fhir-storage-reader
+    methods:
+      - GET
+    processingMode:
+      # Also carries the requestAttributes below, so SKIP would drop the attested caller
+      # identity along with the request headers
+      requestHeaderMode: SEND
+      # STREAMED means the body arrives in chunks that the processor reassembles itself
+      requestBodyMode: NONE
+      # Carries the ':status' the processor filters on. SKIP would leave it unable to tell
+      # a successfully stored notification from a rejected one.
+      responseHeaderMode: SEND
+      # Not needed for the audit trail of the fhir-storage-reader: the response carries no
+      # information the record needs, and not requesting it keeps health data out of the
+      # stream. Set to STREAMED where the response body is what has to be audited.
+      responseBodyMode: STREAMED
+      # Data minimisation: trailers are not part of any audit record
+      requestTrailerMode: SKIP
+      responseTrailerMode: SKIP
+
+%{~ if replica_count != null ~}
+# Number of Pod Replicas desired
+replicaCount: ${replica_count}
+%{endif}
+
+%{~ if resource_block != null ~}
+# Override Resource Definitions for Pod
+${resource_block}
+%{endif}

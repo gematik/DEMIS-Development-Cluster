@@ -42,6 +42,25 @@ module "service_mesh" {
   grafana_digest     = var.service_mesh_grafana_digest
   prometheus_enabled = var.service_mesh_monitoring_enabled
   prometheus_version = var.service_mesh_prometheus_version
+  # Configure Loki (only deployed together with Grafana)
+  loki_enabled              = var.service_mesh_loki_enabled
+  loki_version              = var.service_mesh_loki_version
+  loki_deployment_mode      = var.service_mesh_loki_deployment_mode
+  loki_storage_type         = var.service_mesh_loki_storage_type
+  loki_s3_endpoint          = var.service_mesh_loki_s3_endpoint
+  loki_s3_region            = var.service_mesh_loki_s3_region
+  loki_s3_bucket_chunks     = var.service_mesh_loki_s3_bucket_chunks
+  loki_s3_bucket_ruler      = var.service_mesh_loki_s3_bucket_ruler
+  loki_s3_bucket_admin      = var.service_mesh_loki_s3_bucket_admin
+  loki_s3_force_path_style  = var.service_mesh_loki_s3_force_path_style
+  loki_s3_insecure          = var.service_mesh_loki_s3_insecure
+  loki_s3_access_key_id     = var.loki_s3_access_key_id
+  loki_s3_secret_access_key = var.loki_s3_secret_access_key
+  loki_replicas             = var.service_mesh_loki_replicas
+  loki_read_replicas        = var.service_mesh_loki_read_replicas
+  loki_write_replicas       = var.service_mesh_loki_write_replicas
+  loki_backend_replicas     = var.service_mesh_loki_backend_replicas
+  loki_retention_period     = var.service_mesh_loki_retention_period
   # Set Trace Sampling
   jaeger_version         = var.service_mesh_jaeger_version
   jaeger_digest          = var.service_mesh_jaeger_digest
