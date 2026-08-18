@@ -1,15 +1,10 @@
 # Application Information
-appName: "postgres"
+appName: "${app_name}"
 appNamespace: "${namespace}" # defaults to Release.Namespace
 # Settings for the Kubernetes Service Object for the Application
 appServiceType: ClusterIP
-appServicePortExternal: 5432
-appServicePortTarget: 5432
+appServicePortExternal: 50051
+appServicePortTarget: grpc-port
 appServicePortProtocol: TCP
-appServicePortName: tcp
-appServiceAppProtocol: tcp
-
-# Istio Information
-virtualServiceTcpRules: 
-  - match: 
-    - port: 5432
+appServicePortName: grpc-port
+appServiceAppProtocol: grpc

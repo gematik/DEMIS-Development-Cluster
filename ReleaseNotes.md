@@ -2,6 +2,21 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.12.0
+- added new Loki module (infrastructure/service-mesh/loki) as central log receiver, configurable per stage and only deployed together with Grafana
+  - deployment topology selectable via service_mesh_loki_deployment_mode (Monolithic or SimpleScalable)
+  - storage configurable as local filesystem (default) or external S3
+  - services push logs directly via Push-API or native OTLP/HTTP endpoint (no collector)
+- refactored http_timeouts_retries module: standard timeout/retry defaults (common and no-retries) are now defined inside the module
+  - The full service list is passed via the new `service_names` input (keys of deployment_information)
+  - any service without an explicit `no_retries_services` or `custom_timeout_retry` entry automatically receives the common default, so services using standard settings no longer need explicit per-service definitions
+  - added validation to http_timeouts_retries module ensuring the configured timeout is >= perTryTimeout * attempts
+  - the validation is computed only from the known configuration inputs (independent of service_names) so an invalid timeout fails already at plan time instead of being deferred to apply
+- added audit log service resource for fhir storage writer service (als-fssw)
+- added appProtocol property to created kubernetes network services
+- added audit log service resource for fhir storage reader service (als-fssr)
+- removed version info in "igsServiceUrl" for S3 endpoint in igs
+
 ## Release 5.11.0
 - removed feature flag FEATURE_FLAG_SEPARATION_API_VERSION_AND_PROFILE_VERSION, external routing configuration is now applied by default
 - removed FEATURE_FLAG_FHIR_CORE_SPLIT and vs-core + futs-core services

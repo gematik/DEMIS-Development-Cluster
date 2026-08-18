@@ -1,0 +1,163 @@
+# Loki deployed as central log receiver. The deployment topology is selectable via
+# loki_deployment_mode ("Monolithic" single-binary, or "SimpleScalable" read/write/backend
+# behind a gateway). The DEMIS services actively push their logs to Loki
+# (Monolithic: http://loki:3100, SimpleScalable: through the loki-gateway service);
+# no collector (Promtail/Alloy) is deployed.
+#
+# Loki 3.x additionally exposes a native OTLP logs endpoint on the same HTTP port:
+#   http://loki:3100/otlp/v1/logs  (OTLP over HTTP only).
+# Applications can therefore push OTLP logs directly, without a collector. Loki has
+# NO OTLP/gRPC log receiver - the gRPC port 9095 is for internal component traffic only,
+# so an OTLP/gRPC source still needs an OpenTelemetry Collector translating to OTLP/HTTP.
+#
+# This file is rendered by the loki module (templatefile) so the storage backend
+# can be switched between local "filesystem" and an external "s3" object store
+# via the loki_storage / loki_s3_* variables.
+
+# Deployment mode of the chart. Configurable per stage via loki_deployment_mode. Options:
+#   - Monolithic:      all Loki components in a single process (StatefulSet); ideal for
+#                      small installs, works without object storage.
+#   - SimpleScalable:  3 targets (read/write/backend) behind a gateway; medium installs,
+#                      REQUIRES S3 object storage.
+#   (The chart also supports "Distributed" - every component as its own microservice -
+#    which is intentionally not wired here.)
+deploymentMode: ${deployment_mode}
+
+loki:
+  # Multi-tenancy switch. Options:
+  #   - false: single tenant; requests need no "X-Scope-OrgID" header (used here, cluster-internal).
+  #   - true:  multi-tenant; every push/query must carry a tenant "X-Scope-OrgID" header.
+  auth_enabled: false
+  # Force the generated resource names (Service, StatefulSet, ...) to "loki" so the
+  # push/query endpoint is stably reachable at http://loki:3100.
+  fullnameOverride: loki
+  commonConfig:
+    # Number of ingesters that must acknowledge a write. Derived from the replica count
+    # (max 3). 1 for a single instance; higher only with multiple replicas + S3 storage.
+    replication_factor: ${replication_factor}
+  storage:
+    # Backend for chunks and indexes. Options:
+    #   - filesystem: local disk (PVC/emptyDir); no external dependency.
+    #   - s3:         external S3-compatible object storage (required for HA / multiple replicas).
+    #   (The chart also supports gcs / azure / swift / ... which are not wired here.)
+    type: ${storage_type}
+%{ if storage_type == "s3" ~}
+    # Buckets Loki writes to (chunks, ruler rules, admin/compactor objects).
+    bucketNames:
+      chunks: ${s3_bucket_chunks}
+      ruler: ${s3_bucket_ruler}
+      admin: ${s3_bucket_admin}
+    s3:
+      # S3 endpoint host. The access key id / secret access key are injected separately
+      # via Helm set_sensitive so they are never written into this values file.
+      endpoint: ${s3_endpoint}
+      region: "${s3_region}"
+      # s3ForcePathStyle: true for MinIO / non-AWS (path-style), false for real AWS S3.
+      s3ForcePathStyle: ${s3_force_path_style}
+      # insecure: true = plain HTTP, false = HTTPS.
+      insecure: ${s3_insecure}
+%{ endif ~}
+  schemaConfig:
+    # Schema/index configuration. At least one schema entry is required by Loki.
+    configs:
+        # Date from which this schema is active (must be in the past, no overlap).
+      - from: "2024-04-01"
+        # Index store engine. Options: tsdb (recommended, used here) or boltdb-shipper (legacy).
+        store: tsdb
+        # Where index files live. Kept in sync with loki.storage.type (filesystem | s3 | ...).
+        object_store: ${storage_type}
+        # Loki schema version. Options: v11, v12, v13 (latest/recommended).
+        schema: v13
+        index:
+          # Filename prefix for the generated index tables.
+          prefix: index_
+          # Rotation period per index table. For the tsdb store this must be 24h.
+          period: 24h
+  limits_config:
+    # Retention time before the compactor deletes ingested logs (Go duration).
+    retention_period: ${retention_period}
+  # Pattern ingester (automatic log-pattern detection). Options:
+  #   - false: disabled; smaller footprint, enough for plain ingestion/troubleshooting (used here).
+  #   - true:  enabled; powers the "patterns" feature in Grafana Explore.
+  pattern_ingester:
+    enabled: false
+
+%{ if deployment_mode == "Monolithic" ~}
+# Monolithic ("single binary") target - the only active target in this mode.
+singleBinary:
+  # Number of Loki instances (integer). 1 for the local/non-HA setup; > 1 requires S3 storage.
+  replicas: ${replicas}
+  persistence:
+    # PersistentVolumeClaim for the Loki data. Options:
+    #   - false: ephemeral pod storage; logs are lost on pod restart (fine for filesystem/local
+    #            or when using external S3, where chunks live in the object store).
+    #   - true:  request a PVC (set persistence.size) so local data survives pod restarts.
+    enabled: false
+  podAnnotations:
+    # Istio sidecar injection for the Loki pod. Options:
+    #   - "false": no Envoy sidecar; plain cluster-internal HTTP, not part of mTLS routing (used here).
+    #   - "true":  inject the sidecar and make Loki part of the mesh (needs extra mTLS/routing config).
+    sidecar.istio.io/inject: "false"
+
+# The scalable targets MUST be 0 in monolithic mode so no extra workloads are created.
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
+# NGINX reverse-proxy that fans requests out to the read/write targets. Not needed in
+# monolithic mode - clients talk to the single "loki" Service directly.
+gateway:
+  enabled: false
+%{ else ~}
+# SimpleScalable mode: the monolithic target is disabled; the read/write/backend targets below are active.
+singleBinary:
+  replicas: 0
+
+# Read target (queriers / query-frontend) of the SimpleScalable mode.
+read:
+  replicas: ${read_replicas}
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+# Write target (distributors / ingesters) of the SimpleScalable mode.
+write:
+  replicas: ${write_replicas}
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+# Backend target (compactor / ruler / index-gateway) of the SimpleScalable mode.
+backend:
+  replicas: ${backend_replicas}
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+
+# NGINX reverse-proxy that fans requests out to the read/write targets. Required for the
+# SimpleScalable topology; clients then reach Loki through the gateway Service.
+gateway:
+  enabled: true
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+%{ endif ~}
+
+# Memcached-based caches. Options (each true/false):
+#   - false: no cache pods; minimal footprint (used here).
+#   - true:  deploy memcached to speed up queries; recommended at scale.
+chunksCache:
+  enabled: false
+resultsCache:
+  enabled: false
+
+# Self-monitoring "canary" that continuously writes/reads test logs to detect data loss.
+# Options: false = disabled (used here); true = deploy the canary DaemonSet.
+lokiCanary:
+  enabled: false
+# Helm test hooks (connectivity smoke tests). Options: false = no test pods (used here); true = create them.
+test:
+  enabled: false
+
+# Bundled MinIO object-storage dependency. Options:
+#   - false: no MinIO (used here); we either use local filesystem or an EXTERNAL S3.
+#   - true:  deploy an in-cluster S3-compatible MinIO (self-contained object storage).
+minio:
+  enabled: false

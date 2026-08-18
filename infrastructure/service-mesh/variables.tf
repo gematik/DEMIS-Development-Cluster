@@ -114,6 +114,116 @@ variable "grafana_digest" {
   default     = "sha256:5781759b3d27734d4d548fcbaf60b1180dbf4290e708f01f292faa6ae764c5e6"
 }
 
+variable "loki_enabled" {
+  description = "Defines if Loki has to be deployed. Loki is only deployed if Grafana is also enabled."
+  type        = bool
+  default     = false
+}
+
+variable "loki_version" {
+  description = "The version of the Loki Service to be installed"
+  type        = string
+  default     = "18.5.1"
+}
+
+variable "loki_storage_type" {
+  description = "Storage backend for Loki. Options: filesystem (default) or s3 (external object storage)."
+  type        = string
+  default     = "filesystem"
+}
+
+variable "loki_deployment_mode" {
+  description = "Loki deployment topology. Options: Monolithic (default) or SimpleScalable (requires s3 storage)."
+  type        = string
+  default     = "Monolithic"
+}
+
+variable "loki_s3_endpoint" {
+  description = "S3 endpoint host used when loki_storage_type is s3."
+  type        = string
+  default     = ""
+}
+
+variable "loki_s3_region" {
+  description = "S3 region used when loki_storage_type is s3 (may be empty for MinIO / non-AWS)."
+  type        = string
+  default     = ""
+}
+
+variable "loki_s3_bucket_chunks" {
+  description = "S3 bucket for Loki chunks."
+  type        = string
+  default     = ""
+}
+
+variable "loki_s3_bucket_ruler" {
+  description = "S3 bucket for Loki ruler rules."
+  type        = string
+  default     = ""
+}
+
+variable "loki_s3_bucket_admin" {
+  description = "S3 bucket for Loki admin/compactor objects."
+  type        = string
+  default     = ""
+}
+
+variable "loki_s3_force_path_style" {
+  description = "Use path-style S3 URLs (true for MinIO / non-AWS, false for real AWS S3)."
+  type        = bool
+  default     = true
+}
+
+variable "loki_s3_insecure" {
+  description = "Talk to the S3 endpoint over plain HTTP instead of HTTPS."
+  type        = bool
+  default     = false
+}
+
+variable "loki_s3_access_key_id" {
+  description = "The S3 access key id used when loki_storage_type is s3."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "loki_s3_secret_access_key" {
+  description = "The S3 secret access key used when loki_storage_type is s3."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "loki_replicas" {
+  description = "Number of Loki instances. Must be 1 for filesystem storage; values > 1 require S3 storage. In SimpleScalable mode this is the default for the read/write/backend targets unless overridden."
+  type        = number
+  default     = 1
+}
+
+variable "loki_read_replicas" {
+  description = "Replica count for the SimpleScalable read target. Defaults to loki_replicas when not set."
+  type        = number
+  default     = null
+}
+
+variable "loki_write_replicas" {
+  description = "Replica count for the SimpleScalable write target. Defaults to loki_replicas when not set."
+  type        = number
+  default     = null
+}
+
+variable "loki_backend_replicas" {
+  description = "Replica count for the SimpleScalable backend target. Defaults to loki_replicas when not set."
+  type        = number
+  default     = null
+}
+
+variable "loki_retention_period" {
+  description = "How long ingested logs are kept before deletion (Go duration, e.g. 168h)."
+  type        = string
+  default     = "168h"
+}
+
 variable "trace_sampling" {
   description = "The sampling rate option can be used to control what percentage of requests get reported to your tracing system. (https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling)"
   type        = string

@@ -7,6 +7,7 @@ appServicePortExternal: 5432
 appServicePortTarget: 5432
 appServicePortProtocol: TCP
 appServicePortName: tcp
+appServiceAppProtocol: tcp
 
 # Istio Information
 virtualServiceTcpRules: 

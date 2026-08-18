@@ -17,6 +17,7 @@ Module to deploy a complete Service Mesh based on Istio with Sidecar and observa
 | <a name="module_istio"></a> [istio](#module\_istio) | ./istio | n/a |
 | <a name="module_jaeger"></a> [jaeger](#module\_jaeger) | ./jaeger | n/a |
 | <a name="module_kiali"></a> [kiali](#module\_kiali) | ./kiali | n/a |
+| <a name="module_loki"></a> [loki](#module\_loki) | ./loki | n/a |
 | <a name="module_prometheus"></a> [prometheus](#module\_prometheus) | ./prometheus | n/a |
 
 ## Resources
@@ -47,6 +48,24 @@ No resources.
 | <a name="input_loadbalancer_sourceranges"></a> [loadbalancer\_sourceranges](#input\_loadbalancer\_sourceranges) | The load balancer source ranges to be used for the ingress gateway | `list(string)` | `[]` | no |
 | <a name="input_local_deployment"></a> [local\_deployment](#input\_local\_deployment) | Defines if the components (Grafana, Prometheus) have to be installed locally. | `bool` | `false` | no |
 | <a name="input_local_node_ports_istio"></a> [local\_node\_ports\_istio](#input\_local\_node\_ports\_istio) | Defines the node ports to use with the local cluster (kind) | <pre>list(object({<br/>    port       = number<br/>    targetPort = number<br/>    name       = string<br/>    protocol   = string<br/>    nodePort   = string<br/>  }))</pre> | <pre>[<br/>  {<br/>    "name": "status-port",<br/>    "nodePort": 30002,<br/>    "port": 15021,<br/>    "protocol": "TCP",<br/>    "targetPort": 15021<br/>  },<br/>  {<br/>    "name": "http2",<br/>    "nodePort": 30000,<br/>    "port": 80,<br/>    "protocol": "TCP",<br/>    "targetPort": 80<br/>  },<br/>  {<br/>    "name": "https",<br/>    "nodePort": 30001,<br/>    "port": 443,<br/>    "protocol": "TCP",<br/>    "targetPort": 443<br/>  }<br/>]</pre> | no |
+| <a name="input_loki_backend_replicas"></a> [loki\_backend\_replicas](#input\_loki\_backend\_replicas) | Replica count for the SimpleScalable backend target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
+| <a name="input_loki_deployment_mode"></a> [loki\_deployment\_mode](#input\_loki\_deployment\_mode) | Loki deployment topology. Options: Monolithic (default) or SimpleScalable (requires s3 storage). | `string` | `"Monolithic"` | no |
+| <a name="input_loki_enabled"></a> [loki\_enabled](#input\_loki\_enabled) | Defines if Loki has to be deployed. Loki is only deployed if Grafana is also enabled. | `bool` | `false` | no |
+| <a name="input_loki_read_replicas"></a> [loki\_read\_replicas](#input\_loki\_read\_replicas) | Replica count for the SimpleScalable read target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
+| <a name="input_loki_replicas"></a> [loki\_replicas](#input\_loki\_replicas) | Number of Loki instances. Must be 1 for filesystem storage; values > 1 require S3 storage. In SimpleScalable mode this is the default for the read/write/backend targets unless overridden. | `number` | `1` | no |
+| <a name="input_loki_retention_period"></a> [loki\_retention\_period](#input\_loki\_retention\_period) | How long ingested logs are kept before deletion (Go duration, e.g. 168h). | `string` | `"168h"` | no |
+| <a name="input_loki_s3_access_key_id"></a> [loki\_s3\_access\_key\_id](#input\_loki\_s3\_access\_key\_id) | The S3 access key id used when loki\_storage\_type is s3. | `string` | `""` | no |
+| <a name="input_loki_s3_bucket_admin"></a> [loki\_s3\_bucket\_admin](#input\_loki\_s3\_bucket\_admin) | S3 bucket for Loki admin/compactor objects. | `string` | `""` | no |
+| <a name="input_loki_s3_bucket_chunks"></a> [loki\_s3\_bucket\_chunks](#input\_loki\_s3\_bucket\_chunks) | S3 bucket for Loki chunks. | `string` | `""` | no |
+| <a name="input_loki_s3_bucket_ruler"></a> [loki\_s3\_bucket\_ruler](#input\_loki\_s3\_bucket\_ruler) | S3 bucket for Loki ruler rules. | `string` | `""` | no |
+| <a name="input_loki_s3_endpoint"></a> [loki\_s3\_endpoint](#input\_loki\_s3\_endpoint) | S3 endpoint host used when loki\_storage\_type is s3. | `string` | `""` | no |
+| <a name="input_loki_s3_force_path_style"></a> [loki\_s3\_force\_path\_style](#input\_loki\_s3\_force\_path\_style) | Use path-style S3 URLs (true for MinIO / non-AWS, false for real AWS S3). | `bool` | `true` | no |
+| <a name="input_loki_s3_insecure"></a> [loki\_s3\_insecure](#input\_loki\_s3\_insecure) | Talk to the S3 endpoint over plain HTTP instead of HTTPS. | `bool` | `false` | no |
+| <a name="input_loki_s3_region"></a> [loki\_s3\_region](#input\_loki\_s3\_region) | S3 region used when loki\_storage\_type is s3 (may be empty for MinIO / non-AWS). | `string` | `""` | no |
+| <a name="input_loki_s3_secret_access_key"></a> [loki\_s3\_secret\_access\_key](#input\_loki\_s3\_secret\_access\_key) | The S3 secret access key used when loki\_storage\_type is s3. | `string` | `""` | no |
+| <a name="input_loki_storage_type"></a> [loki\_storage\_type](#input\_loki\_storage\_type) | Storage backend for Loki. Options: filesystem (default) or s3 (external object storage). | `string` | `"filesystem"` | no |
+| <a name="input_loki_version"></a> [loki\_version](#input\_loki\_version) | The version of the Loki Service to be installed | `string` | `"18.5.1"` | no |
+| <a name="input_loki_write_replicas"></a> [loki\_write\_replicas](#input\_loki\_write\_replicas) | Replica count for the SimpleScalable write target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install the services | `string` | `"istio-system"` | no |
 | <a name="input_prometheus_enabled"></a> [prometheus\_enabled](#input\_prometheus\_enabled) | Defines if Prometheus has to be deployed | `bool` | `false` | no |
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
