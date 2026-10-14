@@ -27,6 +27,10 @@ customEnvVars:
   IGS_PROFILE_VERSION: "v${igs_profile_major_version}"
   IGS_PACKAGE_NAME: "${igs_package_name}"
   FUTS_IGS_URL: "http://futs.${namespace}.svc.cluster.local"
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: gateway-igs.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

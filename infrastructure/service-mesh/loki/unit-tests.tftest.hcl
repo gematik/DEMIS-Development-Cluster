@@ -155,7 +155,7 @@ run "loki_invalid_helm_repository_test" {
 
   variables {
     loki_version         = "18.5.1"
-    loki_helm_repository = "not-a-url"
+    loki_helm_repository = "not a url or repository name"
   }
 
   expect_failures = [var.loki_helm_repository]

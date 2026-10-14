@@ -40,6 +40,10 @@ customEnvVars:
 %{ if length(profile_versions) == 1 ~}
   JAVA_TOOL_OPTIONS: "-XX:ActiveProcessorCount=2 -XX:MaxRAMPercentage=70.0 -XX:MaxMetaspaceSize=160m -XX:+UseG1GC"
 %{ endif ~}
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: validation-service-igs.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
 %{ for flag_name, flag_value in feature_flags ~}
   ${flag_name}: ${flag_value}
 %{ endfor ~}

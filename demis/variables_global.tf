@@ -33,6 +33,22 @@ variable "helm_repository" {
   }
 }
 
+variable "helm_repository_source" {
+  type        = string
+  description = "Where Helm Charts are resolved from: 'url' uses helm_repository with the credentials from credentials.tfvars, 'local' uses the repository name helm_repository_name from the Helm repositories.yaml (credentials and index cache are taken from there)"
+  default     = "url"
+  validation {
+    condition     = contains(["url", "local"], var.helm_repository_source)
+    error_message = "helm_repository_source must be either 'url' or 'local'"
+  }
+}
+
+variable "helm_repository_name" {
+  type        = string
+  description = "The repository name in the Helm repositories.yaml, used if helm_repository_source is 'local'"
+  default     = "demis"
+}
+
 variable "docker_registry" {
   type        = string
   description = "The Docker Registry to use for pulling Images"
@@ -89,4 +105,10 @@ variable "deployment_timeout" {
   type        = number
   description = "Timeout for the deployment in seconds"
   default     = 600
+}
+
+variable "opentelemetry_endpoint" {
+  type        = string
+  description = "The endpoint for OpenTelemetry tracing."
+  default     = null
 }

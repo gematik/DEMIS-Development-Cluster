@@ -2,6 +2,39 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.13.0
+- add istio cluster name definition in istio config
+- upgraded providers and changed istio helm repo to https://blob.istio.io/istio-release/charts
+  - hashicorp/helm to 3.3.0
+  - hashicorp/kubernetes to 3.3.0
+  - hashicorp/random to 3.9.1
+  - hashicorp/external to 2.4.2
+  - hashicorp/http to 3.6.2
+- referenced kubernetes and helm provider in infrastructure root module to host and certificates on local kind cluster for prevention of kubeconfig not found error
+- kc-management: 
+  - created kc-management project
+  - added keycloak configuration for realms: master, HOSPITAL, PORTAL, LAB, INSTITUTIONS-TI & SURVEILLANCE-PROGRAMS
+  - project features flags to control keycloak structure 
+  - added possibility to add service-account-roles to clients
+  - added Port-Forward behaviour for kc-management
+  - made import for clients more robust (not present clients got created during import instead of error)
+  - upgraded keycloak-terraform-provider to 5.10.0
+- fixed monitoring (local): 
+   - adjusted Prometheus scraping
+   - enabled kube-state-metrics
+   - enabled node-exporter
+   - enabled persistent storage
+   - replaced outdated Grafana dashboards
+- added `helm_repository_source` to resolve Helm Charts from the Helm repositories.yaml (`local`) or via URL (`url`, default)
+- updated keycloak secret mapping
+- added keycloak_terraform_client_secret to idm
+- kc-management: added possibility to add service-account-roles to clients
+- changed validate pipeline to check against all DEV stages
+- kc-management: use dedicated clients instead of admin user 
+- added p12 truststore to keycloak
+- added tracing configuration for spring boot applications by feature flag FEATURE_FLAG_SERVICE_TRACING_ENABLED on root modules demis and dmz
+- fixed tagging in validate pipeline
+
 ## Release 5.12.0
 - added new Loki module (infrastructure/service-mesh/loki) as central log receiver, configurable per stage and only deployed together with Grafana
   - deployment topology selectable via service_mesh_loki_deployment_mode (Monolithic or SimpleScalable)

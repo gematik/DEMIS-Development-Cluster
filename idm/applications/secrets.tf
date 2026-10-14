@@ -139,8 +139,12 @@ resource "kubernetes_secret_v1" "keycloak_truststore_file" {
 
   immutable = true
 
+  # For compatibility, include both JKS and PKCS12 formats if available. In future, remove jks support and only keep PKCS12
   binary_data = {
-    "truststore.jks" = var.keycloak_truststore_jks
+    for name, content in {
+      "truststore.jks" = var.keycloak_truststore_jks
+      "truststore.p12" = var.keycloak_truststore_p12
+    } : name => content if content != ""
   }
 }
 
@@ -227,5 +231,25 @@ resource "kubernetes_secret_v1" "redis_cus_acl" {
       user ${var.redis_cus_writer_user} on ~* &* +@write +@read #${sha256(var.redis_cus_writer_password)}
       user ${var.redis_cus_reader_user} on ~* &* +@read +info #${sha256(var.redis_cus_reader_password)}
     EOF
+  }
+}
+
+resource "kubernetes_secret_v1" "keycloak_terraform_client_secret" {
+  # Only create this secret if the keycloak_terraform_client_secret variable in local. Else it is not needed because client is created manually 
+  count = (var.keycloak_terraform_client_secret != null && var.keycloak_terraform_client_secret != "") ? 1 : 0
+  metadata {
+    name      = "keycloak-terraform-client-secret"
+    namespace = var.target_namespace
+    annotations = {
+      checksum = substr(sha256(var.keycloak_terraform_client_secret), 0, 61)
+    }
+  }
+
+  immutable = true
+
+  data = {
+    # Important: these keys are used as keycloak ENV variables names.
+    KC_BOOTSTRAP_ADMIN_CLIENT_ID     = "terraform-client"
+    KC_BOOTSTRAP_ADMIN_CLIENT_SECRET = var.keycloak_terraform_client_secret
   }
 }

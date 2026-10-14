@@ -8,6 +8,7 @@ variable "helm_repository" {
   description = "The Helm Chart Repository for Trivy Operator"
   type        = string
   default     = "oci://ghcr.io/aquasecurity/helm-charts/"
+  nullable    = false
 }
 
 variable "chart_version" {

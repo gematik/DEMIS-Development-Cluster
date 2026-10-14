@@ -24,9 +24,9 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | 3.9.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.3.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.3.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.9.1 |
 
 ## Modules
 
@@ -57,13 +57,15 @@ No resources.
 | <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | The name of the region where the cluster is deployed | `string` | n/a | yes |
 | <a name="input_cluster_role_name"></a> [cluster\_role\_name](#input\_cluster\_role\_name) | Defines the Cluster Role Name to be configured | `string` | `"api-cluster-role"` | no |
 | <a name="input_docker_pull_secrets"></a> [docker\_pull\_secrets](#input\_docker\_pull\_secrets) | This Object contains the definition of Pull Secrets for accessing private repositories and pull Docker Images, using credentials.<br/><br/>  For credentials-based secrets, if the field "password\_type" is "token", <br/>  then the value of the variable "google\_cloud\_access\_token" will be used instead.<br/><br/>  If the field "password\_type" is set to "json\_key", the value of the field "user\_password" will be used as a Base64-encoded JSON Key. | <pre>list(object({<br/>    name          = string<br/>    registry      = string<br/>    user_name     = string<br/>    user_email    = string<br/>    user_password = string<br/>    password_type = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_falco_chart_version"></a> [falco\_chart\_version](#input\_falco\_chart\_version) | The Helm Chart Version for Falco | `string` | `"9.1.0"` | no |
+| <a name="input_falco_chart_version"></a> [falco\_chart\_version](#input\_falco\_chart\_version) | The Helm Chart Version for Falco | `string` | `"9.2.0"` | no |
 | <a name="input_falco_driver_kind"></a> [falco\_driver\_kind](#input\_falco\_driver\_kind) | sets the specfifc driver kind of the probe inside the nodes. Default of Falco is auto. The options are: kmod, ebpf, modern\_ebpf, We can enforce that if needed. | `string` | `"auto"` | no |
 | <a name="input_falco_enabled"></a> [falco\_enabled](#input\_falco\_enabled) | Activates/Deactivates the deployment of Falco | `bool` | `false` | no |
 | <a name="input_falco_falcosidekick_enabled"></a> [falco\_falcosidekick\_enabled](#input\_falco\_falcosidekick\_enabled) | enables falcosidekick | `bool` | `false` | no |
 | <a name="input_falco_falcosidekick_ui_enabled"></a> [falco\_falcosidekick\_ui\_enabled](#input\_falco\_falcosidekick\_ui\_enabled) | enables falcosidekick | `bool` | `false` | no |
 | <a name="input_falco_kubernetes_meta_collector"></a> [falco\_kubernetes\_meta\_collector](#input\_falco\_kubernetes\_meta\_collector) | enables the k8s metacollector plugin | `bool` | `true` | no |
 | <a name="input_google_cloud_access_token"></a> [google\_cloud\_access\_token](#input\_google\_cloud\_access\_token) | The User-Token for accessing the Google Artifact Registry. <br/>  Typically obtained with the command: 'gcloud auth print-access-token' | `string` | `""` | no |
+| <a name="input_helm_repository_names"></a> [helm\_repository\_names](#input\_helm\_repository\_names) | Repository names in the Helm repositories.yaml per chart, used if helm\_repository\_source is 'local' | <pre>object({<br/>    istio           = optional(string, "istio")<br/>    kyverno         = optional(string, "kyverno")<br/>    kiali           = optional(string, "kiali")<br/>    prometheus      = optional(string, "prometheus-community")<br/>    loki            = optional(string, "grafana-community")<br/>    trivy           = optional(string, "aqua")<br/>    falco           = optional(string, "falcosecurity")<br/>    policy_reporter = optional(string, "policy-reporter")<br/>  })</pre> | `{}` | no |
+| <a name="input_helm_repository_source"></a> [helm\_repository\_source](#input\_helm\_repository\_source) | Where Helm Charts are resolved from: 'url' uses the public repository URLs, 'local' uses the repository names from helm\_repository\_names in the Helm repositories.yaml (credentials and index cache are taken from there) | `string` | `"url"` | no |
 | <a name="input_jaeger_max_traces"></a> [jaeger\_max\_traces](#input\_jaeger\_max\_traces) | The maximum number of traces to be kept | `number` | `null` | no |
 | <a name="input_jaeger_storage_backend"></a> [jaeger\_storage\_backend](#input\_jaeger\_storage\_backend) | The storage backend for Jaeger | `string` | `null` | no |
 | <a name="input_jaeger_ttl_spans"></a> [jaeger\_ttl\_spans](#input\_jaeger\_ttl\_spans) | The time to live for spans stored in Jaeger | `string` | `null` | no |
@@ -93,6 +95,7 @@ No resources.
 | <a name="input_service_mesh_grafana_url"></a> [service\_mesh\_grafana\_url](#input\_service\_mesh\_grafana\_url) | The Cluster-internal URL of the Grafana Instance to be used | `string` | `"http://grafana:3000"` | no |
 | <a name="input_service_mesh_grafana_version"></a> [service\_mesh\_grafana\_version](#input\_service\_mesh\_grafana\_version) | The version of Grafana to be installed. | `string` | `""` | no |
 | <a name="input_service_mesh_ingress_annotations"></a> [service\_mesh\_ingress\_annotations](#input\_service\_mesh\_ingress\_annotations) | The annotations to be used for the ingress gateway | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_service_mesh_istio_helm_repository"></a> [service\_mesh\_istio\_helm\_repository](#input\_service\_mesh\_istio\_helm\_repository) | Istio Helm Chart Repository URL | `string` | `"https://blob.istio.io/istio-release/charts"` | no |
 | <a name="input_service_mesh_istio_version"></a> [service\_mesh\_istio\_version](#input\_service\_mesh\_istio\_version) | The version of the Istio Helm Chart to be installed. | `string` | n/a | yes |
 | <a name="input_service_mesh_istiod_replica_count"></a> [service\_mesh\_istiod\_replica\_count](#input\_service\_mesh\_istiod\_replica\_count) | The number of replicas that have to be configured for the Istiod services | `number` | `3` | no |
 | <a name="input_service_mesh_jaeger_digest"></a> [service\_mesh\_jaeger\_digest](#input\_service\_mesh\_jaeger\_digest) | The digest of the Jaeger Service to be used | `string` | n/a | yes |

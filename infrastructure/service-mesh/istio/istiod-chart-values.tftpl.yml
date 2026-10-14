@@ -2,10 +2,18 @@ autoscaleEnabled: ${autoscale_enabled}
 autoscaleMin: ${autoscale_min}
 replicaCount: ${replica_count}
 traceSampling: ${trace_sampling}
+%{ if jwt_enable_remote_jwks != "" ~}
+# LOCAL-ONLY: each Envoy sidecar fetches and refreshes the Keycloak JWKS itself,
+# so realm keys rotated on redeploy are trusted immediately (no stale istiod cache).
+pilot:
+  env:
+    PILOT_JWT_ENABLE_REMOTE_JWKS: ${jwt_enable_remote_jwks}
+%{ endif ~}
 
 global: 
   logAsJson: true
-
+  multiCluster:
+    clusterName: ${cluster_name}
   proxy:
     tracer: "none"
     resources:

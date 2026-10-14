@@ -33,6 +33,9 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_client_certificate"></a> [client\_certificate](#output\_client\_certificate) | The client certificate for authenticating to the cluster |
+| <a name="output_client_key"></a> [client\_key](#output\_client\_key) | The client key for authenticating to the cluster |
+| <a name="output_cluster_ca_certificate"></a> [cluster\_ca\_certificate](#output\_cluster\_ca\_certificate) | The CA certificate of the cluster |
 | <a name="output_kind_endpoint"></a> [kind\_endpoint](#output\_kind\_endpoint) | The Kubernetes API Endpoint |
 | <a name="output_kind_version"></a> [kind\_version](#output\_kind\_version) | The version of KIND Image |
 | <a name="output_kind_worker_nodes"></a> [kind\_worker\_nodes](#output\_kind\_worker\_nodes) | The number of KIND Worker Nodes |

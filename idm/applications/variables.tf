@@ -374,3 +374,8 @@ variable "pvc_trigger" {
   description = "List of PVC names from module.persistent_volume_claims that establishes deploy ordering without known-after-apply propagation."
   default     = []
 }
+
+variable "managed_realms" {
+  type        = list(string)
+  description = "List of Keycloak realms to be managed by Terraform"
+}

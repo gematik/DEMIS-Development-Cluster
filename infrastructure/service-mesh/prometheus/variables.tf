@@ -8,9 +8,10 @@ variable "prometheus_helm_repository" {
   description = "The Helm Repository to download the Prometheus Chart"
   type        = string
   default     = "https://prometheus-community.github.io/helm-charts"
+  nullable    = false
   validation {
-    condition     = can(regex("^(https?|file|oci)://.*$", var.prometheus_helm_repository))
-    error_message = "The Prometheus Helm Repository must be a valid URL"
+    condition     = can(regex("^(https?|file|oci)://.*$", var.prometheus_helm_repository)) || can(regex("^[a-z0-9][a-z0-9._-]*$", var.prometheus_helm_repository))
+    error_message = "The Prometheus Helm Repository must be a valid URL or a repository name"
   }
 }
 

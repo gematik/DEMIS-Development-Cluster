@@ -50,6 +50,7 @@ module "bulk_inbound_service" {
     bulk_inbound_encryption_secret_checksum = try(kubernetes_secret_v1.ars_bis_in_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     bis_rabbitmq_credentials_checksum       = try(kubernetes_secret_v1.bis_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
     istio_proxy_resources                   = var.resource_definitions[local.bulk_inbound_name].istio_proxy_resources,
+    service_tracing_config                  = local.java_service_tracing_config
   }), local.chart_files[local.bulk_inbound_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.bulk_inbound_name].istio_template, {
     namespace                  = var.target_namespace,

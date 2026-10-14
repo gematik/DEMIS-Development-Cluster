@@ -1,0 +1,119 @@
+master:
+  idps:
+    - entra-id: ["Admin Role"]
+  groups: ["RKI.admin"]
+%{ if config.with_testsuite_client ~}
+  clients:
+      - testsuite-client:
+          service_account_roles: [
+            "master-realm/view-realm",
+            "OEGD-realm/manage-users", "OEGD-realm/query-groups", "OEGD-realm/view-realm", "OEGD-realm/manage-events",
+            "LAB-realm/manage-users", "LAB-realm/query-groups", "LAB-realm/view-realm", "LAB-realm/manage-events",
+            "HOSPITAL-realm/manage-users", "HOSPITAL-realm/query-groups", "HOSPITAL-realm/view-realm", "HOSPITAL-realm/manage-events",
+            "PORTAL-realm/manage-users", "PORTAL-realm/query-groups", "PORTAL-realm/view-realm", "PORTAL-realm/manage-clients", "PORTAL-realm/manage-realm", "PORTAL-realm/manage-events",
+            "SURVEILLANCE-PROGRAMS-realm/manage-users", "SURVEILLANCE-PROGRAMS-realm/query-groups", "SURVEILLANCE-PROGRAMS-realm/view-realm",
+            "INSTITUTIONS-TI-realm/manage-users", "INSTITUTIONS-TI-realm/query-groups", "INSTITUTIONS-TI-realm/view-realm"
+          ]
+%{ endif ~}
+
+PORTAL:
+  roles: ["are-notification-sender", "bed-occupancy-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "igs-sequence-data-sender-fasta-only", "pathogen-notification-anonymous-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+  groups: ["GematikIdp", "OZG", "Zertifikat", "PathologischAnatomischeEinrichtung", "Apotheke", "Arztpraxis", "Geburtshilfe", "InstitutionOEGD", "Krankenhaus", "SonstigeMedizinischeEinrichtung", "Tierarzt", "VorsorgeReha", "WeitereGesundheitsberufe", "Zahnarztpraxis", "GesundheitsamtHauptstelle", "GesundheitsamtNebenstelle", "RKI", "ARE", "IGS", "IgsFastAOnly", "EinrichtungenFürAnonymeMeldungen", "Testusers"]
+  clients:
+    - demis-test-password-grant:
+        mappers: ["Account-Source-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "SP-User-ID-Mapper", "ik-mapper", "Account-Type-Protocol-Mapper", "Username-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+    - meldeportal:
+        mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "ik-mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+    - meldeportal-internet:
+        mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "ik-mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+  idps:
+    - bundid-idp: ["Account-Is-Temporary-Mapper", "Account-Source-Mapper", "Level-Of-Assurance-Mapper", "Account-Type-Mapper"]
+%{ if lookup(feature_flags, "FEATURE_FLAG_MUK", false) ~}
+    - muk: ["Account-Is-Temporary-Mapper", "Account-Source-Mapper", "Level-Of-Assurance-Mapper", "Account-Type-Mapper", "Username-Protocol-Mapper"]
+%{ endif ~}
+    - gematik-authenticator: ["Account-Is-Temporary-Mapper", "Account-Source-Mapper", "Level-Of-Assurance-Mapper", "Account-Type-Mapper", "Profession-OID-Mapper", "Organization-Name-Mapper"]
+  event_listener: ["jboss-logging", "registerEventListenerProvider"]
+  disabled_clients: ["account-console"]
+
+OEGD:
+  groups: ["Organisationstypen", "OEGD", "GesundheitsamtHauptstelle", "GesundheitsamtNebenstelle", "RKI", "Testusers"]
+  roles: ["are-notification-fetcher", "ars-data-fetcher", "bed-occupancy-fetcher", "disease-notification-fetcher", "disease-notification-nonnominal-fetcher", "igs-notification-data-fetcher", "igs-sequence-data-fetcher", "pathogen-notification-anonymous-fetcher", "pathogen-notification-fetcher", "pathogen-notification-negative-fetcher", "pathogen-notification-nonnominal-fetcher", "proof-of-disease-notification-excerpt-fetcher", "proof-of-pathogen-notification-excerpt-fetcher", "vaccine-injury-fetcher"]
+  clients:
+    - aeskulab21: {}
+    - cus-cli:
+        service_account_roles: ["realm-management/view-users"]
+    - demis-analyzer:
+        mappers: ["Account-Is-Test-Protocol-Mapper", "testuser-Recipient-attribute-mapper"]
+    - demis-importer:
+        mappers: ["Account-Is-Test-Protocol-Mapper"]
+    - demis-test-password-grant:
+        mappers: ["Account-Is-Test-Protocol-Mapper"]
+    - devagency: {}
+    - duplicate-detection-engine: {}
+    - gumax: {}
+    - isga: {}
+    - mikropro: {}
+    - notification-clearing-api:
+        roles: ["lab-notification-receiver"]
+    - octoware: {}
+    - profile-loader: {}
+    - profile-server: {}
+    - survnet: {}
+  default_groups: ["GesundheitsamtHauptstelle"]
+  event_listener: ["jboss-logging", "registerEventListenerProvider"]
+  auth_flows: ["Direct Grant Mutual TLS"]
+  disabled_clients: ["account-console", "broker"]
+
+HOSPITAL:
+  groups: ["Krankenhaus", "ARE", "ARS", "Testusers", "EinrichtungenFürAnonymeMeldungen"]
+  roles: ["are-notification-sender", "ars-data-sender", "bed-occupancy-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "pathogen-notification-anonymous-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+  event_listener: ["jboss-logging", "registerEventListenerProvider"]
+  default_groups: ["Krankenhaus", "ARS"]
+  clients:
+    - demis-gateway:
+        mappers: []
+    - demis-test:
+        mappers: ["testuser-Recipient-attribute-mapper", "SP-User-ID-Mapper", "preferred_username-mapper", "ik-mapper", "Account-Is-Test-Protocol-Mapper"]
+    - demis-test-password-grant:
+        mappers: ["Account-Is-Test-Protocol-Mapper", "ik-mapper"]
+    - notification-entry-service:
+        mappers: []
+        roles: ["disease-notification-sender", "lab-notification-sender"]
+    - notification-gateway:
+        mappers: []
+        roles: ["disease-notification-sender", "lab-notification-sender"]
+  disabled_clients: ["account-console"]
+  auth_flows: ["Direct Grant Mutual TLS"]
+
+LAB:
+  groups: ["PathologischAnatomischeEinrichtung", "ARS", "IGS", "IgsFastAOnly", "Testusers", "EinrichtungenFürAnonymeMeldungen"]
+  default_groups: ["ErregerdiagnostischeUntersuchungsstelle", "ARS"]
+  roles: ["ars-data-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "igs-sequence-data-sender-fasta-only", "pathogen-notification-anonymous-sender", "pathogen-notification-negative-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+  event_listener: ["jboss-logging", "registerEventListenerProvider"]
+  clients:
+    - demis-adapter:
+        mappers: ["Account-Is-Test-Protocol-Mapper", "testuser-Recipient-attribute-mapper"]
+    - demis-gateway:
+        mappers: []
+    - demis-test-password-grant:
+        mappers: ["Account-Is-Test-Protocol-Mapper"]
+    - notification-api:
+        roles: ["lab-notification-sender"]
+    - notification-entry-service:
+        roles: ["lab-notification-sender", "disease-notification-sender"]
+  auth_flows: ["Direct Grant Mutual TLS"]
+
+INSTITUTIONS-TI:
+  clients:
+    - token-exchange-client:
+        mappers: ["Account-Is-Test-Protocol-Mapper", "IK-Number-Protocol-Mapper", "Profession-OID-Protocol-Mapper", "testuser-Recipient-attribute-mapper", "ik-mapper", "Account-Type-Protocol-Mapper", "Username-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Source-Protocol-Mapper", "Account-Identifier-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper"]
+  default_groups: ["ARS"]
+  groups: ["GematikIdp", "PathologischAnatomischeEinrichtung", "Apotheke", "Arztpraxis", "Geburtshilfe", "InstitutionOEGD", "Krankenhaus", "SonstigeMedizinischeEinrichtung", "Tierarzt", "VorsorgeReha", "WeitereGesundheitsberufe", "Zahnarztpraxis", "GesundheitsamtHauptstelle", "GesundheitsamtNebenstelle", "RKI", "ARS", "IGS", "IgsFastAOnly", "Testusers", "EinrichtungenFürAnonymeMeldungen"]
+  roles: ["ars-data-sender", "bed-occupancy-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "igs-sequence-data-sender-fasta-only", "pathogen-notification-anonymous-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+  event_listener: ["jboss-logging", "registerEventListenerProvider"]
+  idps:
+    - gematik-idp: ["Account-Source-Mapper", "Account-Is-Temporary-Mapper", "Profession-OID-Mapper", "Organization-Name-Mapper", "Level-Of-Assurance-Mapper", "Account-Type-Mapper"]
+
+SURVEILLANCE-PROGRAMS:
+  disabled_clients: ["account", "account-console", "admin-cli", "broker", "realm-management", "security-admin-console"]
+  event_listener: ["jboss-logging", "surveillance-programs-event-listener-provider"]

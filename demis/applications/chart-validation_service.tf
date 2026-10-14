@@ -86,6 +86,7 @@ module "validation_service_igs_apps" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
+    service_tracing_config  = local.java_service_tracing_config
   }
   app_values_override   = local.chart_files[local.vs_igs_name].app_values_override
   istio_template_file   = local.chart_files[local.vs_igs_name].istio_template
@@ -118,6 +119,7 @@ module "validation_service_ars_apps" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
+    service_tracing_config  = local.java_service_tracing_config
   }
   app_values_override   = local.chart_files[local.vs_ars_name].app_values_override
   istio_template_file   = local.chart_files[local.vs_ars_name].istio_template
@@ -150,6 +152,7 @@ module "validation_service_bedoccupancy_apps" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
+    service_tracing_config  = local.java_service_tracing_config
   }
   app_values_override   = local.chart_files[local.vs_bedoccupancy_name].app_values_override
   istio_template_file   = local.chart_files[local.vs_bedoccupancy_name].istio_template
@@ -182,6 +185,7 @@ module "validation_service_disease_apps" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
+    service_tracing_config  = local.java_service_tracing_config
   }
   app_values_override   = local.chart_files[local.vs_disease_name].app_values_override
   istio_template_params = {}
@@ -215,6 +219,7 @@ module "validation_service_pathogen_apps" {
     debug_enable            = var.debug_enabled,
     istio_enable            = var.istio_enabled,
     profile_docker_registry = var.docker_registry,
+    service_tracing_config  = local.java_service_tracing_config
   }
   app_values_override   = local.chart_files[local.vs_pathogen_name].app_values_override
   istio_template_file   = local.chart_files[local.vs_pathogen_name].istio_template

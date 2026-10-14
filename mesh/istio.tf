@@ -13,9 +13,9 @@ resource "helm_release" "authorization_policies_istio" {
   chart               = local.istio_authorization_policies_chart
   version             = local.istio_authorization_policies_chart_version
   namespace           = var.target_namespace
-  repository          = var.helm_repository
-  repository_username = var.helm_repository_username
-  repository_password = var.helm_repository_password
+  repository          = local.chart_repository
+  repository_username = local.chart_repository_username
+  repository_password = local.chart_repository_password
   max_history         = 3
   lint                = true
   atomic              = true
@@ -37,9 +37,9 @@ resource "helm_release" "network_rules_istio" {
   chart               = local.istio_network_policies_chart
   version             = local.istio_network_policies_chart_version
   namespace           = var.target_namespace
-  repository          = var.helm_repository
-  repository_username = var.helm_repository_username
-  repository_password = var.helm_repository_password
+  repository          = local.chart_repository
+  repository_username = local.chart_repository_username
+  repository_password = local.chart_repository_password
   max_history         = 3
   lint                = true
   atomic              = true

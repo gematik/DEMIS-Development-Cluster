@@ -24,9 +24,17 @@ imagePullSecrets:
 config:
   # The (external) Secret Object containing the API Key entry
   secret:
+    # The (external) Secret for Admin Password
+    secretsToEnv:
+      admin: 
+        name: keycloak-admin-password
+      db:
+        name: keycloak-database-secret
+      passwords:
+        name: keycloak-truststore-password
     # Use default Secret from this Chart
     useDefault: false
-    # The (external) Secret for Admin Password
+    # The (external) Secret for Admin Password (To delete ["admin", "db", "passwords"] when keycloak version 26.6.3 is full released in all stages)
     admin:
       # The name of the (external) Secret for Admin Password and the entries to be used and mapped
       name: keycloak-admin-password

@@ -111,7 +111,7 @@ variable "falco_driver_kind" {
 variable "falco_chart_version" {
   description = "The Helm Chart Version for Falco"
   type        = string
-  default     = "9.1.0"
+  default     = "9.2.0"
 }
 
 #########################

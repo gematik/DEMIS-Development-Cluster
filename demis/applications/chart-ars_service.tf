@@ -50,13 +50,14 @@ module "ars_service" {
     ars_bulk_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     ars_rabbitmq_credentials_checksum                = try(kubernetes_secret_v1.ars_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
     istio_proxy_resources                            = var.resource_definitions[local.ars_name].istio_proxy_resources,
+    service_tracing_config                           = local.java_service_tracing_config
   }), local.chart_files[local.ars_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.ars_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    demis_hostnames            = local.demis_hostnames
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null)
+    demis_hostnames            = local.demis_hostnames,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.ars_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.ars_name], [])
   }), local.chart_files[local.ars_name].istio_values_override])
 }

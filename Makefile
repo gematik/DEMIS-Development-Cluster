@@ -26,6 +26,7 @@ APPLICATIONS_ENV_FOLDER := demis
 DMZ_PATH := dmz
 DMZ_ENV_FOLDER := dmz
 IDM_PATH := idm
+KC_MANAGEMENT_PATH := kc-management
 MESH_PATH := mesh
 EKM_TEMPLATE_PATH := ekm-template
 ARE_PATH := are
@@ -186,6 +187,32 @@ cleanup-idm:
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 	$(TF_BIN) destroy -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} $(TERRAFORM_EXTRA_ARGS)
 
+.PHONY: kc-management
+kc-management: export WORKING_PATH=$(ROOT_DIR)/$(KC_MANAGEMENT_PATH)
+kc-management: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(KC_MANAGEMENT_PATH) STAGE=$(STAGE))
+kc-management: init-kc-management validate ## Deploys the Keycloak Config components
+	cd $(WORKING_PATH)
+	$(ROOT_DIR)/.scripts/keycloakTunnel.sh run -- bash -c '\
+	echo "## Checking for drifts" && \
+	$(TF_BIN) plan $(RESET_HELM_VALUES) ${VAR_FILE_ARGS} -lock=false -refresh-only && \
+	echo "## Computing Plan" && \
+	$(TF_BIN) plan $(RESET_HELM_VALUES) ${VAR_FILE_ARGS} -out=tfplan.out $(TARGET_ARG) && \
+	echo "## Applying Plan" && \
+	$(TF_BIN) apply $(TERRAFORM_EXTRA_ARGS) tfplan.out'
+
+.PHONY: cleanup-kc-management
+cleanup-kc-management: export WORKING_PATH=$(ROOT_DIR)/$(KC_MANAGEMENT_PATH)
+cleanup-kc-management: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(KC_MANAGEMENT_PATH) STAGE=$(STAGE))
+cleanup-kc-management: export BACKEND_CONFIG_VARS=$(shell $(MAKE) -s get-backend-config-args-for-folder MODULE=$(KC_MANAGEMENT_PATH) STAGE=$(STAGE))
+cleanup-kc-management:
+	cd $(WORKING_PATH)
+	$(ROOT_DIR)/.scripts/keycloakTunnel.sh run -- bash -c '\
+	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
+	echo "## Destroying Keycloak Config Resources"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+	$(TF_BIN) destroy ${VAR_FILE_ARGS} -exclude="module.realms[\"master\"].keycloak_realm.realm" $(TERRAFORM_EXTRA_ARGS)'
+
+
 .PHONY: mesh
 mesh: export WORKING_PATH=$(ROOT_DIR)/$(MESH_PATH)
 mesh: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(MESH_PATH) STAGE=$(STAGE))
@@ -281,6 +308,13 @@ init-idm: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file
 init-idm: ## Initializes the Terraform IDM components
 	cd $(WORKING_PATH)
 	@echo "## Initialising the IDM project"
+	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
+
+init-kc-management: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(KC_MANAGEMENT_PATH) STAGE=$(STAGE))
+init-kc-management: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(KC_MANAGEMENT_PATH) STAGE=$(STAGE))
+init-kc-management: ## Initializes the Terraform Keycloak Config components
+	cd $(WORKING_PATH)
+	@echo "## Initialising the Keycloak Config project"
 	$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}
 
 init-mesh: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(MESH_PATH) STAGE=$(STAGE))
@@ -382,9 +416,12 @@ local: ## Defines local resources
 	rm -rf $(CURR_FOLDER)/are/backend.tf
 	rm -rf $(CURR_FOLDER)/ekm-template/backend.tf
 	rm -rf $(CURR_FOLDER)/demis/backend.tf
+	rm -rf $(CURR_FOLDER)/kc-management/backend.tf
 	rm -rf $(CURR_FOLDER)/idm/backend.tf
 	rm -rf $(CURR_FOLDER)/mesh/backend.tf
 	rm -rf $(CURR_FOLDER)/infrastructure/backend.tf
+	# The local stage resolves the Helm Charts from the Helm repositories.yaml (helm_repository_source = "local")
+	$(ROOT_DIR)/.scripts/helm-repo-update.sh $(ROOT_DIR)/environments/stage-$(STAGE)
 
 .PHONY: reset-helm-values
 reset-helm-values:
@@ -437,6 +474,7 @@ create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local infrastructure
 	$(MAKE) local mesh
 	$(MAKE) local idm
+	$(MAKE) local kc-management
 	@if [ "$${DEPLOY_DMZ:-}" = "true" ]; then $(MAKE) local dmz; fi
 	$(MAKE) local services
 	@if [ "$${DEPLOY_ARE:-}" = "true" ]; then $(MAKE) local are; fi
@@ -448,7 +486,7 @@ cleanup-local-environment: ## Destroys the local environment
 	@if kubectl get namespace ekm-template >/dev/null 2>&1; then $(MAKE) local cleanup-ekm-template; else echo "## Namespace 'ekm-template' not found, skipping cleanup-ekm-template"; fi
 	@if kubectl get namespace dmz >/dev/null 2>&1; then $(MAKE) local cleanup-dmz; else echo "## Namespace 'dmz' not found, skipping cleanup-dmz"; fi
 	@if kubectl get namespace demis >/dev/null 2>&1; then $(MAKE) local cleanup-services; else echo "## Namespace 'demis' not found, skipping cleanup-services"; fi
-	@if kubectl get namespace idm >/dev/null 2>&1; then $(MAKE) local cleanup-idm; else echo "## Namespace 'idm' not found, skipping cleanup-idm"; fi
+	@if kubectl get namespace idm >/dev/null 2>&1; then $(MAKE) local cleanup-kc-management cleanup-idm; else echo "## Namespace 'idm' not found, skipping cleanup-idm"; fi
 	@if kubectl get namespace mesh >/dev/null 2>&1; then $(MAKE) local cleanup-mesh; else echo "## Namespace 'mesh' not found, skipping cleanup-mesh"; fi
 	$(MAKE) local cleanup-infrastructure
 

@@ -3,18 +3,21 @@ module "istio" {
   chart_version             = var.istio_version
   local_deployment          = var.local_deployment
   local_node_ports_istio    = var.local_node_ports_istio
+  cluster_name              = var.cluster_name
   namespace                 = var.namespace
   trace_sampling            = var.trace_sampling
   replica_count             = var.istio_replica_count
   external_ip               = var.external_ip
   ingress_annotations       = var.ingress_annotations
   loadbalancer_sourceranges = var.loadbalancer_sourceranges
+  helm_repository           = var.istio_helm_repository
 }
 
 module "kiali" {
-  source           = "./kiali"
-  kiali_version    = var.kiali_version
-  target_namespace = var.namespace
+  source                = "./kiali"
+  kiali_version         = var.kiali_version
+  kiali_helm_repository = var.kiali_helm_repository
+  target_namespace      = var.namespace
   # Define the Cluster-internal URL for Prometheus
   prometheus_service_url = var.prometheus_enabled ? module.prometheus[0].prometheus_service_url : var.prometheus_service_url
   # Define the Cluster-internal URL and Port for Tracing (Jaeger)
@@ -31,9 +34,10 @@ module "kiali" {
 }
 
 module "prometheus" {
-  source             = "./prometheus"
-  prometheus_version = var.prometheus_version
-  target_namespace   = var.namespace
+  source                     = "./prometheus"
+  prometheus_version         = var.prometheus_version
+  prometheus_helm_repository = var.prometheus_helm_repository
+  target_namespace           = var.namespace
   # Enable only if explicitly set
   count = var.prometheus_enabled ? 1 : 0
   # Add dependency
@@ -72,9 +76,10 @@ module "grafana" {
 }
 
 module "loki" {
-  source           = "./loki"
-  loki_version     = var.loki_version
-  target_namespace = var.namespace
+  source               = "./loki"
+  loki_version         = var.loki_version
+  loki_helm_repository = var.loki_helm_repository
+  target_namespace     = var.namespace
   # Deployment topology (Monolithic or SimpleScalable)
   loki_deployment_mode = var.loki_deployment_mode
   # Storage configuration (local filesystem or external S3)

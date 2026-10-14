@@ -29,8 +29,9 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | The version of the Istio Helm Chart to be installed | `string` | n/a | yes |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the istio cluster | `string` | n/a | yes |
 | <a name="input_external_ip"></a> [external\_ip](#input\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
-| <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | Helm Chart Repository URL | `string` | `"https://istio-release.storage.googleapis.com/charts"` | no |
+| <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | Helm Chart Repository URL or repository name from the Helm repositories.yaml | `string` | `"https://blob.istio.io/istio-release/charts"` | no |
 | <a name="input_ingress_annotations"></a> [ingress\_annotations](#input\_ingress\_annotations) | The annotations to be used for the ingress gateway | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_loadbalancer_sourceranges"></a> [loadbalancer\_sourceranges](#input\_loadbalancer\_sourceranges) | The load balancer source ranges to be used for the ingress gateway | `list(string)` | `[]` | no |
 | <a name="input_local_deployment"></a> [local\_deployment](#input\_local\_deployment) | Defines if the components (Grafana, Prometheus) have to be installed locally. | `bool` | `false` | no |

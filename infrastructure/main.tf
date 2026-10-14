@@ -3,11 +3,14 @@
 ########################
 
 locals {
-  kubeconfig_path    = var.local_cluster ? module.local_cluster[0].kubeconfig_path : var.kubeconfig_path
   kms_encryption_key = length(var.kms_encryption_key) > 0 ? true : false
 
   # retrieve the name of the pull secret from the given docker registry credentials (local)
   pull_secrets_credentials = [for k, v in module.pull_secrets : v.metadata.name]
+
+  # Helm Chart sources: repository name from the Helm repositories.yaml or null (module default URL)
+  helm_use_local         = var.helm_repository_source == "local"
+  helm_repository_by_key = { for k, v in var.helm_repository_names : k => local.helm_use_local ? v : null }
 }
 
 # Configure a KIND cluster locally
@@ -31,11 +34,17 @@ module "remote_cluster" {
 # Configure Service-Mesh
 module "service_mesh" {
   source           = "./service-mesh"
+  cluster_name     = format("%s-%s", var.stage_name, var.cluster_region)
   namespace        = module.istio_namespace.name
   local_deployment = var.local_cluster
   # Configure Istio
-  istio_version       = var.service_mesh_istio_version
-  istio_replica_count = var.local_cluster ? var.kind_worker_nodes : var.service_mesh_istiod_replica_count
+  istio_version         = var.service_mesh_istio_version
+  istio_replica_count   = var.local_cluster ? var.kind_worker_nodes : var.service_mesh_istiod_replica_count
+  istio_helm_repository = local.helm_use_local ? var.helm_repository_names.istio : var.service_mesh_istio_helm_repository
+  # Helm Repositories of the monitoring charts
+  kiali_helm_repository      = local.helm_repository_by_key.kiali
+  prometheus_helm_repository = local.helm_repository_by_key.prometheus
+  loki_helm_repository       = local.helm_repository_by_key.loki
   # Configure Monitoring
   grafana_enabled    = var.service_mesh_monitoring_enabled
   grafana_version    = var.service_mesh_grafana_version
@@ -81,9 +90,10 @@ module "service_mesh" {
 
 # Configure Trivy
 module "trivy" {
-  count     = var.trivy_enabled ? 1 : 0
-  source    = "./security/trivy"
-  namespace = module.security_namespace.name
+  count           = var.trivy_enabled ? 1 : 0
+  source          = "./security/trivy"
+  helm_repository = local.helm_repository_by_key.trivy
+  namespace       = module.security_namespace.name
   # Configure Trivy settings
   chart_version                 = var.trivy_chart_version
   additional_report_fields      = var.trivy_additional_report_fields
@@ -100,6 +110,7 @@ module "trivy" {
 module "falco" {
   count                     = var.falco_enabled ? 1 : 0
   source                    = "./security/falco"
+  helm_repository           = local.helm_repository_by_key.falco
   namespace                 = module.security_namespace.name
   chart_version             = var.falco_chart_version
   kubernetes_meta_collector = var.falco_kubernetes_meta_collector
@@ -111,6 +122,7 @@ module "falco" {
 module "kyverno" {
   count                         = var.kyverno_enabled ? 1 : 0
   source                        = "./kyverno-controller"
+  helm_repository               = local.helm_repository_by_key.kyverno
   namespace                     = module.kyverno_namespace.name
   chart_version                 = var.kyverno_chart_version
   pull_secrets                  = local.pull_secrets_credentials
@@ -121,9 +133,10 @@ module "kyverno" {
 }
 
 module "kyverno_policy_reporter" {
-  count         = var.kyverno_policy_reporter_enabled ? 1 : 0
-  source        = "./security/policy-reporter"
-  namespace     = module.security_namespace.name
-  chart_version = var.kyverno_policy_reporter_chart_version
-  depends_on    = [module.kyverno]
+  count           = var.kyverno_policy_reporter_enabled ? 1 : 0
+  source          = "./security/policy-reporter"
+  helm_repository = local.helm_repository_by_key.policy_reporter
+  namespace       = module.security_namespace.name
+  chart_version   = var.kyverno_policy_reporter_chart_version
+  depends_on      = [module.kyverno]
 }

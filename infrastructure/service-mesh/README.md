@@ -28,6 +28,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the istio cluster | `string` | n/a | yes |
 | <a name="input_external_ip"></a> [external\_ip](#input\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
 | <a name="input_grafana_digest"></a> [grafana\_digest](#input\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | `"sha256:5781759b3d27734d4d548fcbaf60b1180dbf4290e708f01f292faa6ae764c5e6"` | no |
 | <a name="input_grafana_enabled"></a> [grafana\_enabled](#input\_grafana\_enabled) | Defines if Grafana has to be deployed | `bool` | `false` | no |
@@ -35,6 +36,7 @@ No resources.
 | <a name="input_grafana_service_url"></a> [grafana\_service\_url](#input\_grafana\_service\_url) | The Cluster-internal URL of the Grafana Instance to be used | `string` | `"http://grafana:3000"` | no |
 | <a name="input_grafana_version"></a> [grafana\_version](#input\_grafana\_version) | The version of the Grafana Service to be installed | `string` | `"11.5.1"` | no |
 | <a name="input_ingress_annotations"></a> [ingress\_annotations](#input\_ingress\_annotations) | The annotations to be used for the ingress gateway | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_istio_helm_repository"></a> [istio\_helm\_repository](#input\_istio\_helm\_repository) | Istio Helm Chart Repository URL | `string` | `"https://blob.istio.io/istio-release/charts"` | no |
 | <a name="input_istio_replica_count"></a> [istio\_replica\_count](#input\_istio\_replica\_count) | The number of replicas that have to be configured for the Istio services | `number` | `3` | no |
 | <a name="input_istio_version"></a> [istio\_version](#input\_istio\_version) | The version of the Istio Helm Chart to be installed. | `string` | `"1.23.0"` | no |
 | <a name="input_jaeger_digest"></a> [jaeger\_digest](#input\_jaeger\_digest) | The digest of the Jaeger Service to be used | `string` | `"sha256:9864182b4e01350fcc64631bdba5f4085f87daae9d477a04c25d9cb362e787a9"` | no |
@@ -44,6 +46,7 @@ No resources.
 | <a name="input_jaeger_ttl_spans"></a> [jaeger\_ttl\_spans](#input\_jaeger\_ttl\_spans) | The time to live for spans stored in Jaeger | `string` | `null` | no |
 | <a name="input_jaeger_version"></a> [jaeger\_version](#input\_jaeger\_version) | The version of the Jaeger Service to be installed | `string` | `"1.66.0"` | no |
 | <a name="input_kiali_enabled"></a> [kiali\_enabled](#input\_kiali\_enabled) | Defines if Kiali has to be deployed | `bool` | `true` | no |
+| <a name="input_kiali_helm_repository"></a> [kiali\_helm\_repository](#input\_kiali\_helm\_repository) | Kiali Helm Chart Repository URL or repository name, null uses the module default | `string` | `null` | no |
 | <a name="input_kiali_version"></a> [kiali\_version](#input\_kiali\_version) | The version of the Kiali Helm Chart to be installed | `string` | `"2.5.0"` | no |
 | <a name="input_loadbalancer_sourceranges"></a> [loadbalancer\_sourceranges](#input\_loadbalancer\_sourceranges) | The load balancer source ranges to be used for the ingress gateway | `list(string)` | `[]` | no |
 | <a name="input_local_deployment"></a> [local\_deployment](#input\_local\_deployment) | Defines if the components (Grafana, Prometheus) have to be installed locally. | `bool` | `false` | no |
@@ -51,6 +54,7 @@ No resources.
 | <a name="input_loki_backend_replicas"></a> [loki\_backend\_replicas](#input\_loki\_backend\_replicas) | Replica count for the SimpleScalable backend target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
 | <a name="input_loki_deployment_mode"></a> [loki\_deployment\_mode](#input\_loki\_deployment\_mode) | Loki deployment topology. Options: Monolithic (default) or SimpleScalable (requires s3 storage). | `string` | `"Monolithic"` | no |
 | <a name="input_loki_enabled"></a> [loki\_enabled](#input\_loki\_enabled) | Defines if Loki has to be deployed. Loki is only deployed if Grafana is also enabled. | `bool` | `false` | no |
+| <a name="input_loki_helm_repository"></a> [loki\_helm\_repository](#input\_loki\_helm\_repository) | Loki Helm Chart Repository URL or repository name, null uses the module default | `string` | `null` | no |
 | <a name="input_loki_read_replicas"></a> [loki\_read\_replicas](#input\_loki\_read\_replicas) | Replica count for the SimpleScalable read target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
 | <a name="input_loki_replicas"></a> [loki\_replicas](#input\_loki\_replicas) | Number of Loki instances. Must be 1 for filesystem storage; values > 1 require S3 storage. In SimpleScalable mode this is the default for the read/write/backend targets unless overridden. | `number` | `1` | no |
 | <a name="input_loki_retention_period"></a> [loki\_retention\_period](#input\_loki\_retention\_period) | How long ingested logs are kept before deletion (Go duration, e.g. 168h). | `string` | `"168h"` | no |
@@ -68,6 +72,7 @@ No resources.
 | <a name="input_loki_write_replicas"></a> [loki\_write\_replicas](#input\_loki\_write\_replicas) | Replica count for the SimpleScalable write target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install the services | `string` | `"istio-system"` | no |
 | <a name="input_prometheus_enabled"></a> [prometheus\_enabled](#input\_prometheus\_enabled) | Defines if Prometheus has to be deployed | `bool` | `false` | no |
+| <a name="input_prometheus_helm_repository"></a> [prometheus\_helm\_repository](#input\_prometheus\_helm\_repository) | Prometheus Helm Chart Repository URL or repository name, null uses the module default | `string` | `null` | no |
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
 | <a name="input_prometheus_version"></a> [prometheus\_version](#input\_prometheus\_version) | The version of the Prometheus Service to be installed | `string` | `"27.3.0"` | no |
 | <a name="input_trace_sampling"></a> [trace\_sampling](#input\_trace\_sampling) | The sampling rate option can be used to control what percentage of requests get reported to your tracing system. (https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling) | `string` | `"1.0"` | no |

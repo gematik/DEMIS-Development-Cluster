@@ -19,3 +19,26 @@ resource "helm_release" "this" {
 
   values = [file("${abspath(path.module)}/chart-values.yml")]
 }
+
+resource "kubernetes_cluster_role_v1" "node_proxy" {
+  metadata { name = "${local.app}-node-proxy" }
+  rule {
+    api_groups = [""]
+    resources  = ["nodes/proxy"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+resource "kubernetes_cluster_role_binding_v1" "node_proxy" {
+  metadata { name = "${local.app}-node-proxy" }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role_v1.node_proxy.metadata[0].name
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = local.app
+    namespace = var.target_namespace
+  }
+}

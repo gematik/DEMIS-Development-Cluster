@@ -12,11 +12,11 @@ resource "helm_release" "kyverno_admission_policies" {
   count               = local.kyverno_admission_policies.enabled ? 1 : 0
   name                = local.kyverno_policies_name
   chart               = local.kyverno_policies_name
-  repository          = var.helm_repository
+  repository          = local.chart_repository
   version             = local.kyverno_admission_policies.main.version
   namespace           = var.target_namespace
-  repository_username = var.helm_repository_username
-  repository_password = var.helm_repository_password
+  repository_username = local.chart_repository_username
+  repository_password = local.chart_repository_password
   lint                = true
   atomic              = true
   wait                = true

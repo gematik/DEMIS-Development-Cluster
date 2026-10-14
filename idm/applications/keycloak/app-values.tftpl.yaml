@@ -4,6 +4,9 @@ istio:
   # only for Local - allows Keycloak to read the user certificate from KIND-generated Header
   enableKindClientCertHeader: ${local_stage}
 
+debug:
+  enable: ${debug_enable}
+
 required:
   image: 
     repository: ${repository}
@@ -28,6 +31,18 @@ config:
     # Use default Secret from this Chart
     useDefault: false
     # The (external) Secret for Admin Password
+    secretsToEnv:
+      admin: 
+        name: keycloak-admin-password
+      db:
+        name: keycloak-database-secret
+      passwords:
+        name: keycloak-truststore-password
+      %{~ if bootstrap_admin_client }
+      terraform-client:
+        name: keycloak-terraform-client-secret
+      %{~ endif }
+    # The (external) Secret for Admin Password (To delete ["admin", "db", "passwords"] when keycloak version 26.6.3 is full released in all stages)
     admin:
       # The name of the (external) Secret for Admin Password and the entries to be used and mapped
       name: keycloak-admin-password
@@ -52,7 +67,9 @@ config:
       # Define the Truststore
       # IMPORTANT: these values must be defined in the Secret
       entries:
+        #TODO: JSK is deprecated in favor of PKCS12. Remove this with KC-version 
         truststore.jks: truststore.jks
+        truststore.p12: truststore.p12
     # The (external) Secret for Truststore Password
     passwords:
       # The name of the (external) Secret for Truststore Password and the entries to be used and mapped
@@ -93,6 +110,7 @@ customEnvVars:
   KC_HOSTNAME: "https://${issuer_hostname}"
   KC_DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/keycloak"
   GEMATIK_IDP_TSL_PRIMARY_URL: "${tsl_download_endpoint}"
+  TF_MANAGED_REALMS: "${join(",", managed_realms)}"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

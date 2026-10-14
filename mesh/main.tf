@@ -15,6 +15,11 @@ data "kubernetes_namespace_v1" "istio_namespace" {
 
 # Define local variables based on input values
 locals {
+  # Resolve the Helm Chart source: repository name from the Helm repositories.yaml or URL with credentials
+  helm_use_local            = var.helm_repository_source == "local"
+  chart_repository          = local.helm_use_local ? var.helm_repository_name : var.helm_repository
+  chart_repository_username = local.helm_use_local ? null : var.helm_repository_username
+  chart_repository_password = local.helm_use_local ? null : var.helm_repository_password
   # Extract the labels from the Istio Namespace
   cluster_labels = data.kubernetes_namespace_v1.istio_namespace.metadata[0].labels
   # define if the current stage is local

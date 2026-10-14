@@ -88,16 +88,41 @@ resource "kubernetes_config_map_v1" "grafana_base_dashboards" {
   }
 
   data = {
-    "cluster-dashboard.json"   = data.local_file.cluster_dashboard.content
-    "cluster-monitoring.json"  = data.local_file.cluster_monitoring_prometheus.content
-    "pod-metrics.json"         = data.local_file.pod_metrics_dashboard.content
-    "prometheus-stats.json"    = data.local_file.prometheus_stats.content
-    "prometheus-overview.json" = data.local_file.prometheus_overview.content
+    "prometheus.json"     = data.local_file.prometheus_dashboard.content
+    "jvm-micrometer.json" = data.local_file.jvm_micrometer_dashboard.content
   }
 
   lifecycle {
     precondition {
-      condition     = !contains([data.local_file.cluster_dashboard.filename, data.local_file.cluster_monitoring_prometheus.filename, data.local_file.pod_metrics_dashboard.filename, data.local_file.prometheus_stats.filename, data.local_file.prometheus_overview.filename], ".gitkeep")
+      condition     = !contains([data.local_file.prometheus_dashboard.filename, data.local_file.jvm_micrometer_dashboard.filename], ".gitkeep")
+      error_message = "one or more of the dashboard files are missing."
+    }
+  }
+}
+
+resource "kubernetes_config_map_v1" "grafana_kubernetes_dashboards" {
+  metadata {
+    name      = "kubernetes-grafana-dashboards"
+    namespace = var.target_namespace
+    labels = {
+      "app"       = local.app
+      "component" = local.app
+      "release"   = local.app
+    }
+  }
+
+  data = {
+    "kubernetes-views-global.json"      = data.local_file.kubernetes_views_global_dashboard.content
+    "kubernetes-views-namespaces.json"  = data.local_file.kubernetes_views_namespaces_dashboard.content
+    "kubernetes-views-nodes.json"       = data.local_file.kubernetes_views_nodes_dashboard.content
+    "kubernetes-views-pods.json"        = data.local_file.kubernetes_views_pods_dashboard.content
+    "kubernetes-system-api-server.json" = data.local_file.kubernetes_system_api_server_dashboard.content
+    "kubernetes-system-coredns.json"    = data.local_file.kubernetes_system_coredns_dashboard.content
+  }
+
+  lifecycle {
+    precondition {
+      condition     = !contains([data.local_file.kubernetes_views_global_dashboard.filename, data.local_file.kubernetes_views_namespaces_dashboard.filename, data.local_file.kubernetes_views_nodes_dashboard.filename, data.local_file.kubernetes_views_pods_dashboard.filename, data.local_file.kubernetes_system_api_server_dashboard.filename, data.local_file.kubernetes_system_coredns_dashboard.filename], ".gitkeep")
       error_message = "one or more of the dashboard files are missing."
     }
   }

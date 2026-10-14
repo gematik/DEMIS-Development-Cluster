@@ -33,6 +33,10 @@ customEnvVars:
   RPS_BASE_URL: "http://report-processing-service.${namespace}.svc.cluster.local/"
   KEYCLOAK_TOKEN_LAB_URI: "https://${core_hostname}/auth/realms/LAB/protocol/openid-connect/token"
   ALLOWED_ORIGINS: "http://localhost:8080,https://${portal_hostname},https://${meldung_hostname},https://${portal_hostname}${context_path},https://${meldung_hostname}${context_path}"
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: notification-gateway.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

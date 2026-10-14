@@ -21,3 +21,10 @@ providers:
     path: /var/lib/grafana/dashboards/base
   orgId: 1
   type: file
+- disableDeletion: false
+  folder: kubernetes
+  name: kubernetes
+  options:
+    path: /var/lib/grafana/dashboards/kubernetes
+  orgId: 1
+  type: file

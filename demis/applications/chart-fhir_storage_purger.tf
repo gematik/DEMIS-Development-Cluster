@@ -28,8 +28,8 @@ module "fhir_storage_purger" {
     feature_flags         = try(var.feature_flags[local.fsp_name], {}),
     config_options        = try(var.config_options[local.fsp_name], {}),
     replica_count         = var.resource_definitions[local.fsp_name].replicas,
-    resource_block        = var.resource_definitions[local.fsp_name].resource_block
-    istio_proxy_resources = var.resource_definitions[local.fsp_name].istio_proxy_resources,
+    resource_block        = var.resource_definitions[local.fsp_name].resource_block,
+    istio_proxy_resources = var.resource_definitions[local.fsp_name].istio_proxy_resources
   }), local.chart_files[local.fsp_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.fsp_name].istio_template, {
     namespace = var.target_namespace

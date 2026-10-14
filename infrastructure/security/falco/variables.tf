@@ -8,6 +8,7 @@ variable "helm_repository" {
   description = "The Helm Chart Repository for Falco"
   type        = string
   default     = "https://falcosecurity.github.io/charts"
+  nullable    = false
 }
 
 variable "chart_version" {

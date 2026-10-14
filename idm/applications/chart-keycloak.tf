@@ -40,7 +40,7 @@ module "keycloak" {
     data_version                          = local.stage_configuration_data_version,
     data_name                             = local.stage_configuration_data_name,
     tsl_deliverer_mock_name               = local.tsl_deliverer_mock_name,
-    tsl_deliverer_mock_version            = local.tsl_deliverer_mock_version
+    tsl_deliverer_mock_version            = local.tsl_deliverer_mock_version,
     feature_flags                         = try(var.feature_flags[local.keycloak_name], {}),
     config_options                        = try(var.config_options[local.keycloak_name], {}),
     replica_count                         = var.resource_definitions[local.keycloak_name].replicas,
@@ -49,6 +49,8 @@ module "keycloak" {
     debug_enable                          = var.debug_enabled,
     enable_tsl_deliverer_mock             = local.enable_tsl_deliverer_mock,
     tsl_download_endpoint                 = var.tsl_download_endpoint,
+    managed_realms                        = var.managed_realms,
+    bootstrap_admin_client                = length(kubernetes_secret_v1.keycloak_terraform_client_secret[*].id) > 0,
     keycloak_admin_account_checksum       = try(kubernetes_secret_v1.keycloak_admin_account.metadata[0].annotations["checksum"], ""),
     keycloak_portal_secret_checksum       = try(kubernetes_secret_v1.keycloak_portal_secret.metadata[0].annotations["checksum"], ""),
     keycloak_truststore_file_checksum     = try(kubernetes_secret_v1.keycloak_truststore_file.metadata[0].annotations["checksum"], ""),
@@ -65,3 +67,4 @@ module "keycloak" {
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.keycloak_name], [])
   }), local.chart_files[local.keycloak_name].istio_values_override])
 }
+

@@ -1,0 +1,21 @@
+# Helm repositories used by the cluster deployment, created by create-helm-repositories.sh
+# credentials: true reads username and password from HELM_<NAME>_USERNAME / HELM_<NAME>_PASSWORD or prompts for them
+repositories:
+  - name: demis-public
+    url: https://gematik.github.io/DEMIS-Helm-Charts/
+  - name: istio
+    url: https://blob.istio.io/istio-release/charts
+  - name: kyverno
+    url: https://kyverno.github.io/kyverno/
+  - name: kiali
+    url: https://kiali.org/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: grafana-community
+    url: https://grafana-community.github.io/helm-charts
+  - name: aqua
+    url: https://aquasecurity.github.io/helm-charts/
+  - name: falcosecurity
+    url: https://falcosecurity.github.io/charts
+  - name: policy-reporter
+    url: https://kyverno.github.io/policy-reporter

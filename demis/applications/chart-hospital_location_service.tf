@@ -17,22 +17,24 @@ module "hospital_location_service" {
 
   # Pass the values for the chart
   application_values = compact([templatefile(local.chart_files[local.hls_name].app_template, {
-    image_pull_secrets    = var.pull_secrets,
-    repository            = var.docker_registry,
-    debug_enable          = var.debug_enabled,
-    istio_enable          = var.istio_enabled,
-    feature_flags         = try(var.feature_flags[local.hls_name], {}),
-    config_options        = try(var.config_options[local.hls_name], {}),
-    replica_count         = var.resource_definitions[local.hls_name].replicas,
-    resource_block        = var.resource_definitions[local.hls_name].resource_block
-    istio_proxy_resources = var.resource_definitions[local.hls_name].istio_proxy_resources,
+    image_pull_secrets     = var.pull_secrets,
+    repository             = var.docker_registry,
+    debug_enable           = var.debug_enabled,
+    istio_enable           = var.istio_enabled,
+    feature_flags          = try(var.feature_flags[local.hls_name], {}),
+    config_options         = try(var.config_options[local.hls_name], {}),
+    replica_count          = var.resource_definitions[local.hls_name].replicas,
+    resource_block         = var.resource_definitions[local.hls_name].resource_block,
+    istio_proxy_resources  = var.resource_definitions[local.hls_name].istio_proxy_resources,
+    service_tracing_config = local.java_service_tracing_config,
+    namespace              = var.target_namespace
   }), local.chart_files[local.hls_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.hls_name].istio_template, {
     namespace                  = var.target_namespace,
     cluster_gateway            = var.cluster_gateway,
     context_path               = var.context_path,
     demis_hostnames            = local.demis_hostnames,
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.hls_name], null)
-    istio_rules_block_external = try(var.external_routing_configurations.rules[local.hls_name], [])
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.hls_name], null),
+    istio_rules_block_external = try(var.external_routing_configurations.rules[local.hls_name], []),
   }), local.chart_files[local.hls_name].istio_values_override])
 }

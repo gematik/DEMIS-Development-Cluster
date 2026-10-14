@@ -28,13 +28,14 @@ module "report_processing_service" {
     replica_count              = var.resource_definitions[local.rps_name].replicas,
     resource_block             = var.resource_definitions[local.rps_name].resource_block,
     istio_proxy_resources      = var.resource_definitions[local.rps_name].istio_proxy_resources,
+    service_tracing_config     = local.java_service_tracing_config
   }), local.chart_files[local.rps_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.rps_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    core_hostname              = var.core_hostname
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.rps_name], null)
+    core_hostname              = var.core_hostname,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.rps_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.rps_name], [])
   }), local.chart_files[local.rps_name].istio_values_override])
 }

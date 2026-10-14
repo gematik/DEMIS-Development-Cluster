@@ -94,6 +94,25 @@ make local init-stage
 
 Now the public stage repository is checked out into the folder `DEMIS-Development-Cluster/environments`.
 
+### Optional: Use the Helm repositories.yaml
+By default, the Helm Charts are pulled directly from the repository URLs. Alternatively, they can be resolved from
+the Helm `repositories.yaml`, which uses the Helm index cache. Create or update the file with all required
+repositories (existing entries keep their credentials, the last 5 backups are kept):
+
+```sh
+.scripts/create-helm-repositories.sh
+```
+
+Then set in the `application-configuration.tfvars` of each module (e.g. `demis`, `idm`, `mesh`):
+
+```hcl
+helm_repository_source = "local"
+helm_repository_name   = "demis-public"
+```
+
+and `helm_repository_source = "local"` for the `infrastructure` module. `make local` runs `helm repo update` 
+automatically if the stage changed since the last update.
+
 ### Setup the whole environment
 To create a new complete Environment, including the KIND Cluster, Service Mesh Services and DEMIS Services, 
 you need to run the following command:

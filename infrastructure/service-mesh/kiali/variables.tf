@@ -8,9 +8,10 @@ variable "kiali_helm_repository" {
   description = "The Helm Repository to download the Kiali Chart"
   type        = string
   default     = "https://kiali.org/helm-charts"
+  nullable    = false
   validation {
-    condition     = can(regex("^(https?|file|oci)://.*$", var.kiali_helm_repository))
-    error_message = "The Kiali Helm Repository must be a valid URL"
+    condition     = can(regex("^(https?|file|oci)://.*$", var.kiali_helm_repository)) || can(regex("^[a-z0-9][a-z0-9._-]*$", var.kiali_helm_repository))
+    error_message = "The Kiali Helm Repository must be a valid URL or a repository name"
   }
 }
 

@@ -4,9 +4,9 @@ module "demis_services" {
   is_local_mode                                   = local.is_local_mode
   production_mode                                 = !(strcontains(local.stage_name, "local") || strcontains(local.stage_name, "dev"))
   docker_registry                                 = var.docker_registry
-  helm_repository                                 = var.helm_repository
-  helm_repository_username                        = var.helm_repository_username
-  helm_repository_password                        = var.helm_repository_password
+  helm_repository                                 = local.chart_repository
+  helm_repository_username                        = local.chart_repository_username
+  helm_repository_password                        = local.chart_repository_password
   target_namespace                                = module.demis_namespace.name
   pull_secrets                                    = local.pull_secrets_credentials
   deployment_information                          = local.deployment_information
@@ -45,6 +45,7 @@ module "demis_services" {
   deployment_timeout                              = var.deployment_timeout
   external_routing_configurations                 = module.external_routing_configurations
   project_feature_flags                           = var.project_feature_flags
+  opentelemetry_endpoint                          = var.opentelemetry_endpoint
   # Thread the maintenance-mode status and PVC names as explicit inputs instead of using depends_on.
   # This establishes the apply-time ordering (activate → deploy) through data-flow,
   # which avoids the "known after apply" propagation that module-level depends_on causes.

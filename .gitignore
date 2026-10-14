@@ -20,6 +20,8 @@ kind-config
 !modules/maintenance_mode/maintenance-mode.yaml
 !*.tftpl.yaml
 !.scripts/*.sh
+!.scripts/helm-repositories.yaml
+!deployments/local/helm-repositories.yaml
 !modules/maintenance_mode/.scripts/*.sh
 !modules/maintenance_mode/.scripts/*.yaml
 !modules/istio_routing_configurations/.scripts/*.sh
@@ -43,6 +45,9 @@ test/
 
 !.scripts/install-tools.sh
 !.scripts/update-tools.sh
+!.scripts/create-helm-repositories.sh
+!.scripts/helm-repo-update.sh
+!.scripts/helm-repositories.yaml
 .trivyignore.yaml
 README_internal.md
 Misconfiguration-Scan-*.html

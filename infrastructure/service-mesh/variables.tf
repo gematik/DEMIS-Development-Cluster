@@ -36,6 +36,11 @@ variable "local_node_ports_istio" {
   }]
 }
 
+variable "cluster_name" {
+  description = "Name of the istio cluster"
+  type        = string
+}
+
 variable "namespace" {
   description = "Namespace where to install the services"
   type        = string
@@ -294,4 +299,28 @@ variable "jaeger_storage_backend" {
   type        = string
   default     = null
   nullable    = true
+}
+
+variable "istio_helm_repository" {
+  type        = string
+  description = "Istio Helm Chart Repository URL"
+  default     = "https://blob.istio.io/istio-release/charts"
+}
+
+variable "kiali_helm_repository" {
+  type        = string
+  description = "Kiali Helm Chart Repository URL or repository name, null uses the module default"
+  default     = null
+}
+
+variable "prometheus_helm_repository" {
+  type        = string
+  description = "Prometheus Helm Chart Repository URL or repository name, null uses the module default"
+  default     = null
+}
+
+variable "loki_helm_repository" {
+  type        = string
+  description = "Loki Helm Chart Repository URL or repository name, null uses the module default"
+  default     = null
 }

@@ -10,6 +10,7 @@ variable "helm_repository" {
   description = "The Helm Chart Repository for Kyverno Policy Reporter"
   type        = string
   default     = "https://kyverno.github.io/policy-reporter"
+  nullable    = false
 }
 
 variable "chart_version" {

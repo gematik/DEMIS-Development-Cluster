@@ -36,6 +36,11 @@ variable "local_node_ports_istio" {
   }]
 }
 
+variable "cluster_name" {
+  description = "Name of the istio cluster"
+  type        = string
+}
+
 variable "namespace" {
   description = "Namespace where to install the services"
   type        = string
@@ -53,8 +58,9 @@ variable "chart_version" {
 
 variable "helm_repository" {
   type        = string
-  description = "Helm Chart Repository URL"
-  default     = "https://istio-release.storage.googleapis.com/charts"
+  description = "Helm Chart Repository URL or repository name from the Helm repositories.yaml"
+  default     = "https://blob.istio.io/istio-release/charts"
+  nullable    = false
 }
 
 variable "trace_sampling" {

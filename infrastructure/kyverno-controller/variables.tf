@@ -8,6 +8,7 @@ variable "helm_repository" {
   description = "The Helm Chart Repository for Kyverno"
   type        = string
   default     = "https://kyverno.github.io/kyverno/"
+  nullable    = false
 }
 
 variable "chart_version" {

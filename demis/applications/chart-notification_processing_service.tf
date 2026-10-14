@@ -29,14 +29,15 @@ module "notification_processing_service" {
     replica_count                         = var.resource_definitions[local.nps_name].replicas,
     resource_block                        = var.resource_definitions[local.nps_name].resource_block,
     istio_proxy_resources                 = var.resource_definitions[local.nps_name].istio_proxy_resources,
-    redis_cus_reader_credentials_checksum = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], "")
+    redis_cus_reader_credentials_checksum = try(kubernetes_secret_v1.redis_cus_reader_credentials.metadata[0].annotations["checksum"], ""),
+    service_tracing_config                = local.java_service_tracing_config
   }), local.chart_files[local.nps_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.nps_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    core_hostname              = var.core_hostname
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.nps_name], null)
+    core_hostname              = var.core_hostname,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.nps_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.nps_name], [])
   }), local.chart_files[local.nps_name].istio_values_override])
 }
