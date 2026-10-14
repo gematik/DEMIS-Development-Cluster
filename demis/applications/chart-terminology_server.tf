@@ -35,9 +35,10 @@ module "terminology_server" {
     replica_count           = var.resource_definitions[local.fts_name].replicas,
     resource_block          = var.resource_definitions[local.fts_name].resource_block,
     istio_proxy_resources   = var.resource_definitions[local.fts_name].istio_proxy_resources,
+    service_tracing_config  = local.java_service_tracing_config
   }), local.chart_files[local.fts_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.fts_name].istio_template, {
-    namespace                = var.target_namespace
+    namespace                = var.target_namespace,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fts_name], null)
   }), local.chart_files[local.fts_name].istio_values_override])
 }

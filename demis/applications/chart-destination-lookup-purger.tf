@@ -20,6 +20,7 @@ module "destination_lookup_purger" {
   application_values = compact([templatefile(local.chart_files[local.dls_purger_name].app_template, {
     image_pull_secrets    = var.pull_secrets,
     repository            = var.docker_registry,
+    data_base             = replace(local.dls_name, "-", "_"),
     namespace             = var.target_namespace,
     debug_enable          = var.debug_enabled,
     suspend               = var.destination_lookup_purger_suspend,
@@ -28,7 +29,7 @@ module "destination_lookup_purger" {
     config_options        = try(var.config_options[local.dls_purger_name], {}),
     replica_count         = var.resource_definitions[local.dls_purger_name].replicas,
     resource_block        = var.resource_definitions[local.dls_purger_name].resource_block,
-    istio_proxy_resources = var.resource_definitions[local.dls_purger_name].istio_proxy_resources,
+    istio_proxy_resources = var.resource_definitions[local.dls_purger_name].istio_proxy_resources
   }), local.chart_files[local.dls_purger_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.dls_purger_name].istio_template, {
     namespace = var.target_namespace,

@@ -6,6 +6,7 @@ locals {
 resource "terraform_data" "dashboard_downloader" {
   triggers_replace = {
     istio_version = var.istio_version
+    downloader    = filesha256("${local.dashboard_folder}/downloader.sh")
   }
   provisioner "local-exec" {
     working_dir = local.dashboard_folder
@@ -48,28 +49,43 @@ data "local_file" "istio_performance_dashboard" {
 }
 
 # Core Dashboards
-data "local_file" "cluster_dashboard" {
-  filename   = fileexists("${local.dashboard_folder}/Kubernetes-Cluster.json") ? "${local.dashboard_folder}/Kubernetes-Cluster.json" : "${local.dashboard_folder}/.gitkeep"
+data "local_file" "prometheus_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Prometheus.json") ? "${local.dashboard_folder}/Prometheus.json" : "${local.dashboard_folder}/.gitkeep"
   depends_on = [terraform_data.dashboard_downloader]
 }
 
-data "local_file" "cluster_monitoring_prometheus" {
-  filename   = fileexists("${local.dashboard_folder}/Kubernetes-cluster-monitoring-via-Prometheus.json") ? "${local.dashboard_folder}/Kubernetes-cluster-monitoring-via-Prometheus.json" : "${local.dashboard_folder}/.gitkeep"
+data "local_file" "jvm_micrometer_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/JVM-Micrometer.json") ? "${local.dashboard_folder}/JVM-Micrometer.json" : "${local.dashboard_folder}/.gitkeep"
   depends_on = [terraform_data.dashboard_downloader]
 }
 
-data "local_file" "pod_metrics_dashboard" {
-  filename   = fileexists("${local.dashboard_folder}/Kubernetes-Pod-Metrics.json") ? "${local.dashboard_folder}/Kubernetes-Pod-Metrics.json" : "${local.dashboard_folder}/.gitkeep"
+# Kubernetes Dashboards
+data "local_file" "kubernetes_views_global_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--Views--Global.json") ? "${local.dashboard_folder}/Kubernetes--Views--Global.json" : "${local.dashboard_folder}/.gitkeep"
   depends_on = [terraform_data.dashboard_downloader]
 }
 
-
-data "local_file" "prometheus_stats" {
-  filename   = fileexists("${local.dashboard_folder}/Prometheus-Stats.json") ? "${local.dashboard_folder}/Prometheus-Stats.json" : "${local.dashboard_folder}/.gitkeep"
+data "local_file" "kubernetes_views_namespaces_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--Views--Namespaces.json") ? "${local.dashboard_folder}/Kubernetes--Views--Namespaces.json" : "${local.dashboard_folder}/.gitkeep"
   depends_on = [terraform_data.dashboard_downloader]
 }
 
-data "local_file" "prometheus_overview" {
-  filename   = fileexists("${local.dashboard_folder}/Prometheus-20-Overview.json") ? "${local.dashboard_folder}/Prometheus-20-Overview.json" : "${local.dashboard_folder}/.gitkeep"
+data "local_file" "kubernetes_views_nodes_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--Views--Nodes.json") ? "${local.dashboard_folder}/Kubernetes--Views--Nodes.json" : "${local.dashboard_folder}/.gitkeep"
+  depends_on = [terraform_data.dashboard_downloader]
+}
+
+data "local_file" "kubernetes_views_pods_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--Views--Pods.json") ? "${local.dashboard_folder}/Kubernetes--Views--Pods.json" : "${local.dashboard_folder}/.gitkeep"
+  depends_on = [terraform_data.dashboard_downloader]
+}
+
+data "local_file" "kubernetes_system_api_server_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--System--API-Server.json") ? "${local.dashboard_folder}/Kubernetes--System--API-Server.json" : "${local.dashboard_folder}/.gitkeep"
+  depends_on = [terraform_data.dashboard_downloader]
+}
+
+data "local_file" "kubernetes_system_coredns_dashboard" {
+  filename   = fileexists("${local.dashboard_folder}/Kubernetes--System--CoreDNS.json") ? "${local.dashboard_folder}/Kubernetes--System--CoreDNS.json" : "${local.dashboard_folder}/.gitkeep"
   depends_on = [terraform_data.dashboard_downloader]
 }

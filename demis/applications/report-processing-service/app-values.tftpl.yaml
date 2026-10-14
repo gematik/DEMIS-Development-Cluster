@@ -27,6 +27,10 @@ customEnvVars:
   DEMIS_NETWORK_HOSPITAL_LOCATION_SERVICE_ADDRESS: http://hospital-location-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_PDFGEN_SERVICE_ADDRESS: http://pdfgen-service.${namespace}.svc.cluster.local
   DEMIS_NETWORK_CONTEXT_ENRICHMENT_SERVICE_ADDRESS: http://context-enrichment-service.${namespace}.svc.cluster.local
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: report-processing-service.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

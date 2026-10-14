@@ -176,6 +176,12 @@ variable "service_mesh_istiod_replica_count" {
   }
 }
 
+variable "service_mesh_istio_helm_repository" {
+  type        = string
+  description = "Istio Helm Chart Repository URL"
+  default     = "https://blob.istio.io/istio-release/charts"
+}
+
 variable "service_mesh_monitoring_enabled" {
   type        = bool
   default     = false

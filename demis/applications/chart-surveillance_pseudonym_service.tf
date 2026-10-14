@@ -58,14 +58,15 @@ module "surveillance_pseudonym_service_ars" {
     resource_block                  = var.resource_definitions[local.sps_ars_name].resource_block,
     ars_pseudo_hash_pepper_checksum = try(kubernetes_secret_v1.ars_pseudo_hash_pepper[0].metadata[0].annotations["checksum"], ""),
     sps_ars_db_secret_checksum      = try(kubernetes_secret_v1.database_credentials[local.sps_ars_index].metadata[0].annotations["checksum"], ""),
-    sps_ars_db_ddl_secret_checksum  = try(kubernetes_secret_v1.database_credentials[local.sps_ars_ddl_index].metadata[0].annotations["checksum"], "")
-    istio_proxy_resources           = var.resource_definitions[local.sps_ars_name].istio_proxy_resources,
+    sps_ars_db_ddl_secret_checksum  = try(kubernetes_secret_v1.database_credentials[local.sps_ars_ddl_index].metadata[0].annotations["checksum"], ""),
+    istio_proxy_resources           = var.resource_definitions[local.sps_ars_name].istio_proxy_resources
+    service_tracing_config          = local.java_service_tracing_config
   }), local.chart_files[local.sps_ars_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.sps_ars_name].istio_template, {
     namespace                = var.target_namespace,
     context_path             = var.context_path,
     cluster_gateway          = var.cluster_gateway,
-    demis_hostnames          = local.demis_hostnames
+    demis_hostnames          = local.demis_hostnames,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.sps_ars_name], null)
   }), local.chart_files[local.sps_ars_name].istio_values_override])
 }

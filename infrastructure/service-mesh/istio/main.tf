@@ -20,12 +20,16 @@ resource "helm_release" "istiod" {
   wait       = true
 
   values = [templatefile("${abspath(path.module)}/istiod-chart-values.tftpl.yml", {
+    cluster_name           = var.cluster_name
     autoscale_enabled      = var.local_deployment ? "false" : "true",
     autoscale_min          = var.replica_count,
     replica_count          = var.replica_count,
     trace_sampling         = var.trace_sampling,
     opentelemetry_hostname = "otlp-collector.${var.namespace}.svc.cluster.local",
-    opentelemetry_port     = "4317"
+    opentelemetry_port     = "4317",
+    # Local ephemeral Keycloak rotates realm keys on every deploy; let sidecars
+    # fetch the JWKS themselves so rotated keys are trusted without istiod cache lag.
+    jwt_enable_remote_jwks = var.local_deployment ? "hybrid" : ""
   })]
 
   depends_on = [helm_release.istio_base]

@@ -470,3 +470,10 @@ variable "pvc_trigger" {
   description = "List of PVC names from module.persistent_volume_claims that establishes deploy ordering without known-after-apply propagation."
   default     = []
 }
+
+variable "opentelemetry_endpoint" {
+  type        = string
+  description = "The endpoint for OpenTelemetry tracing."
+  default     = "http://otlp-collector.istio-system.svc.cluster.local:4317"
+  nullable    = false
+}

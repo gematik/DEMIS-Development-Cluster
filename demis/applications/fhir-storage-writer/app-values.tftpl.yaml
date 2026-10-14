@@ -31,6 +31,10 @@ customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/fhir-storage"
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: fhir-storage-writer.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

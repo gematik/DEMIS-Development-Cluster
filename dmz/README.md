@@ -16,8 +16,8 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.3.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.3.0 |
 
 ## Modules
 
@@ -39,11 +39,11 @@ It performs the following operations:
 
 | Name | Type |
 | ---- | ---- |
-| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
+| [helm_release.authentication_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.kubernetes_network_policies](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
 
 ## Inputs
 
@@ -68,12 +68,15 @@ It performs the following operations:
 | <a name="input_feature_flags"></a> [feature\_flags](#input\_feature\_flags) | Defines a list of feature flags that belong to services | <pre>list(object({<br/>    services   = list(string)<br/>    flag_name  = string<br/>    flag_value = bool<br/>  }))</pre> | `[]` | no |
 | <a name="input_google_cloud_access_token"></a> [google\_cloud\_access\_token](#input\_google\_cloud\_access\_token) | The User-Token for accessing the Google Artifact Registry. <br/>  Typically obtained with the command: 'gcloud auth print-access-token' | `string` | `""` | no |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Repository where is stored the Helm Chart | `string` | n/a | yes |
+| <a name="input_helm_repository_name"></a> [helm\_repository\_name](#input\_helm\_repository\_name) | The repository name in the Helm repositories.yaml, used if helm\_repository\_source is 'local' | `string` | `"demis"` | no |
 | <a name="input_helm_repository_password"></a> [helm\_repository\_password](#input\_helm\_repository\_password) | The Password credential for the Helm Repository | `string` | `""` | no |
+| <a name="input_helm_repository_source"></a> [helm\_repository\_source](#input\_helm\_repository\_source) | Where Helm Charts are resolved from: 'url' uses helm\_repository with the credentials from credentials.tfvars, 'local' uses the repository name helm\_repository\_name from the Helm repositories.yaml (credentials and index cache are taken from there) | `string` | `"url"` | no |
 | <a name="input_helm_repository_username"></a> [helm\_repository\_username](#input\_helm\_repository\_username) | The Username credential for the Helm Repository | `string` | `""` | no |
 | <a name="input_istio_enabled"></a> [istio\_enabled](#input\_istio\_enabled) | Defines if Istio Settings are enabled for the given target namespace | `bool` | `true` | no |
 | <a name="input_kms_encryption_key"></a> [kms\_encryption\_key](#input\_kms\_encryption\_key) | The GCP KMS encryption key for OpenTofu state encryption | `string` | `""` | no |
 | <a name="input_kubeconfig_path"></a> [kubeconfig\_path](#input\_kubeconfig\_path) | Path to the kubeconfig file for the cluster | `string` | `""` | no |
 | <a name="input_namespace_resource_quota"></a> [namespace\_resource\_quota](#input\_namespace\_resource\_quota) | Resource quota configuration for the target Namespace. Set to null to skip quota creation. | <pre>object({<br/>    limits_cpu      = optional(string)<br/>    limits_memory   = optional(string)<br/>    requests_cpu    = optional(string)<br/>    requests_memory = optional(string)<br/>  })</pre> | `null` | no |
+| <a name="input_opentelemetry_endpoint"></a> [opentelemetry\_endpoint](#input\_opentelemetry\_endpoint) | The endpoint for OpenTelemetry tracing. | `string` | `null` | no |
 | <a name="input_override_stage_name"></a> [override\_stage\_name](#input\_override\_stage\_name) | Override the automatically detected stage name (optional) | `string` | `""` | no |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |

@@ -56,6 +56,10 @@ customEnvVars:
   DB_USER: ars-pseudo-user
   LIQUIBASE_DB_USER: ars-pseudo-ddl
   PARAM_LIQUIBASE_DB_USER_PURGER: ars-pseudo-purger
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: surveillance-pseudonym-service-ars.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

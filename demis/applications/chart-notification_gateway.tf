@@ -21,28 +21,29 @@ module "notification_gateway" {
 
   # Pass the values for the chart
   application_values = compact([templatefile(local.chart_files[local.gateway_name].app_template, {
-    image_pull_secrets    = var.pull_secrets,
-    repository            = var.docker_registry,
-    namespace             = var.target_namespace,
-    debug_enable          = var.debug_enabled,
-    istio_enable          = var.istio_enabled,
-    portal_hostname       = var.portal_hostname,
-    meldung_hostname      = var.meldung_hostname,
-    core_hostname         = var.core_hostname,
-    issuer_hostname       = var.auth_hostname,
-    context_path          = var.context_path,
-    feature_flags         = try(var.feature_flags[local.gateway_name], {}),
-    config_options        = try(var.config_options[local.gateway_name], {}),
-    replica_count         = var.resource_definitions[local.gateway_name].replicas,
-    resource_block        = var.resource_definitions[local.gateway_name].resource_block,
-    istio_proxy_resources = var.resource_definitions[local.gateway_name].istio_proxy_resources,
+    image_pull_secrets     = var.pull_secrets,
+    repository             = var.docker_registry,
+    namespace              = var.target_namespace,
+    debug_enable           = var.debug_enabled,
+    istio_enable           = var.istio_enabled,
+    portal_hostname        = var.portal_hostname,
+    meldung_hostname       = var.meldung_hostname,
+    core_hostname          = var.core_hostname,
+    issuer_hostname        = var.auth_hostname,
+    context_path           = var.context_path,
+    feature_flags          = try(var.feature_flags[local.gateway_name], {}),
+    config_options         = try(var.config_options[local.gateway_name], {}),
+    replica_count          = var.resource_definitions[local.gateway_name].replicas,
+    resource_block         = var.resource_definitions[local.gateway_name].resource_block,
+    istio_proxy_resources  = var.resource_definitions[local.gateway_name].istio_proxy_resources,
+    service_tracing_config = local.java_service_tracing_config
   }), local.chart_files[local.gateway_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.gateway_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    portal_hostnames           = local.frontend_hostnames
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null)
+    portal_hostnames           = local.frontend_hostnames,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.gateway_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.gateway_name], [])
   }), local.chart_files[local.gateway_name].istio_values_override])
 }

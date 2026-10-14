@@ -59,13 +59,13 @@ download_dashboard 11829 true
 download_dashboard 13277 true
 
 # Basic Dashboards
-download_dashboard 2 2
-download_dashboard 3662 2
-download_dashboard 315 3
-download_dashboard 7249 1
-download_dashboard 747 2
 download_dashboard 4701 10
+download_dashboard 19105 9
 
 # Kubernetes
 download_dashboard 15757 43
-download_dashboard 15760 36
+download_dashboard 15760 41
+download_dashboard 15758 46
+download_dashboard 15759 40
+download_dashboard 15761 21
+download_dashboard 15762 22

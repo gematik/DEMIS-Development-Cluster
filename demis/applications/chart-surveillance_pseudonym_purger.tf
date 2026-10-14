@@ -36,7 +36,7 @@ module "surveillance_pseudonym_purger_ars" {
     config_options        = try(var.config_options[local.spp_ars_name], {}),
     replica_count         = var.resource_definitions[local.spp_ars_name].replicas,
     resource_block        = var.resource_definitions[local.spp_ars_name].resource_block,
-    istio_proxy_resources = var.resource_definitions[local.spp_ars_name].istio_proxy_resources,
+    istio_proxy_resources = var.resource_definitions[local.spp_ars_name].istio_proxy_resources
   }), local.chart_files[local.spp_ars_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.spp_ars_name].istio_template, {
     namespace = var.target_namespace

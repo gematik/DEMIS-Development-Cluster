@@ -19,3 +19,21 @@ output "kubeconfig_path" {
   # Kubeconfig must be generated before the kubeconfig path can be used
   depends_on = [kind_cluster.cluster]
 }
+
+output "client_certificate" {
+  description = "The client certificate for authenticating to the cluster"
+  value       = kind_cluster.cluster.client_certificate
+  sensitive   = true
+}
+
+output "client_key" {
+  description = "The client key for authenticating to the cluster"
+  value       = kind_cluster.cluster.client_key
+  sensitive   = true
+}
+
+output "cluster_ca_certificate" {
+  description = "The CA certificate of the cluster"
+  value       = kind_cluster.cluster.cluster_ca_certificate
+  sensitive   = true
+}

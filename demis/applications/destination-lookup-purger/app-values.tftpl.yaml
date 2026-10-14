@@ -23,6 +23,7 @@ imagePullSecrets:
 customEnvVars:
   # preserves default environment variables from helm chart
   TERRAFORM_DEPLOYMENT: true
+  DB_URL: "jdbc:postgresql://pgbouncer.${namespace}.svc.cluster.local:5432/${data_base}"
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

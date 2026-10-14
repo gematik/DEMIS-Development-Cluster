@@ -41,6 +41,7 @@ resource "kubernetes_deployment_v1" "this" {
           "checksum/dashboards-json-config"          = sha256(jsonencode(kubernetes_config_map_v1.grafana_istio_dashboards.data))
           "checksum/dashboards-services-json-config" = sha256(jsonencode(kubernetes_config_map_v1.grafana_istio_services_dashboards.data))
           "checksum/base-dashboard-provider-config"  = sha256(jsonencode(kubernetes_config_map_v1.grafana_base_dashboards.data))
+          "checksum/kubernetes-dashboards-config"    = sha256(jsonencode(kubernetes_config_map_v1.grafana_kubernetes_dashboards.data))
         }
       }
 
@@ -167,6 +168,11 @@ resource "kubernetes_deployment_v1" "this" {
             name       = "dashboards-base"
             mount_path = "/var/lib/grafana/dashboards/base"
           }
+
+          volume_mount {
+            name       = "dashboards-kubernetes"
+            mount_path = "/var/lib/grafana/dashboards/kubernetes"
+          }
           resources {
             requests = {
               "cpu"    = "250m"
@@ -174,7 +180,7 @@ resource "kubernetes_deployment_v1" "this" {
             }
             limits = {
               "cpu"    = "500m"
-              "memory" = "512Mi"
+              "memory" = "1Gi"
             }
           }
           security_context {
@@ -210,6 +216,13 @@ resource "kubernetes_deployment_v1" "this" {
           name = "dashboards-base"
           config_map {
             name = kubernetes_config_map_v1.grafana_base_dashboards.metadata[0].name
+          }
+        }
+
+        volume {
+          name = "dashboards-kubernetes"
+          config_map {
+            name = kubernetes_config_map_v1.grafana_kubernetes_dashboards.metadata[0].name
           }
         }
 

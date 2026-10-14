@@ -37,6 +37,10 @@ customEnvVars:
   DEMIS_NETWORK_FHIR_STORAGE_SERVICE_ADDRESS: http://fhir-storage-writer.${namespace}.svc.cluster.local
   DEMIS_NETWORK_ARS_PSEUDO_SERVICE_ADDRESS: http://surveillance-pseudonym-service-ars.${namespace}.svc.cluster.local
   EXTERNAL_SERVER_URL: "https://${core_hostname}${context_path}/surveillance/antibiotic-resistance/v1"
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: ars-service.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

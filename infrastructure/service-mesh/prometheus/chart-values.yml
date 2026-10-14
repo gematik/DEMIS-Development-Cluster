@@ -3,10 +3,31 @@ alertmanager:
   enabled: false
 prometheus-pushgateway:
   enabled: false
+# provides kube_* object metrics (namespaces, pods, deployments, ...) for the Kubernetes dashboards
 kube-state-metrics:
-  enabled: false
+  enabled: true
+  # kube_*_labels series are only emitted for allowlisted resources (used by Kubernetes / Views / Global)
+  metricLabelsAllowlist:
+    - namespaces=[*]
+    - deployments=[*]
+    - statefulsets=[*]
+    - daemonsets=[*]
+    - networkpolicies=[*]
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+# provides node_* host metrics for the Kubernetes / Views / Nodes dashboards
 prometheus-node-exporter:
-  enabled: false
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 64Mi
 server:
   podLabels:
     sidecar.istio.io/inject: "true"
@@ -19,7 +40,17 @@ server:
         OUTPUT_CERTS: /etc/istio-output-certs
     sidecar.istio.io/userVolumeMount: '{"istio-certs":{"mountPath": "/etc/istio-output-certs/"}}'
   persistentVolume:
-    enabled: false
+    enabled: true
+    size: 10Gi
+  retention: 5d
+  # keep below the volume size, so Prometheus drops old blocks before the disk fills up
+  retentionSize: 8GB
+  resources:
+    requests:
+      cpu: 200m
+      memory: 1Gi
+    limits:
+      memory: 1Gi
   extraVolumes:
     - name: istio-certs
       emptyDir:
@@ -43,13 +74,24 @@ server:
   image:
     repository: prom/prometheus
 
-  securityContext: null
+  # fsGroup lets the non-root Prometheus write to the persistent volume
+  securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    fsGroup: 65534
 
 configmapReload:
   prometheus:
     image:
       # Use ghcr
       repository: ghcr.io/prometheus-operator/prometheus-config-reloader
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
 
 serverFiles: 
   prometheus.yml: 
@@ -58,10 +100,27 @@ serverFiles:
       - /etc/config/alerting_rules.yml
 
 scrapeConfigs:
+  # discover the own pod only to attach pod/namespace labels (needed by the "Prometheus" dashboard),
+  # the scrape itself still goes to localhost
   prometheus:
-    static_configs:
-      - targets:
-        - localhost:9090
+    static_configs: null # drop the chart default localhost target, otherwise Prometheus scrapes itself twice
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          own_namespace: true
+        selectors:
+          - role: pod
+            label: app.kubernetes.io/name=prometheus,app.kubernetes.io/component=server
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_container_name, __meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: prometheus-server;9090
+      - target_label: __address__
+        replacement: localhost:9090
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
   DEMIS_Services:
     honor_labels: true
     kubernetes_sd_configs:
@@ -80,10 +139,11 @@ scrapeConfigs:
       - source_labels: [__meta_kubernetes_pod_label_job_name]
         action: drop
         regex: .+
+      # scrape the pod itself; the Service would load-balance across replicas
       - action: replace
-        source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name, __meta_kubernetes_namespace]
-        regex: (.+);(.+)
-        replacement: $1.$2.svc.cluster.local:8080
+        source_labels: [__meta_kubernetes_pod_ip]
+        regex: (.+)
+        replacement: $1:8080
         target_label: __address__
       - action: replace
         source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name, __meta_kubernetes_namespace]
@@ -102,6 +162,10 @@ scrapeConfigs:
       - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
         action: replace
         target_label: service
+      # the JVM (Micrometer) dashboard selects services by "application"
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+        action: replace
+        target_label: application
     scheme: https
     tls_config:
       ca_file: /etc/prom-certs/root-cert.pem
@@ -184,7 +248,7 @@ scrapeConfigs:
       - role: endpointslice
 
     relabel_configs:
-      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpointslice_port_name]
         action: keep
         regex: default;kubernetes;https
 
@@ -207,6 +271,9 @@ scrapeConfigs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/$1/proxy/metrics
+      # the Kubernetes dashboards filter node metrics by "node"
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: node
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -225,6 +292,9 @@ scrapeConfigs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+      # the Kubernetes dashboards filter node metrics by "node"
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: node
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt

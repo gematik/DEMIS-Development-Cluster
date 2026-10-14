@@ -41,4 +41,9 @@ locals {
 
   # The version of the Routing Data to use
   routing_data_version = var.deployment_information["notification-routing-data"].main.version
+
+  java_service_tracing_config = try(var.project_feature_flags["FEATURE_FLAG_SERVICE_TRACING_ENABLED"], false) ? yamlencode({
+    MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT = var.opentelemetry_endpoint,
+    MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_TRANSPORT = "grpc" }
+  ) : ""
 }

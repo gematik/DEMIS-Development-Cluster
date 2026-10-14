@@ -298,3 +298,10 @@ variable "bulk_inbound_purger_suspend" {
   description = "Defines if the bulk-inbound-purger is suspended."
   default     = false
 }
+
+variable "opentelemetry_endpoint" {
+  type        = string
+  description = "The endpoint for OpenTelemetry tracing."
+  default     = "http://otlp-collector.istio-system.svc.cluster.local:4317"
+  nullable    = false
+}

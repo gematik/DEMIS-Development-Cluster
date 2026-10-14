@@ -2,6 +2,7 @@
 
 Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes Cluster.
 
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -32,6 +33,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | [kubernetes_secret_v1.keycloak_admin_account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.keycloak_cus_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.keycloak_portal_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
+| [kubernetes_secret_v1.keycloak_terraform_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.keycloak_truststore_file](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.keycloak_truststore_password](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_secret_v1.ldap_certificates](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
@@ -75,12 +77,15 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_keycloak_portal_admin_user"></a> [keycloak\_portal\_admin\_user](#input\_keycloak\_portal\_admin\_user) | The Admin User for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_id"></a> [keycloak\_portal\_client\_id](#input\_keycloak\_portal\_client\_id) | The Client-ID for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_portal_client_secret"></a> [keycloak\_portal\_client\_secret](#input\_keycloak\_portal\_client\_secret) | The Client-Secret for Keycloak PORTAL-Realm | `string` | n/a | yes |
+| <a name="input_keycloak_terraform_client_secret"></a> [keycloak\_terraform\_client\_secret](#input\_keycloak\_terraform\_client\_secret) | The Client-Secret for Keycloak Terraform Client | `string` | n/a | yes |
 | <a name="input_keycloak_truststore_jks"></a> [keycloak\_truststore\_jks](#input\_keycloak\_truststore\_jks) | The Truststore JKS for Keycloak in Base64 Format | `string` | n/a | yes |
+| <a name="input_keycloak_truststore_p12"></a> [keycloak\_truststore\_p12](#input\_keycloak\_truststore\_p12) | The Truststore PKCS12 for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_truststore_password"></a> [keycloak\_truststore\_password](#input\_keycloak\_truststore\_password) | The Truststore Password for Keycloak | `string` | n/a | yes |
 | <a name="input_keycloak_user_import_enabled"></a> [keycloak\_user\_import\_enabled](#input\_keycloak\_user\_import\_enabled) | Activate Keycloak user import | `bool` | n/a | yes |
 | <a name="input_keycloak_user_purger_cron_schedule"></a> [keycloak\_user\_purger\_cron\_schedule](#input\_keycloak\_user\_purger\_cron\_schedule) | Defines the Cron Schedule for the Keycloak-User-Purger | `string` | n/a | yes |
 | <a name="input_keycloak_user_purger_suspend"></a> [keycloak\_user\_purger\_suspend](#input\_keycloak\_user\_purger\_suspend) | Defines if the keycloak-user-purger is suspended. | `bool` | `false` | no |
 | <a name="input_maintenance_mode_trigger"></a> [maintenance\_mode\_trigger](#input\_maintenance\_mode\_trigger) | Output from module.activate\_maintenance\_mode that establishes deploy ordering without known-after-apply propagation. | `string` | `""` | no |
+| <a name="input_managed_realms"></a> [managed\_realms](#input\_managed\_realms) | List of Keycloak realms to be managed by Terraform | `list(string)` | n/a | yes |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_key"></a> [postgres\_server\_key](#input\_postgres\_server\_key) | The Server Key for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |

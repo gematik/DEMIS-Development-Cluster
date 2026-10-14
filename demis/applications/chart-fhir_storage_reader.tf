@@ -26,19 +26,20 @@ module "fhir_storage_reader" {
 
   # Pass the values for the chart
   application_values = compact([templatefile(local.chart_files[local.fssr_name].app_template, {
-    image_pull_secrets    = var.pull_secrets,
-    repository            = var.docker_registry,
-    namespace             = var.target_namespace,
-    debug_enable          = var.debug_enabled,
-    istio_enable          = var.istio_enabled,
-    core_hostname         = var.core_hostname,
-    context_path          = var.context_path,
-    feature_flags         = try(var.feature_flags[local.fssr_name], {}),
-    config_options        = try(var.config_options[local.fssr_name], {}),
-    replica_count         = var.resource_definitions[local.fssr_name].replicas,
-    resource_block        = var.resource_definitions[local.fssr_name].resource_block,
-    istio_proxy_resources = var.resource_definitions[local.fssr_name].istio_proxy_resources,
-    db_secret_checksum    = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], "")
+    image_pull_secrets     = var.pull_secrets,
+    repository             = var.docker_registry,
+    namespace              = var.target_namespace,
+    debug_enable           = var.debug_enabled,
+    istio_enable           = var.istio_enabled,
+    core_hostname          = var.core_hostname,
+    context_path           = var.context_path,
+    feature_flags          = try(var.feature_flags[local.fssr_name], {}),
+    config_options         = try(var.config_options[local.fssr_name], {}),
+    replica_count          = var.resource_definitions[local.fssr_name].replicas,
+    resource_block         = var.resource_definitions[local.fssr_name].resource_block,
+    istio_proxy_resources  = var.resource_definitions[local.fssr_name].istio_proxy_resources,
+    db_secret_checksum     = try(kubernetes_secret_v1.database_credentials[local.fssr_index].metadata[0].annotations["checksum"], ""),
+    service_tracing_config = local.java_service_tracing_config
   }), local.chart_files[local.fssr_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.fssr_name].istio_template, {
     namespace                  = var.target_namespace,
@@ -46,7 +47,7 @@ module "fhir_storage_reader" {
     core_hostname              = var.core_hostname,
     context_path               = var.context_path,
     demis_hostnames            = local.demis_hostnames,
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null)
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fssr_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.fssr_name], [])
   }), local.chart_files[local.fssr_name].istio_values_override])
 }

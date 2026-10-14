@@ -114,10 +114,11 @@ module "futs_bedoccupancy" {
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.futs_bedoccupancy_name], {}),
     config_options          = try(var.config_options[local.futs_bedoccupancy_name], {}),
-    replica_count           = var.resource_definitions[local.futs_bedoccupancy_name].replicas
-    resource_block          = var.resource_definitions[local.futs_bedoccupancy_name].resource_block
-    istio_proxy_resources   = var.resource_definitions[local.futs_bedoccupancy_name].istio_proxy_resources
-    namespace               = var.target_namespace
+    replica_count           = var.resource_definitions[local.futs_bedoccupancy_name].replicas,
+    resource_block          = var.resource_definitions[local.futs_bedoccupancy_name].resource_block,
+    istio_proxy_resources   = var.resource_definitions[local.futs_bedoccupancy_name].istio_proxy_resources,
+    namespace               = var.target_namespace,
+    service_tracing_config  = local.java_service_tracing_config
   }), local.chart_files[local.futs_bedoccupancy_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.futs_bedoccupancy_name].istio_template, {
     namespace    = var.target_namespace,
@@ -156,10 +157,11 @@ module "futs_disease" {
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.futs_disease_name], {}),
     config_options          = try(var.config_options[local.futs_disease_name], {}),
-    replica_count           = var.resource_definitions[local.futs_disease_name].replicas
-    resource_block          = var.resource_definitions[local.futs_disease_name].resource_block
-    istio_proxy_resources   = var.resource_definitions[local.futs_disease_name].istio_proxy_resources
-    namespace               = var.target_namespace
+    replica_count           = var.resource_definitions[local.futs_disease_name].replicas,
+    resource_block          = var.resource_definitions[local.futs_disease_name].resource_block,
+    istio_proxy_resources   = var.resource_definitions[local.futs_disease_name].istio_proxy_resources,
+    namespace               = var.target_namespace,
+    service_tracing_config  = local.java_service_tracing_config
   }), local.chart_files[local.futs_disease_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.futs_disease_name].istio_template, {
     namespace    = var.target_namespace,
@@ -198,10 +200,11 @@ module "futs_pathogen" {
     profile_docker_registry = var.docker_registry,
     feature_flags           = try(var.feature_flags[local.futs_pathogen_name], {}),
     config_options          = try(var.config_options[local.futs_pathogen_name], {}),
-    replica_count           = var.resource_definitions[local.futs_pathogen_name].replicas
-    resource_block          = var.resource_definitions[local.futs_pathogen_name].resource_block
-    istio_proxy_resources   = var.resource_definitions[local.futs_pathogen_name].istio_proxy_resources
-    namespace               = var.target_namespace
+    replica_count           = var.resource_definitions[local.futs_pathogen_name].replicas,
+    resource_block          = var.resource_definitions[local.futs_pathogen_name].resource_block,
+    istio_proxy_resources   = var.resource_definitions[local.futs_pathogen_name].istio_proxy_resources,
+    namespace               = var.target_namespace,
+    service_tracing_config  = local.java_service_tracing_config
   }), local.chart_files[local.futs_pathogen_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.futs_pathogen_name].istio_template, {
     namespace    = var.target_namespace,
@@ -241,9 +244,10 @@ module "futs_igs" {
     feature_flags           = try(var.feature_flags[local.futs_igs_name], {}),
     config_options          = try(var.config_options[local.futs_igs_name], {}),
     replica_count           = var.resource_definitions[local.futs_igs_name].replicas,
-    resource_block          = var.resource_definitions[local.futs_igs_name].resource_block
+    resource_block          = var.resource_definitions[local.futs_igs_name].resource_block,
     istio_proxy_resources   = var.resource_definitions[local.futs_igs_name].istio_proxy_resources,
-    namespace               = var.target_namespace
+    namespace               = var.target_namespace,
+    service_tracing_config  = local.java_service_tracing_config
   }), local.chart_files[local.futs_igs_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.futs_igs_name].istio_template, {
     namespace    = var.target_namespace,

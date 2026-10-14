@@ -36,4 +36,9 @@ locals {
     reset_values                  = var.reset_values
     deployment_timeout            = var.deployment_timeout
   }
+
+  java_service_tracing_config = try(var.project_feature_flags["FEATURE_FLAG_SERVICE_TRACING_ENABLED"], false) ? yamlencode({
+    MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT = var.opentelemetry_endpoint,
+    MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_TRANSPORT = "grpc" }
+  ) : ""
 }

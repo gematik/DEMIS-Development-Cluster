@@ -23,6 +23,10 @@ customEnvVars:
   # Prevents empty values that can delete the default environment variables
   TERRAFORM_DEPLOYMENT: true
   DEMIS_NETWORK_FHIR_UI_DATA_MODEL_TRANSLATION_SERVICE_ADDRESS: http://futs.${namespace}.svc.cluster.local
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: pdfgen-service.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

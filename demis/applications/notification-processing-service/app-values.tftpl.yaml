@@ -41,6 +41,10 @@ customEnvVars:
   DEMIS_CODEMAPPING_BASE_URL: http://futs.${namespace}.svc.cluster.local
   NPS_CLIENT_CONTEXT_ENRICHMENT_SERVICE: http://context-enrichment-service.${namespace}.svc.cluster.local
   NPS_CLIENT_DLS: http://destination-lookup-writer.${namespace}.svc.cluster.local
+%{ if service_tracing_config != "" ~}
+  OTEL_SERVICE_NAME: notification-processing-service.${namespace}
+  ${indent(2, service_tracing_config)}
+%{ endif ~}
   %{~ for flag_name, flag_value in feature_flags ~}
   ${flag_name} : ${flag_value}
   %{~ endfor ~}

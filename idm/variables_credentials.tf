@@ -116,6 +116,12 @@ variable "keycloak_truststore_jks" {
   description = "The Truststore JKS for Keycloak in Base64 Format"
 }
 
+variable "keycloak_truststore_p12" {
+  type        = string
+  sensitive   = true
+  description = "The Truststore PKCS12 for Keycloak in Base64 Format"
+}
+
 variable "keycloak_cus_client_secret" {
   type        = string
   sensitive   = true
@@ -187,4 +193,11 @@ variable "cus_health_department_certificates" {
   type        = map(string)
   default     = {}
   description = "Base64-encoded GA certificates for local, ekm and live-test environment"
+}
+
+variable "keycloak_terraform_client_secret" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "The Client-Secret for Keycloak Terraform Client (only used for local-stages and default prevent error in other stages)"
 }

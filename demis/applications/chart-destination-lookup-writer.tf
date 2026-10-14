@@ -46,11 +46,12 @@ module "destination_lookup_writer" {
     replica_count          = var.resource_definitions[local.dls_writer_name].replicas,
     istio_proxy_resources  = var.resource_definitions[local.dls_writer_name].istio_proxy_resources,
     db_secret_checksum     = try(kubernetes_secret_v1.database_credentials[local.dlsw_index].metadata[0].annotations["checksum"], ""),
-    db_ddl_secret_checksum = try(kubernetes_secret_v1.database_credentials[local.dlsw_ddl_index].metadata[0].annotations["checksum"], "")
+    db_ddl_secret_checksum = try(kubernetes_secret_v1.database_credentials[local.dlsw_ddl_index].metadata[0].annotations["checksum"], ""),
+    service_tracing_config = local.java_service_tracing_config
   }), local.chart_files[local.dls_writer_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.dls_writer_name].istio_template, {
     namespace                = var.target_namespace,
-    app_name                 = local.dls_writer_name
+    app_name                 = local.dls_writer_name,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.dls_writer_name], null)
   }), local.chart_files[local.dls_writer_name].istio_values_override])
 }

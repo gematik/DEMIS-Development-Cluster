@@ -35,14 +35,15 @@ module "igs_service" {
     istio_proxy_resources                  = var.resource_definitions[local.igs_name].istio_proxy_resources,
     igs_encryption_certificate_checksum    = try(kubernetes_secret_v1.igs_encryption_certificate.metadata[0].annotations["checksum"], ""),
     object_storage_service_enabled         = local.igs_object_storage_service_enabled,
-    object_storage_service_secret_checksum = local.igs_object_storage_service_enabled ? try(kubernetes_secret_v1.object_storage_service_credentials.metadata[0].annotations["checksum"], "") : try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], "")
+    object_storage_service_secret_checksum = local.igs_object_storage_service_enabled ? try(kubernetes_secret_v1.object_storage_service_credentials.metadata[0].annotations["checksum"], "") : try(kubernetes_secret_v1.minio_credentials.metadata[0].annotations["checksum"], ""),
+    service_tracing_config                 = local.java_service_tracing_config
   }), local.chart_files[local.igs_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.igs_name].istio_template, {
     namespace                  = var.target_namespace,
     context_path               = var.context_path,
     cluster_gateway            = var.cluster_gateway,
-    demis_hostnames            = local.demis_hostnames
-    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.igs_name], null)
+    demis_hostnames            = local.demis_hostnames,
+    http_timeout_retry_block   = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.igs_name], null),
     istio_rules_block_external = try(var.external_routing_configurations.rules[local.igs_name], [])
   }), local.chart_files[local.igs_name].istio_values_override])
 }

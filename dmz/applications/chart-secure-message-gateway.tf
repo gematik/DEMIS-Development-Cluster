@@ -27,9 +27,10 @@ module "secure_message_gateway" {
     config_options                              = try(var.config_options[local.secure_message_gateway_name], {}),
     replica_count                               = var.resource_definitions[local.secure_message_gateway_name].replicas,
     resource_block                              = var.resource_definitions[local.secure_message_gateway_name].resource_block,
-    istio_proxy_resources                       = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources
+    istio_proxy_resources                       = var.resource_definitions[local.secure_message_gateway_name].istio_proxy_resources,
     smg_secure_queue_encryption_secret_checksum = try(kubernetes_secret_v1.ars_smg_secure_queue_encryption_secret.metadata[0].annotations["checksum"], ""),
     smg_rabbitmq_credentials_checksum           = try(kubernetes_secret_v1.smg_rabbitmq_credentials.metadata[0].annotations["checksum"], ""),
+    service_tracing_config                      = local.java_service_tracing_config,
   }), local.chart_files[local.secure_message_gateway_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.secure_message_gateway_name].istio_template, {
     namespace                = var.target_namespace,

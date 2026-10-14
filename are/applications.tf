@@ -2,9 +2,9 @@ module "are_services" {
   source                           = "./applications"
   external_chart_path              = local.chart_source_path
   docker_registry                  = var.docker_registry
-  helm_repository                  = var.helm_repository
-  helm_repository_username         = var.helm_repository_username
-  helm_repository_password         = var.helm_repository_password
+  helm_repository                  = local.chart_repository
+  helm_repository_username         = local.chart_repository_username
+  helm_repository_password         = local.chart_repository_password
   target_namespace                 = module.are_namespace.name
   pull_secrets                     = local.pull_secrets_credentials
   deployment_information           = local.deployment_information

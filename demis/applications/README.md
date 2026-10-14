@@ -121,6 +121,7 @@ Module responsible for deploying the DEMIS Services Helm Charts in a Kubernetes 
 | <a name="input_minio_root_user"></a> [minio\_root\_user](#input\_minio\_root\_user) | The Minio Root User | `string` | n/a | yes |
 | <a name="input_object_storage_service_access_key"></a> [object\_storage\_service\_access\_key](#input\_object\_storage\_service\_access\_key) | The object-storage-service access key | `string` | n/a | yes |
 | <a name="input_object_storage_service_secret_key"></a> [object\_storage\_service\_secret\_key](#input\_object\_storage\_service\_secret\_key) | The object-storage-service secret key | `string` | n/a | yes |
+| <a name="input_opentelemetry_endpoint"></a> [opentelemetry\_endpoint](#input\_opentelemetry\_endpoint) | The endpoint for OpenTelemetry tracing. | `string` | `"http://otlp-collector.istio-system.svc.cluster.local:4317"` | no |
 | <a name="input_portal_hostname"></a> [portal\_hostname](#input\_portal\_hostname) | The URL for accessing the DEMIS Notification Portal over Telematikinfrastruktur (TI) | `string` | `"portal"` | no |
 | <a name="input_postgres_root_ca_certificate"></a> [postgres\_root\_ca\_certificate](#input\_postgres\_root\_ca\_certificate) | The Root CA Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |
 | <a name="input_postgres_server_certificate"></a> [postgres\_server\_certificate](#input\_postgres\_server\_certificate) | The Server Certificate for the Postgres Database in PEM format, encoded in base64 | `string` | n/a | yes |

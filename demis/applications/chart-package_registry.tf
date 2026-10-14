@@ -24,13 +24,14 @@ module "package_registry" {
     feature_flags              = try(var.feature_flags[local.fpr_name], {}),
     config_options             = try(var.config_options[local.fpr_name], {}),
     replica_count              = var.resource_definitions[local.fpr_name].replicas,
-    resource_block             = var.resource_definitions[local.fpr_name].resource_block
+    resource_block             = var.resource_definitions[local.fpr_name].resource_block,
     istio_proxy_resources      = var.resource_definitions[local.fpr_name].istio_proxy_resources,
-    service_accounts_checksums = [for k, v in kubernetes_secret_v1.service_accounts : v.metadata[0].annotations["checksum"]]
-
+    service_accounts_checksums = [for k, v in kubernetes_secret_v1.service_accounts : v.metadata[0].annotations["checksum"]],
+    service_tracing_config     = local.java_service_tracing_config,
+    namespace                  = var.target_namespace
   }), local.chart_files[local.fpr_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.fpr_name].istio_template, {
-    namespace                = var.target_namespace
+    namespace                = var.target_namespace,
     http_timeout_retry_block = try(module.http_timeouts_retries.service_timeout_retry_definitions[local.fpr_name], null)
   }), local.chart_files[local.fpr_name].istio_values_override])
 }

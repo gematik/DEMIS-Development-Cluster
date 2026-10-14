@@ -16,8 +16,8 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.2.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.2.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 3.3.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 3.3.0 |
 
 ## Modules
 
@@ -31,12 +31,12 @@ It performs the following operations:
 
 | Name | Type |
 | ---- | ---- |
-| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.2.0/docs/resources/release) | resource |
-| [kubernetes_secret_v1.demis_gateway_mutual_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.2.0/docs/resources/secret_v1) | resource |
-| [kubernetes_secret_v1.demis_gateway_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.2.0/docs/resources/secret_v1) | resource |
-| [kubernetes_secret_v1.s3_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.2.0/docs/resources/secret_v1) | resource |
+| [helm_release.authorization_policies_istio](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.kyverno_admission_policies](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [helm_release.network_rules_istio](https://registry.terraform.io/providers/hashicorp/helm/3.3.0/docs/resources/release) | resource |
+| [kubernetes_secret_v1.demis_gateway_mutual_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.3.0/docs/resources/secret_v1) | resource |
+| [kubernetes_secret_v1.demis_gateway_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.3.0/docs/resources/secret_v1) | resource |
+| [kubernetes_secret_v1.s3_tls_credential](https://registry.terraform.io/providers/hashicorp/kubernetes/3.3.0/docs/resources/secret_v1) | resource |
 
 ## Inputs
 
@@ -45,7 +45,9 @@ It performs the following operations:
 | <a name="input_bundid_idp_issuer_subdomain"></a> [bundid\_idp\_issuer\_subdomain](#input\_bundid\_idp\_issuer\_subdomain) | The BundID IDP Issuer URL to be used for the JSON Web Token (JWT) validation | `string` | `""` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The Domain Name to be used for the DEMIS Environment | `string` | n/a | yes |
 | <a name="input_helm_repository"></a> [helm\_repository](#input\_helm\_repository) | The Helm Repository where is stored the Helm Chart | `string` | n/a | yes |
+| <a name="input_helm_repository_name"></a> [helm\_repository\_name](#input\_helm\_repository\_name) | The repository name in the Helm repositories.yaml, used if helm\_repository\_source is 'local' | `string` | `"demis"` | no |
 | <a name="input_helm_repository_password"></a> [helm\_repository\_password](#input\_helm\_repository\_password) | The Password credential for the Helm Repository | `string` | `""` | no |
+| <a name="input_helm_repository_source"></a> [helm\_repository\_source](#input\_helm\_repository\_source) | Where Helm Charts are resolved from: 'url' uses helm\_repository with the credentials from credentials.tfvars, 'local' uses the repository name helm\_repository\_name from the Helm repositories.yaml (credentials and index cache are taken from there) | `string` | `"url"` | no |
 | <a name="input_helm_repository_username"></a> [helm\_repository\_username](#input\_helm\_repository\_username) | The Username credential for the Helm Repository | `string` | `""` | no |
 | <a name="input_istio_gateway_mutual_tls_ca_certificate"></a> [istio\_gateway\_mutual\_tls\_ca\_certificate](#input\_istio\_gateway\_mutual\_tls\_ca\_certificate) | Base64-encoded, PEM Certificate Authority certificate to be used for configuring the Mutual-TLS Settings for the Istio Gateway for core services. | `string` | `""` | no |
 | <a name="input_istio_gateway_mutual_tls_certificate"></a> [istio\_gateway\_mutual\_tls\_certificate](#input\_istio\_gateway\_mutual\_tls\_certificate) | Base64-encoded, PEM certificate to be used for configuring the Mutual-TLS Settings for the Istio Gateway for core services. | `string` | `""` | no |
