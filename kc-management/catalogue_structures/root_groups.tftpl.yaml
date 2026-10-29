@@ -1,0 +1,20 @@
+Anmeldeverfahren:
+  name: Anmeldeverfahren
+Organisationstypen:
+  name: Organisationstypen
+SurveillanceProgramme:
+  name: SurveillanceProgramme
+Testusers:
+  name: Testusers
+  attributes:
+    testuserRecipient: "$sender"
+    accountIsTest: true
+"Weitere Organisationstypen":
+  name: "Weitere Organisationstypen"
+RKI.admin:
+  name: RKI.admin
+  client_roles:
+    - client: SURVEILLANCE-PROGRAMS-realm
+      name: manage-users
+    - client: SURVEILLANCE-PROGRAMS-realm
+      name: view-users

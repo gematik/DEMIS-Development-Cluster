@@ -1,0 +1,61 @@
+# Sender roles
+are-notification-sender:
+  desc: "ARE Sendungen übermitteln"
+ars-data-sender:
+  desc: "ARS-Sendungen senden"
+bed-occupancy-sender:
+  desc: "Bettenbelegung senden"
+disease-notification-nonnominal-sender:
+  desc: "Nicht namentliche Erkrankungsmeldung nach §7.3 senden"
+disease-notification-sender:
+  desc: "Erkrankungsmeldung nach §6.1 senden"
+igs-notification-data-sender:
+  desc: "Meldungsdaten senden"
+igs-sequence-data-sender:
+  desc: "Sequenzdaten senden"
+igs-sequence-data-sender-fasta-only:
+  desc: "Nur FastA Sequenzdaten senden und erweiterte Prüfung"
+pathogen-notification-anonymous-sender:
+  desc: "Anonyme Erregernachweis-Meldung nach §7.3 senden"
+pathogen-notification-nonnominal-sender:
+  desc: "Nicht namentliche Erregernachweis-Meldung nach §7.3 senden"
+pathogen-notification-negative-sender:
+  desc: "Negative Erregernachweis-Meldung nach §7.4 senden"
+pathogen-notification-sender:
+  desc: "Erregernachweis-Meldung nach §7.1 senden"
+vaccine-injury-sender:
+  desc: "Impfschäden senden"
+## OEGD Roles
+are-notification-fetcher:
+  desc: "ARE Sendungen abholen"
+ars-data-fetcher:
+  desc: "ARS-Sendungen abholen"
+bed-occupancy-fetcher:
+  desc: "Bettenbelegung abrufen"
+disease-notification-fetcher:
+  desc: "Erkrankungsmeldungen abrufen"
+disease-notification-nonnominal-fetcher:
+  desc: "Nicht namentliche Erkrankungsmeldungen nach §7.3 abrufen"
+igs-notification-data-fetcher:
+  desc: "IGS Meldungsdaten abrufen"
+igs-sequence-data-fetcher:
+  desc: "Sequenzdaten abrufen"
+pathogen-notification-anonymous-fetcher:
+  desc: "Abrufen von anonymen Erregernachweis-Meldungen nach §7.3"
+pathogen-notification-fetcher:
+  desc: "Abrufen von Erregernachweis-Meldungen nach §7.1"
+pathogen-notification-negative-fetcher:
+  desc: "Abrufen von negativen Erregernachweis-Meldungen nach §7.4"
+pathogen-notification-nonnominal-fetcher:
+  desc: "Abrufen von nicht namentlichen Erregernachweis-Meldungen nach §7.3"
+proof-of-disease-notification-excerpt-fetcher:
+  desc: "Abrufen (Auszüge) von Krankheitsmeldungen nach §6.1"
+proof-of-pathogen-notification-excerpt-fetcher:
+  desc: "Abrufen (Auszüge) von Erregernachweis-Meldungen nach §7.1"
+vaccine-injury-fetcher:
+  desc: "Impfschäden abrufen"
+## Client Roles
+lab-notification-sender:
+  desc: "Rolle, die das Versenden von Labormeldungen erlaubt"
+lab-notification-receiver:
+  desc: "Rolle, die das Abrufen von Labormeldungen erlaubt"

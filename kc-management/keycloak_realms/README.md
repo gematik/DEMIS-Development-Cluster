@@ -19,6 +19,7 @@ It performs the following operations:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
+| <a name="requirement_http"></a> [http](#requirement\_http) | >= 3.0.0 |
 | <a name="requirement_keycloak"></a> [keycloak](#requirement\_keycloak) | >= 5.0.0, < 6.0.0 |
 
 ## Modules
@@ -64,6 +65,11 @@ No modules.
 | [keycloak_user.users_surveillance_programs](https://registry.terraform.io/providers/keycloak/keycloak/latest/docs/resources/user) | resource |
 | [keycloak_user_groups.user_groups](https://registry.terraform.io/providers/keycloak/keycloak/latest/docs/resources/user_groups) | resource |
 | [keycloak_user_roles.roles](https://registry.terraform.io/providers/keycloak/keycloak/latest/docs/resources/user_roles) | resource |
+| [terraform_data.prune_undeclared_client_mappers](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.prune_undeclared_client_roles](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.prune_undeclared_groups](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.prune_undeclared_realm_roles](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.prune_undeclared_service_account_roles](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 
 ## Inputs
 
@@ -82,11 +88,14 @@ No modules.
 | <a name="input_idp_configs"></a> [idp\_configs](#input\_idp\_configs) | Identity provider definitions, keyed by IdP alias. | `any` | n/a | yes |
 | <a name="input_idp_mapper_configs"></a> [idp\_mapper\_configs](#input\_idp\_mapper\_configs) | Identity provider mapper definitions, keyed by mapper name. | `any` | n/a | yes |
 | <a name="input_idps"></a> [idps](#input\_idps) | List of identity providers in the realm | `list(map(list(string)))` | `[]` | no |
-| <a name="input_is_production"></a> [is\_production](#input\_is\_production) | Whether the environment is a production environment. Used to prevent destroying critical realms. | `bool` | n/a | yes |
+| <a name="input_insecure_connection"></a> [insecure\_connection](#input\_insecure\_connection) | Whether to skip TLS verification for plan-time client existence checks. | `bool` | `false` | no |
+| <a name="input_keycloak_admin_token"></a> [keycloak\_admin\_token](#input\_keycloak\_admin\_token) | Admin access token used for plan-time client existence checks against the Keycloak admin API. | `string` | n/a | yes |
+| <a name="input_keycloak_connection_url"></a> [keycloak\_connection\_url](#input\_keycloak\_connection\_url) | Base URL of the Keycloak instance, used for plan-time client existence checks. | `string` | n/a | yes |
 | <a name="input_keycloak_default_user_pwd"></a> [keycloak\_default\_user\_pwd](#input\_keycloak\_default\_user\_pwd) | The default password for Keycloak users | `string` | n/a | yes |
 | <a name="input_keycloak_level1_groups"></a> [keycloak\_level1\_groups](#input\_keycloak\_level1\_groups) | A map of Keycloak level 1 groups (groups with root group as parent) | <pre>map(object({<br/>    name   = string<br/>    parent = string<br/>    roles  = optional(list(string), [])<br/>    client_roles = optional(list(object({<br/>      client = string<br/>      name   = string<br/>    })), [])<br/>    attributes = optional(map(string), {})<br/>  }))</pre> | `{}` | no |
 | <a name="input_keycloak_level2_groups"></a> [keycloak\_level2\_groups](#input\_keycloak\_level2\_groups) | A map of Keycloak level 2 groups (groups with level 1 group as parent) | <pre>map(object({<br/>    name   = string<br/>    parent = string<br/>    roles  = optional(list(string), [])<br/>    client_roles = optional(list(object({<br/>      client = string<br/>      name   = string<br/>    })), [])<br/>    attributes = optional(map(string), {})<br/>  }))</pre> | `{}` | no |
 | <a name="input_keycloak_root_groups"></a> [keycloak\_root\_groups](#input\_keycloak\_root\_groups) | A map of Keycloak root groups (groups without parent) | <pre>map(object({<br/>    name  = string<br/>    roles = optional(list(string), [])<br/>    client_roles = optional(list(object({<br/>      client = string<br/>      name   = string<br/>    })), [])<br/>    attributes = optional(map(string), {})<br/>  }))</pre> | `{}` | no |
+| <a name="input_keycloak_themes"></a> [keycloak\_themes](#input\_keycloak\_themes) | Themes to be used for the Keycloak realm (login, account, admin, email). | `map(string)` | n/a | yes |
 | <a name="input_managed_realms"></a> [managed\_realms](#input\_managed\_realms) | List of Keycloak realms to be managed by Terraform | `list(string)` | `[]` | no |
 | <a name="input_openid_clients"></a> [openid\_clients](#input\_openid\_clients) | Configuration for the OpenID clients in the realm | `any` | n/a | yes |
 | <a name="input_password_users"></a> [password\_users](#input\_password\_users) | A map of users with different passwords than default, where the key is the username and the value is the password | `map(string)` | n/a | yes |

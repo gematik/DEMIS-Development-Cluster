@@ -80,8 +80,8 @@ It performs the following operations:
 | <a name="input_keycloak_portal_client_secret"></a> [keycloak\_portal\_client\_secret](#input\_keycloak\_portal\_client\_secret) | The Client-Secret for Keycloak PORTAL-Realm | `string` | n/a | yes |
 | <a name="input_keycloak_terraform_client_secret"></a> [keycloak\_terraform\_client\_secret](#input\_keycloak\_terraform\_client\_secret) | The Client-Secret for Keycloak Terraform Client (only used for local-stages and default prevent error in other stages) | `string` | `""` | no |
 | <a name="input_keycloak_truststore_jks"></a> [keycloak\_truststore\_jks](#input\_keycloak\_truststore\_jks) | The Truststore JKS for Keycloak in Base64 Format | `string` | n/a | yes |
-| <a name="input_keycloak_truststore_p12"></a> [keycloak\_truststore\_p12](#input\_keycloak\_truststore\_p12) | The Truststore PKCS12 for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_truststore_password"></a> [keycloak\_truststore\_password](#input\_keycloak\_truststore\_password) | The Truststore Password for Keycloak | `string` | n/a | yes |
+| <a name="input_keycloak_truststore_pem"></a> [keycloak\_truststore\_pem](#input\_keycloak\_truststore\_pem) | The Truststore PKCS12 for Keycloak in Base64 Format | `string` | n/a | yes |
 | <a name="input_keycloak_user_import_enabled"></a> [keycloak\_user\_import\_enabled](#input\_keycloak\_user\_import\_enabled) | Activate Keycloak user import | `bool` | `false` | no |
 | <a name="input_keycloak_user_purger_cron_schedule"></a> [keycloak\_user\_purger\_cron\_schedule](#input\_keycloak\_user\_purger\_cron\_schedule) | Defines the Cron Schedule for the Keycloak-User-Purger | `string` | n/a | yes |
 | <a name="input_keycloak_user_purger_suspend"></a> [keycloak\_user\_purger\_suspend](#input\_keycloak\_user\_purger\_suspend) | Defines if the keycloak-user-purger is suspended. | `bool` | `false` | no |

@@ -13,13 +13,27 @@ locals {
   #####################################################
   # evaluate given helm properties, including optional ones
   #####################################################
-  image_tag_property          = var.helm_settings.chart_image_tag_property_name
+  image_tag_property          = nonsensitive(var.helm_settings.chart_image_tag_property_name) # not secret, must not make the values sensitive
   helm_repository             = var.helm_settings.helm_repository
   helm_repository_username    = var.helm_settings.helm_repository_username != null ? var.helm_settings.helm_repository_username : ""
   helm_repository_password    = var.helm_settings.helm_repository_password != null ? var.helm_settings.helm_repository_password : ""
   chart_name                  = coalesce(try(var.deployment_information.chart-name, var.application_name), var.application_name)
   istio_routing_chart_version = try(var.helm_settings.istio_routing_chart_version, null)
   deployment_timeout          = coalesce(try(var.helm_settings.deployment_timeout, 600), 600)
+  #####################################################
+  # Image per Helm Release, "<tag>@<image-digest>" if an image-digest is given for its version (main or canary)
+  #####################################################
+  # keyed like available_versions: main version, canary version and "rolling" (main version)
+  image_refs = { for key, block in merge(
+    { (local.main_version) = var.deployment_information.main, rolling = var.deployment_information.main },
+    local.is_canary_defined ? { (local.canary_version) = var.deployment_information.canary } : {}
+  ) : key => join("@", compact([coalesce(try(var.deployment_information.image-tag, null), block.version), block.image-digest])) }
+  # the image as values YAML at the image tag property, the nested object is built as JSON from the property path,
+  # e.g. "required.image.tag" => {"required":{"image":{"tag":"1.0.0"}}}
+  image_tag_path = split(".", local.image_tag_property)
+  image_values = { for version in local.available_versions : version => yamlencode(jsondecode(
+    "${join("", [for key in local.image_tag_path : "{${jsonencode(key)}:"])}${jsonencode(local.image_refs[version])}${join("", [for key in local.image_tag_path : "}"])}"
+  )) }
 }
 
 # Handle the deployment of the Helm Chart for the main and canary versions
@@ -44,14 +58,7 @@ resource "helm_release" "chart" {
   # check if values must be reused for the main version
   reuse_values = length(local.available_versions) > 1 && (each.key == local.main_version) ? true : false
   # When doing a canary deployment, we need to ensure that the values of the main version are not updated
-  values = length(local.available_versions) > 1 && (each.key == local.main_version) ? [] : var.application_values
-
-  set = [
-    {
-      name  = local.image_tag_property
-      value = coalesce(try(var.deployment_information.image-tag, null), local.is_rolling_deployment ? local.main_version : each.key)
-    }
-  ]
+  values = length(local.available_versions) > 1 && (each.key == local.main_version) ? [] : concat([local.image_values[each.key]], var.application_values)
 }
 
 resource "helm_release" "istio" {

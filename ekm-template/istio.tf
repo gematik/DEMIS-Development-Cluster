@@ -1,9 +1,9 @@
 locals {
   # define Istio Helm Chart versions
   istio_authentication_policies_chart         = coalesce(try(local.deployment_information["policies-authentications"].chart-name, ""), "policies-authentications-istio")
-  istio_authentication_policies_chart_version = local.deployment_information["policies-authentications"].main.version
+  istio_authentication_policies_chart_version = coalesce(try(local.deployment_information["policies-authentications"].canary.version, null), local.deployment_information["policies-authentications"].main.version)
   istio_authorization_policies_chart          = coalesce(try(local.deployment_information["policies-authorizations"].chart-name, ""), "policies-authorizations-istio")
-  istio_authorization_policies_chart_version  = local.deployment_information["policies-authorizations"].main.version
+  istio_authorization_policies_chart_version  = coalesce(try(local.deployment_information["policies-authorizations"].canary.version, null), local.deployment_information["policies-authorizations"].main.version)
 }
 ###################################
 # Install Istio Helm Charts

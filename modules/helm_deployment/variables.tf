@@ -46,18 +46,24 @@ variable "deployment_information" {
     deployment-strategy = string
     enabled             = bool
     main = object({
-      version = string
-      weight  = number
+      version      = string
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = number
     })
     canary = optional(object({
-      version = optional(string)
-      weight  = optional(string)
+      version      = optional(string)
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = optional(string)
     }), {})
   })
   description = "Deployment information for managing the main and optional canary version of the application"
   validation {
     condition     = contains(["canary", "replace", "update", "rolling"], var.deployment_information.deployment-strategy)
     error_message = "The deployment strategy must be 'canary', 'replace', 'update' or 'rolling'"
+  }
+  validation {
+    condition     = alltrue([for digest in [try(var.deployment_information.main.image-digest, null), try(var.deployment_information.canary.image-digest, null)] : digest == null || can(regex("^sha256:[0-9a-f]{64}$", coalesce(digest, "-")))])
+    error_message = "The image-digest of the main and canary version must have the format \"sha256:<64 hex characters>\""
   }
 }
 

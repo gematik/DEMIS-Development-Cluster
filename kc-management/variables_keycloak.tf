@@ -59,25 +59,37 @@ variable "stage_specific_keycloak_config" {
     # Base URL of the Keycloak instance used for admin API calls. Should be normaly localhost
     demis_keycloak_url      = string
     provider_connection_url = optional(string, "http://127.0.0.1:43434")
+    themes = optional(map(string), {
+      login_theme   = "demis-login-theme"
+      account_theme = "demis-login-theme"
+      admin_theme   = "keycloak.v2"
+      email_theme   = "demis-login-theme"
+    })
     oidc_idp_configs = map(object({
       tokenUrl         = string
       clientId         = string
       authorizationUrl = string
       issuer           = string
+      sync_mode        = optional(string, "LEGACY")
     }))
     # The configuration for the Keycloak certificate flow, which is used for certificate based authentication
     realm_specifics = map(object({
       x509_cert_auth_regular_expression      = string
       x509_ocsp_checking_enabled             = bool
       x509_cert_timestamp_validation_enabled = bool
+      x509_cert_auth_ocsp_fail_open          = bool
     }))
     saml_idp_configs = map(object({
-      service_url            = string
-      entity_id              = string
-      name_id_policy_format  = string
-      principal_type         = string
-      want_assertions_signed = bool
-      is_enabled             = bool
+      service_url                   = string
+      entity_id                     = string
+      name_id_policy_format         = string
+      principal_type                = optional(string, "SUBJECT")
+      principal_attribute           = optional(string, null)
+      want_assertions_signed        = bool
+      is_enabled                    = bool
+      sync_mode                     = optional(string, "IMPORT")
+      authn_context_class_refs      = optional(list(string), null)
+      authn_context_comparison_type = optional(string, null)
     }))
     authenticator_configs = object({
       client_id         = string
@@ -87,6 +99,7 @@ variable "stage_specific_keycloak_config" {
     })
     portal_specifics = object({
       demis_home_url                    = string
+      internet_home_url                 = optional(string, null)
       meldeportal_redirect_url          = list(string)
       meldeportal_web_origin            = list(string)
       meldeportal_internet_redirect_url = list(string)

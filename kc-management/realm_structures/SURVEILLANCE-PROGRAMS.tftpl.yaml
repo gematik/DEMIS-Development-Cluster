@@ -1,0 +1,4 @@
+roles: []
+disabled_clients: ["account", "account-console", "admin-cli", "broker", "realm-management", "security-admin-console"]
+event_listener: ["jboss-logging", "surveillance-programs-event-listener-provider"]
+default_groups: []

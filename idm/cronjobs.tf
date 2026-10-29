@@ -20,7 +20,7 @@ resource "terraform_data" "cus_manual_trigger" {
     keycloak_version                 = try(local.deployment_information["keycloak"].main.version, "")
     redis                            = tostring(try(local.deployment_information["redis-cus"].enabled, false))
     redis_version                    = try(local.deployment_information["redis-cus"].main.version, "")
-    stage_configuration_data_version = try(local.deployment_information["stage-configuration-data"].main.version, "")
+    stage_configuration_data_version = try(coalesce(try(local.deployment_information["stage-configuration-data"].canary.version, null), local.deployment_information["stage-configuration-data"].main.version), "")
     stage_configuration_data_name    = try(local.deployment_information["stage-configuration-data"].chart-name, "")
   }
 
@@ -41,7 +41,7 @@ resource "terraform_data" "kup_manual_trigger" {
     enabled                          = tostring(module.idm_services.kup_enabled)
     keycloak                         = tostring(try(local.deployment_information["keycloak"].enabled, false))
     keycloak_version                 = try(local.deployment_information["keycloak"].main.version, "")
-    stage_configuration_data_version = try(local.deployment_information["stage-configuration-data"].main.version, "")
+    stage_configuration_data_version = try(coalesce(try(local.deployment_information["stage-configuration-data"].canary.version, null), local.deployment_information["stage-configuration-data"].main.version), "")
     stage_configuration_data_name    = try(local.deployment_information["stage-configuration-data"].chart-name, "")
   }
 

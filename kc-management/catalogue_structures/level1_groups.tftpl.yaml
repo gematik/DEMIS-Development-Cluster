@@ -1,0 +1,45 @@
+GematikIdp:
+  name: GematikIdp
+  parent: Anmeldeverfahren
+ErregerdiagnostischeUntersuchungsstelle:
+  name: ErregerdiagnostischeUntersuchungsstelle
+  parent: Organisationstypen
+  roles: ["pathogen-notification-sender", "disease-notification-sender", "pathogen-notification-negative-sender"]
+MedizinischeEinrichtung:
+  name: MedizinischeEinrichtung
+  parent: Organisationstypen
+  roles: ["pathogen-notification-sender", "disease-notification-sender"]
+OZG:
+  name: OZG
+  parent: Anmeldeverfahren
+  roles: ["pathogen-notification-sender", "disease-notification-sender"]
+Zertifikat:
+  name: Zertifikat
+  parent: Anmeldeverfahren
+OEGD:
+  name: OEGD
+  parent: Organisationstypen
+ARS:
+  name: ARS
+  parent: SurveillanceProgramme
+  roles: ["ars-data-sender"]
+ARE:
+  name: ARE
+  parent: SurveillanceProgramme
+  roles: ["are-notification-sender"]
+IGS:
+  name: IGS
+  parent: SurveillanceProgramme
+  roles: ["igs-sequence-data-sender", "igs-notification-data-sender"]
+IgsFastAOnly:
+  name: IgsFastAOnly
+  parent: SurveillanceProgramme
+  roles: ["igs-sequence-data-sender-fasta-only", "igs-notification-data-sender"]
+EinrichtungenFürAnonymeMeldungen:
+  name: "Einrichtungen für Anonyme Meldungen"
+  parent: "Weitere Organisationstypen"
+  roles: ["pathogen-notification-anonymous-sender"]
+EinrichtungenFür7.3Meldungen:
+  name: "Einrichtungen für 7.3 Meldungen"
+  parent: "Weitere Organisationstypen"
+  roles: ["disease-notification-nonnominal-sender", "pathogen-notification-nonnominal-sender"]

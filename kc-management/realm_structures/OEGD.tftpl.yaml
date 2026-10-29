@@ -1,0 +1,29 @@
+groups: ["Organisationstypen", "OEGD", "GesundheitsamtHauptstelle", "GesundheitsamtNebenstelle", "RKI", "Testusers"]
+roles: ["are-notification-fetcher", "ars-data-fetcher", "bed-occupancy-fetcher", "disease-notification-fetcher", "disease-notification-nonnominal-fetcher", "igs-notification-data-fetcher", "igs-sequence-data-fetcher", "pathogen-notification-anonymous-fetcher", "pathogen-notification-fetcher", "pathogen-notification-negative-fetcher", "pathogen-notification-nonnominal-fetcher", "proof-of-disease-notification-excerpt-fetcher", "proof-of-pathogen-notification-excerpt-fetcher", "vaccine-injury-fetcher"]
+%{ if (length(kc_options.realms_with_managed_clients) == 0 || contains(kc_options.realms_with_managed_clients, "OEGD"))}
+clients:
+  - aeskulab21: {}
+  - cus-cli:
+      service_account_roles: ["realm-management/view-users"]
+  - demis-analyzer:
+      mappers: ["Account-Is-Test-Protocol-Mapper", "testuser-Recipient-attribute-mapper"]
+  - demis-importer:
+      mappers: ["Account-Is-Test-Protocol-Mapper"]
+  - demis-test-password-grant:
+      mappers: ["Account-Is-Test-Protocol-Mapper"]
+  - devagency: {}
+  - duplicate-detection-engine: {}
+  - gumax: {}
+  - isga: {}
+  - mikropro: {}
+  - notification-clearing-api:
+      roles: ["lab-notification-receiver"]
+  - octoware: {}
+  - profile-loader: {}
+  - profile-server: {}
+  - survnet: {}
+%{endif}
+default_groups: ["GesundheitsamtHauptstelle"]
+event_listener: ["jboss-logging", "registerEventListenerProvider"]
+auth_flows: ["Direct Grant Mutual TLS"]
+disabled_clients: ["account-console", "broker"]

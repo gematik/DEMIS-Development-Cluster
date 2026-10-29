@@ -2,12 +2,58 @@ locals {
   surveillance_programs = ["ARE", "IGS"]
   realm_default_roles = {
     master                = ["offline_access", "uma_authorization", "account/manage-account", "account/view-profile"],
-    LAB                   = ["account/view-profile", "notification-api/lab-notification-sender"]
+    LAB                   = ["account/view-profile", "notification-api/lab-notification-sender"],
     PORTAL                = ["offline_access", "uma_authorization", "account/view-profile"],
     HOSPITAL              = ["account/view-profile", "notification-entry-service/lab-notification-sender", "notification-entry-service/disease-notification-sender"],
     OEGD                  = ["account/view-profile", "notification-clearing-api/lab-notification-receiver"],
     SURVEILLANCE-PROGRAMS = ["account/view-profile", "account/manage-account", "offline_access", "uma_authorization"],
     INSTITUTIONS-TI       = ["account/view-profile", "account/manage-account", "offline_access", "uma_authorization"],
+  }
+  # Client names referenced as "<client>/<role>" in this realm's default roles
+  default_role_clients = toset([
+    for role in try(local.realm_default_roles[var.realm_name], []) :
+    split("/", role)[0] if strcontains(role, "/")
+  ])
+
+  # Clients that already exist in this realm (HTTP check returned a non-empty result)
+  existing_default_role_clients = toset([
+    for client in local.default_role_clients : client
+    if data.http.default_role_client_exists[client].status_code == 200
+    && try(length(jsondecode(data.http.default_role_client_exists[client].response_body)), 0) > 0
+  ])
+
+  # Keep client roles only if the client is created here or already exists in the realm
+  default_roles_filtered = [
+    for role in try(local.realm_default_roles[var.realm_name], []) : role
+    if !strcontains(role, "/") || contains(setunion(local.existing_default_role_clients, keys(local.filtered_clients)), split("/", role)[0])
+  ]
+}
+
+# Check whether the clients referenced by default client roles exist in this realm.
+data "http" "default_role_client_exists" {
+  for_each = local.default_role_clients
+
+  url      = "${var.keycloak_connection_url}/admin/realms/${var.realm_name}/clients?clientId=${urlencode(each.key)}"
+  method   = "GET"
+  insecure = var.insecure_connection
+
+  request_headers = {
+    Authorization = "Bearer ${var.keycloak_admin_token}"
+    Accept        = "application/json"
+  }
+
+  retry {
+    attempts     = 10
+    max_delay_ms = 5000
+    min_delay_ms = 1000
+  }
+
+  lifecycle {
+    postcondition {
+      // For initial cluster deployment a 404 status code is acceptable as the realm might not exist yet.
+      condition     = (self.status_code == 200 || self.status_code == 404) && try(jsondecode(self.response_body), "") != ""
+      error_message = "Failed to check if default role client exists in Keycloak."
+    }
   }
 }
 
@@ -42,10 +88,10 @@ resource "keycloak_realm" "realm" {
   verify_email                   = var.realm_config.verify_email
 
   # Theme settings
-  login_theme   = "demis-login-theme"
-  account_theme = "demis-login-theme"
-  admin_theme   = "keycloak.v2"
-  email_theme   = "demis-login-theme"
+  login_theme   = var.keycloak_themes.login_theme
+  account_theme = var.keycloak_themes.account_theme
+  admin_theme   = var.keycloak_themes.admin_theme
+  email_theme   = var.keycloak_themes.email_theme
 
   # Localization settings
   dynamic "internationalization" {
@@ -99,7 +145,7 @@ resource "keycloak_realm" "realm" {
   }
 
   lifecycle {
-    prevent_destroy = (var.realm_name == "master" || var.is_production)
+    prevent_destroy = true
   }
 
 }
@@ -300,7 +346,7 @@ resource "keycloak_realm_user_profile" "userprofile_surveillance_programs" {
 # User registration configuration (Default roles)
 resource "keycloak_default_roles" "default_roles" {
   realm_id      = keycloak_realm.realm.id
-  default_roles = try(local.realm_default_roles[var.realm_name], [])
+  default_roles = local.default_roles_filtered
   depends_on    = [keycloak_openid_client.clients, keycloak_role.roles, keycloak_role.client_roles]
 }
 

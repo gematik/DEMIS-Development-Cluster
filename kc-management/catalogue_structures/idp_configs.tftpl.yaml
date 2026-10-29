@@ -1,0 +1,105 @@
+gematik-idp:
+  type: "oidc"
+  authorization_url: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.authorizationUrl)}
+  client_id: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.clientId)}
+  token_url: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.tokenUrl)}
+  issuer: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.issuer)}
+  display_name: "gematik IDP"
+  sync_mode: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.sync_mode)}
+entra-id:
+  type: "oidc"
+  authorization_url: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.authorizationUrl)}
+  client_id: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.clientId)}
+  token_url: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.tokenUrl)}
+  issuer: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.issuer)}
+  display_name: "EntraID"
+  user_info_url: "https://graph.microsoft.com/oidc/userinfo"
+  logout_url: "https://login.microsoftonline.com/30092c62-4dbf-43bf-a33f-10d21b5b660a/oauth2/v2.0/logout"
+  validate_signature: true
+  jwks_url: "https://login.microsoftonline.com/30092c62-4dbf-43bf-a33f-10d21b5b660a/discovery/v2.0/keys"
+  enabled: ${!local_cluster}
+  sync_mode: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.sync_mode)}
+gematik-authenticator:
+  type: "oidc"
+  provider_id: "gematik-idp"
+  display_name: "gematik Authenticator"
+  client_id: ${jsonencode(stage_specific_keycloak_config.authenticator_configs.client_id)}
+  gui_order: 0
+  sync_mode: "IMPORT"
+  default_scopes: ${jsonencode(stage_specific_keycloak_config.authenticator_configs.default_scope)}
+  trust_email: true
+  first_broker_login_flow_alias: "first broker login"
+  extra_config:
+    authenticatorUrl: "authenticator://"
+    idpUserAgent: ${jsonencode(stage_specific_keycloak_config.authenticator_configs.user_agent)}
+    authenticationFlow: "SMCB"
+    idpTimeoutMs: "10000"
+    openidConfigUrl: ${jsonencode(stage_specific_keycloak_config.authenticator_configs.openid_config_url)}
+    timeoutMs: "60000"
+    newAuthenticationFlow: "true"
+    validateOpenIDConfigSigningCertificate: "false"
+bundid-idp:
+  type: "saml"
+  client_id: "bund-idp-client"
+  display_name: "BundID IDP"
+  gui_order: 1
+  entity_id: "${stage_specific_keycloak_config.demis_keycloak_url}/realms/${realm}"
+  single_sign_on_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].service_url)}
+  single_logout_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].service_url)}
+  post_binding_response: true
+  post_binding_logout: true
+  post_binding_authn_request: true
+  want_assertions_signed: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].want_assertions_signed)}
+  signature_algorithm: "RSA_SHA256_MGF1"
+  name_id_policy_format: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].name_id_policy_format)}
+  validate_signature: true
+  sync_mode: "IMPORT"
+  xml_sign_key_info_key_name_transformer: "KEY_ID"
+  principal_type: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].principal_type)}
+  principal_attribute: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].principal_attribute)}
+  authn_context_class_refs: ${jsonencode(coalesce(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].authn_context_class_refs, ["STORK-QAA-Level-3"]))}
+  authn_context_comparison_type: ${jsonencode(coalesce(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].authn_context_comparison_type, "minimum"))}
+  extra_config:
+    idpEntityId: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].entity_id)}
+    useMetadataDescriptorUrl: "false"
+    allowCreate: "true"
+    enabledFromMetadata: "true"
+    allowedClockSkew: "0"
+    signSpMetadata: "false"
+    sendClientIdOnLogout: "false"
+    sendIdTokenOnLogout: "true"
+    attributeConsumingServiceIndex: "0"
+    addExtensionsElementWithKeyInfo: "false"
+muk:
+  type: "saml"
+  client_id: "muk"
+  display_name: "MUK"
+  gui_order: 2
+  entity_id: "${stage_specific_keycloak_config.demis_keycloak_url}/realms/${realm}"
+  single_sign_on_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].service_url)}
+  single_logout_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].service_url)}
+  post_binding_response: true
+  post_binding_logout: true
+  post_binding_authn_request: true
+  want_assertions_signed: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].want_assertions_signed)}
+  signature_algorithm: "RSA_SHA256_MGF1"
+  name_id_policy_format: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].name_id_policy_format)}
+  validate_signature: true
+  force_authn: true
+  sync_mode: "IMPORT"
+  xml_sign_key_info_key_name_transformer: "KEY_ID"
+  principal_type: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].principal_type)}
+  principal_attribute: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].principal_attribute)}
+  authn_context_class_refs: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].authn_context_class_refs)}
+  authn_context_comparison_type: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].authn_context_comparison_type)}
+  extra_config:
+    idpEntityId: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].entity_id)}
+    useMetadataDescriptorUrl: "false"
+    allowCreate: "true"
+    enabledFromMetadata: "true"
+    allowedClockSkew: "0"
+    signSpMetadata: "false"
+    sendClientIdOnLogout: "false"
+    sendIdTokenOnLogout: "true"
+    attributeConsumingServiceIndex: "0"
+    addExtensionsElementWithKeyInfo: "false"

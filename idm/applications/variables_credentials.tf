@@ -53,7 +53,7 @@ variable "keycloak_truststore_password" {
   description = "The Truststore Password for Keycloak"
 }
 
-variable "keycloak_truststore_p12" {
+variable "keycloak_truststore_pem" {
   type        = string
   sensitive   = true
   description = "The Truststore PKCS12 for Keycloak in Base64 Format"

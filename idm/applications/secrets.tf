@@ -143,7 +143,7 @@ resource "kubernetes_secret_v1" "keycloak_truststore_file" {
   binary_data = {
     for name, content in {
       "truststore.jks" = var.keycloak_truststore_jks
-      "truststore.p12" = var.keycloak_truststore_p12
+      "truststore.pem" = var.keycloak_truststore_pem
     } : name => content if content != ""
   }
 }

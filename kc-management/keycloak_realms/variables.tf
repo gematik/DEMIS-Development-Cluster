@@ -23,7 +23,24 @@ variable "client_uuids" {
   description = "clientId => UUID for the clients that already exist in this realm, resolved by the caller at plan time."
 }
 
-variable "is_production" {
+variable "keycloak_connection_url" {
+  type        = string
+  description = "Base URL of the Keycloak instance, used for plan-time client existence checks."
+}
+
+variable "keycloak_admin_token" {
+  type        = string
+  sensitive   = true
+  description = "Admin access token used for plan-time client existence checks against the Keycloak admin API."
+}
+
+variable "insecure_connection" {
   type        = bool
-  description = "Whether the environment is a production environment. Used to prevent destroying critical realms."
+  default     = false
+  description = "Whether to skip TLS verification for plan-time client existence checks."
+}
+
+variable "keycloak_themes" {
+  type        = map(string)
+  description = "Themes to be used for the Keycloak realm (login, account, admin, email)."
 }
