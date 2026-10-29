@@ -28,8 +28,10 @@ resource "keycloak_saml_identity_provider" "saml_idps" {
   single_sign_on_service_url             = try(var.idp_configs[var.realm_name][each.key].single_sign_on_service_url, "")
   single_logout_service_url              = try(var.idp_configs[var.realm_name][each.key].single_logout_service_url, "")
   principal_type                         = try(var.idp_configs[var.realm_name][each.key].principal_type, null)
-
-  extra_config = try(var.idp_configs[var.realm_name][each.key].extra_config, {})
+  principal_attribute                    = try(var.idp_configs[var.realm_name][each.key].principal_attribute, null)
+  authn_context_class_refs               = try(var.idp_configs[var.realm_name][each.key].authn_context_class_refs, [])
+  authn_context_comparison_type          = try(var.idp_configs[var.realm_name][each.key].authn_context_comparison_type, null)
+  extra_config                           = try(var.idp_configs[var.realm_name][each.key].extra_config, {})
 
 }
 

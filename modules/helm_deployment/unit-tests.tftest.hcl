@@ -54,6 +54,10 @@ run "helm_deployment_canary_with_istio_test" {
 
   # Check internal values
   assert {
+    condition     = yamldecode(helm_release.chart["1.8.3"].values[0]).image.tag == "1.8.3"
+    error_message = "Expected the image tag at the property 'image.tag', got ${jsonencode(helm_release.chart["1.8.3"].values)}"
+  }
+  assert {
     condition     = can(regex(".*LOG_LEVEL.*", join(",", helm_release.chart["1.8.3"].values)))
     error_message = "The Helm Chart Application Values are wrong, got ${join(",", helm_release.chart["1.8.3"].values)}"
   }
@@ -263,5 +267,168 @@ run "helm_deployment_replace_or_update_canary_version_test" {
   assert {
     condition     = anytrue([for set in helm_release.istio[0].set : (set.name == "destinationSubsets.main.weight" && set.value == "100")])
     error_message = "Expected the Istio Helm Chart to have the correct weight '100' set for the main subset, got ${jsonencode(helm_release.istio[0].set)}."
+  }
+}
+
+# Canary Deployment with digests: the canary version is deployed pinned by its digest, the main version is not changed
+run "helm_deployment_canary_digest_test" {
+  command = plan
+
+  variables {
+    namespace = "demis"
+    helm_settings = {
+      chart_image_tag_property_name = "required.image.tag"
+      helm_repository               = "https://gematik.github.io/DEMIS-Helm-Charts/"
+    }
+
+    application_name = "futs-ars"
+    deployment_information = {
+      chart-name          = "futs"
+      deployment-strategy = "canary"
+      enabled             = true
+      main = {
+        version      = "2.8.2"
+        image-digest = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        weight       = 100
+      }
+      canary = {
+        version      = "2.8.3"
+        image-digest = "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        weight       = 0
+      }
+    }
+  }
+
+  # the main version reuses its deployed values including the image, it is not updated by the canary deployment
+  assert {
+    condition     = helm_release.chart["2.8.2"].reuse_values && length(helm_release.chart["2.8.2"].values) == 0
+    error_message = "Expected the main version to reuse its values without setting the image, got ${jsonencode(helm_release.chart["2.8.2"].values)}"
+  }
+  assert {
+    condition     = yamldecode(helm_release.chart["2.8.3"].values[0]).required.image.tag == "2.8.3@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    error_message = "Expected the canary version to be pinned by its digest, got ${jsonencode(helm_release.chart["2.8.3"].values)}"
+  }
+  # the version of the release stays the plain tag
+  assert {
+    condition     = helm_release.chart["2.8.3"].version == "2.8.3"
+    error_message = "Expected the chart version to stay '2.8.3', got ${helm_release.chart["2.8.3"].version}"
+  }
+}
+
+# Replace Deployment with a canary version: the digest of the canary version is deployed
+run "helm_deployment_replace_canary_digest_test" {
+  command = plan
+
+  variables {
+    namespace = "demis"
+    helm_settings = {
+      chart_image_tag_property_name = "required.image.tag"
+      helm_repository               = "https://gematik.github.io/DEMIS-Helm-Charts/"
+    }
+
+    application_name = "ars-purger"
+    deployment_information = {
+      deployment-strategy = "replace"
+      enabled             = true
+      main = {
+        version      = "1.6.1"
+        image-digest = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        weight       = 100
+      }
+      canary = {
+        version      = "1.6.2"
+        image-digest = "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        weight       = 0
+      }
+    }
+  }
+
+  assert {
+    condition     = yamldecode(helm_release.chart["1.6.2"].values[0]).required.image.tag == "1.6.2@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    error_message = "Expected the canary version to be pinned by its digest, got ${jsonencode(helm_release.chart["1.6.2"].values)}"
+  }
+}
+
+# Rolling Deployment with image tag override: the digest is appended to the image tag
+run "helm_deployment_rolling_image_tag_digest_test" {
+  command = plan
+
+  variables {
+    namespace = "demis"
+    helm_settings = {
+      chart_image_tag_property_name = "required.image.tag"
+      helm_repository               = "https://gematik.github.io/DEMIS-Helm-Charts/"
+    }
+
+    application_name = "ars-purger"
+    deployment_information = {
+      image-tag           = "1.6.2-hotfix"
+      deployment-strategy = "rolling"
+      enabled             = true
+      main = {
+        version      = "1.6.2"
+        image-digest = "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        weight       = 100
+      }
+    }
+  }
+
+  assert {
+    condition     = yamldecode(helm_release.chart["rolling"].values[0]).required.image.tag == "1.6.2-hotfix@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    error_message = "Expected the image tag override to be pinned by digest, got ${jsonencode(helm_release.chart["rolling"].values)}"
+  }
+}
+
+# A digest in an invalid format is rejected
+run "helm_deployment_invalid_digest_test" {
+  command = plan
+
+  variables {
+    namespace = "demis"
+    helm_settings = {
+      chart_image_tag_property_name = "required.image.tag"
+      helm_repository               = "https://gematik.github.io/DEMIS-Helm-Charts/"
+    }
+
+    application_name = "ars-purger"
+    deployment_information = {
+      deployment-strategy = "replace"
+      enabled             = true
+      main = {
+        version      = "1.6.2"
+        image-digest = "1.6.2@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        weight       = 100
+      }
+    }
+  }
+
+  expect_failures = [var.deployment_information]
+}
+
+# Without digest the plain tag is deployed
+run "helm_deployment_without_digest_test" {
+  command = plan
+
+  variables {
+    namespace = "demis"
+    helm_settings = {
+      chart_image_tag_property_name = "required.image.tag"
+      helm_repository               = "https://gematik.github.io/DEMIS-Helm-Charts/"
+    }
+
+    application_name = "ars-purger"
+    deployment_information = {
+      deployment-strategy = "replace"
+      enabled             = true
+      main = {
+        version = "1.6.2"
+        weight  = 100
+      }
+    }
+  }
+
+  assert {
+    condition     = yamldecode(helm_release.chart["1.6.2"].values[0]).required.image.tag == "1.6.2"
+    error_message = "Expected the plain image tag, got ${jsonencode(helm_release.chart["1.6.2"].values)}"
   }
 }

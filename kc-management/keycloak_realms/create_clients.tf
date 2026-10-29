@@ -18,18 +18,6 @@ locals {
       for c in var.clients : contains(keys(c), key)
     ])
   }, local.realm_clients)
-
-  clients_with_default_scopes = {
-    for key, client in local.filtered_clients :
-    key => client
-    if try(client.default_scopes, null) != null
-  }
-
-  clients_with_optional_scopes = {
-    for key, client in local.filtered_clients :
-    key => client
-    if try(client.optional_scopes, null) != null
-  }
 }
 
 data "keycloak_authentication_flow" "flows" {
@@ -90,18 +78,3 @@ resource "keycloak_openid_client" "clients" {
   import = try(each.value.defaultClient, false)
 }
 
-resource "keycloak_openid_client_default_scopes" "default_scopes" {
-  for_each       = local.clients_with_default_scopes
-  realm_id       = keycloak_realm.realm.id
-  client_id      = keycloak_openid_client.clients[each.key].id
-  default_scopes = try(each.value[var.realm_name].default_scopes, try(each.value.default_scopes, []))
-  depends_on     = [keycloak_openid_client.clients, keycloak_role.roles]
-}
-
-resource "keycloak_openid_client_optional_scopes" "optional_scopes" {
-  for_each        = local.clients_with_optional_scopes
-  realm_id        = keycloak_realm.realm.id
-  client_id       = keycloak_openid_client.clients[each.key].id
-  optional_scopes = try(each.value[var.realm_name].optional_scopes, try(each.value.optional_scopes, []))
-  depends_on      = [keycloak_openid_client.clients, keycloak_role.roles]
-}

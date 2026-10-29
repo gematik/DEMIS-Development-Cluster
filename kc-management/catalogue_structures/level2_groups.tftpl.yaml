@@ -1,0 +1,52 @@
+PathologischAnatomischeEinrichtung:
+  name: PathologischAnatomischeEinrichtung
+  parent: ErregerdiagnostischeUntersuchungsstelle
+  roles: ["vaccine-injury-sender"]
+Apotheke:
+  name: Apotheke
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender"]
+Arztpraxis:
+  name: Arztpraxis
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender"]
+Geburtshilfe:
+  name: Geburtshilfe
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender"]
+InstitutionOEGD:
+  name: InstitutionOEGD
+  parent: MedizinischeEinrichtung
+Krankenhaus:
+  name: Krankenhaus
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender", "bed-occupancy-sender"]
+SonstigeMedizinischeEinrichtung:
+  name: SonstigeMedizinischeEinrichtung
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender"]
+Tierarzt:
+  name: Tierarzt
+  parent: MedizinischeEinrichtung
+VorsorgeReha:
+  name: VorsorgeReha
+  parent: MedizinischeEinrichtung
+  roles: ["vaccine-injury-sender"]
+WeitereGesundheitsberufe:
+  name: WeitereGesundheitsberufe
+  parent: MedizinischeEinrichtung
+Zahnarztpraxis:
+  name: Zahnarztpraxis
+  parent: MedizinischeEinrichtung
+GesundheitsamtHauptstelle:
+  name: GesundheitsamtHauptstelle
+  parent: OEGD
+  roles: ["vaccine-injury-fetcher", "pathogen-notification-fetcher", "disease-notification-fetcher"]
+GesundheitsamtNebenstelle:
+  name: GesundheitsamtNebenstelle
+  parent: OEGD
+  roles: ["pathogen-notification-fetcher", "disease-notification-fetcher"]
+RKI:
+  name: RKI
+  parent: OEGD
+  roles: ["ars-data-fetcher", "are-notification-fetcher", "igs-sequence-data-fetcher", "proof-of-pathogen-notification-excerpt-fetcher", "disease-notification-nonnominal-fetcher", "pathogen-notification-negative-fetcher", "igs-notification-data-fetcher", "bed-occupancy-fetcher", "pathogen-notification-nonnominal-fetcher", "pathogen-notification-anonymous-fetcher", "proof-of-disease-notification-excerpt-fetcher"]

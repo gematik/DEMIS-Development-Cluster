@@ -10,15 +10,22 @@ locals {
     SURVEILLANCE-PROGRAMS = "${local.environment_data_path}/keycloak-users/gematik-SURVEILLANCE-PROGRAMS.users.json"
   }
 
-  keycloak_realms_structure = yamldecode(templatefile("${path.module}/realm_structures/master.tftpl.yaml", {
-    feature_flags = var.project_feature_flags
-    config = {
-      with_testsuite_client = nonsensitive(var.keycloak_testsuite_client_secret != null)
-    }
-  }))
+  keycloak_realms_structure = {
+    for f in fileset("${path.module}/realm_structures", "*.tftpl.yaml") :
+    trimsuffix(f, ".tftpl.yaml") => yamldecode(templatefile("${path.module}/realm_structures/${f}", {
+      project_feature_flags = var.project_feature_flags
+      kc_options            = var.kc_options
+      config = {
+        with_testsuite_client = nonsensitive(var.keycloak_testsuite_client_secret != null)
+      }
+    }))
+  }
 
   keycloak_realms = {
-    for realm, config in local.keycloak_realms_structure : realm => config
+    for realm, config in local.keycloak_realms_structure : realm => merge(config, {
+      roles          = concat(lookup(var.kc_options.additional_roles, realm, []), try(config.roles, []))
+      default_groups = concat(try(config.default_groups, []), lookup(var.kc_options.additional_default_groups, realm, []))
+    })
     if contains(var.managed_realms, realm)
   }
 
@@ -49,13 +56,12 @@ locals {
     )
   }
 
-
   # Ancestor lookup (same logic as create_groups.tf)
-  import_level1_ancestors = { for k, v in local.level1_groups : k => [v.parent] }
+  import_level1_ancestors = { for k, v in local.group_catalogues.level1 : k => [v.parent] }
   import_level2_ancestors = {
-    for k, v in local.level2_groups : k => [
+    for k, v in local.group_catalogues.level2 : k => [
       v.parent,
-      local.level1_groups[v.parent].parent
+      local.group_catalogues.level1[v.parent].parent
     ]
   }
 
@@ -82,9 +88,9 @@ module "realms" {
   roles                     = try(each.value.roles, [])
   disabled_clients          = try(each.value.disabled_clients, [])
   event_listener            = try(each.value.event_listener, ["jboss-logging"])
-  keycloak_root_groups      = local.root_groups
-  keycloak_level1_groups    = local.level1_groups
-  keycloak_level2_groups    = local.level2_groups
+  keycloak_root_groups      = local.group_catalogues_per_realm[each.key].root
+  keycloak_level1_groups    = local.group_catalogues_per_realm[each.key].level1
+  keycloak_level2_groups    = local.group_catalogues_per_realm[each.key].level2
   expanded_groups_per_realm = local.expanded_groups_per_realm
   idps                      = try(each.value.idps, [])
   auth_flows                = try(each.value.auth_flows, [])
@@ -96,10 +102,14 @@ module "realms" {
   auth_flow_configs         = local.auth_flow_configs[each.key]
   idp_mapper_configs        = local.idp_mapper_configs
   client_mapper_configs     = local.client_mapper_configs
-  is_production             = var.is_production
   realm_config              = try(var.realm_config[each.key], {})
   certs                     = lookup(var.keycloak_certs, each.key, [])
   password_users            = var.password_users
+
+  keycloak_connection_url = var.stage_specific_keycloak_config.provider_connection_url
+  keycloak_admin_token    = local.keycloak_admin_token
+  insecure_connection     = local.insecure_connection
+  keycloak_themes         = var.stage_specific_keycloak_config.themes
 
   client_uuids = { for k, v in data.keycloak_openid_client.clients : split("/", k)[1] => v.id if split("/", k)[0] == each.key }
 }

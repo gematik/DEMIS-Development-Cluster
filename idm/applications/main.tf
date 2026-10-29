@@ -31,12 +31,16 @@ locals {
     helm_repository               = var.helm_repository
     helm_repository_username      = var.helm_repository_username
     helm_repository_password      = var.helm_repository_password
-    istio_routing_chart_version   = try(var.deployment_information["istio-routing"].main.version)
+    istio_routing_chart_version   = try(coalesce(try(var.deployment_information["istio-routing"].canary.version, null), var.deployment_information["istio-routing"].main.version))
     istio_routing_chart_name      = coalesce(try(var.deployment_information["istio-routing"].chart-name, ""), "istio-routing")
     reset_values                  = var.reset_values
     deployment_timeout            = var.deployment_timeout
   }
-  stage_configuration_data_version = try(var.deployment_information["stage-configuration-data"].main.version, "")
+  # The Stage Configuration Data to use (image of an init container), canary first with main as fallback, the image-digest belongs to its version
+  stage_configuration_data         = try(var.deployment_information["stage-configuration-data"].canary.version, null) != null ? var.deployment_information["stage-configuration-data"].canary : try(var.deployment_information["stage-configuration-data"].main, null)
+  stage_configuration_data_version = try(local.stage_configuration_data.version, "")
+  stage_configuration_data_tag     = try(join("@", compact([local.stage_configuration_data.version, local.stage_configuration_data.image-digest])), "")
   stage_configuration_data_name    = try(var.deployment_information["stage-configuration-data"].chart-name, "")
-  tsl_deliverer_mock_version       = try(var.deployment_information["tsl-deliverer-mock"].main.version, "")
+  # The TSL Deliverer Mock (image of an init container), "<version>@<image-digest>" if an image-digest is given
+  tsl_deliverer_mock_tag = try(join("@", compact([var.deployment_information["tsl-deliverer-mock"].main.version, var.deployment_information["tsl-deliverer-mock"].main.image-digest])), "")
 }

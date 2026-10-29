@@ -13,7 +13,7 @@ resource "helm_release" "kyverno_admission_policies" {
   name                = local.kyverno_policies_name
   chart               = local.kyverno_policies_name
   repository          = local.chart_repository
-  version             = local.kyverno_admission_policies.main.version
+  version             = coalesce(try(local.kyverno_admission_policies.canary.version, null), local.kyverno_admission_policies.main.version)
   namespace           = var.target_namespace
   repository_username = local.chart_repository_username
   repository_password = local.chart_repository_password

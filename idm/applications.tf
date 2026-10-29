@@ -51,7 +51,7 @@ module "idm_services" {
   keycloak_portal_client_secret      = var.keycloak_portal_client_secret
   keycloak_cus_client_secret         = var.keycloak_cus_client_secret
   keycloak_truststore_jks            = var.keycloak_truststore_jks
-  keycloak_truststore_p12            = var.keycloak_truststore_p12
+  keycloak_truststore_pem            = var.keycloak_truststore_pem
   keycloak_truststore_password       = var.keycloak_truststore_password
   redis_cus_writer_user              = var.redis_cus_writer_user
   redis_cus_writer_password          = var.redis_cus_writer_password

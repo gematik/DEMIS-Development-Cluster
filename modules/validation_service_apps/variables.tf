@@ -15,14 +15,16 @@ variable "deployment_information" {
     deployment-strategy = string
     enabled             = bool
     main = object({
-      version  = string
-      weight   = number
-      profiles = optional(list(string))
+      version      = string
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = number
+      profiles     = optional(list(string))
     })
     canary = optional(object({
-      version  = optional(string)
-      weight   = optional(string)
-      profiles = optional(list(string))
+      version      = optional(string)
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = optional(string)
+      profiles     = optional(list(string))
     }), {})
   })
 }

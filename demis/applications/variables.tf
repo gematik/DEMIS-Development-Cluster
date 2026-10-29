@@ -32,14 +32,16 @@ variable "deployment_information" {
     deployment-strategy = string
     enabled             = bool
     main = object({
-      version  = string
-      weight   = number
-      profiles = optional(list(string))
+      version      = string
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = number
+      profiles     = optional(list(string))
     })
     canary = optional(object({
-      version  = optional(string)
-      weight   = optional(string)
-      profiles = optional(list(string))
+      version      = optional(string)
+      image-digest = optional(string) # Optional, "sha256:..." to deploy the image of the version pinned by digest
+      weight       = optional(string)
+      profiles     = optional(list(string))
     }), {})
   }))
 
@@ -71,7 +73,7 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.main.profiles)) || can([for v in service.main.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs", "futs-ars"], name) || !can(length(service.main.profiles)) || can([for v in service.main.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
     ])
     error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in main."
   }
@@ -79,7 +81,7 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen"], name) || !can(length(service.canary.profiles)) || can([for v in service.canary.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
+      (!service.enabled || !contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs", "futs-ars"], name) || !can(length(service.canary.profiles)) || can([for v in service.canary.profiles : regex("^(([a-zA-Z]*-)*)?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$", v)]))
     ])
     error_message = "Service Configuration is not valid. Please recheck versions for profiles syntax in canary."
   }
@@ -87,9 +89,9 @@ variable "deployment_information" {
   validation {
     condition = alltrue([
       for name, service in var.deployment_information : true &&
-      (!service.enabled || contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs"], name) || (!contains(["validation-service-igs", "validation-service-ars", "futs-igs"], name) && !can(length(service.main.profiles)) && !can(length(service.canary.profiles))))
+      (!service.enabled || contains(["validation-service-bedoccupancy", "validation-service-disease", "validation-service-pathogen", "validation-service-igs", "validation-service-ars", "futs-bedoccupancy", "futs-disease", "futs-pathogen", "futs-igs", "futs-ars"], name) || (!can(length(service.main.profiles)) && !can(length(service.canary.profiles))))
     ])
-    error_message = "onyl Services validation-service-igs, validation-service-ars, futs-bedoccupancy, futs-disease, futs-pathogen and futs-igs can have profiles defined."
+    error_message = "Only Services validation-service-bedoccupancy, validation-service-disease, validation-service-pathogen, validation-service-igs, validation-service-ars, futs-bedoccupancy, futs-disease, futs-pathogen, futs-igs and futs-ars can have profiles defined."
   }
 
   validation {

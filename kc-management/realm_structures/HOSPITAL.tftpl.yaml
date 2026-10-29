@@ -1,0 +1,21 @@
+groups: ["Krankenhaus", "ARE", "ARS", "Testusers", "EinrichtungenFürAnonymeMeldungen", "EinrichtungenFür7.3Meldungen"]
+roles: ["are-notification-sender", "ars-data-sender", "bed-occupancy-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "pathogen-notification-anonymous-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+event_listener: ["jboss-logging", "registerEventListenerProvider"]
+default_groups: ["Krankenhaus", "ARS"]
+%{ if (length(kc_options.realms_with_managed_clients) == 0 || contains(kc_options.realms_with_managed_clients, "HOSPITAL")) }
+clients:
+  - demis-gateway:
+      mappers: []
+  - demis-test:
+      mappers: ["testuser-Recipient-attribute-mapper", "SP-User-ID-Mapper", "preferred_username-mapper", "ik-mapper", "Account-Is-Test-Protocol-Mapper"]
+  - demis-test-password-grant:
+      mappers: ["Account-Is-Test-Protocol-Mapper", "ik-mapper"]
+  - notification-entry-service:
+      mappers: []
+      roles: ["disease-notification-sender", "lab-notification-sender"]
+  - notification-gateway:
+      mappers: []
+      roles: ["disease-notification-sender", "lab-notification-sender"]
+%{endif}
+disabled_clients: ["account-console"]
+auth_flows: ["Direct Grant Mutual TLS"]

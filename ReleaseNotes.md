@@ -2,6 +2,34 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.14.0
+- changed keycloak p12 truststore to pem truststore
+- kc-management:
+  - moved cataloge to template files
+  - added more flexibility to fit test-stage requirements and special configuration
+  - configured IAM for piloting of 7.3 notifications 
+  - added a script to wipe and recreate keycloak locally `wipe-and-recreate-keycloak.sh`
+  - added check for client, so it has just exclusive the configured scopes, mappers, account-roles and roles
+  - added check for realm-roles, so not defined roles got pruned
+  - remove not definded groups
+  - added optional RKI.admin mapper 
+- added optional image digest pinning:
+  - optional `image-digest` (`sha256:...`) for main and canary versions in the `active-versions.yaml`, images are deployed as `<tag>@<image-digest>`
+- service versions now will be read from canary with main as fallback for following service definitions:
+  - istio-routing
+  - network-rules
+  - policies-authentications
+  - policies-authorizations
+  - kyverno-admission-policies
+  - kubernetes-network-policies
+  - notification-routing-data
+  - stage-configuration-data
+- demis: 
+  - added new service futs-ars
+  - added futs url to ARS app-values
+- improved parallel execution of cluster deployment validation
+- fixed race condition on parallel module validation
+
 ## Release 5.13.0
 - add istio cluster name definition in istio config
 - upgraded providers and changed istio helm repo to https://blob.istio.io/istio-release/charts

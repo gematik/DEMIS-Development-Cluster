@@ -1,0 +1,272 @@
+testsuite-client:
+  name: "Testsuite"
+  access_type: "CONFIDENTIAL"
+  access_token_lifespan: 600
+  frontchannel_logout_enabled: true
+  frontend_logout_session_required: true
+  service_accounts_enabled: true
+token-exchange-client:
+  access_type: "CONFIDENTIAL"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  frontchannel_logout_enabled: true
+  valid_redirect_uris: ["/*"]
+  valid_post_logout_redirect_uris: ["+"]
+  web_origins: ["/*"]
+demis-adapter:
+  name: "Service Provider demis-adapter"
+  access_type: "CONFIDENTIAL"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.movi.kaa://oauth/callback"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  valid_post_logout_redirect_uris: ["+"]
+demis-gateway:
+  access_type: "CONFIDENTIAL"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_redirect_uris: ["http://www.example.de/*"]
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+demis-test-password-grant:
+  access_type: "PUBLIC"
+  standard_flow_enabled: false
+  direct_access_grants_enabled: true
+  frontchannel_logout_enabled: true
+  authentication_flow_binding_overrides:
+    direct_grant: "direct grant"
+demis-test:
+  name: "Service Provider demis-test"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris: ["/*"]
+  valid_post_logout_redirect_uris: ["+"]
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  access_token_lifespan: 600
+  default_scopes: ["basic", "profile", "roles"]
+  optional_scopes: []
+notification-gateway:
+  name: "Notification Gateway Ressource"
+  access_type: "BEARER-ONLY"
+  access_token_lifespan: 540
+notification-api:
+  name: "REST Service: notification-api"
+  access_type: "BEARER-ONLY"
+notification-entry-service:
+  name: "REST Service: notification-entry-service"
+  access_type: "BEARER-ONLY"
+  access_token_lifespan: 600
+### PORTAL Clients
+%{ for instance in kc_options.multi_stage_kc ~}
+meldeportal${instance.name_suffix}:
+  access_type: "PUBLIC"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  backchannel_logout_session_required: true
+  base_url: ${jsonencode(replace(stage_specific_keycloak_config.portal_specifics.demis_home_url, "<STAGE_NAME>", instance.stage_name))}
+  admin_url: ${jsonencode(replace(stage_specific_keycloak_config.portal_specifics.demis_home_url, "<STAGE_NAME>", instance.stage_name))}
+  valid_redirect_uris: ${jsonencode([for uri in stage_specific_keycloak_config.portal_specifics.meldeportal_redirect_url : replace(uri, "<STAGE_NAME>", instance.stage_name)])}
+  valid_post_logout_redirect_uris: ["+"]
+  web_origins: ${jsonencode([for origin in stage_specific_keycloak_config.portal_specifics.meldeportal_web_origin : replace(origin, "<STAGE_NAME>", instance.stage_name)])}
+meldeportal-internet${instance.name_suffix}:
+  access_type: "PUBLIC"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  backchannel_logout_session_required: true
+  base_url: ${jsonencode(replace(coalesce(stage_specific_keycloak_config.portal_specifics.internet_home_url, stage_specific_keycloak_config.portal_specifics.demis_home_url), "<STAGE_NAME>", instance.stage_name))}
+  admin_url: ${jsonencode(replace(coalesce(stage_specific_keycloak_config.portal_specifics.internet_home_url, stage_specific_keycloak_config.portal_specifics.demis_home_url), "<STAGE_NAME>", instance.stage_name))}
+  valid_redirect_uris: ${jsonencode([for uri in stage_specific_keycloak_config.portal_specifics.meldeportal_internet_redirect_url : replace(uri, "<STAGE_NAME>", instance.stage_name)])}
+  valid_post_logout_redirect_uris: ["+"]
+  web_origins: ${jsonencode([for origin in stage_specific_keycloak_config.portal_specifics.meldeportal_internet_web_origin : replace(origin, "<STAGE_NAME>", instance.stage_name)])}
+%{ endfor ~}
+
+### OEGD Clients
+demis-analyzer:
+  name: "Service Provider demis-analyzer"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.demis2.bachelorarbeitmarkus://oauth/callback"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  valid_post_logout_redirect_uris: ["+"]
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  full_scope_allowed: true
+  access_token_lifespan: 600
+demis-importer:
+  name: "Service Provider demis-importer"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.movi.kaa://oauth/callback"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  valid_post_logout_redirect_uris: ["+"]
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  full_scope_allowed: true
+  access_token_lifespan: 600
+aeskulab21:
+  name: "Service Provider aeskulab21"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "https://unisoft.de/"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+cus-cli:
+  name: "Certificate Update Service"
+  access_type: "CONFIDENTIAL"
+  access_token_lifespan: 600
+  frontchannel_logout_enabled: true
+  frontend_logout_session_required: true
+  service_accounts_enabled: true
+devagency:
+  name: "Service Provider devagency"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "https://devagency.de/"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  valid_post_logout_redirect_uris: ["+"]
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  access_token_lifespan: 600
+duplicate-detection-engine:
+  name: "REST Service: duplicate-detection-engine"
+  access_type: "BEARER-ONLY"
+  access_token_lifespan: 600
+gumax:
+  name: "Service Provider gumax"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+    - "https://www.software-house.de/"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+isga:
+  name: "Service Provider isga"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+    - "http://www.computerzentrum.de/"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+mikropro:
+  name: "Service Provider mikropro"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+    - "http://www.computerzentrum.de/"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+notification-clearing-api:
+  name: "REST Service: notification-clearing-api"
+  access_type: "BEARER-ONLY"
+  access_token_lifespan: 600
+octoware:
+  name: "Service Provider octoware"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "http://easy-soft.de/unternehmen/"
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+profile-loader:
+  name: "Service Provider profile-loader"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "www.example.de"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+profile-server:
+  name: "REST Service: profile-server"
+  access_type: "BEARER-ONLY"
+  access_token_lifespan: 600
+survnet:
+  name: "Service Provider survnet"
+  access_type: "CONFIDENTIAL"
+  valid_redirect_uris:
+    - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
+    - "http://www.computerzentrum.de/"
+  standard_flow_enabled: true
+  direct_access_grants_enabled: true
+  valid_post_logout_redirect_uris: ["+"]
+  access_token_lifespan: 600
+# Default clients that are created by Keycloak and should be imported into Terraform state if not excluded
+account:
+  name: "$${client_account}"
+  access_type: "CONFIDENTIAL"
+  standard_flow_enabled: true
+  valid_redirect_uris: ["/realms/${realm}/account/*"]
+  defaultClient: true
+  full_scope_allowed: false
+  SURVEILLANCE-PROGRAMS:
+    access_type: "PUBLIC"
+account-console:
+  name: "$${client_account-console}"
+  access_type: "PUBLIC"
+  standard_flow_enabled: true
+  pkce_code_challenge_method: "S256"
+  valid_redirect_uris: ["/realms/${realm}/account/*"]
+  defaultClient: true
+  full_scope_allowed: false
+admin-cli:
+  name: "$${client_admin-cli}"
+  access_type: "PUBLIC"
+  defaultClient: true
+  direct_access_grants_enabled: true
+  PORTAL: {}
+broker:
+  name: "$${client_broker}"
+  access_type: "BEARER-ONLY"
+  defaultClient: true
+  full_scope_allowed: false
+  LAB:
+    access_type: "CONFIDENTIAL"
+    valid_redirect_uris: ["+"]
+    standard_flow_enabled: true
+  HOSPITAL:
+    access_type: "CONFIDENTIAL"
+    valid_redirect_uris: ["+"]
+    standard_flow_enabled: true
+realm-management:
+  name: "$${client_realm-management}"
+  access_type: "BEARER-ONLY"
+  defaultClient: true
+  INSTITUTIONS-TI:
+    access_type: "CONFIDENTIAL"
+    standard_flow_enabled: true
+    implicit_flow_enabled: false
+    direct_access_grants_enabled: false
+    service_accounts_enabled: true
+    full_scope_allowed: false
+    frontchannel_logout_enabled: false
+    allow_remote_resource_management: false
+    valid_redirect_uris: ["+"]
+    valid_post_logout_redirect_uris: ["+"]
+    web_origins: []
+    authorization:
+      policy_enforcement_mode: "ENFORCING"
+      decision_strategy: "UNANIMOUS"
+      allow_remote_resource_management: false
+      keep_defaults: false
+  master:
+    defaultClient: false
+security-admin-console:
+  name: "$${client_security-admin-console}"
+  access_type: "PUBLIC"
+  standard_flow_enabled: true
+  pkce_code_challenge_method: "S256"
+  valid_redirect_uris: ["/admin/${realm}/console/*"]
+  defaultClient: true
+  post_logout_redirect_uris: ["+"]

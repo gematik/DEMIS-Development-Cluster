@@ -33,14 +33,16 @@ locals {
     helm_repository               = var.helm_repository
     helm_repository_username      = var.helm_repository_username
     helm_repository_password      = var.helm_repository_password
-    istio_routing_chart_version   = try(var.deployment_information["istio-routing"].main.version, "")
+    istio_routing_chart_version   = try(coalesce(try(var.deployment_information["istio-routing"].canary.version, null), var.deployment_information["istio-routing"].main.version), "")
     istio_routing_chart_name      = coalesce(try(var.deployment_information["istio-routing"].chart-name, ""), "istio-routing")
     reset_values                  = var.reset_values
     deployment_timeout            = var.deployment_timeout
   }
 
-  # The version of the Routing Data to use
-  routing_data_version = var.deployment_information["notification-routing-data"].main.version
+  # The Routing Data to use (image of an init container), canary first with main as fallback, the image-digest belongs to its version
+  routing_data         = try(var.deployment_information["notification-routing-data"].canary.version, null) != null ? var.deployment_information["notification-routing-data"].canary : var.deployment_information["notification-routing-data"].main
+  routing_data_version = local.routing_data.version
+  routing_data_tag     = join("@", compact([local.routing_data.version, local.routing_data.image-digest]))
 
   java_service_tracing_config = try(var.project_feature_flags["FEATURE_FLAG_SERVICE_TRACING_ENABLED"], false) ? yamlencode({
     MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT = var.opentelemetry_endpoint,

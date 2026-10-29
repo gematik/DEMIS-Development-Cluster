@@ -1,0 +1,77 @@
+"Admin Role":
+  should_create: ${!local_cluster}
+  mapper: "oidc-advanced-role-idp-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    claims: '[{"key":"roles","value":"StageAdmin"}]'
+    role: "admin"
+"RKI Admin Mapper":
+  should_create: ${!local_cluster}
+  mapper: "oidc-advanced-group-idp-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    claims: '[{"key":"roles","value":"RKIKeycloakAdmin"}]'
+    group: "/RKI.admin"
+    role: "admin"
+Account-Source-Mapper:
+  mapper: "hardcoded-attribute-idp-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    attribute.value: "gematik"
+    attribute: "accountSource"
+  bundid-idp:
+    extra_config:
+      attribute.value: "bundid"
+  muk:
+    extra_config:
+      attribute.value: "muk"
+Account-Is-Temporary-Mapper:
+  mapper: "hardcoded-attribute-idp-mapper"
+  extra_config:
+    syncMode: "IMPORT"
+    attribute.value: "true"
+    attribute: "accountIsTemporary"
+Profession-OID-Mapper:
+  mapper: "gematik-smcb-user-attribute-mapper"
+  extra_config:
+    syncMode: "IMPORT"
+    userAttribute: "professionOid"
+    claimAttribute: "PROFESSION_OID"
+  gematik-authenticator:
+    mapper: "gematik-idp-smcb-user-mapper"
+Organization-Name-Mapper:
+  mapper: "gematik-smcb-user-attribute-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    userAttribute: "organizationName"
+    claimAttribute: "ORGANIZATION_NAME"
+  gematik-authenticator:
+    mapper: "gematik-idp-smcb-user-mapper"
+Level-Of-Assurance-Mapper:
+  mapper: "hardcoded-attribute-idp-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    attribute.value: "STORK-QAA-Level-3"
+    attribute: "levelOfAssurance"
+  bundid-idp:
+    mapper: "saml-user-attribute-idp-mapper"
+    extra_config:
+      attribute.friendly.name: "EID-CITIZEN-QAA-LEVEL"
+      attribute.name.format: "ATTRIBUTE_FORMAT_BASIC"
+      user.attribute: "levelOfAssurance"
+Account-Type-Mapper:
+  mapper: "hardcoded-attribute-idp-mapper"
+  extra_config:
+    syncMode: "FORCE"
+    attribute.value: "organization"
+    attribute: "accountType"
+  bundid-idp:
+    extra_config:
+      attribute.value: "person"
+Username-Protocol-Mapper:
+  mapper: "saml-user-attribute-idp-mapper"
+  extra_config:
+    syncMode: "IMPORT"
+    user.attribute: "username"
+    attribute.name.format: "ATTRIBUTE_FORMAT_BASIC"
+    attribute.name: "DatenuebermittlerPseudonymId"

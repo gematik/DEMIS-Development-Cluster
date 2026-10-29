@@ -36,6 +36,7 @@ checkov_report.xml
 /lib/
 Misconfiguration-Scan-*.html
 tfplan.txt
+!kc-management/keycloak_realms/.scripts/*.sh
 
 .jenkinspipelines/
 .scripts/*

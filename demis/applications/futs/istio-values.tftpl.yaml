@@ -23,7 +23,7 @@ virtualServiceDomains:
 # The "route" part is generated using the destination subset information
 
 virtualServiceHttpRules:
-%{ for entry in [{package = "disease", service = "disease"}, {package = "laboratory", service = "pathogen"}, {package = "statistic", service = "bedoccupancy"}, {package = "igs", service = "igs"}] ~}
+%{ for entry in [{package = "disease", service = "disease"}, {package = "laboratory", service = "pathogen"}, {package = "statistic", service = "bedoccupancy"}, {package = "igs", service = "igs"}, {package = "ars", service = "ars"}] ~}
   - match:
     - headers:
         x-fhir-profile:
@@ -48,7 +48,7 @@ virtualServiceHttpRules:
 virtualServiceExternalHttpRules:
 %{ for entry in istio_rules_block_external ~}
   - ${indent(4, yamlencode(entry))}
-%{ for service in ["bedoccupancy", "disease", "pathogen", "igs"] ~}
+%{ for service in ["bedoccupancy", "disease", "pathogen", "igs", "ars"] ~}
 %{ if http_timeout_retry_block != null && startswith(entry.delegate.name, "futs-${service}") && http_timeout_retry_block[service] != null ~}
     ${indent(4, http_timeout_retry_block[service])}
 %{ endif ~}

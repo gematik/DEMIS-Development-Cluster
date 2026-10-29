@@ -1,0 +1,137 @@
+Account-Is-Test-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    aggregate.attrs: "false"
+    userinfo.token.claim: "true"
+    user.attribute: "accountIsTest"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "accountIsTest"
+    lightweight.claim: "false"
+    jsonType.label: "boolean"
+IK-Number-Protocol-Mapper:
+  protocol_mapper: "ik-number-mapper"
+  config:
+    id.token.claim: "true"
+    lightweight.claim: "false"
+    access.token.claim: "true"
+    claim.name: "ik"
+    userinfo.token.claim: "true"
+    introspection.token.claim: "true"
+Profession-OID-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    aggregate.attrs: "false"
+    userinfo.token.claim: "true"
+    multivalued: "false"
+    user.attribute: "professionOid"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "professionOid"
+    jsonType.label: "String"
+    lightweight.claim: "false"
+testuser-Recipient-attribute-mapper:
+  config:
+    introspection.token.claim: "true"
+    userinfo.token.claim: "true"
+    user.attribute: "testuserRecipient"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "testuserRecipient"
+    jsonType.label: "String"
+ik-mapper:
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "ik"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "ik"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"
+Account-Type-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "accountType"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "accountType"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"
+Username-Protocol-Mapper:
+  protocol_mapper: "oidc-usermodel-property-mapper"
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "username"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "username"
+    lightweight.claim: "false"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"
+Organization-Name-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    lightweight.claim: "false"
+    userinfo.token.claim: "true"
+    jsonType.label: "String"
+    user.attribute: "organizationName"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "organizationName"
+Level-Of-Assurance-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "levelOfAssurance"
+    lightweight.claim: "false"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "levelOfAssurance"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"
+Account-Source-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "accountSource"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "accountSource"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"
+Account-Identifier-Protocol-Mapper:
+  protocol_mapper: "account-identifier-mapper"
+  config:
+    id.token.claim: "true"
+    lightweight.claim: "false"
+    access.token.claim: "true"
+    claim.name: "accountIdentifier"
+    userinfo.token.claim: "true"
+    introspection.token.claim: "true"
+Account-Is-Temporary-Protocol-Mapper:
+  config:
+    introspection.token.claim: "true"
+    userinfo.token.claim: "true"
+    user.attribute: "accountIsTemporary"
+    id.token.claim: "true"
+    lightweight.claim: "false"
+    access.token.claim: "true"
+    claim.name: "accountIsTemporary"
+    jsonType.label: "boolean"
+SP-User-ID-Mapper:
+  config:
+    introspection.token.claim: "true"
+    userinfo.token.claim: "true"
+    user.attribute: "SP-User-ID"
+    id.token.claim: "true"
+    lightweight.claim: "false"
+    access.token.claim: "true"
+    claim.name: "SP-User-ID"
+    jsonType.label: "String"
+preferred_username-mapper:
+  config:
+    introspection.token.claim: "true"
+    user.attribute: "preferred_username"
+    id.token.claim: "true"
+    access.token.claim: "true"
+    claim.name: "preferred_username"
+    jsonType.label: "String"
+    userinfo.token.claim: "true"

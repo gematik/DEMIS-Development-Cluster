@@ -1,0 +1,18 @@
+groups: ["PathologischAnatomischeEinrichtung", "ARS", "IGS", "IgsFastAOnly", "Testusers", "EinrichtungenFürAnonymeMeldungen", "EinrichtungenFür7.3Meldungen"]
+default_groups: ["ErregerdiagnostischeUntersuchungsstelle", "ARS"]
+roles: ["ars-data-sender", "disease-notification-nonnominal-sender", "disease-notification-sender", "igs-notification-data-sender", "igs-sequence-data-sender", "igs-sequence-data-sender-fasta-only", "pathogen-notification-anonymous-sender", "pathogen-notification-negative-sender", "pathogen-notification-nonnominal-sender", "pathogen-notification-sender", "vaccine-injury-sender"]
+event_listener: ["jboss-logging", "registerEventListenerProvider"]
+%{ if (length(kc_options.realms_with_managed_clients) == 0 || contains(kc_options.realms_with_managed_clients, "LAB"))}
+clients:
+  - demis-adapter:
+      mappers: ["Account-Is-Test-Protocol-Mapper", "testuser-Recipient-attribute-mapper"]
+  - demis-gateway:
+      mappers: []
+  - demis-test-password-grant:
+      mappers: ["Account-Is-Test-Protocol-Mapper"]
+  - notification-api:
+      roles: ["lab-notification-sender"]
+  - notification-entry-service:
+      roles: ["lab-notification-sender", "disease-notification-sender"]
+%{endif}
+auth_flows: ["Direct Grant Mutual TLS"]

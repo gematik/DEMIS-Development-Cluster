@@ -152,75 +152,111 @@ import {
 # ============================================================================
 # === Import existing groups =================================================
 # ============================================================================
-# Get datasource for all groups to import, we need the group ID for the import block
-data "keycloak_group" "root" {
-  for_each = {
-    for item in flatten([
-      for realm in local.realms_to_import : [
-        for group_key, group in local.root_groups : {
-          realm     = realm
-          group_key = group_key
-          name      = group.name
-        } if contains(local.expanded_groups_per_realm[realm], group_key)
-      ]
-    ]) : "${item.realm}/${item.group_key}" => item
+# Look up existing groups through the Admin API so missing groups can be created.
+data "http" "realm_groups" {
+  for_each = toset(local.realms_to_import)
+
+  url      = "${var.stage_specific_keycloak_config.provider_connection_url}/admin/realms/${each.value}/groups?q=*"
+  method   = "GET"
+  insecure = local.insecure_connection
+
+  request_headers = {
+    Authorization = "Bearer ${local.keycloak_import_token}"
+    Content-Type  = "application/json"
   }
 
-  realm_id = each.value.realm
-  name     = each.value.name
-}
-
-data "keycloak_group" "level1" {
-  for_each = {
-    for item in flatten([
-      for realm in local.realms_to_import : [
-        for group_key, group in local.level1_groups : {
-          realm     = realm
-          group_key = group_key
-          name      = group.name
-        } if contains(local.expanded_groups_per_realm[realm], group_key)
-      ]
-    ]) : "${item.realm}/${item.group_key}" => item
+  retry {
+    attempts     = 10
+    max_delay_ms = 5000
+    min_delay_ms = 1000
   }
 
-  realm_id = each.value.realm
-  name     = each.value.name
+  lifecycle {
+    postcondition {
+      condition     = self.status_code == 200 && try(jsondecode(self.response_body), false) != false
+      error_message = "Failed to fetch groups for realm: '${each.value}'"
+    }
+  }
 }
 
-data "keycloak_group" "level2" {
-  for_each = {
-    for item in flatten([
-      for realm in local.realms_to_import : [
-        for group_key, group in local.level2_groups : {
-          realm     = realm
-          group_key = group_key
-          name      = group.name
-        } if contains(local.expanded_groups_per_realm[realm], group_key)
-      ]
-    ]) : "${item.realm}/${item.group_key}" => item
+locals {
+  # Terraform has no recursion; the group catalogue has at most three levels, so each level is merged explicitly.
+  keycloak_group_tree = {
+    for realm, response in data.http.realm_groups : realm => flatten([
+      for root in try(jsondecode(response.response_body), []) : concat(
+        [{ path = root.path, id = root.id }],
+        flatten([
+          for level1 in try(root.subGroups, []) : concat(
+            [{ path = level1.path, id = level1.id }],
+            [
+              for level2 in try(level1.subGroups, []) : { path = level2.path, id = level2.id }
+            ]
+          )
+        ])
+      )
+    ])
   }
 
-  realm_id = each.value.realm
-  name     = each.value.name
+  existing_groups = {
+    root = {
+      for item in flatten([
+        for realm in local.realms_to_import : [
+          for group_key, group in local.group_catalogues.root : {
+            key   = "${realm}/${group_key}"
+            path  = "/${group.name}"
+            realm = realm
+          } if contains(local.expanded_groups_per_realm[realm], group_key)
+        ]
+        ]) : item.key => {
+        id = [for group in local.keycloak_group_tree[item.realm] : group.id if group.path == item.path][0]
+      } if contains([for group in local.keycloak_group_tree[item.realm] : group.path], item.path)
+    }
+    level1 = {
+      for item in flatten([
+        for realm in local.realms_to_import : [
+          for group_key, group in local.group_catalogues.level1 : {
+            key   = "${realm}/${group_key}"
+            path  = "/${local.group_catalogues.root[group.parent].name}/${group.name}"
+            realm = realm
+          } if contains(local.expanded_groups_per_realm[realm], group_key)
+        ]
+        ]) : item.key => {
+        id = [for group in local.keycloak_group_tree[item.realm] : group.id if group.path == item.path][0]
+      } if contains([for group in local.keycloak_group_tree[item.realm] : group.path], item.path)
+    }
+    level2 = {
+      for item in flatten([
+        for realm in local.realms_to_import : [
+          for group_key, group in local.group_catalogues.level2 : {
+            key   = "${realm}/${group_key}"
+            path  = "/${local.group_catalogues.root[local.group_catalogues.level1[group.parent].parent].name}/${local.group_catalogues.level1[group.parent].name}/${group.name}"
+            realm = realm
+          } if contains(local.expanded_groups_per_realm[realm], group_key)
+        ]
+        ]) : item.key => {
+        id = [for group in local.keycloak_group_tree[item.realm] : group.id if group.path == item.path][0]
+      } if contains([for group in local.keycloak_group_tree[item.realm] : group.path], item.path)
+    }
+  }
 }
 
-# Import blocks for all levels
+# Import only groups that already exist; the remaining resources are created.
 import {
-  for_each = data.keycloak_group.root
+  for_each = local.existing_groups.root
   to       = module.realms[split("/", each.key)[0]].keycloak_group.root[split("/", each.key)[1]]
-  id       = "${each.value.realm_id}/${each.value.id}"
+  id       = "${split("/", each.key)[0]}/${each.value.id}"
 }
 
 import {
-  for_each = data.keycloak_group.level1
+  for_each = local.existing_groups.level1
   to       = module.realms[split("/", each.key)[0]].keycloak_group.level1[split("/", each.key)[1]]
-  id       = "${each.value.realm_id}/${each.value.id}"
+  id       = "${split("/", each.key)[0]}/${each.value.id}"
 }
 
 import {
-  for_each = data.keycloak_group.level2
+  for_each = local.existing_groups.level2
   to       = module.realms[split("/", each.key)[0]].keycloak_group.level2[split("/", each.key)[1]]
-  id       = "${each.value.realm_id}/${each.value.id}"
+  id       = "${split("/", each.key)[0]}/${each.value.id}"
 }
 
 # ============================================================================
@@ -313,39 +349,46 @@ import {
 # === Import existing clientmappers ==========================================
 # ============================================================================
 locals {
-  client_mapper_to_import = {
-    for item in flatten([
-      for realm in local.realms_to_import : flatten([
-        for clients_map in try(local.keycloak_realms[realm].clients, []) : [
-          for client_name, client_cfg in clients_map : [
-            for effective_client in distinct(concat([client_name], try(client_cfg.clients, []))) : [
-              for mapper in try(client_cfg.mappers, []) : {
-                key = "${realm}/${effective_client}/${mapper}"
-                value = {
-                  realm       = realm
-                  client      = effective_client
-                  mapper_name = mapper
-                }
-              }
-            ]
-          ]
-        ]
-      ])
-    ]) : item.key => item.value
+  client_mapper_to_import = merge({}, [
+    for realm in local.realms_to_import : merge({}, [
+      for clients_map in try(local.keycloak_realms[realm].clients, []) : merge({}, [
+        for client_name, client_cfg in clients_map : merge({}, [
+          for effective_client in distinct(concat([client_name], try(client_cfg.clients, []))) : {
+            for mapper in try(client_cfg.mappers, []) :
+            "${realm}/${effective_client}/${mapper}" => {
+              realm       = realm
+              client      = effective_client
+              mapper_name = mapper
+            }
+          }
+        ]...)
+      ]...)
+    ]...)
+  ]...)
+
+  existing_client_mapper_ids = {
+    for key, item in local.client_mapper_to_import : key => one(flatten([
+      for client in jsondecode(data.http.realm_clients[item.realm].response_body) : [
+        for mapper in try(client.protocolMappers, []) : mapper.id
+        if client.clientId == item.client && mapper.name == item.mapper_name
+      ]
+    ]))
+    if length(flatten([
+      for client in jsondecode(data.http.realm_clients[item.realm].response_body) : [
+        for mapper in try(client.protocolMappers, []) : mapper.id
+        if client.clientId == item.client && mapper.name == item.mapper_name
+      ]
+    ])) > 0
   }
 }
 
-data "keycloak_generic_protocol_mapper" "mappers" {
-  for_each  = local.client_mapper_to_import
-  realm_id  = each.value.realm
-  client_id = data.keycloak_openid_client.clients["${each.value.realm}/${each.value.client}"].id
-  name      = each.value.mapper_name
-}
-
 import {
-  for_each = local.client_mapper_to_import
-  to       = module.realms[each.value.realm].keycloak_generic_protocol_mapper.protocol_mappers["${each.value.client}-${each.value.mapper_name}"]
-  id       = "${each.value.realm}/client/${data.keycloak_openid_client.clients["${each.value.realm}/${each.value.client}"].id}/${data.keycloak_generic_protocol_mapper.mappers[each.key].id}"
+  for_each = {
+    for key, item in local.client_mapper_to_import : key => item
+    if contains(keys(local.existing_client_mapper_ids), key)
+  }
+  to = module.realms[each.value.realm].keycloak_generic_protocol_mapper.protocol_mappers["${each.value.client}-${each.value.mapper_name}"]
+  id = "${each.value.realm}/client/${data.keycloak_openid_client.clients["${each.value.realm}/${each.value.client}"].id}/${local.existing_client_mapper_ids[each.key]}"
 }
 
 # ============================================================================
@@ -366,18 +409,51 @@ locals {
       role  = item.role
     }
   }
+
+  existing_roles_to_import = {
+    for key, item in local.roles_to_import : key => merge(item, {
+      id = [
+        for role in jsondecode(data.http.realm_roles[item.realm].response_body) : role.id
+        if role.name == item.role
+      ][0]
+    })
+    if contains(
+      [for role in jsondecode(data.http.realm_roles[item.realm].response_body) : role.name],
+      item.role
+    )
+  }
 }
 
-data "keycloak_role" "roles" {
-  for_each = local.roles_to_import
-  realm_id = each.value.realm
-  name     = each.value.role
+data "http" "realm_roles" {
+  for_each = toset(local.realms_to_import)
+
+  url      = "${var.stage_specific_keycloak_config.provider_connection_url}/admin/realms/${each.value}/roles"
+  method   = "GET"
+  insecure = local.insecure_connection
+
+  request_headers = {
+    Authorization = "Bearer ${local.keycloak_import_token}"
+    Content-Type  = "application/json"
+  }
+
+  retry {
+    attempts     = 10
+    max_delay_ms = 5000
+    min_delay_ms = 1000
+  }
+
+  lifecycle {
+    postcondition {
+      condition     = self.status_code == 200 && try(jsondecode(self.response_body), false) != false
+      error_message = "Failed to fetch roles for realm: '${each.value}'"
+    }
+  }
 }
 
 import {
-  for_each = local.roles_to_import
+  for_each = local.existing_roles_to_import
   to       = module.realms[each.value.realm].keycloak_role.roles[each.value.role]
-  id       = "${each.value.realm}/${data.keycloak_role.roles[each.key].id}"
+  id       = "${each.value.realm}/${each.value.id}"
 }
 
 # ============================================================================
@@ -450,12 +526,20 @@ locals {
   oidc_idps_to_import = {
     for key, item in local.idps_to_import : key => item
     if try(local.idp_type_by_alias[item.idp], "") == "oidc" && (item.idp != "entra-id" || !var.local_cluster)
+    && contains(local.existing_idp_keys, key)
   }
 
   saml_idps_to_import = {
     for key, item in local.idps_to_import : key => item
     if try(local.idp_type_by_alias[item.idp], "") == "saml"
+    && contains(local.existing_idp_keys, key)
   }
+
+  # The mappers endpoint answers 404 if the identity provider does not exist yet.
+  existing_idp_keys = [
+    for key, response in data.http.idp_mappers : key
+    if response.status_code == 200
+  ]
 
 }
 
@@ -494,16 +578,23 @@ locals {
     ]) : item.key => item.value
   }
 
+  # Mappers per identity provider; empty if the provider does not exist yet.
+  idp_mappers_by_idp = {
+    for key, response in data.http.idp_mappers :
+    key => jsondecode(response.status_code == 200 ? response.response_body : "[]")
+  }
+
   # Import only mappers that already exist in Keycloak.
+  idp_mapper_ids_to_import = {
+    for key, item in local.idp_mapper_to_import : key => [
+      for mapper in try(local.idp_mappers_by_idp["${item.realm}/${item.idp}"], []) : mapper.id
+      if mapper.name == item.mapper_name
+    ]
+  }
+
   existing_idp_mapper_ids = {
-    for key, item in local.idp_mapper_to_import : key => one([
-      for mapper in jsondecode(data.http.idp_mappers["${item.realm}/${item.idp}"].response_body) : mapper.id
-      if mapper.name == item.mapper_name
-    ])
-    if length([
-      for mapper in jsondecode(data.http.idp_mappers["${item.realm}/${item.idp}"].response_body) : mapper.id
-      if mapper.name == item.mapper_name
-    ]) > 0
+    for key, ids in local.idp_mapper_ids_to_import : key => one(ids)
+    if length(ids) > 0
   }
 }
 
@@ -525,7 +616,7 @@ data "http" "idp_mappers" {
 
   lifecycle {
     postcondition {
-      condition     = self.status_code == 200 && try(jsondecode(self.response_body), false) != false
+      condition     = self.status_code == 404 || (self.status_code == 200 && try(jsondecode(self.response_body), false) != false)
       error_message = "Fail to fetch idp_mapper for realm: '${each.value.realm}' and idp: '${each.value.idp}'"
     }
   }

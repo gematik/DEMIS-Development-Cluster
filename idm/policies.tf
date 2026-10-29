@@ -9,7 +9,7 @@ resource "helm_release" "kubernetes_network_policies" {
   name                = local.kubernetes_network_policies_name
   chart               = local.kubernetes_network_policies_name
   repository          = local.chart_repository
-  version             = local.kubernetes_network_policies.main.version
+  version             = coalesce(try(local.kubernetes_network_policies.canary.version, null), local.kubernetes_network_policies.main.version)
   namespace           = var.target_namespace
   repository_username = local.chart_repository_username
   repository_password = local.chart_repository_password

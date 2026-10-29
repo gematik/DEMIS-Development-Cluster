@@ -1,0 +1,23 @@
+Direct Grant Mutual TLS:
+  execution:
+    - requirement: "REQUIRED"
+      authenticator: "direct-grant-validate-username"
+      priority: 5
+      alias: "Direct Grant Validate Username"
+    - requirement: "REQUIRED"
+      authenticator: "direct-grant-auth-x509-username"
+      priority: 10
+      alias: "x509-exec-config"
+      config:
+        x509-cert-auth.canonical-dn-enabled: "true"
+        x509-cert-auth.serialnumber-hex-enabled: "false"
+        x509-cert-auth.ocsp-fail-open: ${jsonencode(try(stage_specific_keycloak_config.realm_specifics[realm].x509_cert_auth_ocsp_fail_open, false))}
+        x509-cert-auth.regular-expression: ${jsonencode(try(stage_specific_keycloak_config.realm_specifics[realm].x509_cert_auth_regular_expression, null))}
+        x509-cert-auth-crl-abort-if-non-updated: "true"
+        x509-cert-auth.mapper-selection: "Username or Email"
+        x509-cert-auth.crl-relative-path: "crl.pem"
+        x509-cert-auth.certificate-policy-mode: "All"
+        x509-cert-auth.crldp-checking-enabled: "false"
+        x509-cert-auth.mapping-source-selection: "Match SubjectDN using regular expression"
+        x509-cert-auth.timestamp-validation-enabled: ${jsonencode(try(stage_specific_keycloak_config.realm_specifics[realm].x509_cert_timestamp_validation_enabled, null))}
+        x509-cert-auth.ocsp-checking-enabled: ${jsonencode(try(stage_specific_keycloak_config.realm_specifics[realm].x509_ocsp_checking_enabled, true))}

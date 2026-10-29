@@ -58,6 +58,65 @@ variable "clients" {
       ])
     ])}'. Allowed values are: '${join(", ", keys(var.client_mapper_configs))}'"
   }
+
+  validation {
+    condition = alltrue([
+      for client in var.clients : alltrue([
+        for role in client[keys(client)[0]].roles :
+        contains(keys(var.roles_config), role)
+      ])
+    ])
+
+    error_message = "(Realm: ${var.realm_name}) Invalid client role(s) specified: '${join("; ", [
+      for client in var.clients :
+      format(
+        "%s: [%s]",
+        keys(client)[0],
+        join(", ", [
+          for role in client[keys(client)[0]].roles :
+          role if !contains(keys(var.roles_config), role)
+        ])
+      )
+      if !alltrue([
+        for role in client[keys(client)[0]].roles :
+        contains(keys(var.roles_config), role)
+      ])
+    ])}'. Allowed values are: '${join(", ", keys(var.roles_config))}'"
+  }
+
+  validation {
+    condition = alltrue([
+      for client in var.clients : alltrue([
+        for sa_role in client[keys(client)[0]].service_account_roles :
+        can(regex("^[^/]+/.+$", sa_role)) && contains(
+          concat(keys(var.openid_clients), [for realm in var.managed_realms : "${realm}-realm"]),
+          split("/", sa_role)[0]
+        )
+      ])
+    ])
+
+    error_message = "(Realm: ${var.realm_name}) Invalid service account role(s) specified: '${join("; ", [
+      for client in var.clients :
+      format(
+        "%s: [%s]",
+        keys(client)[0],
+        join(", ", [
+          for sa_role in client[keys(client)[0]].service_account_roles :
+          sa_role if !(can(regex("^[^/]+/.+$", sa_role)) && contains(
+            concat(keys(var.openid_clients), [for realm in var.managed_realms : "${realm}-realm"]),
+            split("/", sa_role)[0]
+          ))
+        ])
+      )
+      if !alltrue([
+        for sa_role in client[keys(client)[0]].service_account_roles :
+        can(regex("^[^/]+/.+$", sa_role)) && contains(
+          concat(keys(var.openid_clients), [for realm in var.managed_realms : "${realm}-realm"]),
+          split("/", sa_role)[0]
+        )
+      ])
+    ])}'. Expected format is '<source-client>/<role>' with a known source client: '${join(", ", concat(keys(var.openid_clients), [for realm in var.managed_realms : "${realm}-realm"]))}'"
+  }
 }
 
 variable "disabled_clients" {

@@ -45,7 +45,17 @@ locals {
   # http timeouts and retries
   futs_igs_http_timeout_retry_block = { igs : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_igs_name], null) }
 
-  futs_http_timeout_retry_block = merge(local.futs_bedoccupancy_http_timeout_retry_block, local.futs_disease_http_timeout_retry_block, local.futs_pathogen_http_timeout_retry_block, local.futs_igs_http_timeout_retry_block)
+  ###########################
+  # FUTS ARS                #
+  ###########################
+  futs_ars_name = "${local.futs_name}-ars"
+  ## Verify whether the service is defined or the deployment is explicitly enabled
+  futs_ars_enabled = contains(local.service_names, local.futs_ars_name) ? var.deployment_information[local.futs_ars_name].enabled : false
+  # http timeouts and retries
+  futs_ars_http_timeout_retry_block = { ars : try(module.http_timeouts_retries.service_timeout_retry_definitions[local.futs_ars_name], null) }
+
+  # Merge all timeout and retry blocks for the FUTS services
+  futs_http_timeout_retry_block = merge(local.futs_bedoccupancy_http_timeout_retry_block, local.futs_disease_http_timeout_retry_block, local.futs_pathogen_http_timeout_retry_block, local.futs_igs_http_timeout_retry_block, local.futs_ars_http_timeout_retry_block)
 }
 
 # Creates the Virtual Service for the Validation Service delegates
@@ -80,7 +90,7 @@ resource "helm_release" "futs" {
     create_before_destroy = true
   }
 
-  depends_on = [module.futs_igs[0], module.futs_bedoccupancy[0], module.futs_disease[0], module.futs_pathogen[0]]
+  depends_on = [module.futs_igs[0], module.futs_bedoccupancy[0], module.futs_disease[0], module.futs_pathogen[0], module.futs_ars[0]]
 }
 
 module "futs_bedoccupancy_metadata" {
@@ -253,4 +263,47 @@ module "futs_igs" {
     namespace    = var.target_namespace,
     context_path = var.context_path
   }), local.chart_files[local.futs_igs_name].istio_values_override])
+}
+
+module "futs_ars_metadata" {
+  source = "../../modules/fhir-profiles-metadata"
+  count  = local.futs_ars_enabled ? 1 : 0
+
+  profile_type           = "ars-profile-snapshots"
+  deployment_information = var.deployment_information[local.futs_ars_name]
+  provisioning_mode      = "distributed"
+}
+
+module "futs_ars" {
+  source = "../../modules/helm_deployment"
+
+  # Deploy if enabled
+  count = local.futs_ars_enabled ? 1 : 0
+
+  namespace              = var.target_namespace
+  application_name       = local.futs_ars_name
+  deployment_information = var.deployment_information[local.futs_ars_name]
+  helm_settings          = local.common_helm_release_settings
+  depends_on             = [module.package_registry]
+
+  # Pass the values for the chart
+  application_values = compact([templatefile(local.chart_files[local.futs_ars_name].app_template, {
+    image_pull_secrets      = var.pull_secrets,
+    repository              = var.docker_registry,
+    debug_enable            = var.debug_enabled,
+    istio_enable            = var.istio_enabled,
+    profile_version         = element(module.futs_ars_metadata[0].current_profile_versions, -1),
+    profile_docker_registry = var.docker_registry,
+    feature_flags           = try(var.feature_flags[local.futs_ars_name], {}),
+    config_options          = try(var.config_options[local.futs_ars_name], {}),
+    replica_count           = var.resource_definitions[local.futs_ars_name].replicas,
+    resource_block          = var.resource_definitions[local.futs_ars_name].resource_block,
+    istio_proxy_resources   = var.resource_definitions[local.futs_ars_name].istio_proxy_resources,
+    namespace               = var.target_namespace,
+    service_tracing_config  = local.java_service_tracing_config
+  }), local.chart_files[local.futs_ars_name].app_values_override])
+  istio_values = compact([templatefile(local.chart_files[local.futs_ars_name].istio_template, {
+    namespace    = var.target_namespace,
+    context_path = var.context_path
+  }), local.chart_files[local.futs_ars_name].istio_values_override])
 }
