@@ -56,6 +56,8 @@ variable "kc_options" {
   - replace_group_attributes: Map of replacing group attributes per realm and group. Structure: realm name => group key => attribute name => attribute value
   - additional_client_roles_to_groups: Map of additional client roles assigned to groups per realm. Structure: realm name => group key => list of client-role objects (with client and name fields)
   - rki_admin_mapper: Boolean flag indicating whether the RKI Admin Mapper should be enabled
+  - entraIdAdminRoleMapperRole: The role used by the Entra ID Admin Role Mapper
+  - entraIdAdminRoleMapperSyncMode: The sync mode used by the Entra ID Admin Role Mapper
   EOT
 
   type = object({
@@ -66,6 +68,14 @@ variable "kc_options" {
     replace_group_attributes          = optional(map(map(map(string))), {})
     additional_client_roles_to_groups = optional(map(list(object({ client = string, name = string }))), {})
     rki_admin_mapper                  = optional(bool, false)
+    entraIdAdminRoleMapperRole        = optional(string, "StageAdmin")
+    entraIdAdminRoleMapperSyncMode    = optional(string, "FORCE")
   })
   default = {}
+}
+
+variable "reset" {
+  type        = bool
+  default     = false
+  description = "Whether to trigger replacement of resources that aren't automatically replaced by Terraform when reset."
 }

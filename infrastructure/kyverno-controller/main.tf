@@ -1,9 +1,10 @@
 resource "helm_release" "kyverno" {
+  count      = var.enabled ? 1 : 0
   name       = "kyverno"
   chart      = "kyverno"
   repository = var.helm_repository
   version    = var.chart_version
-  namespace  = var.namespace
+  namespace  = module.namespace.name
   lint       = true
   atomic     = true
   wait       = true
@@ -70,7 +71,13 @@ resource "helm_release" "kyverno" {
 
   set_list = [{
     name  = "existingImagePullSecrets"
-    value = var.pull_secrets
+    value = [for k, v in module.pull_secrets : v.metadata.name]
     }
   ]
+}
+
+# The release had no count before
+moved {
+  from = helm_release.kyverno
+  to   = helm_release.kyverno[0]
 }

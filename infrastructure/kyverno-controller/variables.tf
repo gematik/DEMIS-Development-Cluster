@@ -41,8 +41,29 @@ variable "reportscontroller_replicas" {
   default     = 2
 }
 
-variable "pull_secrets" {
-  type        = list(string)
-  description = "The list of pull secrets to be used for downloading Docker Images"
-  default     = []
+variable "enabled" {
+  description = "Deploys Kyverno; namespace and pull secrets are created in any case"
+  type        = bool
+  default     = true
+}
+
+variable "docker_pull_secrets" {
+  description = "Pull Secrets for the Kyverno images (see docker_pull_secrets of the infrastructure)"
+  type = list(object({
+    name          = string
+    registry      = string
+    user_name     = string
+    user_email    = string
+    user_password = string
+    password_type = string
+  }))
+  # Not sensitive, it drives for_each (as the infrastructure variable)
+  default = []
+}
+
+variable "google_cloud_access_token" {
+  description = "Access Token used for the Pull Secrets with password_type 'token'"
+  type        = string
+  default     = ""
+  sensitive   = true
 }

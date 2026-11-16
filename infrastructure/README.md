@@ -32,19 +32,11 @@ It performs the following operations:
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_falco"></a> [falco](#module\_falco) | ./security/falco | n/a |
-| <a name="module_istio_metadata"></a> [istio\_metadata](#module\_istio\_metadata) | ../modules/metadata | n/a |
-| <a name="module_istio_namespace"></a> [istio\_namespace](#module\_istio\_namespace) | ../modules/namespace | n/a |
 | <a name="module_kyverno"></a> [kyverno](#module\_kyverno) | ./kyverno-controller | n/a |
-| <a name="module_kyverno_namespace"></a> [kyverno\_namespace](#module\_kyverno\_namespace) | ../modules/namespace | n/a |
-| <a name="module_kyverno_policy_reporter"></a> [kyverno\_policy\_reporter](#module\_kyverno\_policy\_reporter) | ./security/policy-reporter | n/a |
 | <a name="module_local_cluster"></a> [local\_cluster](#module\_local\_cluster) | ./local-cluster-setup | n/a |
-| <a name="module_pull_secrets"></a> [pull\_secrets](#module\_pull\_secrets) | ../modules/pull_secret | n/a |
 | <a name="module_remote_cluster"></a> [remote\_cluster](#module\_remote\_cluster) | ./remote-cluster-setup | n/a |
-| <a name="module_security_metadata"></a> [security\_metadata](#module\_security\_metadata) | ../modules/metadata | n/a |
-| <a name="module_security_namespace"></a> [security\_namespace](#module\_security\_namespace) | ../modules/namespace | n/a |
+| <a name="module_security"></a> [security](#module\_security) | ./security | n/a |
 | <a name="module_service_mesh"></a> [service\_mesh](#module\_service\_mesh) | ./service-mesh | n/a |
-| <a name="module_trivy"></a> [trivy](#module\_trivy) | ./security/trivy | n/a |
 
 ## Resources
 
@@ -87,6 +79,8 @@ No resources.
 | <a name="input_local_cluster"></a> [local\_cluster](#input\_local\_cluster) | Defines if the current setup is for a local cluster (using KIND) | `bool` | `true` | no |
 | <a name="input_loki_s3_access_key_id"></a> [loki\_s3\_access\_key\_id](#input\_loki\_s3\_access\_key\_id) | The S3 access key id used by Loki when service\_mesh\_loki\_storage\_type is "s3".<br/>Leave empty to rely on an IAM role / instance profile (workload identity). | `string` | `""` | no |
 | <a name="input_loki_s3_secret_access_key"></a> [loki\_s3\_secret\_access\_key](#input\_loki\_s3\_secret\_access\_key) | The S3 secret access key used by Loki when service\_mesh\_loki\_storage\_type is "s3".<br/>Leave empty to rely on an IAM role / instance profile (workload identity). | `string` | `""` | no |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace of the observability module; with FEATURE\_FLAG\_OBSERVABILITY\_NAMESPACE\_ENABLED the tracing provider of istiod points to its Jaeger | `string` | `"observability"` | no |
+| <a name="input_project_feature_flags"></a> [project\_feature\_flags](#input\_project\_feature\_flags) | Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false). | `map(bool)` | `{}` | no |
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
 | <a name="input_security_namespace"></a> [security\_namespace](#input\_security\_namespace) | Defines the namespace for the Security-related services | `string` | `"security"` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The Service Account name to be configured | `string` | `"api-service-account"` | no |

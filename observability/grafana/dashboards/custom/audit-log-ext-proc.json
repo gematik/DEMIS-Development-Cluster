@@ -1,0 +1,1775 @@
+{
+  "description": "The Envoy External Processor that feeds the audit trail (DEMIS-6253). Every value comes from one sidecar: the audited workload's (ext_proc counters, its requests) or the processor's (the streams it received). Requires meshConfig.defaultConfig.proxyStatsMatcher to include '.*\\.ext_proc\\..*'. Derived from \"load & drops\" for several EnvoyFilters per audit-log-service (istio.extProc.filters): the ext_proc stats of the audited workloads carry the filter's stats prefix in the metric name, which is kept as label \"filter\" so that several prefixes per workload (two filters, or a renamed one) no longer collide.",
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Status over the selected time range",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Available replicas of each processor Deployment, right now.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (deployment) (kube_deployment_status_replicas_available{namespace=\"$processor_namespace\", deployment=~\"${processor:regex}\"})",
+          "instant": true,
+          "legendFormat": "{{deployment}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Processor pods ready",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Requests the ext_proc filter opened an audit stream for, counted by the audited workload's sidecar (streams_started). Only methods in istio.extProc.methods are counted.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "round(sum by (app) (clamp_min(last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\")[$__range:1m]) - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__range, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 1 or last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\")[$__range:1m]) * 0), 0)))",
+          "instant": true,
+          "legendFormat": "{{app}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Audited requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Audit streams that ended with a gRPC error, counted by the audited workload's sidecar (streams_failed): processor unreachable, no endpoints, stream reset. The notification itself went through (failure_mode_allow); its audit record is missing or incomplete.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "round(sum by (app) (clamp_min(last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\")[$__range:1m]) - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__range, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 1 or last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\")[$__range:1m]) * 0), 0)))",
+          "instant": true,
+          "legendFormat": "{{app}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Failed audit streams",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Share of audit streams that did not fail, from the two counters of the same sidecar: 1 − streams_failed / streams_started.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.999
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "1 - sum by (app) (clamp_min(last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\")[$__range:1m]) - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__range, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 1 or last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\")[$__range:1m]) * 0), 0)) / (sum by (app) (clamp_min(last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\")[$__range:1m]) - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__range, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 1 or last_over_time(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\")[$__range:1m]) * 0), 0)) > 0)",
+          "instant": true,
+          "legendFormat": "{{app}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Audit streams without error",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "95th percentile of how long a stream stayed open, measured by the processor's sidecar.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 4000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (processor, le) (label_replace(clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__range]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__range * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__range]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")))",
+          "instant": true,
+          "legendFormat": "{{processor}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Stream lifetime p95",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "95th percentile of the audited workload's own request duration, measured by its sidecar.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (app, le) (clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__range]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"} offset $__range * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__range]) * 0), 0)))",
+          "instant": true,
+          "legendFormat": "{{app}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Notification latency p95",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Audit streams — counted by the audited workload's sidecar",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Per second, from the audited workload's sidecar: streams the ext_proc filter opened, and streams that ended with a gRPC error.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*started"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*failed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 7
+      },
+      "id": 9,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app) ((clamp_min(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__interval, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 1 or label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 0), 0) / ($__interval_ms / 1000)))",
+          "legendFormat": "{{app}} — started",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app) ((clamp_min(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__interval, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 1 or label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 0), 0) / ($__interval_ms / 1000)))",
+          "legendFormat": "{{app}} — failed",
+          "refId": "B"
+        }
+      ],
+      "title": "Audit streams started and failed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Per interval, from the audited workload's sidecar: failed streams (filter counter), and next to them the cause as counted by the cluster the filter sends to the processor through. 'stream reset by the audited sidecar' also covers streams it reset when deferred_close_timeout expired.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*: failed streams"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 10,
+        "x": 8,
+        "y": 7
+      },
+      "id": 10,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app) (clamp_min(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__interval, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 1 or label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_failed\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_failed\") * 0), 0))",
+          "legendFormat": "{{app}}: failed streams",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app, processor, reason) (label_replace(label_replace(clamp_min(last_over_time(envoy_cluster_upstream_cx_none_healthy{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_cx_none_healthy{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_cx_none_healthy{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"no healthy processor endpoint\", \"cluster_name\", \".*\") or label_replace(clamp_min(last_over_time(envoy_cluster_upstream_rq_pending_failure_eject{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_rq_pending_failure_eject{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_rq_pending_failure_eject{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"connection to the processor failed\", \"cluster_name\", \".*\") or label_replace(clamp_min(last_over_time(envoy_cluster_upstream_rq_pending_overflow{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_rq_pending_overflow{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_rq_pending_overflow{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"circuit breaker: too many pending streams\", \"cluster_name\", \".*\") or label_replace(clamp_min(last_over_time(envoy_cluster_upstream_rq_timeout{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_rq_timeout{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_rq_timeout{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"timeout\", \"cluster_name\", \".*\") or label_replace(clamp_min(last_over_time(envoy_cluster_upstream_rq_rx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_rq_rx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_rq_rx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"stream reset from the processor side\", \"cluster_name\", \".*\") or label_replace(clamp_min(last_over_time(envoy_cluster_upstream_rq_tx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) - (envoy_cluster_upstream_rq_tx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"} offset $__interval * 1 or last_over_time(envoy_cluster_upstream_rq_tx_reset{namespace=\"$namespace\", app=~\"${workload:regex}\", cluster_name=~\"outbound\\\\|50051\\\\|\\\\|(${processor:regex})\\\\..*\"}[$__interval]) * 0), 0), \"reason\", \"stream reset by the audited sidecar\", \"cluster_name\", \".*\"), \"processor\", \"$1\", \"cluster_name\", \"outbound\\\\|50051\\\\|\\\\|([^.]+)\\\\..*\"))",
+          "legendFormat": "{{app}} → {{processor}}: {{reason}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Why audit streams failed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Available processor replicas over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 7
+      },
+      "id": 11,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (deployment) (kube_deployment_status_replicas_available{namespace=\"$processor_namespace\", deployment=~\"${processor:regex}\"})",
+          "legendFormat": "{{deployment}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Processor pods ready",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Streams at the processor — counted by the processor's sidecar",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Streams received by the processor, by how they ended (gRPC status + Envoy response flags of the processor's sidecar).\n\n| Outcome | Meaning | What to do |\n|---|---|---|\n| **OK — closed by the processor** (grpc 0, flags -) | The processor got the last expected message and closed the stream. The normal case. | — |\n| **not closed by the processor** (DR) | Nobody closed the stream; the audited workload's Envoy reset it, normally when `deferred_close_timeout` expired after the request. | The processor does not recognise the end of the exchange, or reads too slowly — the record may be incomplete. |\n| **error** (grpc 2) | The processor ended the stream with an exception, usually a parse error. | Processor log. No record for that request. |\n| **cancelled / deadline / internal** (grpc 1 / 4 / 13) | gRPC-level failure inside the processor. | Processor log. |\n| **unavailable** (grpc 14) | The processor's sidecar could not reach the processor. | Pod status, restarts. |\n| **unreachable** (UC, UF, URX, UH) | Processor container closed, refused or is missing. | Pod status, restarts, readiness. |\n| **dropped** (DC) | The connection from the audited sidecar went away mid-stream. | Restarts of the audited workload. |\n| **other** | Any combination not listed; the raw values are shown. | Envoy response-flag docs. |",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*: OK.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*: not closed.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*: (error|cancelled|deadline|internal|unavailable|unreachable|dropped).*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*: other.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 13,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (processor, outcome) (label_replace(label_replace(label_replace(label_replace(label_replace(label_replace(label_replace(label_replace(label_replace(label_replace(label_join(label_replace((clamp_min(last_over_time(istio_requests_total{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_requests_total{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_requests_total{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0) / ($__interval_ms / 1000)), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\"), \"sig\", \"/\", \"grpc_response_status\", \"response_flags\"), \"outcome\", \"other (grpc/flags = $1)\", \"sig\", \"(.*)\"), \"outcome\", \"OK — closed by the processor\", \"sig\", \"0/-\"), \"outcome\", \"cancelled (gRPC 1 CANCELLED)\", \"sig\", \"1/.*\"), \"outcome\", \"error — processor ended the stream (gRPC 2 UNKNOWN)\", \"sig\", \"2/.*\"), \"outcome\", \"deadline exceeded (gRPC 4)\", \"sig\", \"4/.*\"), \"outcome\", \"internal error in the processor (gRPC 13 INTERNAL)\", \"sig\", \"13/.*\"), \"outcome\", \"unavailable (gRPC 14 UNAVAILABLE)\", \"sig\", \"14/.*\"), \"outcome\", \"unreachable — processor container closed or refused ($1)\", \"sig\", \".*/(UC|UF|URX|UH)\"), \"outcome\", \"dropped — connection from the audited sidecar closed (DC)\", \"sig\", \".*/DC\"), \"outcome\", \"not closed by the processor — Envoy reset it (DR)\", \"sig\", \".*/DR\"))",
+          "legendFormat": "{{processor}}: {{outcome}}",
+          "refId": "A"
+        }
+      ],
+      "title": "How streams end at the processor",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "p50 / p95 / p99 of how long a stream stayed open, measured by the processor's sidecar. Log scale.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 14,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.5, sum by (processor, le) (label_replace(clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")))",
+          "legendFormat": "{{processor}} p50",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (processor, le) (label_replace(clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")))",
+          "legendFormat": "{{processor}} p95",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.99, sum by (processor, le) (label_replace(clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")))",
+          "legendFormat": "{{processor}} p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Stream lifetime",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Completed streams per lifetime bucket, measured by the processor's sidecar. The rows are Istio's histogram buckets (… 1 s, 2.5 s, 5 s, 10 s …).",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "id": 15,
+      "interval": "30s",
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "color": {
+          "exponent": 0.5,
+          "mode": "scheme",
+          "scale": "exponential",
+          "scheme": "Oranges",
+          "steps": 64
+        },
+        "filterValues": {
+          "le": 1e-09
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "le"
+        },
+        "tooltip": {
+          "mode": "single",
+          "yHistogram": true
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "unit": "ms"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (le) (clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\", le!~\"[+]Inf|[0-9.]+e[+]06|300000([.]0)?|600000([.]0)?\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\", le!~\"[+]Inf|[0-9.]+e[+]06|300000([.]0)?|600000([.]0)?\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\", le!~\"[+]Inf|[0-9.]+e[+]06|300000([.]0)?|600000([.]0)?\"}[$__interval]) * 0), 0))",
+          "format": "heatmap",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Stream lifetime distribution",
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Mean number of streams open at the same time at the processor = stream-seconds per second (Little's law, from the processor sidecar's duration histogram).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "id": 16,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (processor) (label_replace((clamp_min(last_over_time(istio_request_duration_milliseconds_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_duration_milliseconds_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0) / ($__interval_ms / 1000)), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")) / 1000",
+          "legendFormat": "{{processor}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Open streams (average concurrency)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 17,
+      "panels": [],
+      "title": "Load on the notification path — counted by the audited workload's sidecar",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "All inbound requests per second at the audited workload (every method), by HTTP status.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 36
+      },
+      "id": 18,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app, response_code) ((clamp_min(last_over_time(istio_requests_total{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) - (istio_requests_total{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"} offset $__interval * 1 or last_over_time(istio_requests_total{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) * 0), 0) / ($__interval_ms / 1000)))",
+          "legendFormat": "{{app}} http={{response_code}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Requests at the audited workload by status",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "p50 / p95 / p99 of the audited workload's request duration, measured by its sidecar.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 36
+      },
+      "id": 19,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.5, sum by (app, le) (clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) * 0), 0)))",
+          "legendFormat": "{{app}} p50",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (app, le) (clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) * 0), 0)))",
+          "legendFormat": "{{app}} p95",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.99, sum by (app, le) (clamp_min(last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) - (istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"} offset $__interval * 1 or last_over_time(istio_request_duration_milliseconds_bucket{reporter=\"destination\", namespace=\"$namespace\", app=~\"${workload:regex}\", source_principal!~\".*/sa/prometheus\"}[$__interval]) * 0), 0)))",
+          "legendFormat": "{{app}} p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Notification latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "gRPC messages the audited workload's sidecar sent per stream it opened (stream_msgs_sent / streams_started). Request headers, body chunks, response headers, response body chunks.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 36
+      },
+      "id": 20,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (app) (clamp_min(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?stream_msgs_sent\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_stream_msgs_sent\") - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?stream_msgs_sent\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__interval, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_stream_msgs_sent\") * 1 or label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?stream_msgs_sent\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_stream_msgs_sent\") * 0), 0)) / (sum by (app) (clamp_min(label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") - (label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"} offset $__interval, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 1 or label_replace({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\", app=~\"${workload:regex}\"}, \"filter\", \"$1\", \"__name__\", \"envoy_http_ext_proc_(.+)_streams_started\") * 0), 0)) > 0)",
+          "legendFormat": "{{app}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Messages per audit stream",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 21,
+      "panels": [],
+      "title": "Payload — counted by the processor's sidecar",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Bytes per second the processor's sidecar received on audit streams.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "id": 22,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (processor) (label_replace((clamp_min(last_over_time(istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0) / ($__interval_ms / 1000)), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\"))",
+          "legendFormat": "{{processor}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Throughput into the processor",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Average bytes per stream received by the processor's sidecar (request_bytes_sum / _count).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 46
+      },
+      "id": 23,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (processor) (label_replace(clamp_min(last_over_time(istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_bytes_sum{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")) / (sum by (processor) (label_replace(clamp_min(last_over_time(istio_request_bytes_count{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) - (istio_request_bytes_count{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"} offset $__interval * 1 or last_over_time(istio_request_bytes_count{reporter=\"destination\", namespace=\"$processor_namespace\", request_protocol=\"grpc\", destination_service_name=~\"${processor:regex}\"}[$__interval]) * 0), 0), \"processor\", \"$1\", \"destination_service_name\", \"(.*)\")) > 0)",
+          "legendFormat": "{{processor}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Bytes per stream",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 24,
+      "panels": [],
+      "title": "Resources",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Cores. The audited workload's istio-proxy carries the ext_proc client; the processor's two containers carry the stream server.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "cores"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 55
+      },
+      "id": 25,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"(${workload:regex})-.*\", container=\"istio-proxy\"}[$__rate_interval]))",
+          "legendFormat": "{{pod}} istio-proxy",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod, container) (rate(container_cpu_usage_seconds_total{namespace=\"$processor_namespace\", pod=~\"(${processor:regex})-.*\", container!=\"\", container!=\"POD\"}[$__rate_interval]))",
+          "legendFormat": "{{pod}} {{container}}",
+          "refId": "B"
+        }
+      ],
+      "title": "CPU",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Working set against the container memory limit (dashed).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".* limit"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 55
+      },
+      "id": 26,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"(${workload:regex})-.*\", container=\"istio-proxy\"})",
+          "legendFormat": "{{pod}} istio-proxy",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod, container) (container_memory_working_set_bytes{namespace=\"$processor_namespace\", pod=~\"(${processor:regex})-.*\", container!=\"\", container!=\"POD\"})",
+          "legendFormat": "{{pod}} {{container}}",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (pod, container) (kube_pod_container_resource_limits{namespace=\"$namespace\", resource=\"memory\", pod=~\"(${workload:regex})-.*\", container=\"istio-proxy\"} or kube_pod_container_resource_limits{namespace=\"$processor_namespace\", resource=\"memory\", pod=~\"(${processor:regex})-.*\"})",
+          "legendFormat": "{{pod}} {{container}} limit",
+          "refId": "C"
+        }
+      ],
+      "title": "Memory (working set) and limit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Restarts per interval of the processor and the audited workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisSoftMin": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 55
+      },
+      "id": 27,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (pod, container) (clamp_min(last_over_time(kube_pod_container_status_restarts_total{namespace=\"$processor_namespace\", pod=~\"(${processor:regex})-.*\"}[$__interval]) - (kube_pod_container_status_restarts_total{namespace=\"$processor_namespace\", pod=~\"(${processor:regex})-.*\"} offset $__interval * 1 or last_over_time(kube_pod_container_status_restarts_total{namespace=\"$processor_namespace\", pod=~\"(${processor:regex})-.*\"}[$__interval]) * 0), 0) or clamp_min(last_over_time(kube_pod_container_status_restarts_total{namespace=\"$namespace\", pod=~\"(${workload:regex})-.*\"}[$__interval]) - (kube_pod_container_status_restarts_total{namespace=\"$namespace\", pod=~\"(${workload:regex})-.*\"} offset $__interval * 1 or last_over_time(kube_pod_container_status_restarts_total{namespace=\"$namespace\", pod=~\"(${workload:regex})-.*\"}[$__interval]) * 0), 0))",
+          "legendFormat": "{{pod}} {{container}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Container restarts",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [
+    "demis",
+    "audit-log-service",
+    "ext_proc",
+    "istio"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "label": "Datasource",
+        "name": "datasource",
+        "query": "prometheus",
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "query": {
+          "query": "label_values({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\"}, namespace)",
+          "refId": "ns"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "Every workload whose sidecar carries the ext_proc filter.",
+        "includeAll": true,
+        "label": "Audited workload",
+        "multi": true,
+        "name": "workload",
+        "query": {
+          "query": "label_values({__name__=~\"envoy_http_ext_proc_(.+_)?streams_started\", namespace=\"$namespace\"}, app)",
+          "refId": "wl"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "includeAll": false,
+        "label": "Processor namespace",
+        "multi": false,
+        "name": "processor_namespace",
+        "query": {
+          "query": "query_result(max by (namespace) (kube_service_info{service=~\"audit-log-service.*\"}))",
+          "refId": "procns",
+          "qryType": 3
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query",
+        "description": "Namespace of the Audit Log Service (processor), from the current series only, so a former namespace is not offered; the audited workloads are selected via namespace",
+        "regex": "/namespace=\"([^\"]+)\"/"
+      },
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "Every Service named audit-log-service* in the namespace.",
+        "includeAll": true,
+        "label": "Processor",
+        "multi": true,
+        "name": "processor",
+        "query": {
+          "query": "label_values(kube_service_info{namespace=\"$processor_namespace\", service=~\"audit-log-service.*\"}, service)",
+          "refId": "proc"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-60m",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Audit-Log ext_proc",
+  "uid": "01a1afd9-e2a1-5546-d952-9b737d0eb855",
+  "version": 1
+}

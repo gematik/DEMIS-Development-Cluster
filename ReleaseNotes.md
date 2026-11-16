@@ -2,6 +2,24 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.15.0
+- kc-management:
+  - improved reset script for mac
+  - implemented reset flag, explicit replace trigger for otherwise not managed ressources
+  - edit mapper and roles for RKI.admin group
+- infrastructure:
+  - moved security tools (Trivy, Falco, Policy Reporter) into new module `security`
+  - namespaces and pull secrets are created in their submodules, `moved` blocks keep existing states
+- observability:
+  - added new root module `observability` (`make <stage> observability`, deployed after the infrastructure) with own namespace `observability` for Prometheus, Grafana, Loki, Jaeger, Kiali and the audit-log-service
+  - switched with feature flag `FEATURE_FLAG_OBSERVABILITY_NAMESPACE_ENABLED` (same value in infrastructure and observability), without it the infrastructure keeps deploying Kiali and Jaeger in `istio-system` as before
+  - versions and activation of the components in `observability/active-versions.yaml`, the canary version is used if one exists;
+  - Loki and Grafana are part of the service mesh
+  - audit-log-service with istio-routing, its ext_proc EnvoyFilters are restricted to the audited namespace
+  - Jaeger drops traces of metrics scrapes, actuator endpoints and its own queries
+- demis: removed the audit-log-service deployment (now part of observability)
+- keda: added KEDA as new component in its own namespace `keda`, only deployed for stages with a `keda` folder (for local usage use env-var `DEPLOY_KEDA=true`)
+
 ## Release 5.14.0
 - changed keycloak p12 truststore to pem truststore
 - kc-management:

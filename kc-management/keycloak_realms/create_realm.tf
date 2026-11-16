@@ -160,6 +160,11 @@ resource "keycloak_realm_events" "realm_events" {
   events_listeners = var.event_listener
 }
 
+# Changes to reseted (set by the wipe script via make ... reseted=true) replace the user profiles once.
+resource "terraform_data" "reset" {
+  triggers_replace = var.reset ? timestamp() : ""
+}
+
 resource "keycloak_realm_user_profile" "userprofile" {
   count                      = var.realm_name != "SURVEILLANCE-PROGRAMS" ? 1 : 0
   realm_id                   = keycloak_realm.realm.id
@@ -227,6 +232,10 @@ resource "keycloak_realm_user_profile" "userprofile" {
     name                = "user-metadata"
     display_header      = "User metadata"
     display_description = "Attributes, which refer to user metadata"
+  }
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.reset]
   }
 }
 
@@ -340,6 +349,10 @@ resource "keycloak_realm_user_profile" "userprofile_surveillance_programs" {
     name                = "user-metadata"
     display_header      = "User metadata"
     display_description = "Attributes, which refer to user metadata"
+  }
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.reset]
   }
 }
 

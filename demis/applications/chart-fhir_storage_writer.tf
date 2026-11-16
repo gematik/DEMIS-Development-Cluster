@@ -46,7 +46,8 @@ module "fhir_storage_writer" {
     istio_proxy_resources  = var.resource_definitions[local.fssw_name].istio_proxy_resources,
     db_secret_checksum     = try(kubernetes_secret_v1.database_credentials[local.fssw_index].metadata[0].annotations["checksum"], ""),
     db_ddl_secret_checksum = try(kubernetes_secret_v1.database_credentials[local.fssw_ddl_index].metadata[0].annotations["checksum"], ""),
-    service_tracing_config = local.java_service_tracing_config
+    service_tracing_config = local.java_service_tracing_config,
+    audit_log_enabled      = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSW_ENABLED"], false)
   }), local.chart_files[local.fssw_name].app_values_override])
   istio_values = compact([templatefile(local.chart_files[local.fssw_name].istio_template, {
     namespace                = var.target_namespace,

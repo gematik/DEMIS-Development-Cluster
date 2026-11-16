@@ -1,0 +1,43 @@
+# Default values of the DEMIS KEDA Chart (operator, metrics API server and admission webhooks).
+# Values not defined here keep the defaults of the Chart.
+#
+# Stage-specific settings (see README.md):
+# - environments/stage-<stage>/keda/keda/app-values.yaml (recommended)
+#   is applied on top of this template and only contains the differing values.
+# - environments/stage-<stage>/keda/keda/app-values.tftpl.yaml
+#   replaces this template completely and must keep the managed values below.
+#
+# Available template variables: repository, image_tag, image_pull_secrets, priority_class_name
+
+# The upstream Chart composes the images as "<global.image.registry>/<repository>:<tag>"
+global:
+  image:
+    registry: "${repository}"
+
+keda:
+  # The Chart requires all three tags and fails if they differ.
+  # On Docker Hub (gematik1) the images are published with the prefix "demis-".
+  image:
+    keda:
+      %{~ if strcontains(repository, "gematik1") ~}
+      repository: demis-keda-operator
+      %{~ endif ~}
+      tag: "${image_tag}"
+    metricsApiServer:
+      %{~ if strcontains(repository, "gematik1") ~}
+      repository: demis-keda-metrics-apiserver
+      %{~ endif ~}
+      tag: "${image_tag}"
+    webhooks:
+      %{~ if strcontains(repository, "gematik1") ~}
+      repository: demis-keda-admission-webhooks
+      %{~ endif ~}
+      tag: "${image_tag}"
+
+  # Image Pull Secrets
+  imagePullSecrets:
+    %{~ for pull_secret in image_pull_secrets ~}
+    - name: ${pull_secret}
+    %{~ endfor ~}
+
+  priorityClassName: "${priority_class_name}"

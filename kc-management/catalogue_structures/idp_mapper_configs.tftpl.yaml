@@ -2,8 +2,8 @@
   should_create: ${!local_cluster}
   mapper: "oidc-advanced-role-idp-mapper"
   extra_config:
-    syncMode: "FORCE"
-    claims: '[{"key":"roles","value":"StageAdmin"}]'
+    syncMode: "${kc_options.entraIdAdminRoleMapperSyncMode}"
+    claims: '[{"key":"roles","value":"${kc_options.entraIdAdminRoleMapperRole}"}]'
     role: "admin"
 "RKI Admin Mapper":
   should_create: ${!local_cluster}
@@ -12,7 +12,6 @@
     syncMode: "FORCE"
     claims: '[{"key":"roles","value":"RKIKeycloakAdmin"}]'
     group: "/RKI.admin"
-    role: "admin"
 Account-Source-Mapper:
   mapper: "hardcoded-attribute-idp-mapper"
   extra_config:
