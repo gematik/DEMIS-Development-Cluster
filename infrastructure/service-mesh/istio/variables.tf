@@ -47,6 +47,12 @@ variable "namespace" {
   default     = "istio-system"
 }
 
+variable "tracing_namespace" {
+  description = "Namespace of the Tracing (OTLP) collector used by the Istio tracing provider"
+  type        = string
+  default     = "observability"
+}
+
 variable "chart_version" {
   type        = string
   description = "The version of the Istio Helm Chart to be installed"

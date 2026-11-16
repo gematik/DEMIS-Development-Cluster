@@ -4,8 +4,9 @@ module "istio" {
   local_deployment          = var.local_deployment
   local_node_ports_istio    = var.local_node_ports_istio
   cluster_name              = var.cluster_name
-  namespace                 = var.namespace
+  namespace                 = module.namespace.name
   trace_sampling            = var.trace_sampling
+  tracing_namespace         = var.tracing_namespace
   replica_count             = var.istio_replica_count
   external_ip               = var.external_ip
   ingress_annotations       = var.ingress_annotations
@@ -13,11 +14,13 @@ module "istio" {
   helm_repository           = var.istio_helm_repository
 }
 
+# Legacy observability (Kiali, Prometheus, Jaeger, Grafana, Loki) until the observability module
+# is switched on (FEATURE_FLAG_OBSERVABILITY_NAMESPACE_ENABLED), then it is removed here
 module "kiali" {
   source                = "./kiali"
   kiali_version         = var.kiali_version
   kiali_helm_repository = var.kiali_helm_repository
-  target_namespace      = var.namespace
+  target_namespace      = module.namespace.name
   # Define the Cluster-internal URL for Prometheus
   prometheus_service_url = var.prometheus_enabled ? module.prometheus[0].prometheus_service_url : var.prometheus_service_url
   # Define the Cluster-internal URL and Port for Tracing (Jaeger)
@@ -28,7 +31,7 @@ module "kiali" {
   # Define the Public URL for Grafana (might require Port-Forwarding)
   grafana_public_url = var.grafana_enabled ? module.grafana[0].grafana_public_url : var.grafana_public_url
   # Enable only if explicitly set
-  count = var.kiali_enabled ? 1 : 0
+  count = var.kiali_enabled && !var.observability_namespace_enabled ? 1 : 0
   # Add dependency
   depends_on = [module.istio]
 }
@@ -37,9 +40,9 @@ module "prometheus" {
   source                     = "./prometheus"
   prometheus_version         = var.prometheus_version
   prometheus_helm_repository = var.prometheus_helm_repository
-  target_namespace           = var.namespace
+  target_namespace           = module.namespace.name
   # Enable only if explicitly set
-  count = var.prometheus_enabled ? 1 : 0
+  count = var.prometheus_enabled && !var.observability_namespace_enabled ? 1 : 0
   # Add dependency
   depends_on = [module.istio]
 }
@@ -48,12 +51,12 @@ module "jaeger" {
   source                 = "./jaeger"
   jaeger_version         = var.jaeger_version
   jaeger_digest          = var.jaeger_digest
-  target_namespace       = var.namespace
+  target_namespace       = module.namespace.name
   jaeger_max_traces      = coalesce(var.jaeger_max_traces, "50000")
   jaeger_storage_backend = coalesce(var.jaeger_storage_backend, "memory")
   jaeger_ttl_spans       = coalesce(var.jaeger_ttl_spans, "48h")
   # Enable only if explicitly set
-  count = var.jaeger_enabled ? 1 : 0
+  count = var.jaeger_enabled && !var.observability_namespace_enabled ? 1 : 0
   # Add dependency
   depends_on = [module.istio]
 }
@@ -62,9 +65,9 @@ module "grafana" {
   source           = "./grafana"
   grafana_version  = var.grafana_version
   grafana_digest   = var.grafana_digest
-  target_namespace = var.namespace
+  target_namespace = module.namespace.name
   # Enable only if explicitly set
-  count = var.grafana_enabled ? 1 : 0
+  count = var.grafana_enabled && !var.observability_namespace_enabled ? 1 : 0
   # Used for downloading the Dashboards
   istio_version = var.istio_version
   # Enable the Loki datasource only if Loki is deployed
@@ -79,7 +82,7 @@ module "loki" {
   source               = "./loki"
   loki_version         = var.loki_version
   loki_helm_repository = var.loki_helm_repository
-  target_namespace     = var.namespace
+  target_namespace     = module.namespace.name
   # Deployment topology (Monolithic or SimpleScalable)
   loki_deployment_mode = var.loki_deployment_mode
   # Storage configuration (local filesystem or external S3)
@@ -99,7 +102,7 @@ module "loki" {
   loki_backend_replicas     = var.loki_backend_replicas
   loki_retention_period     = var.loki_retention_period
   # Only deploy Loki if explicitly enabled AND Grafana is installed
-  count = var.loki_enabled && var.grafana_enabled ? 1 : 0
+  count = var.loki_enabled && var.grafana_enabled && !var.observability_namespace_enabled ? 1 : 0
   # Deploy Loki before Grafana; only the mesh is required beforehand
   depends_on = [module.istio]
 }

@@ -1,7 +1,10 @@
 locals {
   client_mapper_configs = yamldecode(templatefile("${path.module}/catalogue_structures/client_mapper_configs.tftpl.yaml", {}))
-  idp_mapper_configs    = yamldecode(templatefile("${path.module}/catalogue_structures/idp_mapper_configs.tftpl.yaml", { local_cluster = var.local_cluster }))
-  roles_config          = yamldecode(templatefile("${path.module}/catalogue_structures/roles_config.tftpl.yaml", {}))
+  idp_mapper_configs = yamldecode(templatefile("${path.module}/catalogue_structures/idp_mapper_configs.tftpl.yaml", {
+    local_cluster = var.local_cluster
+    kc_options    = var.kc_options
+  }))
+  roles_config = yamldecode(templatefile("${path.module}/catalogue_structures/roles_config.tftpl.yaml", {}))
 
   group_catalogues = {
     root   = yamldecode(templatefile("${path.module}/catalogue_structures/root_groups.tftpl.yaml", {}))

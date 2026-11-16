@@ -14,6 +14,9 @@
 .vscode/
 credentials.tfvars
 kind-config
+!observability/grafana/config/*.yaml
+!observability/grafana/dashboards/custom/*
+!observability/grafana/dashboards/downloader.sh
 !infrastructure/service-mesh/grafana/config/*.yaml
 !infrastructure/service-mesh/grafana/dashboards/custom/*
 !infrastructure/service-mesh/grafana/dashboards/downloader.sh
@@ -49,6 +52,7 @@ test/
 !.scripts/create-helm-repositories.sh
 !.scripts/helm-repo-update.sh
 !.scripts/helm-repositories.yaml
+!.scripts/keycloakTunnel.sh
 .trivyignore.yaml
 README_internal.md
 Misconfiguration-Scan-*.html

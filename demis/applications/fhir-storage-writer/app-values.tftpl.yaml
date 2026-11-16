@@ -26,6 +26,16 @@ podAnnotations:
   sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
   sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
   sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+  %{~ if audit_log_enabled ~}
+  # Export the counters of the audit-log ext_proc filter on this sidecar only (DEMIS-6253),
+  # and only while FEATURE_FLAG_AUDIT_LOG_FSSW_ENABLED is set. Istio drops Envoy stats outside
+  # its inclusion list; the filter's stats are named
+  # http.<hcm prefix>.ext_proc.audit_log_<filter name>.<counter>.
+  proxy.istio.io/config: |
+    proxyStatsMatcher:
+      inclusionRegexps:
+        - '.*\.ext_proc\.audit_log_.*'
+  %{~ endif ~}
 
 customEnvVars:
   # Prevents empty values that can delete the default environment variables

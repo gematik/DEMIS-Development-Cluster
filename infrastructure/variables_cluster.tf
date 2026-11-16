@@ -57,3 +57,9 @@ variable "kms_encryption_key" {
     error_message = "Invalid KMS encryption key format, must start with 'projects/...'"
   }
 }
+
+variable "project_feature_flags" {
+  type        = map(bool)
+  description = "Map of feature flags to enable or disable specific features in the DEMIS deployment. The keys are the names of the feature flags, and the values are booleans indicating whether the feature is enabled (true) or disabled (false)."
+  default     = {}
+}

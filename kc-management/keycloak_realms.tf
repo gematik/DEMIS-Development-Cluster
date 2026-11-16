@@ -82,6 +82,7 @@ module "realms" {
   source   = "./keycloak_realms"
 
   realm_name                = each.key
+  reset                     = var.reset
   managed_realms            = var.managed_realms
   clients                   = try(each.value.clients, [])
   users                     = try(local.users[each.key], [])

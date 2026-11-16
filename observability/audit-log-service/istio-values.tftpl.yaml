@@ -1,0 +1,10 @@
+# Application Information
+appName: "${app_name}"
+appNamespace: "${namespace}"
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: ${port}
+appServicePortTarget: grpc-port
+appServicePortProtocol: TCP
+appServicePortName: grpc-port
+appServiceAppProtocol: grpc

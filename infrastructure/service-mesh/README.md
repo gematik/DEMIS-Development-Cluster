@@ -1,6 +1,6 @@
 # service-mesh
 
-Module to deploy a complete Service Mesh based on Istio with Sidecar and observability tools
+Module to deploy the Service Mesh based on Istio with Sidecar. The observability tools are deployed by the [observability](../observability) module
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -18,6 +18,8 @@ Module to deploy a complete Service Mesh based on Istio with Sidecar and observa
 | <a name="module_jaeger"></a> [jaeger](#module\_jaeger) | ./jaeger | n/a |
 | <a name="module_kiali"></a> [kiali](#module\_kiali) | ./kiali | n/a |
 | <a name="module_loki"></a> [loki](#module\_loki) | ./loki | n/a |
+| <a name="module_metadata"></a> [metadata](#module\_metadata) | ../../modules/metadata | n/a |
+| <a name="module_namespace"></a> [namespace](#module\_namespace) | ../../modules/namespace | n/a |
 | <a name="module_prometheus"></a> [prometheus](#module\_prometheus) | ./prometheus | n/a |
 
 ## Resources
@@ -29,6 +31,7 @@ No resources.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the istio cluster | `string` | n/a | yes |
+| <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | Region of the cluster, used for the namespace labels | `string` | n/a | yes |
 | <a name="input_external_ip"></a> [external\_ip](#input\_external\_ip) | The external IP of the ingress gateway, only single IP is supported | `string` | `""` | no |
 | <a name="input_grafana_digest"></a> [grafana\_digest](#input\_grafana\_digest) | The digest of the Grafana Service to be used | `string` | `"sha256:5781759b3d27734d4d548fcbaf60b1180dbf4290e708f01f292faa6ae764c5e6"` | no |
 | <a name="input_grafana_enabled"></a> [grafana\_enabled](#input\_grafana\_enabled) | Defines if Grafana has to be deployed | `bool` | `false` | no |
@@ -70,12 +73,15 @@ No resources.
 | <a name="input_loki_storage_type"></a> [loki\_storage\_type](#input\_loki\_storage\_type) | Storage backend for Loki. Options: filesystem (default) or s3 (external object storage). | `string` | `"filesystem"` | no |
 | <a name="input_loki_version"></a> [loki\_version](#input\_loki\_version) | The version of the Loki Service to be installed | `string` | `"18.5.1"` | no |
 | <a name="input_loki_write_replicas"></a> [loki\_write\_replicas](#input\_loki\_write\_replicas) | Replica count for the SimpleScalable write target. Defaults to loki\_replicas when not set. | `number` | `null` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where to install the services | `string` | `"istio-system"` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace that is created for the Istio services | `string` | `"istio-system"` | no |
+| <a name="input_observability_namespace_enabled"></a> [observability\_namespace\_enabled](#input\_observability\_namespace\_enabled) | Removes the legacy observability components here, they are deployed by the observability module | `bool` | `false` | no |
 | <a name="input_prometheus_enabled"></a> [prometheus\_enabled](#input\_prometheus\_enabled) | Defines if Prometheus has to be deployed | `bool` | `false` | no |
 | <a name="input_prometheus_helm_repository"></a> [prometheus\_helm\_repository](#input\_prometheus\_helm\_repository) | Prometheus Helm Chart Repository URL or repository name, null uses the module default | `string` | `null` | no |
 | <a name="input_prometheus_service_url"></a> [prometheus\_service\_url](#input\_prometheus\_service\_url) | The Cluster-internal URL of the Prometheus Instance to be used | `string` | `"http://prometheus:9090"` | no |
 | <a name="input_prometheus_version"></a> [prometheus\_version](#input\_prometheus\_version) | The version of the Prometheus Service to be installed | `string` | `"27.3.0"` | no |
+| <a name="input_stage_name"></a> [stage\_name](#input\_stage\_name) | Name of the stage, used for the namespace labels | `string` | n/a | yes |
 | <a name="input_trace_sampling"></a> [trace\_sampling](#input\_trace\_sampling) | The sampling rate option can be used to control what percentage of requests get reported to your tracing system. (https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling) | `string` | `"1.0"` | no |
+| <a name="input_tracing_namespace"></a> [tracing\_namespace](#input\_tracing\_namespace) | Namespace of the Tracing (OTLP) collector used by the Istio tracing provider | `string` | `"observability"` | no |
 | <a name="input_tracing_service_url"></a> [tracing\_service\_url](#input\_tracing\_service\_url) | The Cluster-internal URL of the Tracing Instance to be used | `string` | `"http://tracing:16685/jaeger"` | no |
 
 ## Outputs
@@ -85,6 +91,7 @@ No resources.
 | <a name="output_istio_health_port"></a> [istio\_health\_port](#output\_istio\_health\_port) | The Istio Health port |
 | <a name="output_istio_http_port"></a> [istio\_http\_port](#output\_istio\_http\_port) | The Istio HTTP port |
 | <a name="output_istio_https_port"></a> [istio\_https\_port](#output\_istio\_https\_port) | The Istio HTTPS port |
+| <a name="output_namespace"></a> [namespace](#output\_namespace) | The namespace of the Istio services |
 | <a name="output_url_grafana"></a> [url\_grafana](#output\_url\_grafana) | Grafana Dashboard URL |
 | <a name="output_url_jaeger"></a> [url\_jaeger](#output\_url\_jaeger) | Jaeger URL |
 | <a name="output_url_kiali"></a> [url\_kiali](#output\_url\_kiali) | Kiali Dashboard URL |

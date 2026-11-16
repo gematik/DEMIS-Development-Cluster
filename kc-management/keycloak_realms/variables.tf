@@ -44,3 +44,8 @@ variable "keycloak_themes" {
   type        = map(string)
   description = "Themes to be used for the Keycloak realm (login, account, admin, email)."
 }
+
+variable "reset" {
+  type        = bool
+  description = "Whether to trigger replacement of resources that aren't automatically replaced by Terraform when reset."
+}

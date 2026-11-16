@@ -31,7 +31,12 @@ resource "helm_release" "authorization_policies_istio" {
     fileexists("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml") ? templatefile("${local.chart_source_path}/policies-authorizations/istio-values.tftpl.yaml", {
       namespace        = var.target_namespace,
       als_fssw_enabled = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSW_ENABLED"], false),
-      als_fssr_enabled = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSR_ENABLED"], false)
+      als_fssr_enabled = try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSR_ENABLED"], false),
+      # Workloads audited by the audit-log-service, they get access to it
+      als_workloads = compact([
+        try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSR_ENABLED"], false) ? "fhir-storage-reader" : "",
+        try(var.project_feature_flags["FEATURE_FLAG_AUDIT_LOG_FSSW_ENABLED"], false) ? "fhir-storage-writer" : ""
+      ])
     }) : "",
     fileexists("${local.chart_source_path}/policies-authorizations/istio-values.yaml") ? file("${local.chart_source_path}/policies-authorizations/istio-values.yaml") : "",
   ])

@@ -42,9 +42,25 @@ variable "cluster_name" {
 }
 
 variable "namespace" {
-  description = "Namespace where to install the services"
+  description = "Namespace that is created for the Istio services"
   type        = string
   default     = "istio-system"
+}
+
+variable "stage_name" {
+  description = "Name of the stage, used for the namespace labels"
+  type        = string
+}
+
+variable "cluster_region" {
+  description = "Region of the cluster, used for the namespace labels"
+  type        = string
+}
+
+variable "tracing_namespace" {
+  description = "Namespace of the Tracing (OTLP) collector used by the Istio tracing provider"
+  type        = string
+  default     = "observability"
 }
 
 variable "istio_version" {
@@ -57,6 +73,39 @@ variable "istio_replica_count" {
   description = "The number of replicas that have to be configured for the Istio services"
   type        = number
   default     = 3
+}
+
+variable "trace_sampling" {
+  description = "The sampling rate option can be used to control what percentage of requests get reported to your tracing system. (https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling)"
+  type        = string
+  default     = "1.0"
+}
+
+variable "external_ip" {
+  description = "The external IP of the ingress gateway, only single IP is supported"
+  type        = string
+  default     = ""
+}
+
+variable "ingress_annotations" {
+  description = "The annotations to be used for the ingress gateway"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "loadbalancer_sourceranges" {
+  description = "The load balancer source ranges to be used for the ingress gateway"
+  type        = list(string)
+  default     = []
+}
+
+variable "istio_helm_repository" {
+  type        = string
+  description = "Istio Helm Chart Repository URL"
+  default     = "https://blob.istio.io/istio-release/charts"
 }
 
 variable "kiali_enabled" {
@@ -229,33 +278,6 @@ variable "loki_retention_period" {
   default     = "168h"
 }
 
-variable "trace_sampling" {
-  description = "The sampling rate option can be used to control what percentage of requests get reported to your tracing system. (https://istio.io/latest/docs/tasks/observability/distributed-tracing/mesh-and-proxy-config/#customizing-trace-sampling)"
-  type        = string
-  default     = "1.0"
-}
-
-variable "external_ip" {
-  description = "The external IP of the ingress gateway, only single IP is supported"
-  type        = string
-  default     = ""
-}
-
-variable "ingress_annotations" {
-  description = "The annotations to be used for the ingress gateway"
-  type = list(object({
-    name  = string
-    value = string
-  }))
-  default = []
-}
-
-variable "loadbalancer_sourceranges" {
-  description = "The load balancer source ranges to be used for the ingress gateway"
-  type        = list(string)
-  default     = []
-}
-
 variable "prometheus_service_url" {
   description = "The Cluster-internal URL of the Prometheus Instance to be used"
   type        = string
@@ -301,12 +323,6 @@ variable "jaeger_storage_backend" {
   nullable    = true
 }
 
-variable "istio_helm_repository" {
-  type        = string
-  description = "Istio Helm Chart Repository URL"
-  default     = "https://blob.istio.io/istio-release/charts"
-}
-
 variable "kiali_helm_repository" {
   type        = string
   description = "Kiali Helm Chart Repository URL or repository name, null uses the module default"
@@ -323,4 +339,10 @@ variable "loki_helm_repository" {
   type        = string
   description = "Loki Helm Chart Repository URL or repository name, null uses the module default"
   default     = null
+}
+
+variable "observability_namespace_enabled" {
+  description = "Removes the legacy observability components here, they are deployed by the observability module"
+  type        = bool
+  default     = false
 }

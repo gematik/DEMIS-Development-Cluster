@@ -1,0 +1,105 @@
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [tail_sampling/drop_scrapes, batch]
+      exporters: [jaeger_storage_exporter]
+  telemetry:
+    resource:
+      service.name: jaeger
+    logs:
+      level: INFO
+
+extensions:
+  healthcheckv2:
+    use_v2: true
+    component_health:
+      include_permanent_errors: false
+      include_recoverable_errors: true
+      recovery_duration: 5m
+    http:
+      endpoint: "0.0.0.0:${health_check_port}"
+      status:
+        enabled: true
+        path: "/status"
+      config:
+        enabled: true
+        path: "/config"
+  jaeger_query:
+    # No traces of Jaeger's own UI and API calls, they would end up in Jaeger itself
+    enable_tracing: false
+    storage:
+      traces: trace_storage
+    grpc:
+      endpoint: 0.0.0.0:${grpc_query_port}
+    http:
+      endpoint: 0.0.0.0:${http_query_port}
+    ui:
+      config_file: "/ui/jaeger-ui.json"
+  jaeger_storage:
+    backends:
+      trace_storage:
+%{ if jaeger_storage_backend == "badger" ~}
+        badger:
+          ephemeral: false
+          consistency: false
+          ttl:
+            spans: ${ttl_spans}
+          directories:
+            keys: /badger/keys
+            values: /badger/values
+%{ else ~}
+        memory:
+          max_traces: ${max_traces}
+%{ endif ~}
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:${otlp_grpc_port}"
+      http:
+        endpoint: "0.0.0.0:${otlp_http_port}"
+
+processors:
+  # Drops whole traces of metrics scrapes and health checks. Decided per trace, so the child spans
+  # without a URL (e.g. Spring Security) go together with the root span. A drop policy wins over
+  # any other decision; every other trace is kept.
+  tail_sampling/drop_scrapes:
+    # Traces show up in Jaeger after this delay. Spans arriving later keep the decision of their trace.
+    decision_wait: 5s
+    num_traces: 20000
+    # Remembers dropped trace IDs, so late spans of a dropped trace are dropped as well
+    decision_cache:
+      non_sampled_cache_size: 20000
+    policies:
+      # Actuator endpoints: path in the app span, full URL in the sidecar span
+      - name: drop-actuator
+        type: drop
+        drop:
+          drop_sub_policy:
+            - name: actuator-url
+              type: string_attribute
+              string_attribute:
+                key: http.url
+                values: [".*/actuator/.*"]
+                enabled_regex_matching: true
+      # Every Prometheus scrape, whatever the path (e.g. /metrics of kube-state-metrics)
+      - name: drop-prometheus-scrapes
+        type: drop
+        drop:
+          drop_sub_policy:
+            - name: prometheus-user-agent
+              type: string_attribute
+              string_attribute:
+                key: user_agent
+                values: ["Prometheus/.*"]
+                enabled_regex_matching: true
+      - name: keep-everything-else
+        type: always_sample
+  batch:
+
+exporters:
+  jaeger_storage_exporter:
+    trace_storage: trace_storage

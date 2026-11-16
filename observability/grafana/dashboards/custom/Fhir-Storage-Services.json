@@ -1,0 +1,819 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Keep in touch with FHIR storage services",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 250,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "panels": [],
+      "title": "Reader",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "Comparing GET-Responses of FSS-Reader and NCAPI and counting mismatches",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "/^rest 2$/",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "{container=\"fhir-storage-reader\"} |= `queryresult`",
+          "queryType": "range",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "{container=\"notification-clearing-api\"} |= `queryresult`",
+          "hide": false,
+          "queryType": "range",
+          "refId": "B"
+        }
+      ],
+      "title": "Reader-NCAPI-Diff-Count v2",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "source": "Line"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "trace",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "rest 1",
+                "rest 2"
+              ]
+            }
+          }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+              {
+                "alias": "resource1",
+                "path": "query.resource"
+              },
+              {
+                "alias": "parameters1",
+                "path": "query.parameters"
+              },
+              {
+                "alias": "total1",
+                "path": "result.total"
+              },
+              {
+                "alias": "ids1",
+                "path": "result.ids"
+              }
+            ],
+            "keepTime": false,
+            "replace": false,
+            "source": "rest 1"
+          }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+              {
+                "alias": "resource2",
+                "path": "query.resource"
+              },
+              {
+                "alias": "parameters2",
+                "path": "query.parameters"
+              },
+              {
+                "alias": "total2",
+                "path": "result.total"
+              },
+              {
+                "alias": "ids2",
+                "path": "result.ids"
+              }
+            ],
+            "source": "rest 2"
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "string",
+                "targetField": "ids1"
+              },
+              {
+                "destinationType": "string",
+                "targetField": "ids2"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "resource.diff",
+            "binary": {
+              "left": "rest 1",
+              "operator": "+"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "resource1",
+                "resource2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "parameters.diff",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "parameters1",
+                "parameters2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.diff.tmp",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total1",
+                "total2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "ids.diff",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ids1",
+                "ids2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.trim",
+            "binary": {
+              "left": "total2",
+              "operator": "/",
+              "right": "1"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total2"
+              ],
+              "reducer": "range"
+            },
+            "replaceFields": false,
+            "unary": {
+              "fieldName": "total2",
+              "operator": "abs"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.ignore",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total.trim"
+              ],
+              "reducer": "allIsNull"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.sub",
+            "binary": {
+              "left": "total.ignore",
+              "operator": "+",
+              "right": "0"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.diff",
+            "binary": {
+              "left": "total.diff.tmp",
+              "operator": "-",
+              "right": "total.sub"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "total.diff.tmp"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "resource.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "parameters.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "total.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "ids.diff"
+              }
+            ],
+            "match": "all",
+            "type": "exclude"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "Comparing GET-Responses of FSS-Reader and NCAPI and counting mismatches",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 28,
+        "w": 21,
+        "x": 3,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "{container=\"fhir-storage-reader\"} |= `queryresult`",
+          "queryType": "range",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource}"
+          },
+          "editorMode": "builder",
+          "expr": "{container=\"notification-clearing-api\"} |= `queryresult`",
+          "hide": false,
+          "queryType": "range",
+          "refId": "B"
+        }
+      ],
+      "title": "Reader-NCAPI-Diff v2",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "source": "Line"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "trace",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "trace",
+                "rest 1",
+                "rest 2",
+                "Time 1"
+              ]
+            }
+          }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+              {
+                "alias": "resource1",
+                "path": "query.resource"
+              },
+              {
+                "alias": "parameters1",
+                "path": "query.parameters"
+              },
+              {
+                "alias": "total1",
+                "path": "result.total"
+              },
+              {
+                "alias": "ids1",
+                "path": "result.ids"
+              }
+            ],
+            "keepTime": false,
+            "replace": false,
+            "source": "rest 1"
+          }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+              {
+                "alias": "resource2",
+                "path": "query.resource"
+              },
+              {
+                "alias": "parameters2",
+                "path": "query.parameters"
+              },
+              {
+                "alias": "total2",
+                "path": "result.total"
+              },
+              {
+                "alias": "ids2",
+                "path": "result.ids"
+              }
+            ],
+            "source": "rest 2"
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "string",
+                "targetField": "ids1"
+              },
+              {
+                "destinationType": "string",
+                "targetField": "ids2"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "resource.diff",
+            "binary": {
+              "left": "rest 1",
+              "operator": "+"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "resource1",
+                "resource2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "parameters.diff",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "parameters1",
+                "parameters2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.diff.tmp",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total1",
+                "total2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "ids.diff",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "ids1",
+                "ids2"
+              ],
+              "reducer": "distinctCount"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.trim",
+            "binary": {
+              "left": "total2",
+              "operator": "/",
+              "right": "1"
+            },
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total2"
+              ],
+              "reducer": "range"
+            },
+            "replaceFields": false,
+            "unary": {
+              "fieldName": "total2",
+              "operator": "abs"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.ignore",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "total.trim"
+              ],
+              "reducer": "allIsNull"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.sub",
+            "binary": {
+              "left": "total.ignore",
+              "operator": "+",
+              "right": "0"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "total.diff",
+            "binary": {
+              "left": "total.diff.tmp",
+              "operator": "-",
+              "right": "total.sub"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "total.diff.tmp"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "resource.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "parameters.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "total.diff"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "ids.diff"
+              }
+            ],
+            "match": "all",
+            "type": "exclude"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "ids.diff": true,
+              "ids1": true,
+              "ids2": true,
+              "parameters.diff": true,
+              "parameters1": true,
+              "parameters2": true,
+              "resource.diff": true,
+              "resource1": true,
+              "resource2": true,
+              "total.diff": true,
+              "total.diff.tmp": true,
+              "total.ignore": true,
+              "total.sub": true,
+              "total.trim": true,
+              "total1": true,
+              "total2": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "ids.diff": 15,
+              "ids1": 7,
+              "ids2": 11,
+              "parameters.diff": 13,
+              "parameters1": 5,
+              "parameters2": 9,
+              "resource.diff": 12,
+              "resource1": 4,
+              "resource2": 8,
+              "rest 1": 2,
+              "rest 2": 3,
+              "total.diff": 19,
+              "total.diff.tmp": 14,
+              "total.ignore": 17,
+              "total.sub": 18,
+              "total.trim": 16,
+              "total1": 6,
+              "total2": 10,
+              "trace": 1
+            },
+            "renameByName": {
+              "Time": "time",
+              "rest 1": "reader",
+              "rest 2": "ncapi"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Loki rki-fkb-dev",
+          "value": "loki-u972vtmrfl"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "loki",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "FHIR-Storage-Services",
+  "uid": "b6c6db48-bccb-4048-a271-02167e7017f1",
+  "version": 14,
+  "weekStart": ""
+}

@@ -25,7 +25,7 @@ resource "helm_release" "istiod" {
     autoscale_min          = var.replica_count,
     replica_count          = var.replica_count,
     trace_sampling         = var.trace_sampling,
-    opentelemetry_hostname = "otlp-collector.${var.namespace}.svc.cluster.local",
+    opentelemetry_hostname = "otlp-collector.${var.tracing_namespace}.svc.cluster.local",
     opentelemetry_port     = "4317",
     # Local ephemeral Keycloak rotates realm keys on every deploy; let sidecars
     # fetch the JWKS themselves so rotated keys are trusted without istiod cache lag.

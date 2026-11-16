@@ -18,3 +18,30 @@ RKI.admin:
       name: manage-users
     - client: SURVEILLANCE-PROGRAMS-realm
       name: view-users
+    - client: OEGD-realm
+      name: manage-users
+    - client: OEGD-realm
+      name: view-users
+    - client: HOSPITAL-realm
+      name: manage-users
+    - client: HOSPITAL-realm
+      name: view-users
+    - client: LAB-realm
+      name: manage-users
+    - client: LAB-realm
+      name: view-users
+    - client: PORTAL-realm
+      name: manage-users
+    - client: PORTAL-realm
+      name: view-users
+    - client: PORTAL-realm
+      name: query-users
+    - client: PORTAL-realm
+      name: query-groups
+    - client: master-realm
+      name: view-events
+    - client: account
+      name: view-profile
+    - client: account
+      name: manage-account
+    
