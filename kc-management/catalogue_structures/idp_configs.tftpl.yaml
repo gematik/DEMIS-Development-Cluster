@@ -45,7 +45,6 @@ bundid-idp:
   gui_order: 1
   entity_id: "${stage_specific_keycloak_config.demis_keycloak_url}/realms/${realm}"
   single_sign_on_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].service_url)}
-  single_logout_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["bundid-idp"].service_url)}
   post_binding_response: true
   post_binding_logout: true
   post_binding_authn_request: true
@@ -77,7 +76,6 @@ muk:
   gui_order: 2
   entity_id: "${stage_specific_keycloak_config.demis_keycloak_url}/realms/${realm}"
   single_sign_on_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].service_url)}
-  single_logout_service_url: ${jsonencode(stage_specific_keycloak_config.saml_idp_configs["muk"].service_url)}
   post_binding_response: true
   post_binding_logout: true
   post_binding_authn_request: true
