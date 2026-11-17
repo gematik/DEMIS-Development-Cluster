@@ -2,6 +2,10 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.15.1
+- kc-management:
+  - removed single logout url for bundid and muk
+
 ## Release 5.15.0
 - kc-management:
   - improved reset script for mac
