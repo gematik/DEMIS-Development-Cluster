@@ -58,6 +58,7 @@ variable "kc_options" {
   - rki_admin_mapper: Boolean flag indicating whether the RKI Admin Mapper should be enabled
   - entraIdAdminRoleMapperRole: The role used by the Entra ID Admin Role Mapper
   - entraIdAdminRoleMapperSyncMode: The sync mode used by the Entra ID Admin Role Mapper
+  - ik_mapper_disabled_realms: List of realms in which the client protocol mapper "ik-mapper" should not be added to the clients
   EOT
 
   type = object({
@@ -70,6 +71,7 @@ variable "kc_options" {
     rki_admin_mapper                  = optional(bool, false)
     entraIdAdminRoleMapperRole        = optional(string, "StageAdmin")
     entraIdAdminRoleMapperSyncMode    = optional(string, "FORCE")
+    ik_mapper_disabled_realms         = optional(list(string), ["PORTAL"])
   })
   default = {}
 }

@@ -25,6 +25,14 @@ locals {
     for realm, config in local.keycloak_realms_structure : realm => merge(config, {
       roles          = concat(lookup(var.kc_options.additional_roles, realm, []), try(config.roles, []))
       default_groups = concat(try(config.default_groups, []), lookup(var.kc_options.additional_default_groups, realm, []))
+      # Filter out the "ik-mapper" from the mappers of all clients if the realm is in the list of realms where the ik-mapper should be disabled
+      clients = [
+        for clients_map in try(config.clients, []) : {
+          for client_name, client_cfg in clients_map : client_name => merge(client_cfg, {
+            mappers = [for mapper in try(client_cfg.mappers, []) : mapper if mapper != "ik-mapper" || !contains(var.kc_options.ik_mapper_disabled_realms, realm)]
+          })
+        }
+      ]
     })
     if contains(var.managed_realms, realm)
   }
