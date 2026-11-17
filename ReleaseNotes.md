@@ -2,6 +2,10 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.15.2
+- kc-management:
+  - client protocol mapper "ik-mapper" can be disabled per realm via `kc_options.ik_mapper_disabled_realms` (default: PORTAL)
+
 ## Release 5.15.1
 - kc-management:
   - removed single logout url for bundid and muk
