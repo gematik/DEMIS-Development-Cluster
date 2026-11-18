@@ -46,7 +46,7 @@ resource "keycloak_authentication_execution_config" "execution_configs" {
 }
 
 resource "keycloak_authentication_bindings" "bind_direct_grant_to_demis_test_password_grant" {
-  count             = contains(keys(local.selected_auth_flows), "Direct Grant Mutual TLS") && contains(flatten([for client_map in var.clients : keys(client_map)]), "demis-test-password-grant") ? 1 : 0
+  count             = contains(keys(local.selected_auth_flows), "Direct Grant Mutual TLS") ? 1 : 0
   realm_id          = keycloak_realm.realm.id
   direct_grant_flow = keycloak_authentication_flow.flows["Direct Grant Mutual TLS"].alias
 }
