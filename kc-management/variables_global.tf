@@ -59,6 +59,7 @@ variable "kc_options" {
   - entraIdAdminRoleMapperRole: The role used by the Entra ID Admin Role Mapper
   - entraIdAdminRoleMapperSyncMode: The sync mode used by the Entra ID Admin Role Mapper
   - ik_mapper_disabled_realms: List of realms in which the client protocol mapper "ik-mapper" should not be added to the clients
+  - excluded_clients: Map of clients that should not be managed per realm. The keys are the realm names, and the values are lists of client names
   EOT
 
   type = object({
@@ -72,6 +73,7 @@ variable "kc_options" {
     entraIdAdminRoleMapperRole        = optional(string, "StageAdmin")
     entraIdAdminRoleMapperSyncMode    = optional(string, "FORCE")
     ik_mapper_disabled_realms         = optional(list(string), ["PORTAL"])
+    excluded_clients                  = optional(map(list(string)), {})
   })
   default = {}
 }
