@@ -1,0 +1,20 @@
+# Application Information
+appName: "${app_name}"
+appNamespace: "${namespace}"
+# Settings for the Kubernetes Service Object for the Application
+appServiceType: ClusterIP
+appServicePortExternal: ${port}
+appServicePortTarget: ${port}
+appServicePortProtocol: TCP
+appServicePortName: http
+
+# HTTP Rules for internal endpoints (Loki), with timeout and retries (timeout_retry_overrides.tfvars)
+virtualServiceHttpRules:
+  - match:
+      - uri:
+          prefix: /
+    rewrite:
+      uri: /
+  %{ if http_timeout_retry_block != null ~}
+  ${indent(4, http_timeout_retry_block)}
+  %{ endif ~}

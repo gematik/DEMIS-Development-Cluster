@@ -1,5 +1,6 @@
 locals {
-  client_mapper_configs = yamldecode(templatefile("${path.module}/catalogue_structures/client_mapper_configs.tftpl.yaml", {}))
+  client_mapper_configs  = yamldecode(templatefile("${path.module}/catalogue_structures/client_mapper_configs.tftpl.yaml", {}))
+  required_action_config = yamldecode(templatefile("${path.module}/catalogue_structures/required_action.tftpl.yaml", {}))
   idp_mapper_configs = yamldecode(templatefile("${path.module}/catalogue_structures/idp_mapper_configs.tftpl.yaml", {
     local_cluster = var.local_cluster
     kc_options    = var.kc_options

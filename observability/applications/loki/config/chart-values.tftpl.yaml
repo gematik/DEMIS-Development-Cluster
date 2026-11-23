@@ -1,0 +1,151 @@
+# Loki deployed as central log receiver (monolithic). The Audit Log Service pushes logs and Grafana
+# reads them through the "loki" Service on port 3100 (no gateway). Which
+# workloads may push and read is set by the Istio authorization policies of the observability
+# namespace (policies chart). No collector (Promtail/Alloy) is deployed.
+#
+# Loki 3.x additionally exposes a native OTLP logs endpoint on the same HTTP path:
+#   <loki_service_url>/otlp/v1/logs  (OTLP over HTTP only).
+# Applications can therefore push OTLP logs directly, without a collector. Loki has
+# NO OTLP/gRPC log receiver - the gRPC port 9095 is for internal component traffic only,
+# so an OTLP/gRPC source still needs an OpenTelemetry Collector translating to OTLP/HTTP.
+#
+# This file is rendered by the loki module (templatefile) so the storage backend
+# can be switched between local "filesystem" and an external "s3" object store
+# via the loki_storage_type / loki_s3_* variables.
+
+# Only the monolithic mode ("single binary"): all Loki components in one process (StatefulSet),
+# with s3 storage scaled out (replicas in resources.tfvars)
+deploymentMode: Monolithic
+
+loki:
+  # Config (with the S3 credentials) in a Secret, mounted as a volume
+  configStorageType: Secret
+  # Multi-tenancy switch. Options:
+  #   - false: single tenant; requests need no "X-Scope-OrgID" header (used here, cluster-internal).
+  #   - true:  multi-tenant; every push/query must carry a tenant "X-Scope-OrgID" header.
+  auth_enabled: false
+  # Force the generated resource names (Service, StatefulSet, ...) to "loki" so the
+  # push/query endpoint is stably reachable at http://loki:3100.
+  fullnameOverride: loki
+  commonConfig:
+    # Number of ingesters that must acknowledge a write. Derived from the replica count
+    # (max 3). 1 for a single instance; higher only with multiple replicas + S3 storage.
+    replication_factor: ${replication_factor}
+  storage:
+    # Backend for chunks and indexes. Options:
+    #   - filesystem: local disk (PVC/emptyDir); no external dependency.
+    #   - s3:         external S3-compatible object storage (required for HA / multiple replicas).
+    #   (The chart also supports gcs / azure / swift / ... which are not wired here.)
+    type: ${storage_type}
+%{ if storage_type == "s3" ~}
+    # Own bucket for chunks, ruler rules and admin/compactor objects (created by the bucket Job of this module).
+    bucketNames:
+      chunks: ${s3_bucket}
+      ruler: ${s3_bucket}
+      admin: ${s3_bucket}
+    s3:
+      # S3 endpoint host. The access key id / secret access key are injected separately
+      # via Helm set_sensitive so they are never written into this values file.
+      endpoint: ${s3_endpoint}
+      region: "${s3_region}"
+      # s3ForcePathStyle: true for MinIO / non-AWS (path-style), false for real AWS S3.
+      s3ForcePathStyle: ${s3_force_path_style}
+      # insecure: true = plain HTTP, false = HTTPS.
+      insecure: ${s3_insecure}
+%{ if s3_sse_type != "none" ~}
+      # Server-side encryption by the object storage (SSE-S3: its key, SSE-KMS: key from its KMS).
+      sse:
+        type: ${s3_sse_type}
+%{ if s3_sse_type == "SSE-KMS" ~}
+        kms_key_id: ${s3_sse_kms_key_id}
+%{ endif ~}
+%{ endif ~}
+%{ endif ~}
+  schemaConfig:
+    # Schema/index configuration. At least one schema entry is required by Loki.
+    configs:
+        # Date from which this schema is active (must be in the past, no overlap).
+      - from: "2024-04-01"
+        # Index store engine. Options: tsdb (recommended, used here) or boltdb-shipper (legacy).
+        store: tsdb
+        # Where index files live. Kept in sync with loki.storage.type (filesystem | s3 | ...).
+        object_store: ${storage_type}
+        # Loki schema version. Options: v11, v12, v13 (latest/recommended).
+        schema: v13
+        index:
+          # Filename prefix for the generated index tables.
+          prefix: index_
+          # Rotation period per index table. For the tsdb store this must be 24h.
+          period: 24h
+  limits_config:
+    # Retention time before the compactor deletes ingested logs (Go duration).
+    retention_period: ${retention_period}
+  compactor:
+    # Without retention_enabled the compactor ignores retention_period and keeps the logs forever.
+    retention_enabled: true
+    # Store for delete requests, kept in sync with loki.storage.type.
+    delete_request_store: ${storage_type}
+  # Pattern ingester (automatic log-pattern detection). Options:
+  #   - false: disabled; smaller footprint, enough for plain ingestion/troubleshooting (used here).
+  #   - true:  enabled; powers the "patterns" feature in Grafana Explore.
+  pattern_ingester:
+    enabled: false
+
+# Monolithic ("single binary") target, the only active target.
+singleBinary:
+  # Number of Loki instances (integer). 1 for the local/non-HA setup; > 1 requires S3 storage.
+  replicas: ${replicas}
+  persistence:
+    # PersistentVolumeClaim per instance for the WAL and unflushed chunks (with filesystem storage all data);
+    # without, they are lost on pod restart
+%{ if volume != null ~}
+    enabled: true
+    storageClass: ${volume.storage_class}
+    size: ${volume.capacity}
+%{ else ~}
+    enabled: false
+%{ endif ~}
+  podLabels:
+    # Istio sidecar injection for the Loki pod (label, so it also works in namespaces without injection label). Options:
+    #   - "true":  inject the sidecar and make Loki part of the mesh (mTLS between meshed clients, used here).
+    #   - "false": no Envoy sidecar; plain cluster-internal HTTP, not part of mTLS routing.
+    sidecar.istio.io/inject: "true"
+  service:
+    appProtocol:
+      # gRPC between the instances goes to pod IPs: as TCP (like the RabbitMQ clustering ports) the sidecar has a
+      # listener per pod IP with mTLS and closes the connection when an instance restarts, so Loki reconnects to the new IP
+      grpc: tcp
+
+# The targets of the other deployment modes MUST be 0 so no extra workloads are created.
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
+# No NGINX gateway: the authorization policies decide who may push or query (Istio identities)
+gateway:
+  enabled: false
+
+# Memcached-based caches. Options (each true/false):
+#   - false: no cache pods; minimal footprint (used here).
+#   - true:  deploy memcached to speed up queries; recommended at scale.
+chunksCache:
+  enabled: false
+resultsCache:
+  enabled: false
+
+# Self-monitoring "canary" that continuously writes/reads test logs to detect data loss.
+# Options: false = disabled (used here); true = deploy the canary DaemonSet.
+lokiCanary:
+  enabled: false
+# Helm test hooks (connectivity smoke tests). Options: false = no test pods (used here); true = create them.
+test:
+  enabled: false
+
+# Bundled MinIO object-storage dependency. Options:
+#   - false: no MinIO (used here); we either use local filesystem or an EXTERNAL S3.
+#   - true:  deploy an in-cluster S3-compatible MinIO (self-contained object storage).
+minio:
+  enabled: false

@@ -1,7 +1,7 @@
 # Pull Secrets for the Audit Log Service image
 module "pull_secrets" {
   source        = "../modules/pull_secret"
-  for_each      = local.audit_log_service_enabled ? { for pull_creds in var.docker_pull_secrets : pull_creds.name => pull_creds } : {}
+  for_each      = { for pull_creds in var.docker_pull_secrets : pull_creds.name => pull_creds }
   namespace     = local.namespace
   name          = each.value.name
   registry      = each.value.registry

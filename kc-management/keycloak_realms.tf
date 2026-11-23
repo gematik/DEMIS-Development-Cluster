@@ -25,12 +25,15 @@ locals {
     for realm, config in local.keycloak_realms_structure : realm => merge(config, {
       roles          = concat(lookup(var.kc_options.additional_roles, realm, []), try(config.roles, []))
       default_groups = concat(try(config.default_groups, []), lookup(var.kc_options.additional_default_groups, realm, []))
-      # Filter out the "ik-mapper" from the mappers of all clients if the realm is in the list of realms where the ik-mapper should be disabled
+      # Append the stage specific additional clients (if not already declared) and mappers,
       # and drop the clients that are excluded for the realm
       clients = [
         for clients_map in try(config.clients, []) : {
           for client_name, client_cfg in clients_map : client_name => merge(client_cfg, {
-            mappers = [for mapper in try(client_cfg.mappers, []) : mapper if mapper != "ik-mapper" || !contains(var.kc_options.ik_mapper_disabled_realms, realm)]
+            mappers = distinct(concat(
+              try(client_cfg.mappers, []),
+              lookup(lookup(var.kc_options.additional_client_mapper, realm, {}), client_name, [])
+            ))
           }) if !contains(lookup(var.kc_options.excluded_clients, realm, []), client_name)
         } if length(setsubtract(keys(clients_map), lookup(var.kc_options.excluded_clients, realm, []))) > 0
       ]
@@ -115,6 +118,7 @@ module "realms" {
   realm_config              = try(var.realm_config[each.key], {})
   certs                     = lookup(var.keycloak_certs, each.key, [])
   password_users            = var.password_users
+  required_action_config    = local.required_action_config
 
   keycloak_connection_url = var.stage_specific_keycloak_config.provider_connection_url
   keycloak_admin_token    = local.keycloak_admin_token

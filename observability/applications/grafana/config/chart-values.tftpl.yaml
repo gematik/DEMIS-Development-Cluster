@@ -1,0 +1,58 @@
+# No Helm test Pod
+testFramework:
+  enabled: false
+
+# Grafana reads no Kubernetes API (no sidecars)
+rbac:
+  create: false
+
+serviceAccount:
+  create: true
+  name: ${app}
+automountServiceAccountToken: false
+
+service:
+  port: ${port}
+  appProtocol: http
+
+podLabels:
+  # Selected by the network policies (pgbouncer, loki)
+  app: ${app}
+  sidecar.istio.io/inject: "true"
+
+podAnnotations: ${jsonencode(pod_annotations)}
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+grafana.ini:
+  analytics:
+    check_for_updates: false
+  log:
+    mode: console
+  auth.anonymous:
+    enabled: true
+    org_role: Admin
+  auth.basic:
+    enabled: false
+
+env:
+  # Anonymous Admin only, no admin user and no admin Secret
+  GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+
+# Credentials of the datasources from Secrets, mounted as files
+extraSecretMounts: ${jsonencode(secret_mounts)}
+
+datasources:
+  datasources.yaml: ${jsonencode(datasources)}
+
+dashboardProviders:
+  dashboardproviders.yaml: ${jsonencode(dashboard_providers)}
+
+# Dashboards from the ConfigMaps of this module, mounted per provider
+dashboardsConfigMaps: ${jsonencode(dashboards_config_maps)}

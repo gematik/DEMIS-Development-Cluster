@@ -1,0 +1,30 @@
+# Replicas, resources and sidecar resources of the workloads (resources.tfvars), merged into chart-values.yml
+server:
+%{ if server.replicas != null ~}
+  replicaCount: ${server.replicas}
+%{ endif ~}
+%{ if server.resource_block != null ~}
+  ${indent(2, server.resource_block)}
+%{ endif ~}
+  podAnnotations:
+    sidecar.istio.io/proxyCPU: "${server.istio_proxy_resources.requests.cpu}"
+    sidecar.istio.io/proxyMemory: "${server.istio_proxy_resources.requests.memory}"
+    sidecar.istio.io/proxyMemoryLimit: "${server.istio_proxy_resources.limits.memory}"
+%{ if kube_state_metrics != null ~}
+kube-state-metrics:
+%{ if kube_state_metrics.replicas != null ~}
+  replicas: ${kube_state_metrics.replicas}
+%{ endif ~}
+%{ if kube_state_metrics.resource_block != null ~}
+  ${indent(2, kube_state_metrics.resource_block)}
+%{ endif ~}
+  podAnnotations:
+    sidecar.istio.io/proxyCPU: "${kube_state_metrics.istio_proxy_resources.requests.cpu}"
+    sidecar.istio.io/proxyMemory: "${kube_state_metrics.istio_proxy_resources.requests.memory}"
+    sidecar.istio.io/proxyMemoryLimit: "${kube_state_metrics.istio_proxy_resources.limits.memory}"
+%{ endif ~}
+%{ if node_exporter != null && try(node_exporter.resource_block, null) != null ~}
+# DaemonSet without sidecar, one pod per node (no replicas)
+prometheus-node-exporter:
+  ${indent(2, node_exporter.resource_block)}
+%{ endif ~}

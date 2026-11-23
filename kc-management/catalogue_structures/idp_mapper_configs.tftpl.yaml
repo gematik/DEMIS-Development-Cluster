@@ -57,6 +57,8 @@ Level-Of-Assurance-Mapper:
     extra_config:
       attribute.friendly.name: "EID-CITIZEN-QAA-LEVEL"
       attribute.name.format: "ATTRIBUTE_FORMAT_BASIC"
+      attribute.value: null
+      attribute: null
       user.attribute: "levelOfAssurance"
 Account-Type-Mapper:
   mapper: "hardcoded-attribute-idp-mapper"

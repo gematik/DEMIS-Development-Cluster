@@ -39,8 +39,9 @@ locals {
   # The Stage Configuration Data to use (image of an init container), canary first with main as fallback, the image-digest belongs to its version
   stage_configuration_data         = try(var.deployment_information["stage-configuration-data"].canary.version, null) != null ? var.deployment_information["stage-configuration-data"].canary : try(var.deployment_information["stage-configuration-data"].main, null)
   stage_configuration_data_version = try(local.stage_configuration_data.version, "")
-  stage_configuration_data_tag     = try(join("@", compact([local.stage_configuration_data.version, local.stage_configuration_data.image-digest])), "")
+  stage_configuration_data_tag     = local.stage_configuration_data == null ? "" : join("@", compact([local.stage_configuration_data.version, local.stage_configuration_data.image-digest]))
   stage_configuration_data_name    = try(var.deployment_information["stage-configuration-data"].chart-name, "")
   # The TSL Deliverer Mock (image of an init container), "<version>@<image-digest>" if an image-digest is given
-  tsl_deliverer_mock_tag = try(join("@", compact([var.deployment_information["tsl-deliverer-mock"].main.version, var.deployment_information["tsl-deliverer-mock"].main.image-digest])), "")
+  tsl_deliverer_mock     = try(var.deployment_information["tsl-deliverer-mock"].main, null)
+  tsl_deliverer_mock_tag = local.tsl_deliverer_mock == null ? "" : join("@", compact([local.tsl_deliverer_mock.version, local.tsl_deliverer_mock.image-digest]))
 }

@@ -168,13 +168,13 @@ resource "terraform_data" "reset" {
 resource "keycloak_realm_user_profile" "userprofile" {
   count                      = var.realm_name != "SURVEILLANCE-PROGRAMS" ? 1 : 0
   realm_id                   = keycloak_realm.realm.id
-  unmanaged_attribute_policy = "ENABLED"
+  unmanaged_attribute_policy = "ADMIN_EDIT"
   attribute {
     name         = "username"
     display_name = "$${username}"
     permissions {
-      view = ["admin", "user"]
-      edit = ["admin", "user"]
+      view = ["admin"]
+      edit = ["admin"]
     }
     validator {
       name = "length"
@@ -188,8 +188,8 @@ resource "keycloak_realm_user_profile" "userprofile" {
     name         = "email"
     display_name = "$${email}"
     permissions {
-      view = ["admin", "user"]
-      edit = ["admin", "user"]
+      view = ["admin"]
+      edit = ["admin"]
     }
     validator {
       name = "length"
@@ -209,16 +209,16 @@ resource "keycloak_realm_user_profile" "userprofile" {
       }
     }
     permissions {
-      view = ["admin", "user"]
-      edit = ["admin", "user"]
+      view = ["admin"]
+      edit = ["admin"]
     }
   }
   attribute {
     name         = "lastName"
     display_name = "$${lastName}"
     permissions {
-      view = ["admin", "user"]
-      edit = ["admin", "user"]
+      view = ["admin"]
+      edit = ["admin"]
     }
     validator {
       name = "length"

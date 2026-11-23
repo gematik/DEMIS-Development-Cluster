@@ -26,7 +26,7 @@ demis-gateway:
   access_type: "CONFIDENTIAL"
   standard_flow_enabled: true
   direct_access_grants_enabled: true
-  valid_redirect_uris: ["http://www.example.de/*"]
+  valid_redirect_uris: ["http://www.gematik.de/*"]
   valid_post_logout_redirect_uris: ["+"]
   access_token_lifespan: 600
 demis-test-password-grant:
@@ -160,7 +160,7 @@ mikropro:
   access_type: "CONFIDENTIAL"
   valid_redirect_uris:
     - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
-    - "http://www.computerzentrum.de/"
+    - "https://www.mikroprojekt.de/"
   standard_flow_enabled: true
   direct_access_grants_enabled: true
   valid_post_logout_redirect_uris: ["+"]
@@ -197,7 +197,7 @@ survnet:
   access_type: "CONFIDENTIAL"
   valid_redirect_uris:
     - "de.fraunhofer.fokus.ehealth.ask.keycloakauthenticatortest://oauth/callback"
-    - "http://www.computerzentrum.de/"
+    - "http://www.rki.de/"
   standard_flow_enabled: true
   direct_access_grants_enabled: true
   valid_post_logout_redirect_uris: ["+"]

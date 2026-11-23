@@ -1,0 +1,41 @@
+apiVersion: 1
+datasources:
+%{ if prometheus_enabled ~}
+- access: proxy
+  editable: true
+  isDefault: true
+  jsonData:
+    timeInterval: 5s
+  name: Prometheus
+  orgId: 1
+  type: prometheus
+  url: ${prometheus_url}
+%{ endif ~}
+%{ if loki_enabled ~}
+- access: proxy
+  editable: true
+  isDefault: false
+  name: Loki
+  orgId: 1
+  type: loki
+  url: ${loki_url}
+%{ endif ~}
+%{ if fetched_notifications != null ~}
+- access: proxy
+  editable: false
+  isDefault: false
+  name: Fetched Notifications
+  uid: fetched-notifications
+  orgId: 1
+  type: grafana-postgresql-datasource
+  url: ${fetched_notifications.host}:${fetched_notifications.port}
+  # Read-only user and password from the mounted Secret
+  user: $__file{${secrets_path}/fetched-notifications/user}
+  jsonData:
+    database: fetched_notifications
+    # Plain TCP to pgbouncer, the sidecars add mTLS
+    sslmode: disable
+    postgresVersion: 1600
+  secureJsonData:
+    password: $__file{${secrets_path}/fetched-notifications/password}
+%{ endif ~}

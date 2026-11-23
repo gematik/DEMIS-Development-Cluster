@@ -109,6 +109,8 @@ function advanced_tools() {
 
     echo "##### Installing terraform-docs"
     for version in $(curl -sL  https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -r 'select(has("name")).name'); do
+    	# breaking change in v0.25.1
+      version='v0.24.0'
       curl -fsSL "https://github.com/terraform-docs/terraform-docs/releases/download/${version}/terraform-docs-${version}-linux-amd64.tar.gz" -o terraform-docs.tar.gz
       sudo tar -zxvf terraform-docs.tar.gz -C /usr/local/bin/ terraform-docs
       sudo chmod +x /usr/local/bin/terraform-docs

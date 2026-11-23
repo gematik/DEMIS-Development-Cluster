@@ -28,6 +28,11 @@ variable "client_mapper_configs" {
   description = "Protocol mapper definitions available to clients, keyed by mapper name."
 }
 
+variable "required_action_config" {
+  type        = any
+  description = "Required action definitions, keyed by action name."
+}
+
 variable "keycloak_root_groups" {
   description = "A map of Keycloak root groups (groups without parent)"
   type = map(object({

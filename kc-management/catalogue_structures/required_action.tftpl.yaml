@@ -1,0 +1,74 @@
+delete_credential:
+  name: "Delete Credential"
+  enabled: false
+  config:
+    max_auth_age: "300"
+CONFIGURE_RECOVERY_AUTHN_CODES:
+  name: "Recovery Authentication Codes"
+  enabled: false
+  config:
+    max_auth_age: "300"
+    warning_threshold: "4"
+CONFIGURE_TOTP:
+  name: "Configure TOTP"
+  enabled: false
+  config:
+    max_auth_age: "300"
+    add-recovery-codes: "false"
+VERIFY_EMAIL:
+  name: "Verify Email"
+  enabled: false
+  config:
+    emailResendCooldownSeconds: "30"
+    max_auth_age: "300"
+delete_account:
+  name: "Delete Account"
+  enabled: false
+UPDATE_EMAIL:
+  name: "Update Email"
+  enabled: false
+  config:
+    max_auth_age: "300"
+    emailResendCooldownSeconds: "30"
+    verfymail: "false"
+webauthn-register:
+  name: "Webauthn Register"
+  enabled: false
+  config:
+    max_auth_age: "300"
+UPDATE_PROFILE:
+  name: "Update Profile"
+  enabled: false
+  config:
+    max_auth_age: "300"
+webauthn-register-passwordless:
+  name: "Webauthn Register Passwordless"
+  enabled: false
+  config:
+    max_auth_age: "300"
+UPDATE_PASSWORD:
+  name: "Update Password"
+  enabled: false
+  config:
+    max_auth_age: "300"
+TERMS_AND_CONDITIONS:
+  name: "Terms and Conditions"
+  enabled: false
+  config:
+    max_auth_age: "300"
+update_user_locale:
+  name: "Update User Locale"
+  enabled: false
+  config:
+    max_auth_age: "300"
+idp_link:
+  name: "Linking Identity Provider"
+  enabled: false
+  config:
+    max_auth_age: "300"
+VERIFY_PROFILE:
+  name: "Verify Profile"
+  enabled: false
+  config:
+    max_auth_age: "300"
+  

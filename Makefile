@@ -192,6 +192,7 @@ observability: export WORKING_PATH=$(ROOT_DIR)/$(OBSERVABILITY_PATH)
 observability: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(OBSERVABILITY_PATH) STAGE=$(STAGE))
 observability: init-observability validate ## Deploys the observability components
 	cd $(WORKING_PATH)
+	$(call skip-if-not-configured,$(OBSERVABILITY_PATH))
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Checking for drifts"
 	$(TF_BIN) plan $(RESET_HELM_VALUES) -var=google_cloud_access_token=$(GLOUD_TOKEN) ${VAR_FILE_ARGS} -lock=false -refresh-only
@@ -204,6 +205,7 @@ init-observability: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-direct
 init-observability: export VAR_FILE_ARGS=$(shell make -s --no-print-directory get-var-file-args-for-folder MODULE=$(OBSERVABILITY_PATH) STAGE=$(STAGE))
 init-observability: ## Initializes the Terraform observability environment
 	cd $(WORKING_PATH)
+	$(call skip-if-not-configured,$(OBSERVABILITY_PATH))
 	$(write-backend-config)
 	@echo "## Initialising the observability project"
 	@echo "$(TF_BIN) init -reconfigure -upgrade ${VAR_FILE_ARGS} ${BACKEND_CONFIG_VARS}"
@@ -216,6 +218,7 @@ cleanup-observability: export VAR_FILE_ARGS=$(shell make -s --no-print-directory
 cleanup-observability: export BACKEND_CONFIG_VARS=$(shell make -s --no-print-directory get-backend-config-args-for-folder MODULE=$(OBSERVABILITY_PATH) STAGE=$(STAGE))
 cleanup-observability:
 	cd $(WORKING_PATH)
+	$(call skip-if-not-configured,$(OBSERVABILITY_PATH))
 	$(write-backend-config)
 	$(eval GLOUD_TOKEN=$(shell gcloud auth print-access-token))
 	echo "## Destroying Observability Resources"
@@ -595,9 +598,9 @@ endif
 .PHONY: create-local-environment
 create-local-environment: local ## Creates a complete local environment
 	$(MAKE) local infrastructure
-	@if [ -d "$(ROOT_DIR)/environments/stage-$(STAGE)/observability" ]; then $(MAKE) local observability; else echo "## No observability configuration for stage $(STAGE), skipping observability"; fi
 	@if [ "$${DEPLOY_KEDA:-}" = "true" ]; then $(MAKE) local keda; fi
 	$(MAKE) local mesh
+	@if [ -d "$(ROOT_DIR)/environments/stage-$(STAGE)/observability" ]; then $(MAKE) local observability; else echo "## No observability configuration for stage $(STAGE), skipping observability"; fi
 	$(MAKE) local idm
 	$(MAKE) local kc-management
 	@if [ "$${DEPLOY_DMZ:-}" = "true" ]; then $(MAKE) local dmz; fi
@@ -612,8 +615,8 @@ cleanup-local-environment: ## Destroys the local environment
 	@if kubectl get namespace dmz >/dev/null 2>&1; then $(MAKE) local cleanup-dmz; else echo "## Namespace 'dmz' not found, skipping cleanup-dmz"; fi
 	@if kubectl get namespace demis >/dev/null 2>&1; then $(MAKE) local cleanup-services; else echo "## Namespace 'demis' not found, skipping cleanup-services"; fi
 	@if kubectl get namespace idm >/dev/null 2>&1; then $(MAKE) local cleanup-kc-management cleanup-idm; else echo "## Namespace 'idm' not found, skipping cleanup-idm"; fi
-	@if kubectl get namespace mesh >/dev/null 2>&1; then $(MAKE) local cleanup-mesh; else echo "## Namespace 'mesh' not found, skipping cleanup-mesh"; fi
 	@if kubectl get namespace observability >/dev/null 2>&1; then $(MAKE) local cleanup-observability; else echo "## Namespace 'observability' not found, skipping cleanup-observability"; fi
+	@if kubectl get namespace mesh >/dev/null 2>&1; then $(MAKE) local cleanup-mesh; else echo "## Namespace 'mesh' not found, skipping cleanup-mesh"; fi
 	@if kubectl get namespace keda >/dev/null 2>&1; then $(MAKE) local cleanup-keda; else echo "## Namespace 'keda' not found, skipping cleanup-keda"; fi
 	$(MAKE) local cleanup-infrastructure
 

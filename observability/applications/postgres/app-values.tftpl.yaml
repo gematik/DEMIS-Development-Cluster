@@ -1,0 +1,69 @@
+# Database of the observability namespace (fetched_notifications of the Audit Log Service)
+required:
+  image:
+    repository: ${docker_registry}
+
+imagePullSecrets:
+%{ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+%{ endfor ~}
+
+istio:
+  enable: true
+
+podAnnotations:
+  checksum/secrets: "${secret_checksum}"
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+
+persistence:
+  existingClaim: "${volume_claim}"
+
+# Only the embedded initdb script of the observability database
+customEnvVars:
+  TERRAFORM_DEPLOYMENT: true
+  # Enabled by the chart defaults
+  CONFIG_KEYCLOAK_DB: false
+  CONFIG_PSEUDO_DB: false
+  CONFIG_BUNDID_DB: false
+  CONFIG_FHIR_STORAGE_DB: false
+  CONFIG_OBSERVABILITY_FETCHED_NOTIFICATIONS_DB: true
+  # Feature flags and config options (feature_flags.tfvars, config_options.tfvars)
+%{ for flag_name, flag_value in feature_flags ~}
+  ${flag_name}: ${flag_value}
+%{ endfor ~}
+%{ for option_name, option_value in config_options ~}
+  ${option_name}: "${option_value}"
+%{ endfor ~}
+
+extraEnvVars:
+  - name: FETCHED_NOTIFICATIONS_USER_DDL_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fetched-notifications-user-ddl-database-secret
+        key: FETCHED_NOTIFICATIONS_USER_DDL_DB_PASSWORD
+  - name: FETCHED_NOTIFICATIONS_USER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fetched-notifications-user-database-secret
+        key: FETCHED_NOTIFICATIONS_USER_DB_PASSWORD
+  - name: FETCHED_NOTIFICATIONS_PURGER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fetched-notifications-purger-database-secret
+        key: FETCHED_NOTIFICATIONS_PURGER_DB_PASSWORD
+  - name: FETCHED_NOTIFICATIONS_GRAFANA_READER_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fetched-notifications-grafana-reader-database-secret
+        key: FETCHED_NOTIFICATIONS_GRAFANA_READER_DB_PASSWORD
+
+%{ if replica_count != null ~}
+# Number of Pod Replicas (resources.tfvars)
+replicaCount: ${replica_count}
+%{ endif ~}
+%{ if resource_block != null ~}
+# Override Resource Definitions for Pod (resources.tfvars)
+${resource_block}
+%{ endif ~}
