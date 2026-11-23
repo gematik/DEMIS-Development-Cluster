@@ -14,9 +14,10 @@
 .vscode/
 credentials.tfvars
 kind-config
-!observability/grafana/config/*.yaml
-!observability/grafana/dashboards/custom/*
-!observability/grafana/dashboards/downloader.sh
+!observability/applications/grafana/config/*.yaml
+!observability/applications/grafana/dashboards/custom/*
+!observability/applications/grafana/dashboards/downloader.sh
+!observability/applications/loki/config/bucket.sh
 !infrastructure/service-mesh/grafana/config/*.yaml
 !infrastructure/service-mesh/grafana/dashboards/custom/*
 !infrastructure/service-mesh/grafana/dashboards/downloader.sh

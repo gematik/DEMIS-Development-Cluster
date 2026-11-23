@@ -2,6 +2,27 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.16.0
+- kc-management:
+  - in mapper Level-Of-Assurance-Mapper for BundID attributes of the default mapper are set to null
+  - manage required actions
+  - made user attibutes only editable for admins
+  - change redirect url of demis-gateway client
+  - removed igs roles from hospital realm
+  - additional client protocol mappers can be added per realm and client via `kc_options.additional_client_mapper`
+  - removed `kc_options.ik_mapper_disabled_realms`, "ik-mapper" is no longer part of the PORTAL clients by default and can be added via `kc_options.additional_client_mapper`
+- observability:
+  - sidecars of the namespace report no spans except the audit-log-service, pgbouncer and postgres (Telemetry of its own `network-rules`, previously in the mesh)
+  - Loki:
+    - supports only the monolithic mode
+    - storage `filesystem` or `s3` with an own bucket created by a Job (object lock, lifecycle rules, encryption `none`, `SSE-S3` or `SSE-KMS`), retention applied by the compactor
+  - Grafana:
+    - deployed by its Helm chart from OCI, pinned by its digest (`image-digest` in the `active-versions.yaml`)
+    - added datasources Loki and Fetched Notifications (pgbouncer/postgres)
+    - credentials mounted as files under `/run/secrets`
+  - added optional object-storage-service (SeaweedFS, Loki bucket) and postgres/pgbouncer (`fetched_notifications`) in the observability namespace
+  - added optional audit-log-purger (CronJob on `fetched_notifications`, runs once after a new version as the purgers of the demis layer)
+
 ## Release 5.15.3
 - kc-management:
   - added possibility to exclude clients for realms

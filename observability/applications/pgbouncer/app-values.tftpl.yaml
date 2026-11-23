@@ -1,0 +1,48 @@
+# Connection pool in front of the observability postgres
+required:
+  image:
+    repository: ${docker_registry}
+
+imagePullSecrets:
+%{ for pull_secret in image_pull_secrets ~}
+  - name: ${pull_secret}
+%{ endfor ~}
+
+istio:
+  enable: true
+
+podAnnotations:
+  checksum/secrets: "${secret_checksum}"
+  sidecar.istio.io/proxyCPU: ${istio_proxy_resources.requests.cpu}
+  sidecar.istio.io/proxyMemory: ${istio_proxy_resources.requests.memory}
+  sidecar.istio.io/proxyMemoryLimit: ${istio_proxy_resources.limits.memory}
+
+config:
+  databases:
+    fetched_notifications:
+      host: ${database_host}
+      port: ${port}
+      dbname: fetched_notifications
+  pgbouncer:
+    server_lifetime: "300"
+    max_client_conn: "200"
+  # "user" "password" per line
+  userlist:
+    name: pgbouncer-userlist-secret
+  # TLS from pgbouncer to postgres
+  tls:
+    enable: true
+    serverTlsMode: verify-ca
+    certificates:
+      serverCA:
+        name: postgres-tls-secret
+        entry: ca.crt
+
+%{ if replica_count != null ~}
+# Number of Pod Replicas (resources.tfvars)
+replicaCount: ${replica_count}
+%{ endif ~}
+%{ if resource_block != null ~}
+# Override Resource Definitions for Pod (resources.tfvars)
+${resource_block}
+%{ endif ~}

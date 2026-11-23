@@ -3,12 +3,12 @@ groups: ["GematikIdp", "OZG", "Zertifikat", "PathologischAnatomischeEinrichtung"
 %{ if (length(kc_options.realms_with_managed_clients) == 0 || contains(kc_options.realms_with_managed_clients, "PORTAL"))}
 clients:
   - demis-test-password-grant:
-      mappers: ["Account-Source-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "SP-User-ID-Mapper", "ik-mapper", "Account-Type-Protocol-Mapper", "Username-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+      mappers: ["Account-Source-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "SP-User-ID-Mapper", "Account-Type-Protocol-Mapper", "Username-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
 %{ for instance in kc_options.multi_stage_kc ~}
   - meldeportal${instance.name_suffix}:
-      mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "ik-mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+      mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
   - meldeportal-internet${instance.name_suffix}:
-      mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "ik-mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
+      mappers: ["IK-Number-Protocol-Mapper", "SP-User-ID-Mapper", "testuser-Recipient-attribute-mapper", "Profession-OID-Protocol-Mapper", "Account-Source-Protocol-Mapper", "Username-Protocol-Mapper", "Account-Type-Protocol-Mapper", "Account-Is-Temporary-Protocol-Mapper", "Organization-Name-Protocol-Mapper", "Level-Of-Assurance-Protocol-Mapper", "Account-Is-Test-Protocol-Mapper", "Account-Identifier-Protocol-Mapper"]
 %{ endfor ~}
 %{ endif ~}
 idps:
