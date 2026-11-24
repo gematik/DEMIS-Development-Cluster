@@ -19,39 +19,74 @@ variable "realms_to_import" {
 }
 
 variable "realm_config" {
-  description = "A map of realm specific configurations (can be overritten for each realm 'realm={...}')"
+  description = "A map of realm specific configurations (can be overritten for each realm 'realm={...}', unset attributes fall back to local.realm_config_defaults)"
   type = map(object({
     // Login parameter
-    edit_username_allowed          = optional(bool, false)
-    login_with_email_allowed       = optional(bool, false)
-    duplicate_emails_allowed       = optional(bool, false)
-    registration_email_as_username = optional(bool, false)
-    registration_allowed           = optional(bool, false)
-    reset_password_allowed         = optional(bool, false)
-    remember_me                    = optional(bool, false)
-    verify_email                   = optional(bool, false)
+    edit_username_allowed          = optional(bool)
+    login_with_email_allowed       = optional(bool)
+    duplicate_emails_allowed       = optional(bool)
+    registration_email_as_username = optional(bool)
+    registration_allowed           = optional(bool)
+    reset_password_allowed         = optional(bool)
+    remember_me                    = optional(bool)
+    verify_email                   = optional(bool)
 
     // Session parameter
-    sso_session_idle_timeout             = optional(string, "30m")
-    sso_session_max_lifespan             = optional(string, "10h")
-    access_code_lifespan_login           = optional(string, "30m")
-    access_code_lifespan_user_action     = optional(string, "5m")
-    client_session_idle_timeout          = optional(string, "0s")
-    client_session_max_lifespan          = optional(string, "0s")
-    offline_session_idle_timeout         = optional(string, "720h")
-    offline_session_max_lifespan_enabled = optional(bool, false)
+    sso_session_idle_timeout             = optional(string)
+    sso_session_max_lifespan             = optional(string)
+    access_code_lifespan_login           = optional(string)
+    access_code_lifespan_user_action     = optional(string)
+    client_session_idle_timeout          = optional(string)
+    client_session_max_lifespan          = optional(string)
+    offline_session_idle_timeout         = optional(string)
+    offline_session_max_lifespan_enabled = optional(bool)
 
     // Token parameter
-    oauth2_device_code_lifespan              = optional(string, "10m")
-    polling_interval                         = optional(string, 5)
-    access_token_lifespan                    = optional(string, "5m")
-    access_code_lifespan                     = optional(string, "1m")
-    access_token_lifespan_for_implicit_flow  = optional(string, "15m")
-    action_token_generated_by_user_lifespan  = optional(string, "5m")
-    action_token_generated_by_admin_lifespan = optional(string, "12h")
-    default_signature_algorithm              = optional(string, "RS256")
-    revoke_refresh_token                     = optional(bool, false)
+    oauth2_device_code_lifespan              = optional(string)
+    polling_interval                         = optional(string)
+    access_token_lifespan                    = optional(string)
+    access_code_lifespan                     = optional(string)
+    access_token_lifespan_for_implicit_flow  = optional(string)
+    action_token_generated_by_user_lifespan  = optional(string)
+    action_token_generated_by_admin_lifespan = optional(string)
+    default_signature_algorithm              = optional(string)
+    revoke_refresh_token                     = optional(bool)
   }))
+}
+
+locals {
+  realm_config_defaults = {
+    // Login parameter
+    edit_username_allowed          = false
+    login_with_email_allowed       = false
+    duplicate_emails_allowed       = false
+    registration_email_as_username = false
+    registration_allowed           = false
+    reset_password_allowed         = false
+    remember_me                    = false
+    verify_email                   = false
+
+    // Session parameter
+    sso_session_idle_timeout             = "30m"
+    sso_session_max_lifespan             = "10h"
+    access_code_lifespan_login           = "30m"
+    access_code_lifespan_user_action     = "5m"
+    client_session_idle_timeout          = "0s"
+    client_session_max_lifespan          = "0s"
+    offline_session_idle_timeout         = "720h"
+    offline_session_max_lifespan_enabled = false
+
+    // Token parameter
+    oauth2_device_code_lifespan              = "10m"
+    polling_interval                         = "5"
+    access_token_lifespan                    = "5m"
+    access_code_lifespan                     = "1m"
+    access_token_lifespan_for_implicit_flow  = "15m"
+    action_token_generated_by_user_lifespan  = "5m"
+    action_token_generated_by_admin_lifespan = "12h"
+    default_signature_algorithm              = "RS256"
+    revoke_refresh_token                     = false
+  }
 }
 
 variable "stage_specific_keycloak_config" {

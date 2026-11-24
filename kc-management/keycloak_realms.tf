@@ -115,7 +115,7 @@ module "realms" {
   auth_flow_configs         = local.auth_flow_configs[each.key]
   idp_mapper_configs        = local.idp_mapper_configs
   client_mapper_configs     = local.client_mapper_configs
-  realm_config              = try(var.realm_config[each.key], {})
+  realm_config              = merge(local.realm_config_defaults, { for k, v in try(var.realm_config[each.key], {}) : k => v if v != null })
   certs                     = lookup(var.keycloak_certs, each.key, [])
   password_users            = var.password_users
   required_action_config    = local.required_action_config

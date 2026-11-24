@@ -7,6 +7,7 @@ gematik-idp:
   display_name: "gematik IDP"
   sync_mode: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.gematik-idp.sync_mode)}
 entra-id:
+  alias: "oidc"
   type: "oidc"
   authorization_url: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.authorizationUrl)}
   client_id: ${jsonencode(stage_specific_keycloak_config.oidc_idp_configs.entra-id.clientId)}
