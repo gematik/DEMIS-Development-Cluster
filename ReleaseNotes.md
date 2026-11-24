@@ -2,12 +2,17 @@
 
 # Release Notes DEMIS Kubernetes Environment
 
+## Release 5.16.1
+- kc-management:
+  - fix for entra id 
+  - realm_config do not need empty body for each realm if using default
+
 ## Release 5.16.0
 - kc-management:
   - in mapper Level-Of-Assurance-Mapper for BundID attributes of the default mapper are set to null
   - manage required actions
   - made user attibutes only editable for admins
-  - change redirect url of demis-gateway client
+  - change redirect url of demis-gateway client 
   - removed igs roles from hospital realm
   - additional client protocol mappers can be added per realm and client via `kc_options.additional_client_mapper`
   - removed `kc_options.ik_mapper_disabled_realms`, "ik-mapper" is no longer part of the PORTAL clients by default and can be added via `kc_options.additional_client_mapper`

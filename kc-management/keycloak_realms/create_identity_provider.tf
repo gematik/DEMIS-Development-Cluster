@@ -2,7 +2,7 @@ resource "keycloak_saml_identity_provider" "saml_idps" {
   for_each = { for idp in var.idps : keys(idp)[0] => idp if try(var.idp_configs[var.realm_name][keys(idp)[0]].type, "") == "saml" }
 
   realm        = keycloak_realm.realm.id
-  alias        = each.key
+  alias        = try(var.idp_configs[var.realm_name][each.key].alias, each.key)
   display_name = try(var.idp_configs[var.realm_name][each.key].display_name, "")
   gui_order    = try(var.idp_configs[var.realm_name][each.key].gui_order, null)
   sync_mode    = try(var.idp_configs[var.realm_name][each.key].sync_mode, "IMPORT")
@@ -40,7 +40,7 @@ resource "keycloak_oidc_identity_provider" "oidc_idps" {
 
   realm                         = keycloak_realm.realm.id
   provider_id                   = try(var.idp_configs[var.realm_name][each.key].provider_id, "oidc")
-  alias                         = each.key
+  alias                         = try(var.idp_configs[var.realm_name][each.key].alias, each.key)
   authorization_url             = try(var.idp_configs[var.realm_name][each.key].authorization_url, "")
   client_id                     = try(var.idp_configs[var.realm_name][each.key].client_id, "")
   token_url                     = try(var.idp_configs[var.realm_name][each.key].token_url, "")

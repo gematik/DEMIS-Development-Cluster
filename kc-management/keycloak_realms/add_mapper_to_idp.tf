@@ -6,7 +6,7 @@ locals {
           for mapper in mapper_list : {
             key = "${idp}-${mapper}"
             value = {
-              idp_name      = idp
+              idp_name      = try(var.idp_configs[var.realm_name][idp].alias, idp)
               mapper_name   = mapper
               mapper        = try(var.idp_mapper_configs[mapper][idp].mapper, var.idp_mapper_configs[mapper].mapper)
               should_create = try(var.idp_mapper_configs[mapper][idp].should_create, var.idp_mapper_configs[mapper].should_create, true)
